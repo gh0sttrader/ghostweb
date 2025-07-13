@@ -21,14 +21,7 @@ export default function Home() {
         <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48">
           <div className="container px-4 md:px-6">
             <div className="grid gap-6 lg:grid-cols-[1fr_400px] lg:gap-12 xl:grid-cols-[1fr_600px]">
-              <Image
-                alt="Hero"
-                className="mx-auto aspect-video overflow-hidden rounded-xl object-cover sm:w-full lg:order-last lg:aspect-square"
-                height="600"
-                src="https://placehold.co/600x600.png"
-                data-ai-hint="abstract purple"
-                width="600"
-              />
+              
             </div>
           </div>
         </section>
