@@ -26,7 +26,7 @@ import { NewsArticleModal } from '@/components/NewsArticleModal';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
-import { initialMockStocks } from '@/app/(app)/trading/dashboard/page';
+import { initialMockStocks } from '@/app/(app)/trading/dashboard/mock-data';
 
 
 const MOCK_INITIAL_TIMESTAMP = '2024-07-01T10:00:00.000Z';
