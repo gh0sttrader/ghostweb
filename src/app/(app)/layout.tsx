@@ -18,7 +18,7 @@ export default function AppLayout({
   return (
     <OpenPositionsProvider>
       <TradeHistoryProvider>
-        <div className="flex flex-col h-screen bg-background">
+        <div className="flex flex-col h-screen w-full bg-background">
           <NavBar />
           <div className="flex-1 overflow-auto">
             {children}
