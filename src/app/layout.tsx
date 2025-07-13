@@ -1,9 +1,11 @@
 
 import type {Metadata} from 'next';
 import './globals.css';
-import { SidebarProvider } from '@/components/ui/sidebar';
 import { Toaster } from '@/components/ui/toaster';
 import { Inter, Sora } from 'next/font/google';
+import { NavBar } from '@/components/NavBar';
+import { OpenPositionsProvider } from '@/contexts/OpenPositionsContext';
+import { TradeHistoryProvider } from '@/contexts/TradeHistoryContext';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -30,10 +32,17 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${sora.variable} dark`}>
       <body className="font-body antialiased">
-        <SidebarProvider>
-          {children}
-        </SidebarProvider>
-        <Toaster />
+        <OpenPositionsProvider>
+          <TradeHistoryProvider>
+            <div className="flex flex-col h-screen w-full bg-background">
+              <NavBar />
+              <div className="flex-1 overflow-auto">
+                {children}
+              </div>
+            </div>
+            <Toaster />
+          </TradeHistoryProvider>
+        </OpenPositionsProvider>
       </body>
     </html>
   );
