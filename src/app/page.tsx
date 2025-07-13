@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { BrainCircuit, LineChart, PieChart, User } from "lucide-react";
+import { User } from "lucide-react";
 import Image from "next/image";
 
 export default function Home() {
@@ -22,24 +21,6 @@ export default function Home() {
         <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48">
           <div className="container px-4 md:px-6">
             <div className="grid gap-6 lg:grid-cols-[1fr_400px] lg:gap-12 xl:grid-cols-[1fr_600px]">
-              <div className="flex flex-col justify-center space-y-4">
-                <div className="space-y-4">
-                  <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent">
-                    Trade Beyond the Veil
-                  </h1>
-                  <p className="max-w-[600px] text-muted-foreground md:text-xl">
-                    Harness the power of AI to navigate the markets with Ghost Trading. Ethereal insights, tangible results.
-                  </p>
-                </div>
-                <div className="flex flex-col gap-2 min-[400px]:flex-row">
-                  <Button size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground">
-                    Launch Terminal
-                  </Button>
-                  <Button variant="outline" size="lg">
-                    Learn More
-                  </Button>
-                </div>
-              </div>
               <Image
                 alt="Hero"
                 className="mx-auto aspect-video overflow-hidden rounded-xl object-cover sm:w-full lg:order-last lg:aspect-square"
