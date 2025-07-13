@@ -61,7 +61,7 @@ function DashboardPageContent() {
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const [activeFilters, setActiveFilters] = useState<Partial<ActiveScreenerFilters>>({});
   const [isNewsModalOpen, setIsNewsModalOpen] = useState(false);
-  const [newsModalContent, setNewsModalContent] = useState<{ articles: NewsArticle[]; title: string } | null>(null);
+  const [newsModalContent, setNewsModalContent] = useState<{ articles: any[]; title: string } | null>(null);
 
   const [visibleColumns, setVisibleColumns] = useState<Record<string, boolean>>(() => {
     const initialVisibility: Record<string, boolean> = {};
@@ -386,5 +386,3 @@ export default function DashboardPage() {
     </Suspense>
   );
 }
-
-    
