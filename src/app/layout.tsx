@@ -18,8 +18,8 @@ const sora = Sora({
 });
 
 export const metadata: Metadata = {
-  title: 'MILK',
-  description: 'MILK: Market Insight, Liquidity & Knowledge. Modern trading dashboard by Firebase Studio',
+  title: 'Ghost Trading',
+  description: 'Ethereal Trading, Powered by AI.',
 };
 
 export default function RootLayout({
