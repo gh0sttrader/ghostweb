@@ -36,6 +36,22 @@ function TradingDashboardPageContent() {
   const [orderCardInitialOrderType, setOrderCardInitialOrderType] = useState<OrderSystemType | undefined>(undefined);
   const [orderCardInitialLimitPrice, setOrderCardInitialLimitPrice] = useState<string | undefined>(undefined);
 
+  const handleClearOrderCard = useCallback(() => {
+    setOrderCardActionType(null);
+    setOrderCardInitialTradeMode(undefined);
+    setOrderCardMiloActionContext(null);
+    setOrderCardInitialQuantity(undefined);
+    setOrderCardInitialOrderType(undefined);
+    setOrderCardInitialLimitPrice(undefined);
+  }, []);
+
+  const handleSyncedTickerChange = useCallback((symbol: string) => {
+    if (typeof symbol === 'string') {
+        setSyncedTickerSymbol(symbol.toUpperCase());
+    }
+    handleClearOrderCard();
+  }, [handleClearOrderCard]);
+
   useEffect(() => {
     const ticker = searchParams.get('ticker');
     const action = searchParams.get('action') as OrderActionType | null;
@@ -89,22 +105,6 @@ function TradingDashboardPageContent() {
     }
   }, [syncedTickerSymbol, toast]);
   
-  const handleClearOrderCard = useCallback(() => {
-    setOrderCardActionType(null);
-    setOrderCardInitialTradeMode(undefined);
-    setOrderCardMiloActionContext(null);
-    setOrderCardInitialQuantity(undefined);
-    setOrderCardInitialOrderType(undefined);
-    setOrderCardInitialLimitPrice(undefined);
-  }, []);
-
-  const handleSyncedTickerChange = useCallback((symbol: string) => {
-    if (typeof symbol === 'string') {
-        setSyncedTickerSymbol(symbol.toUpperCase());
-    }
-    handleClearOrderCard();
-  }, [handleClearOrderCard]);
-
   const handleTradeSubmit = (tradeDetails: TradeRequest) => {
     console.log("Trade Submitted via Order Card:", tradeDetails);
     toast({
