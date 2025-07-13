@@ -14,7 +14,6 @@ export function NavBar() {
     { href: "/trading", label: "GHOST TRADING" },
     { href: "/news", label: "NEWS" },
     { href: "/screener", label: "SCREENER" },
-    { href: "/alerts", label: "MOO ALERTS" },
     { href: "/tradehistory", label: "TRADE HISTORY" },
   ];
 
