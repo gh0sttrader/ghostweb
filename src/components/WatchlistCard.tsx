@@ -4,7 +4,7 @@ import React from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { initialMockStocks } from '@/app/(app)/trading/dashboard/page.ts';
+import { initialMockStocks } from '@/app/(app)/trading/dashboard/page';
 import { cn } from '@/lib/utils';
 
 interface WatchlistCardProps {
