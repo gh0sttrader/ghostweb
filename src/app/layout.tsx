@@ -31,10 +31,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${inter.variable} ${sora.variable} dark`}>
-      <body className="font-body antialiased">
+      <body className="font-body antialiased bg-background">
         <OpenPositionsProvider>
           <TradeHistoryProvider>
-            <div className="flex flex-col h-screen w-full bg-background">
+            <div className="flex flex-col h-screen w-full">
               <NavBar />
               <div className="flex-1 overflow-auto">
                 {children}
