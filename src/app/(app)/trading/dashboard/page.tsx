@@ -10,7 +10,7 @@ import { useOpenPositionsContext } from '@/contexts/OpenPositionsContext';
 
 import { OrderCard } from '@/components/OrderCard';
 import { Card } from '@/components/ui/card';
-import { InteractiveChartCard } from '@/components/InteractiveChartCard';
+import { InteractiveChartCard } from '@/components/charts/InteractiveChartCard';
 import { WatchlistCard } from '@/components/WatchlistCard';
 import { OpenPositionsCard } from '@/components/OpenPositionsCard';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
