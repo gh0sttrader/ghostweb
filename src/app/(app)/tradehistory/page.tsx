@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import React, { useState, useMemo, useEffect } from 'react';
@@ -64,7 +65,7 @@ const StatDisplay: React.FC<{ label: string; value: string | number; unit?: stri
 );
 
 
-const tradeHistoryColumnConfig: ColumnConfig<TradeHistoryEntry>[] = [
+const tradeHistoryColumnConfig = [
   { key: 'symbol', label: 'Symbol' },
   { key: 'side', label: 'Side' },
   { key: 'totalQty', label: 'Total Qty', align: 'right' },
