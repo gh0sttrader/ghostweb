@@ -187,13 +187,13 @@ function TradingDashboardPageContent() {
                     <OrderCard
                         selectedStock={stockForSyncedComps}
                         initialActionType={orderCardActionType}
-                        initialTradeMode={initialTradeMode}
+                        initialTradeMode={orderCardInitialTradeMode}
                         miloActionContextText={orderCardMiloActionContext}
                         onSubmit={handleTradeSubmit}
                         onClear={handleClearOrderCard}
                         initialQuantity={orderCardInitialQuantity}
                         initialOrderType={orderCardInitialOrderType}
-                        initialLimitPrice={initialLimitPrice}
+                        initialLimitPrice={orderCardInitialLimitPrice}
                         className="h-full"
                     />
                 </div>
