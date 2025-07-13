@@ -2,8 +2,6 @@
 import type {Metadata} from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster"
-import { OpenPositionsProvider } from '@/contexts/OpenPositionsContext';
-import { TradeHistoryProvider } from '@/contexts/TradeHistoryContext';
 
 export const metadata: Metadata = {
   title: 'Ghost Trading',
@@ -23,12 +21,8 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet"></link>
       </head>
       <body className="font-body antialiased">
-        <OpenPositionsProvider>
-          <TradeHistoryProvider>
-            {children}
-            <Toaster />
-          </TradeHistoryProvider>
-        </OpenPositionsProvider>
+        {children}
+        <Toaster />
       </body>
     </html>
   );
