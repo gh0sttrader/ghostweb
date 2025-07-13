@@ -144,8 +144,8 @@ function TradingDashboardPageContent() {
   };
   
   return (
-    <main className="flex flex-col h-screen overflow-hidden p-1.5 md:p-2.5 gap-1.5 bg-background">
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_428px] gap-1.5 flex-1 overflow-hidden">
+    <main className="w-full h-full flex flex-col bg-background">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_428px] gap-1.5 flex-1 overflow-hidden p-1.5 md:p-2.5">
             
             <div className="flex flex-col flex-1 min-h-0 gap-1.5">
               <div className="lg:h-[60%] flex-shrink-0">
@@ -187,13 +187,13 @@ function TradingDashboardPageContent() {
                     <OrderCard
                         selectedStock={stockForSyncedComps}
                         initialActionType={orderCardActionType}
-                        initialTradeMode={orderCardInitialTradeMode}
+                        initialTradeMode={initialTradeMode}
                         miloActionContextText={orderCardMiloActionContext}
                         onSubmit={handleTradeSubmit}
                         onClear={handleClearOrderCard}
                         initialQuantity={orderCardInitialQuantity}
                         initialOrderType={orderCardInitialOrderType}
-                        initialLimitPrice={orderCardInitialLimitPrice}
+                        initialLimitPrice={initialLimitPrice}
                         className="h-full"
                     />
                 </div>

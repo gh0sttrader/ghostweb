@@ -1,3 +1,4 @@
+
 import type {Config} from 'tailwindcss';
 
 export default {
@@ -9,25 +10,33 @@ export default {
   ],
   theme: {
     extend: {
+      boxShadow: {
+        'market-open': '0 0 15px 1px hsl(var(--confirm-green) / 0.5)',
+        'market-closing': '0 0 15px 1px hsl(var(--chart-4) / 0.5)',
+        'market-closed': '0 0 15px 1px hsl(var(--destructive) / 0.5)',
+      },
       fontFamily: {
-        body: ['Inter', 'sans-serif'],
-        headline: ['Inter', 'sans-serif'],
+        body: ['var(--font-inter)', 'sans-serif'],
+        headline: ['var(--font-sora)', 'sans-serif'],
         code: ['monospace'],
+      },
+      backgroundImage: {
+        'neon-radial': 'radial-gradient(circle at center, #6a0dad, #1e0635, #0e021a)', // Kept original neon-radial in case it's used elsewhere
       },
       colors: {
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
         card: {
-          DEFAULT: 'hsl(var(--card))',
+          DEFAULT: 'hsl(var(--card))', 
           foreground: 'hsl(var(--card-foreground))',
         },
         popover: {
-          DEFAULT: 'hsl(var(--popover))',
+          DEFAULT: 'hsl(var(--popover))', 
           foreground: 'hsl(var(--popover-foreground))',
         },
         primary: {
-          DEFAULT: 'hsl(var(--primary))',
-          foreground: 'hsl(var(--primary-foreground))',
+          DEFAULT: 'hsl(var(--primary))', // Now uses the CSS variable defined in globals.css
+          foreground: 'hsl(var(--primary-foreground))', // Now uses the CSS variable
         },
         secondary: {
           DEFAULT: 'hsl(var(--secondary))',
@@ -45,7 +54,7 @@ export default {
           DEFAULT: 'hsl(var(--destructive))',
           foreground: 'hsl(var(--destructive-foreground))',
         },
-        border: 'hsl(var(--border))',
+        border: 'hsl(var(--border))', 
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
         chart: {
@@ -56,14 +65,23 @@ export default {
           '5': 'hsl(var(--chart-5))',
         },
         sidebar: {
-          DEFAULT: 'hsl(var(--sidebar-background))',
+          DEFAULT: 'hsl(var(--sidebar-background))', 
           foreground: 'hsl(var(--sidebar-foreground))',
           primary: 'hsl(var(--sidebar-primary))',
           'primary-foreground': 'hsl(var(--sidebar-primary-foreground))',
           accent: 'hsl(var(--sidebar-accent))',
           'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
-          border: 'hsl(var(--sidebar-border))',
+          border: 'hsl(var(--sidebar-border))', 
           ring: 'hsl(var(--sidebar-ring))',
+        },
+        panel: 'hsl(var(--panel-base))', 
+        header: {
+          DEFAULT: 'hsl(var(--header-background))', 
+          foreground: 'hsl(var(--foreground))',
+        },
+        dialog: {
+          DEFAULT: 'hsl(var(--dialog-background))', 
+          foreground: 'hsl(var(--foreground))',
         },
       },
       borderRadius: {
@@ -96,4 +114,4 @@ export default {
     },
   },
   plugins: [require('tailwindcss-animate')],
-} satisfies Config;
+} satisfies Config
