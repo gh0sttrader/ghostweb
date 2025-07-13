@@ -1,88 +1,125 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-body {
-  font-family: Arial, Helvetica, sans-serif;
-}
-
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 0 0% 3.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 3.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 3.9%;
-    --primary: 269 21% 62%;
-    --primary-foreground: 270 10% 8%;
-    --secondary: 0 0% 96.1%;
-    --secondary-foreground: 0 0% 9%;
-    --muted: 0 0% 96.1%;
-    --muted-foreground: 0 0% 45.1%;
-    --accent: 86 61% 70%;
-    --accent-foreground: 270 10% 8%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 89.8%;
-    --input: 0 0% 89.8%;
-    --ring: 86 61% 70%;
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
-    --radius: 0.5rem;
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --background: 0 0% 0%; /* jet black */
+    --foreground: 0 0% 90%; /* text-white/90 */
+
+    /* Base white for panels, to be combined with opacity in components */
+    --panel-base: 0 0% 100%; 
+
+    --card: var(--panel-base);
+    --card-foreground: 0 0% 90%; /* text-white/90 */
+
+    --popover: var(--panel-base);
+    --popover-foreground: 0 0% 90%; /* text-white/90 */
+
+    --primary: 0 0% 98%; /* #FAFAFA - Replaced Purple with Off-White/Steel */
+    --primary-foreground: 0 0% 9%; /* Replaced white with near-black for contrast */
+
+    --secondary: 0 0% 12%; /* Darker grey for less prominent elements */
+    --secondary-foreground: 0 0% 90%; /* Light grey text */
+
+    --muted: 0 0% 15%;
+    --muted-foreground: 0 0% 60%; /* text-white/60 Muted text, soft gray */
+
+    --accent: 0 0% 98%; /* #FAFAFA - Replaced Purple with Off-White/Steel */
+    --accent-foreground: 0 0% 9%; /* Replaced white with near-black for contrast */
+
+    --destructive: 0 100% 65%; /* #FF4C4C Error Red */
+    --destructive-foreground: 0 0% 100%; /* White text for destructive elements */
+    
+    --confirm-green: 158 100% 50%; /* #00FF9C Confirm Green */
+    --confirm-green-foreground: 0 0% 6%; /* Dark text for confirm green buttons */
+
+    --border: var(--panel-base); /* White base for borders, opacity applied in components */
+    --input: 0 0% 12%; /* Darker grey for input field backgrounds */
+    --ring: 0 0% 98%; /* #FAFAFA - Replaced purple with Off-White for focus rings */
+
+    /* Chart Colors */
+    --chart-1: hsl(var(--primary)); 
+    --chart-2: hsl(var(--confirm-green)); 
+    --chart-3: 210 40% 96.1%; /* Light Blue for a neutral accent */
+    --chart-4: 220 70% 60%;  
+    --chart-5: hsl(var(--destructive));   
+
+    --radius: 0.5rem; 
+
+    /* Sidebar specific vars */
+    --sidebar-background: transparent; 
+    --sidebar-foreground: 0 0% 90%; 
+    --sidebar-primary: hsl(var(--primary)); 
+    --sidebar-primary-foreground: hsl(var(--primary-foreground)); 
+    --sidebar-accent: 0 0% 100%; 
+    --sidebar-accent-foreground: hsl(var(--primary)); 
+    --sidebar-border: transparent; 
+    --sidebar-ring: hsl(var(--ring)); 
+
+    /* Specific backgrounds for header and dialog for consistency with panel styling */
+    --header-background: transparent; 
+    --dialog-background: transparent; 
   }
-  .dark {
-    --background: 270 10% 8%;
-    --foreground: 0 0% 98%;
-    --card: 270 9% 10%;
-    --card-foreground: 0 0% 98%;
-    --popover: 270 9% 10%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 269 21% 62%;
-    --primary-foreground: 270 10% 8%;
-    --secondary: 270 8% 15%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 270 8% 15%;
-    --muted-foreground: 0 0% 63.9%;
-    --accent: 86 61% 70%;
-    --accent-foreground: 270 10% 8%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 270 8% 20%;
-    --input: 270 8% 20%;
-    --ring: 86 61% 70%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+
+  html {
+    font-size: 19px;
+  }
+
+  * {
+    @apply border-border; 
+  }
+  body {
+    @apply text-foreground;
+    background-color: #000000; /* Set background to jet black */
+    min-height: 100vh;
+    height: 100%;
+    background-attachment: fixed;
+    font-family: var(--font-inter); /* Ensures Inter font is applied globally */
+    overflow-x: hidden; /* Prevents horizontal scroll issues */
+  }
+
+  /* Custom scrollbar styles */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent; /* Track is transparent */
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: transparent; /* Thumb is transparent by default */
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.1); /* Thumb becomes subtly visible on hover */
+  }
+  /* For Firefox - less direct control, but can make it more subtle */
+  * {
+    scrollbar-width: thin; /* "thin" or "auto" */
+    scrollbar-color: rgba(255, 255, 255, 0.1) transparent; /* thumb and track color */
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-sora), sans-serif;
+    text-transform: uppercase;
+    font-weight: 700;
   }
 }
 
-@layer base {
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
+@keyframes ticker {
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+}
+.animate-ticker-slow {
+  animation: ticker 40s linear infinite;
+}
+.animate-ticker-medium {
+  animation: ticker 30s linear infinite;
+}
+.animate-ticker-fast {
+  animation: ticker 15s linear infinite;
 }
