@@ -6,7 +6,28 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Input } from "./ui/input";
 import { Search } from "lucide-react";
-import { GhostIcon } from "./GhostIcon";
+
+const GhostIcon = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="1em"
+    height="1em"
+    fill="none"
+    viewBox="0 0 64 64"
+    {...props}
+  >
+    <path
+      d="M32 6c-13 0-22 9.7-22 23.5 0 10.5.1 22.5.1 22.5s2.3-2 5.5-2 5.5 2 5.5 2 2.3-2 5.5-2 5.5 2 5.5 2 2.3-2 5.5-2 5.5 2 5.5 2 2.3-2 5.5-2 5.5 2 5.5 2 .1-12 .1-22.5C54 15.7 45 6 32 6z"
+      stroke="currentColor"
+      strokeWidth={2}
+      fill="currentColor"
+      fillOpacity={0.05}
+    />
+    <circle cx={24} cy={28} r={2.5} fill="currentColor" />
+    <circle cx={40} cy={28} r={2.5} fill="currentColor" />
+  </svg>
+);
+
 
 const NavLinks = () => {
   const pathname = usePathname();
