@@ -7,7 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { X, PackageSearch } from 'lucide-react';
+import { PackageSearch } from 'lucide-react';
 import type { OpenPosition } from '@/types';
 
 interface OpenPositionsCardProps {
@@ -21,17 +21,22 @@ const PositionRow = ({ position, onClose }: { position: OpenPosition; onClose: (
 
     return (
         <TableRow key={position.id} className="text-xs hover:bg-white/5">
+            <TableCell className="px-2 py-1.5 text-center">
+                <Button 
+                    variant="destructive" 
+                    size="sm" 
+                    className="h-6 px-2.5 text-xs font-bold rounded-md" 
+                    onClick={() => onClose(position.id)}
+                >
+                    CLOSE
+                </Button>
+            </TableCell>
             <TableCell className="px-2 py-1.5 font-bold text-left">{position.symbol}</TableCell>
             <TableCell className="px-2 py-1.5 text-right font-bold">{position.shares}</TableCell>
             <TableCell className="px-2 py-1.5 text-right font-bold">${position.entryPrice.toFixed(2)}</TableCell>
             <TableCell className="px-2 py-1.5 text-right font-bold">${position.currentPrice.toFixed(2)}</TableCell>
             <TableCell className={cn("px-2 py-1.5 text-right font-bold", pnlColor)}>
-                {pnl.toFixed(2)} ({pnlPercent.toFixed(2)}%)
-            </TableCell>
-            <TableCell className="px-2 py-1.5 text-center">
-                <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => onClose(position.id)}>
-                    <X className="h-3.5 w-3.5" />
-                </Button>
+                {pnlPercent.toFixed(2)}%
             </TableCell>
         </TableRow>
     );
@@ -47,12 +52,12 @@ export function OpenPositionsCard({ className }: OpenPositionsCardProps) {
                     <Table className="table-fixed">
                         <TableHeader className="sticky top-0 bg-card/[.05] backdrop-blur-md z-[1]">
                             <TableRow>
+                                <TableHead className="text-xs h-7 px-2 text-center text-muted-foreground font-medium w-20">Action</TableHead>
                                 <TableHead className="text-xs h-7 px-2 text-left text-muted-foreground font-medium">Symbol</TableHead>
                                 <TableHead className="text-xs h-7 px-2 text-right text-muted-foreground font-medium">Qty</TableHead>
                                 <TableHead className="text-xs h-7 px-2 text-right text-muted-foreground font-medium">Avg Price</TableHead>
                                 <TableHead className="text-xs h-7 px-2 text-right text-muted-foreground font-medium">Last Price</TableHead>
                                 <TableHead className="text-xs h-7 px-2 text-right text-muted-foreground font-medium">Open P&L</TableHead>
-                                <TableHead className="text-xs h-7 px-2 text-center text-muted-foreground font-medium">Action</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
