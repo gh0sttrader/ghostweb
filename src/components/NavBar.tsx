@@ -27,7 +27,7 @@ export function NavBar() {
 
   return (
     <header className="sticky top-0 z-50 w-full bg-black">
-      <div className="flex h-12 items-center justify-between px-4 sm:px-6">
+      <div className="flex h-16 items-center justify-between px-4 sm:px-6">
         {/* Left: Logo only */}
         <div className="flex items-center">
           <Link href="/trading" className="flex items-center space-x-2">
