@@ -264,14 +264,14 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, className }:
               <p className="text-base font-bold text-foreground">
                 ${stock.price.toFixed(2)}
               </p>
-              <p className={cn("text-xs font-bold", stock.changePercent >= 0 ? 'text-[#22C55E]' : 'text-[#EF4444]')}>
+              <p className={cn("text-xs font-bold", stock.changePercent >= 0 ? 'text-[hsl(var(--confirm-green))]' : 'text-[#EF4444]')}>
                 {stock.changePercent >= 0 ? '+' : ''}{(stock.price * (stock.changePercent / 100)).toFixed(2)}
                 <span className="ml-1">({stock.changePercent >= 0 ? '+' : ''}{stock.changePercent.toFixed(2)}%)</span>
               </p>
               {stock.afterHoursPrice && stock.afterHoursChange !== undefined && (
                 <p className="text-xs text-neutral-400 font-medium whitespace-nowrap">
                   After-Hours: ${stock.afterHoursPrice.toFixed(2)}
-                  <span className={cn("ml-1", stock.afterHoursChange >= 0 ? 'text-[#4ADE80]' : 'text-red-400')}>
+                  <span className={cn("ml-1", stock.afterHoursChange >= 0 ? 'text-[hsl(var(--confirm-green))]' : 'text-red-400')}>
                     ({stock.afterHoursChange >= 0 ? '+' : ''}{stock.afterHoursChange.toFixed(2)})
                   </span>
                 </p>

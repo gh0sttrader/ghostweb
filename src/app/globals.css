@@ -30,7 +30,7 @@
     --destructive: 0 100% 65%; /* #FF4C4C Error Red */
     --destructive-foreground: 0 0% 100%; /* White text for destructive elements */
     
-    --confirm-green: 158 100% 50%; /* #00FF9C Confirm Green */
+    --confirm-green: 158 100% 46%; /* #00ec95 Confirm Green */
     --confirm-green-foreground: 0 0% 6%; /* Dark text for confirm green buttons */
 
     --border: 260 10% 90%; /* Use foreground color for borders, with opacity applied in components */

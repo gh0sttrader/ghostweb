@@ -50,8 +50,8 @@ const formatCompact = (value?: number) => {
 
 const getAnalystRatingColor = (rating?: Stock['analystRating']) => {
     switch (rating) {
-        case 'Strong Buy': return 'text-green-400 font-bold';
-        case 'Buy': return 'text-green-500';
+        case 'Strong Buy': return 'text-[hsl(var(--confirm-green))] font-bold';
+        case 'Buy': return 'text-[hsl(var(--confirm-green))]';
         case 'Hold': return 'text-yellow-400';
         case 'Sell': return 'text-orange-400';
         case 'Strong Sell': return 'text-red-500 font-bold';
@@ -85,8 +85,8 @@ export function FundamentalsCard({ stock, className }: FundamentalsCardProps) {
         };
     }, [stock]);
 
-    const macdColor = technicalData.macd.includes('Bullish') ? 'text-green-500' : technicalData.macd.includes('Bearish') ? 'text-red-500' : 'text-neutral-50';
-    const trendColor = technicalData.trend.includes('Up') ? 'text-green-500' : technicalData.trend.includes('Down') ? 'text-red-500' : 'text-neutral-50';
+    const macdColor = technicalData.macd.includes('Bullish') ? 'text-[hsl(var(--confirm-green))]' : technicalData.macd.includes('Bearish') ? 'text-red-500' : 'text-neutral-50';
+    const trendColor = technicalData.trend.includes('Up') ? 'text-[hsl(var(--confirm-green))]' : technicalData.trend.includes('Down') ? 'text-red-500' : 'text-neutral-50';
 
     if (!stock) {
         return (
@@ -105,8 +105,8 @@ export function FundamentalsCard({ stock, className }: FundamentalsCardProps) {
     
     const netChange = stock.price && stock.prevClose ? stock.price - stock.prevClose : stock.price * (stock.changePercent / 100);
     const netChangePercent = stock.price && stock.prevClose ? (netChange / stock.prevClose) * 100 : stock.changePercent;
-    const changeColor = netChange >= 0 ? 'text-green-500' : 'text-red-500';
-    const afterHoursChangeColor = stock.afterHoursChange && stock.afterHoursChange >= 0 ? 'text-green-400' : 'text-red-500';
+    const changeColor = netChange >= 0 ? 'text-[hsl(var(--confirm-green))]' : 'text-red-500';
+    const afterHoursChangeColor = stock.afterHoursChange && stock.afterHoursChange >= 0 ? 'text-[hsl(var(--confirm-green))]' : 'text-red-500';
 
     return (
         <Card className={cn("flex flex-col border border-white/5", className)}>
