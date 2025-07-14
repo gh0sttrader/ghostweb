@@ -2,7 +2,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils";
 import { dummyNewsData } from './dummy-data';
 import { Badge } from '@/components/ui/badge';
 import { formatDistanceToNowStrict } from 'date-fns';
+import Link from 'next/link';
 
 const sentimentConfig = {
     Positive: { 
@@ -113,6 +114,7 @@ export default function NewsPage() {
                         <TableHead className="w-[150px] bg-card hover:bg-card">Sentiment</TableHead>
                         <TableHead className="w-[150px] bg-card hover:bg-card">Provider</TableHead>
                         <TableHead className="w-[100px] text-center bg-card hover:bg-card">Alerts</TableHead>
+                        <TableHead className="w-[120px] text-center bg-card hover:bg-card">Trade</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -142,6 +144,14 @@ export default function NewsPage() {
                                      <Bell className={cn("h-4 w-4 transition-colors", isAlerted ? 'text-destructive' : 'text-foreground')} />
                                    </button>
                                </TableCell>
+                               <TableCell className="text-center">
+                                    <Link
+                                        href={`/trading/dashboard?ticker=${item.symbol}`}
+                                        className={cn(buttonVariants({ variant: 'outline', size: 'sm' }), "h-7 px-3 text-xs")}
+                                    >
+                                        Trade
+                                    </Link>
+                                </TableCell>
                            </TableRow>
                        );
                    })}
