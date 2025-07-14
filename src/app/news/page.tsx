@@ -52,9 +52,9 @@ export default function NewsPage() {
         </div>
 
         {/* Table Section */}
-        <div className="rounded-lg overflow-auto flex-1 border border-border/10 bg-secondary">
+        <div className="rounded-lg overflow-auto flex-1 border border-border/10 bg-card">
             <Table>
-                <TableHeader className="sticky top-0 bg-secondary z-10">
+                <TableHeader className="sticky top-0 bg-card z-10">
                     <TableRow>
                         <TableHead className="w-[120px]">Time</TableHead>
                         <TableHead className="w-[100px]">Symbol</TableHead>
