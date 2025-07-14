@@ -95,10 +95,10 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, className }:
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
-  const [chartColor, setChartColor] = useState<string>('#A088B3');
+  const [chartColor, setChartColor] = useState<string>('#5721aa');
 
   const colorOptions = [
-      { color: '#A088B3', label: 'Purple' },
+      { color: '#5721aa', label: 'Purple' },
       { color: '#00ec95', label: 'Green' },
       { color: '#ff395b', label: 'Red' },
       { color: '#e6e6e6', label: 'Silver' },
