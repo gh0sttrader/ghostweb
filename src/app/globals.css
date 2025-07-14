@@ -5,14 +5,14 @@
 
 @layer base {
   :root {
-    --background: 260 10% 4%; /* Dark grayish-purple: #141216 */
+    --background: 0 0% 0%; /* Jet Black */
     --foreground: 260 10% 90%; /* text-white/90 */
 
-    /* Panels and Cards will use a semi-transparent black */
-    --card: 0 0% 0%;
+    /* Panels and Cards will use a very dark grey to be visible against pure black */
+    --card: 240 4% 5%; /* #0c0c0e */
     --card-foreground: 260 10% 90%; /* text-white/90 */
 
-    --popover: 0 0% 0%;
+    --popover: 240 4% 5%;
     --popover-foreground: 260 10% 90%; /* text-white/90 */
 
     --primary: 274 25% 61%; /* Soft, muted purple: #A088B3 */
@@ -33,7 +33,7 @@
     --confirm-green: 158 100% 46%; /* #00ec95 Confirm Green */
     --confirm-green-foreground: 0 0% 6%; /* Dark text for confirm green buttons */
 
-    --border: 260 10% 90%; /* Use foreground color for borders, with opacity applied in components */
+    --border: 260 10% 20%; /* #29262b Use a subtle border color */
     --input: 0 0% 12%; /* Darker grey for input field backgrounds */
     --ring: 274 25% 61%; /* Soft, muted purple for focus rings */
 

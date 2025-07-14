@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from "next/link";
@@ -17,16 +18,16 @@ export function NavBar() {
     { href: "/tradehistory", label: "TRADE HISTORY" },
   ];
 
-  const isActive = (href: string, matchStartsWith = false) => {
-    if (matchStartsWith) {
-      return pathname.startsWith(href);
+  const isActive = (href: string) => {
+    if (href === "/trading") {
+      return pathname.startsWith("/trading");
     }
     return pathname === href;
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="flex h-14 items-center justify-between px-4 sm:px-6">
+    <header className="sticky top-0 z-50 w-full bg-background">
+      <div className="flex h-12 items-center justify-between px-4 sm:px-6">
         {/* Left: Logo only */}
         <div className="flex items-center">
           <Link href="/trading" className="flex items-center space-x-2">
@@ -53,7 +54,7 @@ export function NavBar() {
               href={link.href}
               className={cn(
                 "transition-colors hover:text-foreground/80",
-                isActive(link.href, link.href === "/trading") ? "text-foreground" : "text-foreground/60",
+                isActive(link.href) ? "text-foreground" : "text-foreground/60",
                 link.href === "/trading" ? "font-bold" : ""
               )}
             >
