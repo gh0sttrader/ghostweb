@@ -93,7 +93,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({
     return (
         <Card className={cn("h-full flex flex-col", className)}>
             <CardHeader>
-                <CardTitle>Trade Panel</CardTitle>
+                <CardTitle></CardTitle>
             </CardHeader>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(handleFormSubmit)} className="flex flex-col flex-1">
@@ -106,7 +106,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({
                                     <FormLabel>Account</FormLabel>
                                     <Select onValueChange={(value) => { field.onChange(value); setSelectedAccountId(value); }} defaultValue={field.value}>
                                         <FormControl>
-                                            <SelectTrigger><SelectValue /></SelectTrigger>
+                                            <SelectTrigger><SelectValue /></SelectValue></SelectTrigger>
                                         </FormControl>
                                         <SelectContent>
                                             {accounts.map(acc => <SelectItem key={acc.id} value={acc.id}>{acc.name} (${acc.balance.toLocaleString()})</SelectItem>)}
@@ -170,7 +170,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({
                                     <FormLabel>Order Type</FormLabel>
                                      <Select onValueChange={field.onChange} defaultValue={field.value}>
                                         <FormControl>
-                                            <SelectTrigger><SelectValue /></SelectTrigger>
+                                            <SelectTrigger><SelectValue /></SelectValue></SelectTrigger>
                                         </FormControl>
                                         <SelectContent>
                                             <SelectItem value="Market">Market</SelectItem>
