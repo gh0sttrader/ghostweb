@@ -1,7 +1,7 @@
 
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -10,6 +10,7 @@ import { Search, Loader2, TrendingUp, TrendingDown, Minus, Bell } from 'lucide-r
 import { cn } from "@/lib/utils";
 import { dummyNewsData } from './dummy-data';
 import { Badge } from '@/components/ui/badge';
+import { formatDistanceToNow } from 'date-fns';
 
 const sentimentConfig = {
     Positive: { 
@@ -27,6 +28,29 @@ const sentimentConfig = {
         icon: <Minus className="h-4 w-4 mr-1.5" />, 
         className: 'text-muted-foreground' 
     },
+};
+
+const RelativeTime = ({ isoString }: { isoString: string }) => {
+    const [relativeTime, setRelativeTime] = useState('');
+
+    useEffect(() => {
+        const updateRelativeTime = () => {
+            try {
+                const date = new Date(isoString);
+                setRelativeTime(formatDistanceToNow(date, { addSuffix: true }));
+            } catch (e) {
+                setRelativeTime('Invalid date');
+            }
+        };
+
+        updateRelativeTime();
+        // Update every 30 seconds to keep it relatively fresh
+        const intervalId = setInterval(updateRelativeTime, 30000); 
+
+        return () => clearInterval(intervalId);
+    }, [isoString]);
+
+    return <>{relativeTime}</>;
 };
 
 export default function NewsPage() {
@@ -71,9 +95,9 @@ export default function NewsPage() {
 
         <div className="rounded-lg overflow-auto flex-1 border border-border/10 bg-card">
             <Table>
-                <TableHeader className="sticky top-0 bg-card z-10">
+                <TableHeader className="sticky top-0 z-10">
                     <TableRow className="hover:bg-card">
-                        <TableHead className="w-[120px] bg-card hover:bg-card">Time</TableHead>
+                        <TableHead className="w-[150px] bg-card hover:bg-card">Time</TableHead>
                         <TableHead className="w-[100px] bg-card hover:bg-card">Symbol</TableHead>
                         <TableHead className="bg-card hover:bg-card">Headline</TableHead>
                         <TableHead className="w-[150px] bg-card hover:bg-card">Sentiment</TableHead>
@@ -86,7 +110,9 @@ export default function NewsPage() {
                        const sentiment = sentimentConfig[item.sentiment];
                        return (
                            <TableRow key={index} className="border-b border-border/5 hover:bg-white/5">
-                               <TableCell className="text-muted-foreground font-mono text-sm">{item.timestamp}</TableCell>
+                               <TableCell className="text-muted-foreground font-mono text-sm">
+                                   <RelativeTime isoString={item.timestamp} />
+                               </TableCell>
                                <TableCell>
                                    <Badge variant="outline" className="text-sm">{item.symbol}</Badge>
                                </TableCell>
