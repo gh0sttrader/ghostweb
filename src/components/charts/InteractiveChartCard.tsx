@@ -42,8 +42,8 @@ const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>)
       );
     }
     // Default tooltip for line/area
-    const valueColor = payload[0].stroke === "#7c3aed"
-        ? 'text-[#7c3aed]'
+    const valueColor = payload[0].stroke === "hsl(var(--primary))"
+        ? 'text-primary'
         : 'text-primary';
     
     return (
@@ -147,8 +147,7 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, className }:
     // Future logic to refetch chart data will go here.
   };
 
-  const dynamicStrokeColor = "#7c3aed"; // Deep neon purple for the line
-  const milkPurpleColor = "#5B21B6";
+  const dynamicStrokeColor = "hsl(var(--primary))"; 
 
   const handleManualSubmit = () => {
     if (manualTickerInput.trim()) {
@@ -192,7 +191,7 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, className }:
       return (
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={chartData}>
-            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255, 255, 255, 0.05)" />
+            <CartesianGrid strokeDasharray="3 3" stroke="hsla(var(--border), 0.1)" />
             <XAxis dataKey="date" hide />
             <YAxis hide domain={['auto', 'auto']} />
             <Tooltip
@@ -211,18 +210,18 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, className }:
              <RechartsAreaChart data={chartData}>
                 <defs>
                     <linearGradient id={uniqueId} x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor={milkPurpleColor} stopOpacity={0.2}/>
-                      <stop offset="100%" stopColor={milkPurpleColor} stopOpacity={0}/>
+                      <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={0.2}/>
+                      <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
                     </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#18181b" />
+                <CartesianGrid strokeDasharray="3 3" stroke="hsla(var(--border), 0.1)" />
                 <XAxis dataKey="date" hide />
                 <YAxis hide domain={['auto', 'auto']} />
                 <Tooltip
                     cursor={{ stroke: 'hsl(var(--foreground))', strokeWidth: 1, strokeDasharray: '3 3' }}
                     content={<CustomTooltip />}
                 />
-                <Area type="monotone" dataKey="price" stroke={milkPurpleColor} strokeWidth={2} fillOpacity={1} fill={`url(#${uniqueId})`} dot={false} />
+                <Area type="monotone" dataKey="price" stroke={dynamicStrokeColor} strokeWidth={2} fillOpacity={1} fill={`url(#${uniqueId})`} dot={false} />
             </RechartsAreaChart>
         </ResponsiveContainer>
       );
@@ -232,7 +231,7 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, className }:
       return (
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={chartData}>
-            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255, 255, 255, 0.05)" />
+            <CartesianGrid strokeDasharray="3 3" stroke="hsla(var(--border), 0.1)" />
             <XAxis dataKey="date" hide />
             <YAxis hide domain={['dataMin - 1', 'dataMax + 1']} />
             <Tooltip
@@ -242,7 +241,7 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, className }:
             <Bar dataKey={(d: any) => [d.low, d.high]} barSize={1} fill="hsla(var(--muted-foreground), 0.5)" />
             <Bar dataKey={(d: any) => [d.open, d.close]} barSize={8}>
               {chartData.map((entry, index) => {
-                const fillColor = entry.close >= entry.open ? 'hsl(var(--chart-2))' : 'hsl(var(--chart-5))';
+                const fillColor = entry.close >= entry.open ? 'hsl(var(--confirm-green))' : 'hsl(var(--destructive))';
                 return <Cell key={`cell-${index}`} fill={fillColor} style={{ filter: `drop-shadow(0 0 1px ${fillColor})` }}/>;
               })}
             </Bar>
@@ -256,7 +255,7 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, className }:
 
 
   return (
-    <Card className={cn("shadow-none flex flex-col border border-white/5", className)}>
+    <Card className={cn("shadow-none flex flex-col border border-white/10 bg-black/80", className)}>
       <CardHeader className="pb-2 pt-3 px-3">
         <div className="flex flex-col sm:flex-row justify-between items-center gap-2">
           {stock && stock.price > 0 ? (

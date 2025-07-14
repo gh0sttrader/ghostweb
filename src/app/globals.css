@@ -5,20 +5,18 @@
 
 @layer base {
   :root {
-    --background: 0 0% 0%; /* jet black */
-    --foreground: 0 0% 90%; /* text-white/90 */
+    --background: 260 10% 4%; /* Dark grayish-purple: #141216 */
+    --foreground: 260 10% 90%; /* text-white/90 */
 
-    /* Base white for panels, to be combined with opacity in components */
-    --panel-base: 0 0% 100%; 
+    /* Panels and Cards will use a semi-transparent black */
+    --card: 0 0% 0%;
+    --card-foreground: 260 10% 90%; /* text-white/90 */
 
-    --card: var(--panel-base);
-    --card-foreground: 0 0% 90%; /* text-white/90 */
+    --popover: 0 0% 0%;
+    --popover-foreground: 260 10% 90%; /* text-white/90 */
 
-    --popover: var(--panel-base);
-    --popover-foreground: 0 0% 90%; /* text-white/90 */
-
-    --primary: 0 0% 98%; /* #FAFAFA - Replaced Purple with Off-White/Steel */
-    --primary-foreground: 0 0% 9%; /* Replaced white with near-black for contrast */
+    --primary: 274 25% 61%; /* Soft, muted purple: #A088B3 */
+    --primary-foreground: 260 10% 95%;
 
     --secondary: 0 0% 12%; /* Darker grey for less prominent elements */
     --secondary-foreground: 0 0% 90%; /* Light grey text */
@@ -26,8 +24,8 @@
     --muted: 0 0% 15%;
     --muted-foreground: 0 0% 60%; /* text-white/60 Muted text, soft gray */
 
-    --accent: 0 0% 98%; /* #FAFAFA - Replaced Purple with Off-White/Steel */
-    --accent-foreground: 0 0% 9%; /* Replaced white with near-black for contrast */
+    --accent: 85 64% 73%; /* Pale, luminous green: #B3E283 */
+    --accent-foreground: 260 10% 5%;
 
     --destructive: 0 100% 65%; /* #FF4C4C Error Red */
     --destructive-foreground: 0 0% 100%; /* White text for destructive elements */
@@ -35,13 +33,13 @@
     --confirm-green: 158 100% 50%; /* #00FF9C Confirm Green */
     --confirm-green-foreground: 0 0% 6%; /* Dark text for confirm green buttons */
 
-    --border: var(--panel-base); /* White base for borders, opacity applied in components */
+    --border: 260 10% 90%; /* Use foreground color for borders, with opacity applied in components */
     --input: 0 0% 12%; /* Darker grey for input field backgrounds */
-    --ring: 0 0% 98%; /* #FAFAFA - Replaced purple with Off-White for focus rings */
+    --ring: 274 25% 61%; /* Soft, muted purple for focus rings */
 
     /* Chart Colors */
     --chart-1: hsl(var(--primary)); 
-    --chart-2: hsl(var(--confirm-green)); 
+    --chart-2: hsl(var(--accent)); 
     --chart-3: 210 40% 96.1%; /* Light Blue for a neutral accent */
     --chart-4: 220 70% 60%;  
     --chart-5: hsl(var(--destructive));   
@@ -60,11 +58,15 @@
 
     /* Specific backgrounds for header and dialog for consistency with panel styling */
     --header-background: transparent; 
-    --dialog-background: transparent; 
+    --dialog-background: hsl(var(--background)); 
   }
 
   html {
     font-size: 19px;
+  }
+  
+  html, body {
+    background-color: hsl(var(--background)) !important; /* Enforce dark background */
   }
 
   * {
@@ -72,7 +74,6 @@
   }
   body {
     @apply text-foreground;
-    background-color: #000000; /* Set background to jet black */
     min-height: 100vh;
     height: 100%;
     background-attachment: fixed;

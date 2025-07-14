@@ -91,7 +91,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({
     };
 
     return (
-        <Card className={cn("h-full flex flex-col", className)}>
+        <Card className={cn("h-full flex flex-col bg-black/80 border-white/10", className)}>
             <CardHeader>
                 <CardTitle>Trade Panel</CardTitle>
             </CardHeader>
@@ -143,7 +143,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({
                                             </FormControl>
                                             <Label htmlFor={action} className={cn(
                                                 "block w-full text-center p-2 rounded-md cursor-pointer border",
-                                                field.value === action ? "bg-primary text-primary-foreground border-primary" : "bg-secondary"
+                                                field.value === action ? "bg-primary text-primary-foreground border-primary" : "bg-secondary hover:bg-secondary/80"
                                             )}>{action}</Label>
                                         </FormItem>
                                     ))}
@@ -198,7 +198,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({
                                 control={form.control}
                                 name="allowExtendedHours"
                                 render={({ field }) => (
-                                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm flex-1">
+                                    <FormItem className="flex flex-row items-center justify-between rounded-lg border border-white/10 p-3 shadow-sm flex-1">
                                         <div className="space-y-0.5">
                                             <FormLabel>Extended Hours</FormLabel>
                                         </div>

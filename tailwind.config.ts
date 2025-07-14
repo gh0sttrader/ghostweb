@@ -20,9 +20,6 @@ export default {
         headline: ['var(--font-sora)', 'sans-serif'],
         code: ['monospace'],
       },
-      backgroundImage: {
-        'neon-radial': 'radial-gradient(circle at center, #6a0dad, #1e0635, #0e021a)', // Kept original neon-radial in case it's used elsewhere
-      },
       colors: {
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
@@ -35,8 +32,8 @@ export default {
           foreground: 'hsl(var(--popover-foreground))',
         },
         primary: {
-          DEFAULT: 'hsl(var(--primary))', // Now uses the CSS variable defined in globals.css
-          foreground: 'hsl(var(--primary-foreground))', // Now uses the CSS variable
+          DEFAULT: 'hsl(var(--primary))',
+          foreground: 'hsl(var(--primary-foreground))',
         },
         secondary: {
           DEFAULT: 'hsl(var(--secondary))',
@@ -74,7 +71,6 @@ export default {
           border: 'hsl(var(--sidebar-border))', 
           ring: 'hsl(var(--sidebar-ring))',
         },
-        panel: 'hsl(var(--panel-base))', 
         header: {
           DEFAULT: 'hsl(var(--header-background))', 
           foreground: 'hsl(var(--foreground))',
