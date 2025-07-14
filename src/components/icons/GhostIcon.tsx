@@ -1,6 +1,6 @@
 import * as React from "react";
 
-export const GhostIcon = (props: React.SVGProps<SVGSVGElement>) => (
+export const GhostIcon = (props: React.HTMLAttributes<HTMLSpanElement>) => (
   <span {...props}>
     <svg
       xmlns="http://www.w3.org/2000/svg"
