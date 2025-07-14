@@ -1,4 +1,5 @@
 
+
 export type Stock = {
     id: string;
     symbol: string;
@@ -54,7 +55,7 @@ export type AlertRule = {
 };
 
 export type Criterion = {
-    id: string;
+    id:string;
     metric: keyof Stock;
     operator: '>' | '<' | '>=' | '<=' | '==' | '!=' | 'between';
     value: number | string | [number, number];
@@ -161,4 +162,19 @@ export type ChartBar = {
     v: number; // Volume
 };
 
-    
+export type AlertMetric = 'price' | 'changePercent' | 'volume' | 'news';
+export type AlertOperator = 'above' | 'below' | 'contains';
+
+export type AlertCondition = {
+    metric: AlertMetric;
+    operator: AlertOperator;
+    value: number | string;
+};
+
+export type Alert = {
+    id: string;
+    symbol: string;
+    condition: AlertCondition;
+    status: 'active' | 'triggered' | 'inactive';
+    createdAt: string;
+};

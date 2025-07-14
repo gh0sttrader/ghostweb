@@ -12,6 +12,9 @@ import { dummyNewsData } from './dummy-data';
 import { Badge } from '@/components/ui/badge';
 import { formatDistanceToNowStrict } from 'date-fns';
 import Link from 'next/link';
+import { useAlertsContext } from '@/contexts/AlertsContext';
+import { AlertModal } from '@/components/AlertModal';
+import type { Alert } from '@/types';
 
 const sentimentConfig = {
     Positive: { 
@@ -56,108 +59,134 @@ const RelativeTime = ({ isoString }: { isoString: string }) => {
 };
 
 export default function NewsPage() {
-  const [alertedRows, setAlertedRows] = useState<Record<string, boolean>>({});
+  const { alerts, addAlert, removeAlert } = useAlertsContext();
+  const [isAlertModalOpen, setIsAlertModalOpen] = useState(false);
+  const [selectedSymbolForAlert, setSelectedSymbolForAlert] = useState<string | null>(null);
 
-  const handleAlertToggle = (id: string) => {
-    setAlertedRows(prev => ({
-      ...prev,
-      [id]: !prev[id]
-    }));
+  const handleOpenAlertModal = (symbol: string) => {
+    setSelectedSymbolForAlert(symbol);
+    setIsAlertModalOpen(true);
+  };
+
+  const handleCloseAlertModal = () => {
+    setIsAlertModalOpen(false);
+    setSelectedSymbolForAlert(null);
+  };
+
+  const handleSaveAlert = (alert: Alert) => {
+    addAlert(alert);
+    handleCloseAlertModal();
+  };
+
+  const getAlertForSymbol = (symbol: string) => {
+    return alerts.find(a => a.symbol === symbol);
   };
 
   return (
-    <main className="flex flex-col flex-1 h-full overflow-hidden p-4 md:p-6 space-y-4">
-        <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-bold text-foreground">News</h1>
-        </div>
-        
-        <div className="flex items-center justify-between gap-4">
-            <div className="flex items-center gap-2">
-                <Select defaultValue="all_sources">
-                    <SelectTrigger className="w-auto h-9 text-xs">
-                        <SelectValue placeholder="Source" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="all_sources">All Sources</SelectItem>
-                        <SelectItem value="reuters">Reuters</SelectItem>
-                        <SelectItem value="bloomberg">Bloomberg</SelectItem>
-                        <SelectItem value="wsj">Wall Street Journal</SelectItem>
-                    </SelectContent>
-                </Select>
-                <Select defaultValue="us_market">
-                    <SelectTrigger className="w-auto h-9 text-xs">
-                        <SelectValue placeholder="Market" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="us_market">US Market</SelectItem>
-                        <SelectItem value="global">Global</SelectItem>
-                        <SelectItem value="crypto">Crypto</SelectItem>
-                    </SelectContent>
-                </Select>
-            </div>
-            <div className="relative w-full max-w-xs">
-                <Input
-                    placeholder="Search symbol..."
-                    className="h-9 w-full pl-8 rounded-full"
-                />
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            </div>
-        </div>
+    <>
+      <main className="flex flex-col flex-1 h-full overflow-hidden p-4 md:p-6 space-y-4">
+          <div className="flex items-center justify-between">
+              <h1 className="text-2xl font-bold text-foreground">News</h1>
+          </div>
+          
+          <div className="flex items-center justify-between gap-4">
+              <div className="flex items-center gap-2">
+                  <Select defaultValue="all_sources">
+                      <SelectTrigger className="w-auto h-9 text-xs">
+                          <SelectValue placeholder="Source" />
+                      </SelectTrigger>
+                      <SelectContent>
+                          <SelectItem value="all_sources">All Sources</SelectItem>
+                          <SelectItem value="reuters">Reuters</SelectItem>
+                          <SelectItem value="bloomberg">Bloomberg</SelectItem>
+                          <SelectItem value="wsj">Wall Street Journal</SelectItem>
+                      </SelectContent>
+                  </Select>
+                  <Select defaultValue="us_market">
+                      <SelectTrigger className="w-auto h-9 text-xs">
+                          <SelectValue placeholder="Market" />
+                      </SelectTrigger>
+                      <SelectContent>
+                          <SelectItem value="us_market">US Market</SelectItem>
+                          <SelectItem value="global">Global</SelectItem>
+                          <SelectItem value="crypto">Crypto</SelectItem>
+                      </SelectContent>
+                  </Select>
+              </div>
+              <div className="relative w-full max-w-xs">
+                  <Input
+                      placeholder="Search symbol..."
+                      className="h-9 w-full pl-8 rounded-full"
+                  />
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              </div>
+          </div>
 
-        <div className="rounded-lg overflow-auto flex-1 border border-border/10 bg-card">
-            <Table>
-                <TableHeader className="sticky top-0 z-10">
-                    <TableRow className="hover:bg-card">
-                        <TableHead className="w-[150px] bg-card hover:bg-card">Time</TableHead>
-                        <TableHead className="w-[100px] bg-card hover:bg-card">Symbol</TableHead>
-                        <TableHead className="bg-card hover:bg-card">Headline</TableHead>
-                        <TableHead className="w-[150px] bg-card hover:bg-card">Sentiment</TableHead>
-                        <TableHead className="w-[150px] bg-card hover:bg-card">Provider</TableHead>
-                        <TableHead className="w-[100px] text-center bg-card hover:bg-card">Alerts</TableHead>
-                        <TableHead className="w-[120px] text-center bg-card hover:bg-card">Trade</TableHead>
-                    </TableRow>
-                </TableHeader>
-                <TableBody>
-                   {dummyNewsData.map((item) => {
-                       const sentiment = sentimentConfig[item.sentiment];
-                       const isAlerted = alertedRows[item.id];
-                       return (
-                           <TableRow key={item.id} className="border-b border-border/5 hover:bg-white/5">
-                               <TableCell className="text-muted-foreground font-mono text-sm whitespace-nowrap">
-                                   <RelativeTime isoString={item.timestamp} />
-                               </TableCell>
-                               <TableCell>
-                                   <Badge variant="outline" className="text-sm">{item.symbol}</Badge>
-                               </TableCell>
-                               <TableCell className="font-medium">{item.headline}</TableCell>
-                               <TableCell className={cn("flex items-center font-semibold", sentiment.className)}>
-                                   {sentiment.icon}
-                                   {sentiment.label}
-                               </TableCell>
-                               <TableCell className="text-muted-foreground">{item.provider}</TableCell>
-                               <TableCell className="text-center">
-                                   <button
-                                     onClick={() => handleAlertToggle(item.id)}
-                                     aria-label="Toggle alert"
-                                     className="p-1 rounded-full hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-ring"
-                                   >
-                                     <Bell className={cn("h-4 w-4 transition-colors", isAlerted ? 'text-destructive' : 'text-foreground')} />
-                                   </button>
-                               </TableCell>
-                               <TableCell className="text-center">
-                                    <Link
-                                        href={`/trading/dashboard?ticker=${item.symbol}`}
-                                        className={cn(buttonVariants({ variant: 'outline', size: 'sm' }), "h-7 px-3 text-xs")}
-                                    >
-                                        Trade
-                                    </Link>
+          <div className="rounded-lg overflow-auto flex-1 border border-border/10 bg-card">
+              <Table>
+                  <TableHeader className="sticky top-0 z-10">
+                      <TableRow className="hover:bg-card">
+                          <TableHead className="w-[150px] bg-card hover:bg-card">Time</TableHead>
+                          <TableHead className="w-[100px] bg-card hover:bg-card">Symbol</TableHead>
+                          <TableHead className="bg-card hover:bg-card">Headline</TableHead>
+                          <TableHead className="w-[150px] bg-card hover:bg-card">Sentiment</TableHead>
+                          <TableHead className="w-[150px] bg-card hover:bg-card">Provider</TableHead>
+                          <TableHead className="w-[100px] text-center bg-card hover:bg-card">Alerts</TableHead>
+                          <TableHead className="w-[120px] text-center bg-card hover:bg-card">Trade</TableHead>
+                      </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {dummyNewsData.map((item) => {
+                        const sentiment = sentimentConfig[item.sentiment];
+                        const activeAlert = getAlertForSymbol(item.symbol);
+                        return (
+                            <TableRow key={item.id} className="border-b border-border/5 hover:bg-white/5">
+                                <TableCell className="text-muted-foreground font-mono text-sm whitespace-nowrap">
+                                    <RelativeTime isoString={item.timestamp} />
                                 </TableCell>
-                           </TableRow>
-                       );
-                   })}
-                </TableBody>
-            </Table>
-        </div>
-    </main>
+                                <TableCell>
+                                    <Badge variant="outline" className="text-sm">{item.symbol}</Badge>
+                                </TableCell>
+                                <TableCell className="font-medium">{item.headline}</TableCell>
+                                <TableCell className={cn("flex items-center font-semibold", sentiment.className)}>
+                                    {sentiment.icon}
+                                    {sentiment.label}
+                                </TableCell>
+                                <TableCell className="text-muted-foreground">{item.provider}</TableCell>
+                                <TableCell className="text-center">
+                                    <button
+                                      onClick={() => handleOpenAlertModal(item.symbol)}
+                                      aria-label="Toggle alert"
+                                      className="p-1 rounded-full hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-ring"
+                                    >
+                                      <Bell className={cn("h-4 w-4 transition-colors", activeAlert ? 'text-destructive fill-destructive' : 'text-foreground')} />
+                                    </button>
+                                </TableCell>
+                                <TableCell className="text-center">
+                                      <Link
+                                          href={`/trading/dashboard?ticker=${item.symbol}`}
+                                          className={cn(buttonVariants({ variant: 'outline', size: 'sm' }), "h-7 px-3 text-xs")}
+                                      >
+                                          Trade
+                                      </Link>
+                                  </TableCell>
+                            </TableRow>
+                        );
+                    })}
+                  </TableBody>
+              </Table>
+          </div>
+      </main>
+      {isAlertModalOpen && selectedSymbolForAlert && (
+        <AlertModal
+          isOpen={isAlertModalOpen}
+          onClose={handleCloseAlertModal}
+          onSave={handleSaveAlert}
+          onDelete={removeAlert}
+          symbol={selectedSymbolForAlert}
+          existingAlert={getAlertForSymbol(selectedSymbolForAlert)}
+        />
+      )}
+    </>
   );
 }

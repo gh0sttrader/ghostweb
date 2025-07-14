@@ -6,6 +6,7 @@ import { Inter, Sora } from 'next/font/google';
 import { NavBar } from '@/components/NavBar';
 import { OpenPositionsProvider } from '@/contexts/OpenPositionsContext';
 import { TradeHistoryProvider } from '@/contexts/TradeHistoryContext';
+import { AlertsProvider } from '@/contexts/AlertsContext';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -34,13 +35,15 @@ export default function RootLayout({
       <body className="font-body antialiased bg-background">
         <OpenPositionsProvider>
           <TradeHistoryProvider>
-            <div className="flex flex-col h-screen w-full">
-              <NavBar />
-              <div className="flex-1 overflow-auto">
-                {children}
+            <AlertsProvider>
+              <div className="flex flex-col h-screen w-full">
+                <NavBar />
+                <div className="flex-1 overflow-auto">
+                  {children}
+                </div>
               </div>
-            </div>
-            <Toaster />
+              <Toaster />
+            </AlertsProvider>
           </TradeHistoryProvider>
         </OpenPositionsProvider>
       </body>
