@@ -10,7 +10,7 @@ import { Search, Loader2, TrendingUp, TrendingDown, Minus, Bell } from 'lucide-r
 import { cn } from "@/lib/utils";
 import { dummyNewsData } from './dummy-data';
 import { Badge } from '@/components/ui/badge';
-import { formatDistanceToNow } from 'date-fns';
+import { formatDistanceToNowStrict } from 'date-fns';
 
 const sentimentConfig = {
     Positive: { 
@@ -37,7 +37,8 @@ const RelativeTime = ({ isoString }: { isoString: string }) => {
         const updateRelativeTime = () => {
             try {
                 const date = new Date(isoString);
-                setRelativeTime(formatDistanceToNow(date, { addSuffix: true }));
+                const distance = formatDistanceToNowStrict(date);
+                setRelativeTime(`${distance} ago`);
             } catch (e) {
                 setRelativeTime('Invalid date');
             }
@@ -110,7 +111,7 @@ export default function NewsPage() {
                        const sentiment = sentimentConfig[item.sentiment];
                        return (
                            <TableRow key={index} className="border-b border-border/5 hover:bg-white/5">
-                               <TableCell className="text-muted-foreground font-mono text-sm">
+                               <TableCell className="text-muted-foreground font-mono text-sm whitespace-nowrap">
                                    <RelativeTime isoString={item.timestamp} />
                                </TableCell>
                                <TableCell>
