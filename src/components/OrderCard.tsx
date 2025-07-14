@@ -46,6 +46,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({
     const [limitPrice, setLimitPrice] = useState<string>(initialLimitPrice || '');
     const [stopPrice, setStopPrice] = useState<string>('');
     const [timeInForce, setTimeInForce] = useState<TimeInForce>('Day');
+    const [allowExtendedHours, setAllowExtendedHours] = useState(false);
     
     const [useTakeProfit, setUseTakeProfit] = useState(false);
     const [takeProfitPrice, setTakeProfitPrice] = useState<string>('');
@@ -72,6 +73,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({
         setLimitPrice('');
         setStopPrice('');
         setTimeInForce('Day');
+        setAllowExtendedHours(false);
         setUseTakeProfit(false);
         setTakeProfitPrice('');
         setUseStopLoss(false);
@@ -101,6 +103,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({
             action: action,
             orderType: orderType,
             TIF: timeInForce,
+            allowExtendedHours: allowExtendedHours,
             accountId: selectedAccountId,
             tradeModeOrigin: initialTradeMode || 'manual',
             limitPrice: orderType === 'Limit' ? Number(limitPrice) : undefined,
@@ -223,35 +226,49 @@ export const OrderCard: React.FC<OrderCardProps> = ({
                             </Select>
                         </div>
                     </div>
-                    <div>
-                         <Label className="text-xs text-muted-foreground">Quantity</Label>
-                         <div className="relative">
-                            <Input
-                                type="number"
-                                placeholder="0"
-                                value={quantity}
-                                onChange={(e) => setQuantity(e.target.value)}
-                                className="bg-transparent border-white/10 h-10"
-                            />
-                            <div className="absolute right-1.5 top-1/2 -translate-y-1/2 flex items-center gap-1">
-                                {(['Shares', '$', '%'] as const).map(mode => (
-                                    <Button
-                                        key={mode}
-                                        variant="ghost"
-                                        size="sm"
-                                        onClick={() => setQuantityMode(mode)}
-                                        className={cn(
-                                            "h-7 w-auto px-2 text-xs text-white bg-black border border-transparent hover:border-white/20",
-                                            quantityMode === mode && "border-white/50"
-                                        )}
-                                    >
-                                        {mode === '$' && <DollarSign className="h-3.5 w-3.5" />}
-                                        {mode === '%' && <Percent className="h-3.5 w-3.5" />}
-                                        {mode === 'Shares' && <Layers className="h-3.5 w-3.5" />}
-                                    </Button>
-                                ))}
-                            </div>
-                         </div>
+                     <div className="grid grid-cols-2 gap-2">
+                         <div>
+                             <Label className="text-xs text-muted-foreground">Quantity</Label>
+                             <div className="relative">
+                                <Input
+                                    type="number"
+                                    placeholder="0"
+                                    value={quantity}
+                                    onChange={(e) => setQuantity(e.target.value)}
+                                    className="bg-transparent border-white/10 h-10"
+                                />
+                                <div className="absolute right-1.5 top-1/2 -translate-y-1/2 flex items-center gap-1">
+                                    {(['Shares', '$', '%'] as const).map(mode => (
+                                        <Button
+                                            key={mode}
+                                            variant="ghost"
+                                            size="sm"
+                                            onClick={() => setQuantityMode(mode)}
+                                            className={cn(
+                                                "h-7 w-auto px-2 text-xs text-white bg-black border border-transparent hover:border-white/20",
+                                                quantityMode === mode && "border-white/50"
+                                            )}
+                                        >
+                                            {mode === '$' && <DollarSign className="h-3.5 w-3.5" />}
+                                            {mode === '%' && <Percent className="h-3.5 w-3.5" />}
+                                            {mode === 'Shares' && <Layers className="h-3.5 w-3.5" />}
+                                        </Button>
+                                    ))}
+                                </div>
+                             </div>
+                        </div>
+                        <div>
+                            <Label className="text-xs text-muted-foreground">Trading Hours</Label>
+                            <Select value={allowExtendedHours ? 'extended' : 'regular'} onValueChange={(v) => setAllowExtendedHours(v === 'extended')}>
+                                <SelectTrigger className="bg-transparent border-white/10 h-10">
+                                    <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="regular">Regular Hours</SelectItem>
+                                    <SelectItem value="extended">Extended Hours</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
                     </div>
                     {orderType === 'Limit' && (
                         <div>
