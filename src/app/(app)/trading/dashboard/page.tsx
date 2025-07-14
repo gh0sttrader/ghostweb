@@ -174,11 +174,11 @@ function TradingDashboardPageContent() {
                         </TabsContent>
                     </Tabs>
                 </Card>
-                <WatchlistCard
-                    className="h-full"
-                    selectedStockSymbol={syncedTickerSymbol}
-                    onSelectStock={handleSyncedTickerChange}
-                />
+                <div className="h-full">
+                    <WatchlistCard
+                        className="h-full"
+                    />
+                </div>
               </div>
             </div>
 
@@ -193,7 +193,7 @@ function TradingDashboardPageContent() {
                         onClear={handleClearOrderCard}
                         initialQuantity={orderCardInitialQuantity}
                         initialOrderType={orderCardInitialOrderType}
-                        initialLimitPrice={orderCardInitialLimitPrice}
+                        initialLimitPrice={initialLimitPrice}
                         className="h-full"
                     />
                 </div>
