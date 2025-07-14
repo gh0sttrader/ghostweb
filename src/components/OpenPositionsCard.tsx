@@ -3,47 +3,77 @@
 
 import React from 'react';
 import { useOpenPositionsContext } from '@/contexts/OpenPositionsContext';
-import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { X } from 'lucide-react';
+import { X, PackageSearch } from 'lucide-react';
+import type { OpenPosition } from '@/types';
 
 interface OpenPositionsCardProps {
     className?: string;
 }
 
-export function OpenPositionsCard({ className }: OpenPositionsCardProps) {
-  const { openPositions, closePosition } = useOpenPositionsContext();
+const PositionRow = ({ position, onClose }: { position: OpenPosition; onClose: (id: string) => void; }) => {
+    const pnl = (position.currentPrice - position.entryPrice) * position.shares;
+    const pnlPercent = ((position.currentPrice - position.entryPrice) / position.entryPrice) * 100;
+    const pnlColor = pnl >= 0 ? 'text-[hsl(var(--confirm-green))]' : 'text-destructive';
 
-  return (
-    <div className={cn("h-full flex flex-col", className)}>
-        <ScrollArea className="flex-1">
-            <Table>
-                <TableBody>
-                    {openPositions.length > 0 ? (
-                        openPositions.map((position) => (
-                            <TableRow key={position.id}>
-                                <TableCell className="font-medium">{position.symbol}</TableCell>
-                                <TableCell>{position.shares}</TableCell>
-                                <TableCell>{`@ $${position.entryPrice.toFixed(2)}`}</TableCell>
-                                <TableCell className="text-right">
-                                    <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => closePosition(position.id)}>
-                                        <X className="h-4 w-4" />
-                                    </Button>
-                                </TableCell>
+    return (
+        <TableRow key={position.id} className="text-xs hover:bg-white/5">
+            <TableCell className="px-2 py-1.5 font-bold text-left">{position.symbol}</TableCell>
+            <TableCell className="px-2 py-1.5 text-right font-bold">{position.shares}</TableCell>
+            <TableCell className="px-2 py-1.5 text-right font-bold">${position.entryPrice.toFixed(2)}</TableCell>
+            <TableCell className="px-2 py-1.5 text-right font-bold">${position.currentPrice.toFixed(2)}</TableCell>
+            <TableCell className={cn("px-2 py-1.5 text-right font-bold", pnlColor)}>
+                {pnl.toFixed(2)} ({pnlPercent.toFixed(2)}%)
+            </TableCell>
+            <TableCell className="px-2 py-1.5 text-center">
+                <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => onClose(position.id)}>
+                    <X className="h-3.5 w-3.5" />
+                </Button>
+            </TableCell>
+        </TableRow>
+    );
+};
+
+export function OpenPositionsCard({ className }: OpenPositionsCardProps) {
+    const { openPositions, closePosition } = useOpenPositionsContext();
+
+    return (
+        <div className={cn("h-full flex flex-col", className)}>
+            <div className="p-0 flex-1 overflow-hidden">
+                <ScrollArea className="h-full">
+                    <Table className="table-fixed">
+                        <TableHeader className="sticky top-0 bg-card/[.05] backdrop-blur-md z-[1]">
+                            <TableRow>
+                                <TableHead className="text-xs h-7 px-2 text-left text-muted-foreground font-medium">Symbol</TableHead>
+                                <TableHead className="text-xs h-7 px-2 text-right text-muted-foreground font-medium">Qty</TableHead>
+                                <TableHead className="text-xs h-7 px-2 text-right text-muted-foreground font-medium">Avg Price</TableHead>
+                                <TableHead className="text-xs h-7 px-2 text-right text-muted-foreground font-medium">Last Price</TableHead>
+                                <TableHead className="text-xs h-7 px-2 text-right text-muted-foreground font-medium">Open P&L</TableHead>
+                                <TableHead className="text-xs h-7 px-2 text-center text-muted-foreground font-medium">Action</TableHead>
                             </TableRow>
-                        ))
-                    ) : (
-                        <TableRow>
-                            <TableCell colSpan={4} className="h-24 text-center text-muted-foreground">
-                                No open positions.
-                            </TableCell>
-                        </TableRow>
-                    )}
-                </TableBody>
-            </Table>
-        </ScrollArea>
-    </div>
-  );
+                        </TableHeader>
+                        <TableBody>
+                            {openPositions.length > 0 ? (
+                                openPositions.map((position) => (
+                                    <PositionRow key={position.id} position={position} onClose={closePosition} />
+                                ))
+                            ) : (
+                                <TableRow>
+                                    <TableCell colSpan={6} className="h-24 text-center">
+                                        <div className="flex flex-col items-center justify-center text-xs py-8 px-3">
+                                            <PackageSearch className="mx-auto h-8 w-8 mb-2 opacity-50 text-muted-foreground" />
+                                            <p className="text-muted-foreground text-center">No open positions.</p>
+                                        </div>
+                                    </TableCell>
+                                </TableRow>
+                            )}
+                        </TableBody>
+                    </Table>
+                </ScrollArea>
+            </div>
+        </div>
+    );
 }
