@@ -112,25 +112,17 @@ export const OrderCard: React.FC<OrderCardProps> = ({
     
     const actionConfig = {
       'Buy': {
-        icon: ArrowUpCircle,
         className: 'border-green-500 text-green-500 hover:bg-green-500/10',
         selectedClassName: 'bg-green-500/20 text-green-400 border-green-400',
       },
       'Sell': {
-        icon: ArrowDownCircle,
         className: 'border-red-500 text-red-500 hover:bg-red-500/10',
         selectedClassName: 'bg-red-500/20 text-red-400 border-red-400',
       },
       'Short': {
-        icon: TrendingDown,
         className: 'border-yellow-500 text-yellow-500 hover:bg-yellow-500/10',
         selectedClassName: 'bg-yellow-500/20 text-yellow-400 border-yellow-400',
       },
-      'Cover': {
-        icon: CheckCircle,
-        className: 'border-blue-500 text-blue-500 hover:bg-blue-500/10',
-        selectedClassName: 'bg-blue-500/20 text-blue-400 border-blue-400',
-      }
     };
 
     return (
@@ -166,23 +158,21 @@ export const OrderCard: React.FC<OrderCardProps> = ({
                     </div>
                 )}
                 
-                <div className="grid grid-cols-2 gap-2">
-                    {(['Buy', 'Sell', 'Short', 'Cover'] as OrderActionType[]).map((act) => {
+                <div className="grid grid-cols-3 gap-2">
+                    {(['Buy', 'Sell', 'Short'] as (keyof typeof actionConfig)[]).map((act) => {
                         const config = actionConfig[act];
-                        const Icon = config.icon;
                         return (
                             <Button
                                 key={act}
                                 variant="outline"
                                 className={cn(
-                                    "rounded-full h-10 transition-all duration-200 border-2",
+                                    "rounded-full h-10 transition-all duration-200 border-2 font-bold",
                                     config.className,
                                     action === act ? config.selectedClassName : "bg-transparent"
                                 )}
                                 onClick={() => setAction(act)}
                             >
-                                <Icon className="mr-2 h-4 w-4" />
-                                {act}
+                                {act.toUpperCase()}
                             </Button>
                         )
                     })}
