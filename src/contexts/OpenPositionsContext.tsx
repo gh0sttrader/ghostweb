@@ -3,6 +3,7 @@
 
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import type { OpenPosition, Account } from '@/types';
+import { useToast } from '@/hooks/use-toast';
 
 // Mock accounts data
 const initialAccounts: Account[] = [
@@ -28,17 +29,33 @@ interface OpenPositionsContextType {
 
 const OpenPositionsContext = createContext<OpenPositionsContextType | undefined>(undefined);
 
+const ghostMessages = [
+    "You just ghosted that position—boo yeah!",
+    "Ghosted that trade—no strings attached!",
+];
+
 export const OpenPositionsProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [openPositions, setOpenPositions] = useState<OpenPosition[]>(initialPositions);
     const [accounts] = useState<Account[]>(initialAccounts);
     const [selectedAccountId, setSelectedAccountId] = useState<string>(initialAccounts[0].id);
+    const { toast } = useToast();
 
     const addOpenPosition = (position: OpenPosition) => {
         setOpenPositions(prevPositions => [...prevPositions, position]);
     };
 
     const closePosition = (positionId: string) => {
-        setOpenPositions(prevPositions => prevPositions.filter(p => p.id !== positionId));
+        const positionToClose = openPositions.find(p => p.id === positionId);
+        if (positionToClose) {
+            setOpenPositions(prevPositions => prevPositions.filter(p => p.id !== positionId));
+            const randomMessage = ghostMessages[Math.floor(Math.random() * ghostMessages.length)];
+            toast({
+                title: `Closed ${positionToClose.symbol} Position`,
+                description: randomMessage,
+                duration: 2000,
+                variant: 'success',
+            });
+        }
     };
 
     return (
