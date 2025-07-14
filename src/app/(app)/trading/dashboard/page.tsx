@@ -18,6 +18,7 @@ import { TradeHistoryTable } from '@/components/market/TradeHistoryTable';
 import { OrdersTable } from '@/components/market/OrdersTable';
 import { FundamentalsCard } from '@/components/FundamentalsCard';
 import { initialMockStocks } from './mock-data';
+import { NewsCard } from '@/components/NewsCard';
 
 function TradingDashboardPageContent() {
   const { toast } = useToast();
@@ -175,9 +176,20 @@ function TradingDashboardPageContent() {
                     </Tabs>
                 </Card>
                 <div className="h-full">
-                    <WatchlistCard
-                        className="h-full"
-                    />
+                    <Card className="h-full flex flex-col overflow-hidden">
+                        <Tabs defaultValue="watchlist" className="flex flex-col h-full">
+                            <TabsList className="shrink-0 px-3 pt-2">
+                                <TabsTrigger value="watchlist">Watchlist</TabsTrigger>
+                                <TabsTrigger value="news">News</TabsTrigger>
+                            </TabsList>
+                            <TabsContent value="watchlist" className="flex-1 overflow-hidden mt-0 p-0">
+                                <WatchlistCard className="h-full border-0 shadow-none rounded-none bg-transparent" />
+                            </TabsContent>
+                            <TabsContent value="news" className="flex-1 overflow-hidden mt-0 p-0">
+                                <NewsCard className="h-full border-0 shadow-none rounded-none bg-transparent" />
+                            </TabsContent>
+                        </Tabs>
+                    </Card>
                 </div>
               </div>
             </div>
