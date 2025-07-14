@@ -12,7 +12,7 @@ import { Separator } from '@/components/ui/separator';
 import { useOpenPositionsContext } from '@/contexts/OpenPositionsContext';
 import type { Stock, OrderActionType, TradeRequest, TradeMode, OrderSystemType, TimeInForce } from '@/types';
 import { cn } from '@/lib/utils';
-import { DollarSign, Percent, Target, Shield, Layers } from 'lucide-react';
+import { DollarSign, Percent, Layers } from 'lucide-react';
 
 interface OrderCardProps {
     selectedStock: Stock | null;
@@ -286,7 +286,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({
                 
                 <Separator className="bg-white/10" />
 
-                <div className="space-y-2">
+                <div className="grid grid-cols-2 gap-2">
                     <div className="p-3 rounded-md bg-neutral-900/50 border border-white/10 space-y-2">
                         <div className="flex items-center justify-between">
                             <Label htmlFor="tp-switch" className="text-sm font-medium text-foreground">Take Profit</Label>
