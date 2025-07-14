@@ -142,13 +142,12 @@ function TradingDashboardPageContent() {
     });
     if (tradeDetails.action === 'Buy' || tradeDetails.action === 'Short') {
         addOpenPosition({
-            id: `pos${Date.now()}`,
             symbol: tradeDetails.symbol,
             entryPrice: stockInfo?.price || 0,
             shares: tradeDetails.quantity,
-            currentPrice: stockInfo?.price || 0,
             origin: tradeDetails.tradeModeOrigin || 'manual',
             accountId: tradeDetails.accountId || selectedAccountId,
+            side: tradeDetails.action,
         });
     }
   };

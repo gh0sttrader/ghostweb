@@ -2,7 +2,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, ReactNode } from 'react';
-import type { OpenPosition, Account } from '@/types';
+import type { OpenPosition, Account, OrderActionType } from '@/types';
 import { useToast } from '@/hooks/use-toast';
 
 // Mock accounts data
@@ -12,15 +12,15 @@ const initialAccounts: Account[] = [
 ];
 
 const initialPositions: OpenPosition[] = [
-    { id: 'pos_aapl', symbol: 'AAPL', entryPrice: 168.30, shares: 100, currentPrice: 170.34, origin: 'manual', accountId: 'acc_1' },
-    { id: 'pos_msft', symbol: 'MSFT', entryPrice: 415.00, shares: 50, currentPrice: 420.72, origin: 'manual', accountId: 'acc_1' },
-    { id: 'pos_tsla', symbol: 'TSLA', entryPrice: 179.00, shares: 20, currentPrice: 180.01, origin: 'manual', accountId: 'acc_1' },
-    { id: 'pos_nvda', symbol: 'NVDA', entryPrice: 898.00, shares: 10, currentPrice: 900.50, origin: 'manual', accountId: 'acc_1' },
+    { id: 'pos_aapl', symbol: 'AAPL', entryPrice: 168.30, shares: 100, currentPrice: 170.34, origin: 'manual', accountId: 'acc_1', side: 'Buy' },
+    { id: 'pos_msft', symbol: 'MSFT', entryPrice: 415.00, shares: 50, currentPrice: 420.72, origin: 'manual', accountId: 'acc_1', side: 'Buy' },
+    { id: 'pos_tsla', symbol: 'TSLA', entryPrice: 181.01, shares: 20, currentPrice: 180.01, origin: 'manual', accountId: 'acc_1', side: 'Short' },
+    { id: 'pos_nvda', symbol: 'NVDA', entryPrice: 898.00, shares: 10, currentPrice: 900.50, origin: 'manual', accountId: 'acc_1', side: 'Buy' },
 ];
 
 interface OpenPositionsContextType {
     openPositions: OpenPosition[];
-    addOpenPosition: (position: OpenPosition) => void;
+    addOpenPosition: (position: Omit<OpenPosition, 'id' | 'currentPrice'>) => void;
     closePosition: (positionId: string) => void;
     accounts: Account[];
     selectedAccountId: string;
@@ -40,8 +40,13 @@ export const OpenPositionsProvider: React.FC<{ children: ReactNode }> = ({ child
     const [selectedAccountId, setSelectedAccountId] = React.useState<string>(initialAccounts[0].id);
     const { toast } = useToast();
 
-    const addOpenPosition = (position: OpenPosition) => {
-        setOpenPositions(prevPositions => [...prevPositions, position]);
+    const addOpenPosition = (position: Omit<OpenPosition, 'id' | 'currentPrice'>) => {
+        const newPosition: OpenPosition = {
+            ...position,
+            id: `pos_${position.symbol}_${Date.now()}`,
+            currentPrice: position.entryPrice,
+        };
+        setOpenPositions(prevPositions => [...prevPositions, newPosition]);
     };
 
     const closePosition = (positionId: string) => {

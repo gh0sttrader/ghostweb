@@ -127,6 +127,7 @@ export type OpenPosition = {
     currentPrice: number;
     origin: TradeMode;
     accountId: string;
+    side: 'Buy' | 'Sell' | 'Short';
 };
 
 export type NewsArticle = {
