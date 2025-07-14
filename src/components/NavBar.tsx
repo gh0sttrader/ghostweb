@@ -17,7 +17,7 @@ const GhostIcon = (props: React.SVGProps<SVGSVGElement>) => (
     {...props}
   >
     <path
-      d="M24 6c-10 0-16 7.5-16 18.5V40c0 1.5 2 1.5 2 0s2-2 4-2 4 2 4 2 2-2 4-2 4 2 4 2 2-2 4-2 4 2 4 2s2 0 2-1.5V24.5C40 13.5 34 6 24 6z"
+      d="M24 6c-10 0-16 7.5-16 18.5V40c0 1.5 2 1.5 2 0s2-2 4-2 4 2 4 2 2-2 4-2 4 2 4 2 2-2 4-2 4 2 4 2 2 0 2-1.5V24.5C40 13.5 34 6 24 6z"
       fill="#FFF"
       stroke="#FFF"
       strokeWidth="2"
