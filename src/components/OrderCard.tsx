@@ -119,7 +119,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({
       },
       'SELL': {
         className: 'border-destructive text-destructive hover:bg-destructive hover:text-destructive-foreground',
-        selectedClassName: 'bg-destructive border-destructive text-white',
+        selectedClassName: 'bg-destructive border-destructive text-destructive-foreground',
       },
       'SHORT': {
         className: 'border-yellow-500 text-yellow-500 hover:bg-yellow-500 hover:text-yellow-950',
@@ -130,16 +130,14 @@ export const OrderCard: React.FC<OrderCardProps> = ({
     return (
         <Card className={cn("h-full flex flex-col bg-black/50 border-white/5", className)}>
             <CardContent className="flex-1 flex flex-col p-3 space-y-3 overflow-y-auto">
-                <div>
-                    <Select onValueChange={setSelectedAccountId} defaultValue={selectedAccountId}>
-                        <SelectTrigger className="bg-transparent border-white/10 h-10">
-                            <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                            {accounts.map(acc => <SelectItem key={acc.id} value={acc.id}>{acc.name} (${acc.balance.toLocaleString()})</SelectItem>)}
-                        </SelectContent>
-                    </Select>
-                </div>
+                <Select onValueChange={setSelectedAccountId} defaultValue={selectedAccountId}>
+                    <SelectTrigger className="bg-transparent border-white/10 h-10">
+                        <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {accounts.map(acc => <SelectItem key={acc.id} value={acc.id}>{acc.name} (${acc.balance.toLocaleString()})</SelectItem>)}
+                    </SelectContent>
+                </Select>
                 
 
                 {selectedStock && (
@@ -161,7 +159,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({
                 
                 <div className="grid grid-cols-3 gap-2">
                     {(['BUY', 'SELL', 'SHORT'] as (keyof typeof actionConfig)[]).map((act) => {
-                        const config = actionConfig[act];
+                        const config = actionConfig[act as keyof typeof actionConfig];
                         return (
                             <Button
                                 key={act}
