@@ -193,7 +193,7 @@ function TradingDashboardPageContent() {
                         onClear={handleClearOrderCard}
                         initialQuantity={orderCardInitialQuantity}
                         initialOrderType={orderCardInitialOrderType}
-                        initialLimitPrice={initialLimitPrice}
+                        initialLimitPrice={orderCardInitialLimitPrice}
                         className="h-full"
                     />
                 </div>
