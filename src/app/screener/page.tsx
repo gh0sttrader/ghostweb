@@ -21,7 +21,7 @@ import { format } from 'date-fns';
 import { ScreenerFilterModal } from '@/components/ScreenerFilterModal';
 import type { ActiveScreenerFilters } from '@/components/ScreenerFilterModal';
 import { Badge } from '@/components/ui/badge';
-import { dummyNewsData } from '@/components/NewsCard';
+import { dummyNewsData } from '@/app/news/dummy-data';
 import { NewsArticleModal } from '@/components/NewsArticleModal';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
