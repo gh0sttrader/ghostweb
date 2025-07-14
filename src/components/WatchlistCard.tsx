@@ -19,8 +19,8 @@ const watchlistStocks = initialMockStocks.slice(0, 8);
 export const WatchlistCard: React.FC<WatchlistCardProps> = ({ selectedStockSymbol, onSelectStock, className }) => {
     return (
         <Card className={cn("h-full flex flex-col", className)}>
-            <CardHeader>
-                <CardTitle>Watchlist</CardTitle>
+            <CardHeader className="p-3">
+                <CardTitle className="text-base font-medium text-foreground">Watchlist</CardTitle>
             </CardHeader>
             <CardContent className="flex-1 p-0 overflow-hidden">
                 <ScrollArea className="h-full">
