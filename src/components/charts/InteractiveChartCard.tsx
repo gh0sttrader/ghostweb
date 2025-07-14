@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import type { Stock } from '@/types';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, AreaChart as RechartsAreaChart, Area, BarChart, Bar, Cell } from 'recharts';
 import type { TooltipProps } from 'recharts';
-import { AreaChart as AreaIcon, CandlestickChart, Activity, Search, Loader2, Calendar } from 'lucide-react';
+import { AreaChart as AreaIcon, CandlestickChart, Activity, Search, Loader2, Calendar, LineChart as LineChartIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { getChartData } from '@/ai/flows/get-chart-data-flow';
 import { sub, formatISO, format } from 'date-fns';
@@ -184,12 +184,13 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, className }:
     }
 
     const uniqueId = `chart-gradient-${stock?.id || 'default'}`;
+    const chartGrid = <CartesianGrid stroke="#ffffff12" strokeDasharray="4 6" vertical={true} horizontal={true} />;
 
     if (chartType === 'line') {
       return (
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={chartData}>
-            <CartesianGrid strokeDasharray="3 3" stroke="hsla(var(--border), 0.1)" />
+            {chartGrid}
             <XAxis dataKey="date" hide />
             <YAxis hide domain={['auto', 'auto']} />
             <Tooltip
@@ -212,7 +213,7 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, className }:
                       <stop offset="100%" stopColor={ghostPurple} stopOpacity={0}/>
                     </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsla(var(--border), 0.1)" />
+                {chartGrid}
                 <XAxis dataKey="date" hide />
                 <YAxis hide domain={['auto', 'auto']} />
                 <Tooltip
@@ -229,7 +230,7 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, className }:
       return (
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={chartData}>
-            <CartesianGrid strokeDasharray="3 3" stroke="hsla(var(--border), 0.1)" />
+            {chartGrid}
             <XAxis dataKey="date" hide />
             <YAxis hide domain={['dataMin - 1', 'dataMax + 1']} />
             <Tooltip
@@ -253,7 +254,7 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, className }:
 
 
   return (
-    <Card className={cn("shadow-none flex flex-col border border-white/10 bg-black/80", className)}>
+    <Card className={cn("shadow-none flex flex-col border border-white/10 bg-card/80", className)}>
       <CardHeader className="pb-2 pt-3 px-3">
         <div className="flex flex-col sm:flex-row justify-between items-center gap-2">
           {stock && stock.price > 0 ? (
@@ -264,14 +265,14 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, className }:
               <p className="text-base font-bold text-foreground">
                 ${stock.price.toFixed(2)}
               </p>
-              <p className={cn("text-xs font-bold", stock.changePercent >= 0 ? 'text-[hsl(var(--confirm-green))]' : 'text-[#EF4444]')}>
+              <p className={cn("text-xs font-bold", stock.changePercent >= 0 ? 'text-[hsl(var(--confirm-green))]' : 'text-destructive')}>
                 {stock.changePercent >= 0 ? '+' : ''}{(stock.price * (stock.changePercent / 100)).toFixed(2)}
                 <span className="ml-1">({stock.changePercent >= 0 ? '+' : ''}{stock.changePercent.toFixed(2)}%)</span>
               </p>
               {stock.afterHoursPrice && stock.afterHoursChange !== undefined && (
                 <p className="text-xs text-neutral-400 font-medium whitespace-nowrap">
                   After-Hours: ${stock.afterHoursPrice.toFixed(2)}
-                  <span className={cn("ml-1", stock.afterHoursChange >= 0 ? 'text-[hsl(var(--confirm-green))]' : 'text-red-400')}>
+                  <span className={cn("ml-1", stock.afterHoursChange >= 0 ? 'text-[hsl(var(--confirm-green))]' : 'text-destructive')}>
                     ({stock.afterHoursChange >= 0 ? '+' : ''}{stock.afterHoursChange.toFixed(2)})
                   </span>
                 </p>
@@ -344,7 +345,7 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, className }:
         <div className="w-px bg-border/20 h-5 self-center mx-1"></div>
 
         {[
-          { type: 'line', label: 'Line', Icon: LineChart },
+          { type: 'line', label: 'Line', Icon: LineChartIcon },
           { type: 'area', label: 'Area', Icon: AreaIcon },
           { type: 'candle', label: 'Candle', Icon: CandlestickChart },
         ].map(({ type, label, Icon }) => (
