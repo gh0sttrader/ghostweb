@@ -108,7 +108,7 @@ export function AlertModal({ isOpen, onClose, onSave, onDelete, symbol, existing
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="sm:max-w-[425px]">
+            <DialogContent>
                 <DialogHeader>
                     <DialogTitle>Set Alert for {symbol}</DialogTitle>
                     <DialogDescription>
@@ -166,7 +166,7 @@ export function AlertModal({ isOpen, onClose, onSave, onDelete, symbol, existing
                     </div>
                     <div className="flex gap-2">
                         <Button variant="outline" onClick={onClose}>Cancel</Button>
-                        <Button onClick={handleSave}>Save Alert</Button>
+                        <Button onClick={handleSave} className="bg-black/70 text-white hover:bg-black/90">Save Alert</Button>
                     </div>
                 </DialogFooter>
             </DialogContent>
