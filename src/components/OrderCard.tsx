@@ -112,16 +112,16 @@ export const OrderCard: React.FC<OrderCardProps> = ({
     
     const actionConfig = {
       'Buy': {
-        className: 'border-green-500 text-green-500 hover:bg-green-500/10',
-        selectedClassName: 'bg-green-500/20 text-green-400 border-green-400',
+        className: 'border-[hsl(var(--confirm-green))] text-[hsl(var(--confirm-green))] hover:bg-[hsl(var(--confirm-green))]',
+        selectedClassName: 'bg-[hsl(var(--confirm-green))] border-[hsl(var(--confirm-green))] text-[hsl(var(--confirm-green-foreground))]',
       },
       'Sell': {
-        className: 'border-red-500 text-red-500 hover:bg-red-500/10',
-        selectedClassName: 'bg-red-500/20 text-red-400 border-red-400',
+        className: 'border-destructive text-destructive hover:bg-destructive',
+        selectedClassName: 'bg-destructive border-destructive text-destructive-foreground',
       },
       'Short': {
-        className: 'border-yellow-500 text-yellow-500 hover:bg-yellow-500/10',
-        selectedClassName: 'bg-yellow-500/20 text-yellow-400 border-yellow-400',
+        className: 'border-yellow-500 text-yellow-500 hover:bg-yellow-500',
+        selectedClassName: 'bg-yellow-500 border-yellow-500 text-yellow-950',
       },
     };
 
@@ -166,9 +166,8 @@ export const OrderCard: React.FC<OrderCardProps> = ({
                                 key={act}
                                 variant="outline"
                                 className={cn(
-                                    "rounded-full h-10 transition-all duration-200 border-2 font-bold",
-                                    config.className,
-                                    action === act ? config.selectedClassName : "bg-transparent"
+                                    "rounded-md h-10 transition-colors duration-150 border-2 font-bold hover:text-white",
+                                    action === act ? config.selectedClassName : `bg-transparent ${config.className}`
                                 )}
                                 onClick={() => setAction(act)}
                             >
