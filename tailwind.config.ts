@@ -14,6 +14,7 @@ export default {
         'market-open': '0 0 15px 1px hsl(var(--confirm-green) / 0.5)',
         'market-closing': '0 0 15px 1px hsl(var(--chart-4) / 0.5)',
         'market-closed': '0 0 15px 1px hsl(var(--destructive) / 0.5)',
+        'glass': '0 4px 16px 0 rgba(0,0,0,0.7)',
       },
       fontFamily: {
         body: ['var(--font-inter)', 'sans-serif'],
