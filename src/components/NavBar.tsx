@@ -10,8 +10,8 @@ import { Search } from "lucide-react";
 const GhostIcon = (props: React.SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    width="48"
-    height="48"
+    width={48}
+    height={48}
     viewBox="0 0 48 48"
     fill="none"
     {...props}
@@ -22,8 +22,8 @@ const GhostIcon = (props: React.SVGProps<SVGSVGElement>) => (
       stroke="#FFF"
       strokeWidth="2"
     />
-    <circle cx="18" cy="20" r="2" fill="#000" />
-    <circle cx="30" cy="20" r="2" fill="#000" />
+    <circle cx={18} cy={20} r={2} fill="#000" />
+    <circle cx={30} cy={20} r={2} fill="#000" />
   </svg>
 );
 
