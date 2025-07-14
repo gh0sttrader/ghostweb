@@ -15,6 +15,7 @@ const NavLinks = () => {
     { href: "/trading", label: "GHOST TRADING" },
     { href: "/news", label: "NEWS" },
     { href: "/screener", label: "SCREENER" },
+    { href: "/accounts", label: "ACCOUNTS" },
     { href: "/tradehistory", label: "TRADE HISTORY" },
   ];
 
@@ -22,7 +23,7 @@ const NavLinks = () => {
     if (href === "/trading") {
       return pathname.startsWith("/trading");
     }
-    return pathname === href;
+    return pathname.startsWith(href);
   };
 
   return (
