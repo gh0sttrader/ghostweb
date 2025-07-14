@@ -22,14 +22,14 @@ export function OrdersTable({ className }: OrdersTableProps) {
           <Table className="table-fixed">
             <TableHeader className="sticky top-0 bg-card/[.05] backdrop-blur-md z-[1]">
               <TableRow>
-                <TableHead className="h-7 px-2 text-center text-muted-foreground font-medium">Action</TableHead>
-                <TableHead className="h-7 px-2 text-left text-muted-foreground font-medium">Symbol</TableHead>
-                <TableHead className="h-7 px-2 text-left text-muted-foreground font-medium">Side</TableHead>
-                <TableHead className="h-7 px-2 text-right text-muted-foreground font-medium">Qty</TableHead>
-                <TableHead className="h-7 px-2 text-left text-muted-foreground font-medium">Order Type</TableHead>
-                <TableHead className="h-7 px-2 text-right text-muted-foreground font-medium">Limit Price</TableHead>
-                <TableHead className="h-7 px-2 text-left text-muted-foreground font-medium">Status</TableHead>
-                <TableHead className="h-7 px-2 text-left text-muted-foreground font-medium">Time</TableHead>
+                <TableHead className="text-xs h-7 px-2 text-center text-muted-foreground font-medium">Action</TableHead>
+                <TableHead className="text-xs h-7 px-2 text-left text-muted-foreground font-medium">Symbol</TableHead>
+                <TableHead className="text-xs h-7 px-2 text-left text-muted-foreground font-medium">Side</TableHead>
+                <TableHead className="text-xs h-7 px-2 text-right text-muted-foreground font-medium">Qty</TableHead>
+                <TableHead className="text-xs h-7 px-2 text-left text-muted-foreground font-medium">Order Type</TableHead>
+                <TableHead className="text-xs h-7 px-2 text-right text-muted-foreground font-medium">Limit Price</TableHead>
+                <TableHead className="text-xs h-7 px-2 text-left text-muted-foreground font-medium">Status</TableHead>
+                <TableHead className="text-xs h-7 px-2 text-left text-muted-foreground font-medium">Time</TableHead>
               </TableRow>
             </TableHeader>
              <TableBody>
