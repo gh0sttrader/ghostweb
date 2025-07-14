@@ -10,21 +10,21 @@ import { Search } from "lucide-react";
 const GhostIcon = (props: React.SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    width="1em"
-    height="1em"
+    width={48}
+    height={48}
     fill="none"
     viewBox="0 0 64 64"
     {...props}
   >
     <path
       d="M32 6c-13 0-22 9.7-22 23.5 0 10.5.1 22.5.1 22.5s2.3-2 5.5-2 5.5 2 5.5 2 2.3-2 5.5-2 5.5 2 5.5 2 2.3-2 5.5-2 5.5 2 5.5 2 2.3-2 5.5-2 5.5 2 5.5 2 .1-12 .1-22.5C54 15.7 45 6 32 6z"
-      stroke="currentColor"
+      stroke="#FFF"
       strokeWidth={2}
-      fill="currentColor"
-      fillOpacity={0.05}
+      fill="#FFF"
+      fillOpacity={0.12}
     />
-    <circle cx={24} cy={28} r={2.5} fill="currentColor" />
-    <circle cx={40} cy={28} r={2.5} fill="currentColor" />
+    <circle cx={24} cy={28} r={2.5} fill="#FFF" />
+    <circle cx={40} cy={28} r={2.5} fill="#FFF" />
   </svg>
 );
 
@@ -73,7 +73,7 @@ export function NavBar() {
         {/* Left: Logo only */}
         <div className="flex items-center">
           <Link href="/trading" className="flex items-center space-x-2">
-            <GhostIcon className="h-6 w-6 text-primary" />
+            <GhostIcon />
           </Link>
         </div>
 
