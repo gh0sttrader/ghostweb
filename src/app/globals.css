@@ -24,8 +24,8 @@
     --muted: 0 0% 15%;
     --muted-foreground: 0 0% 60%; /* text-white/60 Muted text, soft gray */
 
-    --accent: 85 64% 73%; /* Pale, luminous green: #B3E283 */
-    --accent-foreground: 260 10% 5%;
+    --accent: 0 0% 15%; /* Muted dark gray for subtle highlights */
+    --accent-foreground: 0 0% 80%;
 
     --destructive: 0 100% 65%; /* #FF4C4C Error Red */
     --destructive-foreground: 0 0% 100%; /* White text for destructive elements */
