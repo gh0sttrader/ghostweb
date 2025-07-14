@@ -113,17 +113,14 @@ export const OrderCard: React.FC<OrderCardProps> = ({
     };
     
     const actionConfig = {
-      'BUY': {
-        className: 'border-[hsl(var(--confirm-green))] text-[hsl(var(--confirm-green))] hover:bg-[hsl(var(--confirm-green))] hover:text-[hsl(var(--confirm-green-foreground))]',
-        selectedClassName: 'bg-[hsl(var(--confirm-green))] border-[hsl(var(--confirm-green))] text-white',
+      'Buy': {
+        selectedClassName: 'border-[hsl(var(--confirm-green))] text-[hsl(var(--confirm-green))]',
       },
-      'SELL': {
-        className: 'border-destructive text-destructive hover:bg-destructive hover:text-destructive-foreground',
-        selectedClassName: 'bg-destructive border-destructive text-white',
+      'Sell': {
+        selectedClassName: 'border-destructive text-destructive',
       },
-      'SHORT': {
-        className: 'border-yellow-500 text-yellow-500 hover:bg-yellow-500 hover:text-yellow-950',
-        selectedClassName: 'bg-yellow-500 border-yellow-500 text-black',
+      'Short': {
+        selectedClassName: 'border-yellow-500 text-yellow-500',
       },
     };
 
@@ -158,15 +155,16 @@ export const OrderCard: React.FC<OrderCardProps> = ({
                 )}
                 
                 <div className="grid grid-cols-3 gap-2">
-                    {(['BUY', 'SELL', 'SHORT'] as (keyof typeof actionConfig)[]).map((act) => {
-                        const config = actionConfig[act as keyof typeof actionConfig];
+                    {(['Buy', 'Sell', 'Short'] as OrderActionType[]).map((act) => {
+                        const config = actionConfig[act];
                         return (
                             <Button
                                 key={act}
                                 variant="outline"
                                 className={cn(
-                                    "rounded-md h-9 transition-colors duration-150 border-2 font-bold uppercase",
-                                    action === act ? config.selectedClassName : `bg-transparent ${config.className}`
+                                    "rounded-md h-9 transition-all duration-200 border-2 font-bold uppercase bg-transparent hover:bg-white/5",
+                                    "border-white/50 text-white/80",
+                                    action === act ? config.selectedClassName : "hover:border-white/70 hover:text-white"
                                 )}
                                 onClick={() => setAction(act)}
                             >
