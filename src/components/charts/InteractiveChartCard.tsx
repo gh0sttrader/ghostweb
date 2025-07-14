@@ -22,7 +22,7 @@ interface InteractiveChartCardProps {
   className?: string;
 }
 
-const ghostPurple = "#551faa";
+const ghostPurple = "#5721aa";
 
 const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>) => {
   if (active && payload && payload.length) {
