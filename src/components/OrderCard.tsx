@@ -127,7 +127,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({
 
     return (
         <Card className={cn("h-full flex flex-col bg-black border-white/5", className)}>
-            <CardContent className="flex-1 p-3 space-y-3 overflow-y-auto">
+            <CardContent className="flex-1 flex flex-col p-3 space-y-3 overflow-y-auto">
                 <div>
                     <Select onValueChange={setSelectedAccountId} defaultValue={selectedAccountId}>
                         <SelectTrigger className="bg-transparent border-white/10 h-10">
@@ -166,12 +166,12 @@ export const OrderCard: React.FC<OrderCardProps> = ({
                                 key={act}
                                 variant="outline"
                                 className={cn(
-                                    "rounded-md h-10 transition-colors duration-150 border-2 font-bold hover:text-white",
+                                    "rounded-md h-10 transition-colors duration-150 border-2 font-bold hover:text-white uppercase",
                                     action === act ? config.selectedClassName : `bg-transparent ${config.className}`
                                 )}
                                 onClick={() => setAction(act)}
                             >
-                                {act.toUpperCase()}
+                                {act}
                             </Button>
                         )
                     })}
@@ -261,17 +261,16 @@ export const OrderCard: React.FC<OrderCardProps> = ({
                     {useStopLoss && <Input type="number" placeholder="Enter stop loss price" value={stopLossPrice} onChange={(e) => setStopLossPrice(e.target.value)} className="bg-transparent border-white/10 h-10" />}
                 </div>
 
-            </CardContent>
-            
-            <div className="p-3 border-t border-white/10">
-                 <Button 
-                    className="w-full h-12 text-base font-bold bg-neutral-800 hover:bg-neutral-700 text-neutral-300 disabled:bg-neutral-900 disabled:text-neutral-600 border border-white/10"
+                <div className="flex-1"></div>
+
+                <Button 
+                    className="w-full h-12 text-base font-bold bg-neutral-800 hover:bg-neutral-700 text-neutral-300 disabled:bg-neutral-900 disabled:text-neutral-600 border border-white/10 mt-auto"
                     disabled={!isFormValid}
                     onClick={handleFormSubmit}
                 >
                    {isFormValid && action && selectedStock ? `${action} ${quantity} ${selectedStock.symbol}` : 'Select Action'}
                 </Button>
-            </div>
+            </CardContent>
         </Card>
     );
 };
