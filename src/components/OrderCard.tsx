@@ -114,15 +114,31 @@ export const OrderCard: React.FC<OrderCardProps> = ({
     
     const actionConfig = {
       'Buy': {
-        selectedClassName: 'bg-[hsl(var(--confirm-green))] text-[hsl(var(--confirm-green-foreground))] border-[hsl(var(--confirm-green))] hover:bg-[hsl(var(--confirm-green))]/90',
+        selectedClassName: 'bg-[hsl(var(--confirm-green))] text-black border-transparent hover:bg-[hsl(var(--confirm-green))]/90',
       },
       'Sell': {
-        selectedClassName: 'bg-destructive text-destructive-foreground border-destructive hover:bg-destructive/90',
+        selectedClassName: 'bg-destructive text-black border-transparent hover:bg-destructive/90',
       },
       'Short': {
-        selectedClassName: 'bg-yellow-500 text-yellow-950 border-yellow-500 hover:bg-yellow-500/90',
+        selectedClassName: 'bg-yellow-500 text-black border-transparent hover:bg-yellow-500/90',
       },
     };
+
+    const submitButtonClass = useMemo(() => {
+        if (!isFormValid) {
+            return "bg-neutral-900 text-neutral-600 border-white/10";
+        }
+        switch (action) {
+            case 'Buy':
+                return 'bg-[hsl(var(--confirm-green))] hover:bg-[hsl(var(--confirm-green))]/90 text-black';
+            case 'Sell':
+                return 'bg-destructive hover:bg-destructive/90 text-black';
+            case 'Short':
+                return 'bg-yellow-500 hover:bg-yellow-500/90 text-black';
+            default:
+                return "bg-neutral-800 hover:bg-neutral-700 text-neutral-300 border-white/10";
+        }
+    }, [isFormValid, action]);
 
     return (
         <Card className={cn("h-full flex flex-col bg-black/50 border-white/10", className)}>
@@ -276,7 +292,10 @@ export const OrderCard: React.FC<OrderCardProps> = ({
                 <div className="flex-1"></div>
 
                 <Button 
-                    className="w-full h-12 text-base font-bold bg-neutral-800 hover:bg-neutral-700 text-neutral-300 disabled:bg-neutral-900 disabled:text-neutral-600 border border-white/10"
+                    className={cn(
+                        "w-full h-12 text-base font-bold transition-all duration-300",
+                        submitButtonClass
+                    )}
                     disabled={!isFormValid}
                     onClick={handleFormSubmit}
                 >
