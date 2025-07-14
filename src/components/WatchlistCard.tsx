@@ -30,7 +30,7 @@ export const WatchlistCard: React.FC<WatchlistCardProps> = ({ selectedStockSymbo
                                 <TableRow
                                     key={stock.id}
                                     className={cn("cursor-pointer", {
-                                        "bg-accent text-accent-foreground": selectedStockSymbol === stock.symbol
+                                        "bg-white/5": selectedStockSymbol === stock.symbol
                                     })}
                                     onClick={() => onSelectStock(stock.symbol)}
                                 >
