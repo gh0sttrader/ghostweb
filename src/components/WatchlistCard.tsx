@@ -14,6 +14,7 @@ import { cn } from '@/lib/utils';
 import { initialMockStocks } from '@/app/(app)/trading/dashboard/mock-data';
 import { ScrollArea } from './ui/scroll-area';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table';
+import { Card } from './ui/card';
 
 
 interface WatchlistCardProps {
@@ -33,8 +34,8 @@ export const WatchlistCard: React.FC<WatchlistCardProps> = ({ className }) => {
     };
 
     return (
-        <div className={cn("h-full flex flex-col p-3", className)}>
-            <div className="flex items-center mb-2">
+        <Card className={cn("h-full flex flex-col", className)}>
+            <div className="p-3">
                 <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
                     <DropdownMenuTrigger asChild>
                         <Button
@@ -71,10 +72,10 @@ export const WatchlistCard: React.FC<WatchlistCardProps> = ({ className }) => {
                 </DropdownMenu>
             </div>
             
-            <div className="flex-1 overflow-hidden">
+            <div className="flex-1 overflow-hidden px-3 pb-3">
                 <ScrollArea className="h-full">
                     <Table>
-                        <TableHeader className="sticky top-0 bg-background/[.05] backdrop-blur-md z-[1]">
+                        <TableHeader className="sticky top-0 bg-card/[.05] backdrop-blur-md z-[1]">
                             <TableRow>
                                 <TableHead className="text-xs h-7 px-2 text-left text-muted-foreground font-medium">Symbol</TableHead>
                                 <TableHead className="text-xs h-7 px-2 text-right text-muted-foreground font-medium">Price</TableHead>
@@ -98,6 +99,6 @@ export const WatchlistCard: React.FC<WatchlistCardProps> = ({ className }) => {
                     </Table>
                 </ScrollArea>
             </div>
-        </div>
+        </Card>
     );
 };
