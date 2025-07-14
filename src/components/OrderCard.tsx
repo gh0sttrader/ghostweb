@@ -12,7 +12,7 @@ import { Separator } from '@/components/ui/separator';
 import { useOpenPositionsContext } from '@/contexts/OpenPositionsContext';
 import type { Stock, OrderActionType, TradeRequest, TradeMode, OrderSystemType, TimeInForce } from '@/types';
 import { cn } from '@/lib/utils';
-import { DollarSign, Percent, Target, Shield, Boxes } from 'lucide-react';
+import { DollarSign, Percent, Target, Shield, Layers } from 'lucide-react';
 
 interface OrderCardProps {
     selectedStock: Stock | null;
@@ -232,7 +232,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({
                                     >
                                         {mode === '$' && <DollarSign className="h-3.5 w-3.5" />}
                                         {mode === '%' && <Percent className="h-3.5 w-3.5" />}
-                                        {mode === 'Shares' && <Boxes className="h-3.5 w-3.5" />}
+                                        {mode === 'Shares' && <Layers className="h-3.5 w-3.5" />}
                                     </Button>
                                 ))}
                             </div>
