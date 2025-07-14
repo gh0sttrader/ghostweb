@@ -259,7 +259,7 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, className }:
 
 
   return (
-    <Card className={cn("shadow-none flex flex-col border border-white/10", className)}>
+    <Card className={cn("shadow-none flex flex-col border border-white/10 relative", className)}>
       <CardHeader className="pb-2 pt-3 px-3">
         <div className="flex flex-col sm:flex-row justify-between items-center gap-2">
           {stock && stock.price > 0 ? (
@@ -306,31 +306,6 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, className }:
       </CardHeader>
       <CardContent className="relative flex-1 p-1 pr-2 min-h-[250px]">
         {renderChartContent()}
-        <div className="absolute bottom-2 right-4 z-10">
-            <Popover>
-                <PopoverTrigger asChild>
-                    <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground/50 hover:text-foreground hover:bg-white/10 opacity-50 hover:opacity-100 transition-opacity">
-                        <Palette className="h-4 w-4" />
-                    </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-2" side="top" align="end">
-                    <div className="flex gap-2">
-                        {colorOptions.map(({ color, label }) => (
-                           <button
-                                key={color}
-                                aria-label={`Change chart color to ${label}`}
-                                className={cn(
-                                    "w-6 h-6 rounded-full border-2 transition-all",
-                                    chartColor === color ? 'border-white shadow-md' : 'border-gray-600/50 hover:border-gray-400'
-                                )}
-                                style={{ backgroundColor: color }}
-                                onClick={() => setChartColor(color)}
-                            />
-                        ))}
-                    </div>
-                </PopoverContent>
-            </Popover>
-        </div>
       </CardContent>
       <CardFooter className="flex flex-wrap justify-start items-center gap-x-1 gap-y-2 pt-2 pb-2 px-3">
         {['1D', '5D', '1M', '3M', '6M', 'YTD', '1Y', '5Y', 'All'].map((tf) => (
@@ -377,6 +352,31 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, className }:
           </Button>
         ))}
       </CardFooter>
+      <div className="absolute bottom-3 right-3 z-10">
+          <Popover>
+              <PopoverTrigger asChild>
+                  <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground/50 hover:text-foreground hover:bg-white/10 opacity-50 hover:opacity-100 transition-opacity">
+                      <Palette className="h-4 w-4" />
+                  </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-2" side="top" align="end">
+                  <div className="flex gap-2">
+                      {colorOptions.map(({ color, label }) => (
+                         <button
+                              key={color}
+                              aria-label={`Change chart color to ${label}`}
+                              className={cn(
+                                  "w-6 h-6 rounded-full border-2 transition-all",
+                                  chartColor === color ? 'border-white shadow-md' : 'border-gray-600/50 hover:border-gray-400'
+                              )}
+                              style={{ backgroundColor: color }}
+                              onClick={() => setChartColor(color)}
+                          />
+                      ))}
+                  </div>
+              </PopoverContent>
+          </Popover>
+      </div>
       <ChartDatePickerModal 
         isOpen={isDatePickerOpen}
         onClose={() => setIsDatePickerOpen(false)}
@@ -385,4 +385,3 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, className }:
     </Card>
   );
 }
-
