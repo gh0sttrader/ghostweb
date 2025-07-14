@@ -4,7 +4,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { GhostIcon } from "./GhostIcon";
+import { GhostIcon } from "@/components/icons/GhostIcon";
 import { Input } from "./ui/input";
 import { Search } from "lucide-react";
 
@@ -26,7 +26,7 @@ export function NavBar() {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-background">
+    <header className="sticky top-0 z-50 w-full bg-black">
       <div className="flex h-12 items-center justify-between px-4 sm:px-6">
         {/* Left: Logo only */}
         <div className="flex items-center">
