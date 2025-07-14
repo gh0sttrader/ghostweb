@@ -270,23 +270,33 @@ export const OrderCard: React.FC<OrderCardProps> = ({
                 <Separator className="bg-white/10" />
 
                 <div className="space-y-2">
-                    <div className="flex items-center justify-between p-3 rounded-lg border border-white/10 bg-white/5">
-                        <div className="flex items-center">
-                             <Target className="h-5 w-5 mr-3 text-[hsl(var(--confirm-green))]" />
-                             <Label htmlFor="tp-switch" className="text-sm font-medium text-foreground">Take Profit</Label>
+                    <div className="grid grid-cols-2 gap-2">
+                        <div className="flex items-center justify-between p-3 rounded-lg border border-white/10 bg-white/5">
+                            <div className="flex items-center">
+                                <Target className="h-5 w-5 mr-3 text-[hsl(var(--confirm-green))]" />
+                                <Label htmlFor="tp-switch" className="text-sm font-medium text-foreground">Take Profit</Label>
+                            </div>
+                            <Switch id="tp-switch" checked={useTakeProfit} onCheckedChange={setUseTakeProfit} />
                         </div>
-                        <Switch id="tp-switch" checked={useTakeProfit} onCheckedChange={setUseTakeProfit} />
+                        <div className="flex items-center justify-between p-3 rounded-lg border border-white/10 bg-white/5">
+                            <div className="flex items-center">
+                                <Shield className="h-5 w-5 mr-3 text-destructive" />
+                                <Label htmlFor="sl-switch" className="text-sm font-medium text-foreground">Stop Loss</Label>
+                            </div>
+                            <Switch id="sl-switch" checked={useStopLoss} onCheckedChange={setUseStopLoss} />
+                        </div>
                     </div>
-                     {useTakeProfit && <Input type="number" placeholder="Enter profit target price" value={takeProfitPrice} onChange={(e) => setTakeProfitPrice(e.target.value)} className="bg-transparent border-white/10 h-10" />}
 
-                    <div className="flex items-center justify-between p-3 rounded-lg border border-white/10 bg-white/5">
-                         <div className="flex items-center">
-                             <Shield className="h-5 w-5 mr-3 text-destructive" />
-                             <Label htmlFor="sl-switch" className="text-sm font-medium text-foreground">Stop Loss</Label>
-                         </div>
-                        <Switch id="sl-switch" checked={useStopLoss} onCheckedChange={setUseStopLoss} />
-                    </div>
-                    {useStopLoss && <Input type="number" placeholder="Enter stop loss price" value={stopLossPrice} onChange={(e) => setStopLossPrice(e.target.value)} className="bg-transparent border-white/10 h-10" />}
+                    {(useTakeProfit || useStopLoss) && (
+                        <div className="grid grid-cols-2 gap-2">
+                            <div>
+                                {useTakeProfit && <Input type="number" placeholder="Profit target price" value={takeProfitPrice} onChange={(e) => setTakeProfitPrice(e.target.value)} className="bg-transparent border-white/10 h-10" />}
+                            </div>
+                            <div>
+                                {useStopLoss && <Input type="number" placeholder="Stop loss price" value={stopLossPrice} onChange={(e) => setStopLossPrice(e.target.value)} className="bg-transparent border-white/10 h-10" />}
+                            </div>
+                        </div>
+                    )}
                 </div>
 
                 <div className="flex-1"></div>
