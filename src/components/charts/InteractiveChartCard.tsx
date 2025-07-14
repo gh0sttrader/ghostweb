@@ -14,6 +14,7 @@ import { getChartData } from '@/ai/flows/get-chart-data-flow';
 import { sub, formatISO, format } from 'date-fns';
 import { ChartDatePickerModal } from './ChartDatePickerModal';
 import type { DateRange } from 'react-day-picker';
+import { Tooltip as UiTooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 
 interface InteractiveChartCardProps {
@@ -22,11 +23,10 @@ interface InteractiveChartCardProps {
   className?: string;
 }
 
-const ghostPurple = "#5721aa";
-
 const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>) => {
   if (active && payload && payload.length) {
     const data = payload[0].payload;
+    const color = payload[0].color || 'hsl(var(--primary))';
     // Candlestick data
     if (data.open !== undefined) { 
       const isUp = data.close >= data.open;
@@ -43,15 +43,13 @@ const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>)
         </div>
       );
     }
-    // Default tooltip for line/area
-    const valueColor = 'text-primary';
     
     return (
         <div className="p-2.5 text-xs bg-background/90 backdrop-blur-sm rounded-md border border-border/20 shadow-lg shadow-primary/10">
             <p className="label text-muted-foreground font-semibold mb-1">{`${label}`}</p>
             <div className="flex justify-between items-baseline">
                 <span className="text-foreground">Price:</span>
-                <span className={cn("font-bold ml-2", valueColor)}>${payload[0].value?.toFixed(2)}</span>
+                <span className="font-bold ml-2" style={{ color }}>${payload[0].value?.toFixed(2)}</span>
             </div>
         </div>
     );
@@ -90,7 +88,6 @@ const getTimeframeParams = (timeframe: '1D' | '5D' | '1M' | '3M' | '6M' | 'YTD' 
 export function InteractiveChartCard({ stock, onManualTickerSubmit, className }: InteractiveChartCardProps) {
   const [chartType, setChartType] = useState<'line' | 'area' | 'candle'>('area');
   const [timeframe, setTimeframe] = useState<'1D' | '5D' | '1M' | '3M' | '6M' | 'YTD' | '1Y' | '5Y' | 'All'>('1M');
-  const [interval, setInterval] = useState<'1m' | '5m' | '30m' | '1h' | 'D' | 'W' | 'M'>('D');
   const [manualTickerInput, setManualTickerInput] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -98,7 +95,15 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, className }:
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
+  const [chartColor, setChartColor] = useState<string>('#A088B3');
 
+  const colorOptions = [
+      { color: '#A088B3', label: 'Purple' },
+      { color: '#00ec95', label: 'Green' },
+      { color: '#ff395b', label: 'Red' },
+      { color: '#e6e6e6', label: 'Silver' },
+      { color: '#1450fa', label: 'Navy Blue' },
+  ];
 
   useEffect(() => {
     if (stock && document.activeElement !== inputRef.current) {
@@ -197,7 +202,7 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, className }:
               cursor={{ stroke: 'hsl(var(--foreground))', strokeWidth: 1, strokeDasharray: '3 3' }}
               content={<CustomTooltip />}
             />
-            <Line type="monotone" dataKey="price" stroke={ghostPurple} strokeWidth={2} dot={false} />
+            <Line type="monotone" dataKey="price" stroke={chartColor} strokeWidth={2} dot={false} />
           </LineChart>
         </ResponsiveContainer>
       );
@@ -209,8 +214,8 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, className }:
              <RechartsAreaChart data={chartData}>
                 <defs>
                     <linearGradient id={uniqueId} x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor={ghostPurple} stopOpacity={0.2}/>
-                      <stop offset="100%" stopColor={ghostPurple} stopOpacity={0}/>
+                      <stop offset="0%" stopColor={chartColor} stopOpacity={0.2}/>
+                      <stop offset="100%" stopColor={chartColor} stopOpacity={0}/>
                     </linearGradient>
                 </defs>
                 {chartGrid}
@@ -220,7 +225,7 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, className }:
                     cursor={{ stroke: 'hsl(var(--foreground))', strokeWidth: 1, strokeDasharray: '3 3' }}
                     content={<CustomTooltip />}
                 />
-                <Area type="monotone" dataKey="price" stroke={ghostPurple} strokeWidth={2} fillOpacity={1} fill={`url(#${uniqueId})`} dot={false} />
+                <Area type="monotone" dataKey="price" stroke={chartColor} strokeWidth={2} fillOpacity={1} fill={`url(#${uniqueId})`} dot={false} />
             </RechartsAreaChart>
         </ResponsiveContainer>
       );
@@ -299,8 +304,30 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, className }:
           </div>
         </div>
       </CardHeader>
-      <CardContent className="flex-1 p-1 pr-2 min-h-[250px]">
+      <CardContent className="relative flex-1 p-1 pr-2 min-h-[250px]">
         {renderChartContent()}
+        <TooltipProvider>
+            <div className="absolute bottom-2 right-4 flex gap-2 z-10">
+                {colorOptions.map(({ color, label }) => (
+                    <UiTooltip key={color}>
+                        <TooltipTrigger asChild>
+                            <button
+                                aria-label={`Change chart color to ${label}`}
+                                className={cn(
+                                    "w-5 h-5 rounded-full border-2 transition-all",
+                                    chartColor === color ? 'border-white shadow-[0_0_8px_rgba(255,255,255,0.7)]' : 'border-gray-600/50 hover:border-gray-400'
+                                )}
+                                style={{ backgroundColor: color }}
+                                onClick={() => setChartColor(color)}
+                            />
+                        </TooltipTrigger>
+                        <TooltipContent>
+                            <p>{label}</p>
+                        </TooltipContent>
+                    </UiTooltip>
+                ))}
+            </div>
+        </TooltipProvider>
       </CardContent>
       <CardFooter className="flex flex-wrap justify-start items-center gap-x-1 gap-y-2 pt-2 pb-2 px-3">
         {['1D', '5D', '1M', '3M', '6M', 'YTD', '1Y', '5Y', 'All'].map((tf) => (
