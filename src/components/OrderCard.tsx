@@ -115,7 +115,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({
     const actionConfig = {
       'BUY': {
         className: 'border-[hsl(var(--confirm-green))] text-[hsl(var(--confirm-green))] hover:bg-[hsl(var(--confirm-green))] hover:text-[hsl(var(--confirm-green-foreground))]',
-        selectedClassName: 'bg-[hsl(var(--confirm-green))] border-[hsl(var(--confirm-green))] text-white',
+        selectedClassName: 'bg-[hsl(var(--confirm-green))] border-[hsl(var(--confirm-green))] text-[hsl(var(--confirm-green-foreground))]',
       },
       'SELL': {
         className: 'border-destructive text-destructive hover:bg-destructive hover:text-destructive-foreground',
@@ -141,7 +141,6 @@ export const OrderCard: React.FC<OrderCardProps> = ({
                     </Select>
                 </div>
                 
-                <Separator className="bg-white/10" />
 
                 {selectedStock && (
                     <div className="flex items-center justify-between">
