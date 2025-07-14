@@ -315,7 +315,7 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, className }:
             size="sm"
             onClick={() => setTimeframe(tf as any)}
             className={cn(
-              "h-6 text-[10px] px-2 font-medium",
+              "h-8 text-sm px-3 font-medium",
               timeframe === tf
                 ? "text-foreground font-bold"
                 : "text-muted-foreground hover:text-foreground hover:bg-transparent"
@@ -324,11 +324,11 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, className }:
             {tf}
           </Button>
         ))}
-        <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground hover:text-foreground hover:bg-transparent" onClick={() => setIsDatePickerOpen(true)}>
-          <Calendar className="h-3.5 w-3.5" />
+        <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-transparent" onClick={() => setIsDatePickerOpen(true)}>
+          <Calendar className="h-4 w-4" />
         </Button>
         
-        <div className="w-px bg-border/20 h-5 self-center mx-1"></div>
+        <div className="w-px bg-border/20 h-6 self-center mx-1"></div>
 
         {[
           { type: 'line', label: 'Line', Icon: LineChartIcon },
@@ -341,13 +341,13 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, className }:
             size="sm"
             onClick={() => setChartType(type as any)}
             className={cn(
-              "h-6 text-[10px] px-2 font-medium",
+              "h-8 text-sm px-3 font-medium",
               chartType === type
                 ? "text-foreground font-bold"
                 : "text-muted-foreground hover:text-foreground hover:bg-transparent"
             )}
           >
-            <Icon className="h-3 w-3 mr-0.5" />
+            <Icon className="h-4 w-4 mr-1.5" />
             {label}
           </Button>
         ))}
