@@ -214,8 +214,8 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, className }:
              <RechartsAreaChart data={chartData}>
                 <defs>
                     <linearGradient id={uniqueId} x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor={chartColor} stopOpacity={0.2}/>
-                      <stop offset="100%" stopColor={chartColor} stopOpacity={0}/>
+                      <stop offset="5%" stopColor={chartColor} stopOpacity={0.2}/>
+                      <stop offset="95%" stopColor={chartColor} stopOpacity={0}/>
                     </linearGradient>
                 </defs>
                 {chartGrid}
@@ -315,7 +315,7 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, className }:
             size="sm"
             onClick={() => setTimeframe(tf as any)}
             className={cn(
-              "h-8 text-sm px-3 font-medium",
+              "h-8 text-base px-3 font-medium",
               timeframe === tf
                 ? "text-foreground font-bold"
                 : "text-muted-foreground hover:text-foreground hover:bg-transparent"
@@ -325,7 +325,7 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, className }:
           </Button>
         ))}
         <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-transparent" onClick={() => setIsDatePickerOpen(true)}>
-          <Calendar className="h-4 w-4" />
+          <Calendar className="h-5 w-5" />
         </Button>
         
         <div className="w-px bg-border/20 h-6 self-center mx-1"></div>
@@ -341,13 +341,13 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, className }:
             size="sm"
             onClick={() => setChartType(type as any)}
             className={cn(
-              "h-8 text-sm px-3 font-medium",
+              "h-8 text-base px-3 font-medium",
               chartType === type
                 ? "text-foreground font-bold"
                 : "text-muted-foreground hover:text-foreground hover:bg-transparent"
             )}
           >
-            <Icon className="h-4 w-4 mr-1.5" />
+            <Icon className="h-5 w-5 mr-1.5" />
             {label}
           </Button>
         ))}
@@ -385,3 +385,5 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, className }:
     </Card>
   );
 }
+
+    
