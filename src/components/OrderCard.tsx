@@ -287,19 +287,13 @@ export const OrderCard: React.FC<OrderCardProps> = ({
                 <Separator className="bg-white/10" />
 
                 <div className="space-y-2">
-                    <div className="grid grid-cols-2 gap-2">
-                        <div className="flex items-center justify-between p-3 rounded-lg border border-white/10 bg-white/5">
-                            <div className="flex items-center">
-                                <Target className="h-5 w-5 mr-3 text-[hsl(var(--confirm-green))]" />
-                                <Label htmlFor="tp-switch" className="text-sm font-medium text-foreground">Take Profit</Label>
-                            </div>
+                    <div className="flex items-center justify-around">
+                        <div className="flex items-center gap-2">
+                            <Label htmlFor="tp-switch" className="text-sm font-medium text-foreground">Take Profit</Label>
                             <Switch id="tp-switch" checked={useTakeProfit} onCheckedChange={setUseTakeProfit} />
                         </div>
-                        <div className="flex items-center justify-between p-3 rounded-lg border border-white/10 bg-white/5">
-                            <div className="flex items-center">
-                                <Shield className="h-5 w-5 mr-3 text-destructive" />
-                                <Label htmlFor="sl-switch" className="text-sm font-medium text-foreground">Stop Loss</Label>
-                            </div>
+                        <div className="flex items-center gap-2">
+                            <Label htmlFor="sl-switch" className="text-sm font-medium text-foreground">Stop Loss</Label>
                             <Switch id="sl-switch" checked={useStopLoss} onCheckedChange={setUseStopLoss} />
                         </div>
                     </div>
