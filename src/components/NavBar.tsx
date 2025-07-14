@@ -8,7 +8,7 @@ import { Input } from "./ui/input";
 import { Search } from "lucide-react";
 import { GhostIcon } from "./GhostIcon";
 
-export function NavBar() {
+const NavLinks = () => {
   const pathname = usePathname();
 
   const links = [
@@ -25,6 +25,26 @@ export function NavBar() {
     return pathname === href;
   };
 
+  return (
+    <nav className="flex items-center space-x-4 lg:space-x-6 text-sm font-medium">
+      {links.map((link) => (
+        <Link
+          key={link.href}
+          href={link.href}
+          className={cn(
+            "transition-colors hover:text-foreground/80",
+            isActive(link.href) ? "text-foreground" : "text-foreground/60",
+            link.href === "/trading" ? "font-bold" : ""
+          )}
+        >
+          {link.label}
+        </Link>
+      ))}
+    </nav>
+  );
+};
+
+export function NavBar() {
   return (
     <header className="sticky top-0 z-50 w-full bg-black">
       <div className="flex h-16 items-center justify-between px-4 sm:px-6">
@@ -47,21 +67,7 @@ export function NavBar() {
         </div>
 
         {/* Right: Nav Links */}
-        <nav className="flex items-center space-x-4 lg:space-x-6 text-sm font-medium">
-          {links.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className={cn(
-                "transition-colors hover:text-foreground/80",
-                isActive(link.href) ? "text-foreground" : "text-foreground/60",
-                link.href === "/trading" ? "font-bold" : ""
-              )}
-            >
-              {link.label}
-            </Link>
-          ))}
-        </nav>
+        <NavLinks />
       </div>
     </header>
   );
