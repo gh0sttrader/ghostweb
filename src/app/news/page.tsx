@@ -55,13 +55,13 @@ export default function NewsPage() {
         <div className="rounded-lg overflow-auto flex-1 border border-border/10 bg-card">
             <Table>
                 <TableHeader className="sticky top-0 bg-card z-10">
-                    <TableRow>
-                        <TableHead className="w-[120px]">Time</TableHead>
-                        <TableHead className="w-[100px]">Symbol</TableHead>
-                        <TableHead>Headline</TableHead>
-                        <TableHead className="w-[120px]">Sentiment</TableHead>
-                        <TableHead className="w-[150px]">Provider</TableHead>
-                        <TableHead className="w-[100px] text-center">Alerts</TableHead>
+                    <TableRow className="hover:bg-card">
+                        <TableHead className="w-[120px] bg-card hover:bg-card">Time</TableHead>
+                        <TableHead className="w-[100px] bg-card hover:bg-card">Symbol</TableHead>
+                        <TableHead className="bg-card hover:bg-card">Headline</TableHead>
+                        <TableHead className="w-[120px] bg-card hover:bg-card">Sentiment</TableHead>
+                        <TableHead className="w-[150px] bg-card hover:bg-card">Provider</TableHead>
+                        <TableHead className="w-[100px] text-center bg-card hover:bg-card">Alerts</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
