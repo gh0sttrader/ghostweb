@@ -145,7 +145,7 @@ function TradingDashboardPageContent() {
   
   return (
     <main className="w-full h-full flex flex-col bg-background">
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_428px] gap-1.5 flex-1 overflow-hidden p-1.5 md:p-2.5">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_428px] gap-1.5 flex-1 overflow-hidden p-4 md:p-8">
             
             <div className="flex flex-col flex-1 min-h-0 gap-1.5">
               <div className="lg:h-[60%] flex-shrink-0">

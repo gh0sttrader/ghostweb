@@ -115,20 +115,20 @@ export const OrderCard: React.FC<OrderCardProps> = ({
     const actionConfig = {
       'BUY': {
         className: 'border-[hsl(var(--confirm-green))] text-[hsl(var(--confirm-green))] hover:bg-[hsl(var(--confirm-green))] hover:text-[hsl(var(--confirm-green-foreground))]',
-        selectedClassName: 'bg-[hsl(var(--confirm-green))] border-[hsl(var(--confirm-green))] text-[hsl(var(--confirm-green-foreground))]',
+        selectedClassName: 'bg-[hsl(var(--confirm-green))] border-[hsl(var(--confirm-green))] text-white',
       },
       'SELL': {
         className: 'border-destructive text-destructive hover:bg-destructive hover:text-destructive-foreground',
-        selectedClassName: 'bg-destructive border-destructive text-destructive-foreground',
+        selectedClassName: 'bg-destructive border-destructive text-white',
       },
       'SHORT': {
         className: 'border-yellow-500 text-yellow-500 hover:bg-yellow-500 hover:text-yellow-950',
-        selectedClassName: 'bg-yellow-500 border-yellow-500 text-yellow-950',
+        selectedClassName: 'bg-yellow-500 border-yellow-500 text-black',
       },
     };
 
     return (
-        <Card className={cn("h-full flex flex-col bg-black/50 border-white/5", className)}>
+        <Card className={cn("h-full flex flex-col bg-black/50 border-white/10", className)}>
             <CardContent className="flex-1 flex flex-col p-3 space-y-3 overflow-y-auto">
                 <Select onValueChange={setSelectedAccountId} defaultValue={selectedAccountId}>
                     <SelectTrigger className="bg-transparent border-white/10 h-10">
