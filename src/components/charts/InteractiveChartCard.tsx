@@ -1,16 +1,20 @@
+
 "use client";
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { Stock } from '@/types';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, AreaChart as RechartsAreaChart, Area, BarChart, Bar, Cell } from 'recharts';
 import type { TooltipProps } from 'recharts';
-import { AreaChart as AreaIcon, CandlestickChart, Activity, Search, Loader2 } from 'lucide-react';
+import { AreaChart as AreaIcon, CandlestickChart, Activity, Search, Loader2, Calendar } from 'lucide-react';
 import { cn } from '@/lib/utils';
-// import { getChartData } from '@/ai/flows/get-chart-data-flow'; // Temporarily removed to fix server startup issue
+import { getChartData } from '@/ai/flows/get-chart-data-flow';
 import { sub, formatISO, format } from 'date-fns';
+import { ChartDatePickerModal } from './ChartDatePickerModal';
+import type { DateRange } from 'react-day-picker';
+
 
 interface InteractiveChartCardProps {
   stock: Stock | null;
@@ -38,10 +42,8 @@ const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>)
       );
     }
     // Default tooltip for line/area
-    const valueColor = payload[0].stroke === "hsl(var(--chart-2))"
-        ? 'text-[hsl(var(--confirm-green))]'
-        : payload[0].stroke === "hsl(var(--chart-5))"
-        ? 'text-destructive'
+    const valueColor = payload[0].stroke === "#7c3aed"
+        ? 'text-[#7c3aed]'
         : 'text-primary';
     
     return (
@@ -58,7 +60,7 @@ const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>)
 };
 
 // Map UI timeframes to Alpaca API parameters
-const getTimeframeParams = (timeframe: '1D' | '5D' | '1M' | '6M' | '1Y' | '5Y') => {
+const getTimeframeParams = (timeframe: '1D' | '5D' | '1M' | '3M' | '6M' | 'YTD' | '1Y' | '5Y' | 'All') => {
   const now = new Date();
   switch (timeframe) {
     case '1D':
@@ -67,12 +69,18 @@ const getTimeframeParams = (timeframe: '1D' | '5D' | '1M' | '6M' | '1Y' | '5Y') 
       return { timeframe: '1Hour', start: formatISO(sub(now, { days: 5 })) };
     case '1M':
       return { timeframe: '1Day', start: formatISO(sub(now, { months: 1 })) };
+    case '3M':
+      return { timeframe: '1Day', start: formatISO(sub(now, { months: 3 })) };
     case '6M':
       return { timeframe: '1Day', start: formatISO(sub(now, { months: 6 })) };
+    case 'YTD':
+      return { timeframe: '1Day', start: formatISO(new Date(now.getFullYear(), 0, 1)) };
     case '1Y':
       return { timeframe: '1Day', start: formatISO(sub(now, { years: 1 })) };
     case '5Y':
       return { timeframe: '1Week', start: formatISO(sub(now, { years: 5 })) };
+    case 'All':
+      return { timeframe: '1Month', start: '2015-01-01T00:00:00Z' }; // A reasonable 'all time' start
     default:
       return { timeframe: '1Day', start: formatISO(sub(now, { months: 1 })) };
   }
@@ -80,14 +88,16 @@ const getTimeframeParams = (timeframe: '1D' | '5D' | '1M' | '6M' | '1Y' | '5Y') 
 
 
 export function InteractiveChartCard({ stock, onManualTickerSubmit, className }: InteractiveChartCardProps) {
-  const [chartType, setChartType] = useState<'line' | 'area' | 'candle'>('line');
-  const [timeframe, setTimeframe] = useState<'1D' | '5D' | '1M' | '6M' | '1Y' | '5Y'>('1M');
+  const [chartType, setChartType] = useState<'line' | 'area' | 'candle'>('area');
+  const [timeframe, setTimeframe] = useState<'1D' | '5D' | '1M' | '3M' | '6M' | 'YTD' | '1Y' | '5Y' | 'All'>('1M');
+  const [interval, setInterval] = useState<'1m' | '5m' | '30m' | '1h' | 'D' | 'W' | 'M'>('D');
   const [manualTickerInput, setManualTickerInput] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
 
   const [chartData, setChartData] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
 
 
   useEffect(() => {
@@ -98,22 +108,47 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, className }:
     }
   }, [stock]);
 
-  // Effect to fetch data from Alpaca
+  // Effect to fetch data from mocked flow
   useEffect(() => {
     const fetchAndSetChartData = async () => {
-      // This function is now completely disabled to prevent startup issues.
+      if (!stock?.symbol) {
+        setChartData([]);
+        return;
+      }
+      setIsLoading(true);
+      setError(null);
+      try {
+        const params = getTimeframeParams(timeframe);
+        const data = await getChartData({ symbol: stock.symbol, ...params });
+        
+        const formattedData = data.map(bar => ({
+          date: format(new Date(bar.t), 'MMM dd'),
+          price: bar.c,
+          open: bar.o,
+          high: bar.h,
+          low: bar.l,
+          close: bar.c
+        }));
+        setChartData(formattedData);
+      } catch (err: any) {
+        console.error("Error fetching chart data:", err);
+        setError(err.message || "Failed to fetch chart data.");
+        setChartData([]);
+      } finally {
+        setIsLoading(false);
+      }
     };
     
-    // Temporarily disabled to allow server to start.
-    // fetchAndSetChartData();
-    setError("Chart data is temporarily unavailable while we resolve a connection issue.");
-    setIsLoading(false);
-    setChartData([]);
+    fetchAndSetChartData();
   }, [stock, timeframe]);
 
+  const handleDateGo = (date: Date | DateRange) => {
+    console.log("Selected date/range:", date);
+    // Future logic to refetch chart data will go here.
+  };
 
-  const dynamicStrokeColor = stock && stock.changePercent >= 0 ? "hsl(var(--chart-2))" : "hsl(var(--chart-5))";
-  const neonPurpleColor = "hsl(var(--primary))";
+  const dynamicStrokeColor = "#7c3aed"; // Deep neon purple for the line
+  const milkPurpleColor = "#5B21B6";
 
   const handleManualSubmit = () => {
     if (manualTickerInput.trim()) {
@@ -151,65 +186,77 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, className }:
       );
     }
 
-    return (
-      <ResponsiveContainer width="100%" height="100%">
-        {chartType === 'line' && (
+    const uniqueId = `chart-gradient-${stock?.id || 'default'}`;
+
+    if (chartType === 'line') {
+      return (
+        <ResponsiveContainer width="100%" height="100%">
           <LineChart data={chartData}>
-            <CartesianGrid strokeDasharray="3 3" stroke="hsla(var(--border), 0.1)" />
-            <XAxis dataKey="date" stroke="hsl(var(--muted-foreground))" fontSize={10} tickLine={false} axisLine={{ stroke: "hsla(var(--border), 0.1)" }} />
-            <YAxis stroke="hsl(var(--muted-foreground))" fontSize={10} tickLine={false} axisLine={{ stroke: "hsla(var(--border), 0.1)" }} domain={['auto', 'auto']} />
+            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255, 255, 255, 0.05)" />
+            <XAxis dataKey="date" hide />
+            <YAxis hide domain={['auto', 'auto']} />
             <Tooltip
-              cursor={{ stroke: 'hsl(var(--primary))', strokeWidth: 1, strokeDasharray: '3 3' }}
+              cursor={{ stroke: 'hsl(var(--foreground))', strokeWidth: 1, strokeDasharray: '3 3' }}
               content={<CustomTooltip />}
             />
-            <Line type="monotone" dataKey="price" stroke={dynamicStrokeColor} strokeWidth={1.5} dot={false} />
+            <Line type="monotone" dataKey="price" stroke={dynamicStrokeColor} strokeWidth={2} dot={false} />
           </LineChart>
-        )}
-        {chartType === 'area' && (
+        </ResponsiveContainer>
+      );
+    }
+
+    if (chartType === 'area') {
+      return (
+        <ResponsiveContainer width="100%" height="100%">
              <RechartsAreaChart data={chartData}>
                 <defs>
-                    <linearGradient id={`colorPriceAreaPurple-${stock?.id || 'default'}`} x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor={neonPurpleColor} stopOpacity={0.5}/>
-                      <stop offset="95%" stopColor={neonPurpleColor} stopOpacity={0.05}/>
+                    <linearGradient id={uniqueId} x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor={milkPurpleColor} stopOpacity={0.2}/>
+                      <stop offset="100%" stopColor={milkPurpleColor} stopOpacity={0}/>
                     </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsla(var(--border), 0.1)" />
-                <XAxis dataKey="date" stroke="hsl(var(--muted-foreground))" fontSize={10} tickLine={false} axisLine={{ stroke: "hsla(var(--border), 0.1)" }} />
-                <YAxis stroke="hsl(var(--muted-foreground))" fontSize={10} tickLine={false} axisLine={{ stroke: "hsla(var(--border), 0.1)" }} domain={['auto', 'auto']} />
+                <CartesianGrid strokeDasharray="3 3" stroke="#18181b" />
+                <XAxis dataKey="date" hide />
+                <YAxis hide domain={['auto', 'auto']} />
                 <Tooltip
-                    cursor={{ stroke: 'hsl(var(--primary))', strokeWidth: 1, strokeDasharray: '3 3' }}
+                    cursor={{ stroke: 'hsl(var(--foreground))', strokeWidth: 1, strokeDasharray: '3 3' }}
                     content={<CustomTooltip />}
                 />
-                <Area type="monotone" dataKey="price" stroke={neonPurpleColor} strokeWidth={1.5} fillOpacity={1} fill={`url(#colorPriceAreaPurple-${stock?.id || 'default'})`} dot={false}/>
+                <Area type="monotone" dataKey="price" stroke={milkPurpleColor} strokeWidth={2} fillOpacity={1} fill={`url(#${uniqueId})`} dot={false} />
             </RechartsAreaChart>
-        )}
-        {chartType === 'candle' && (
+        </ResponsiveContainer>
+      );
+    }
+    
+    if (chartType === 'candle') {
+      return (
+        <ResponsiveContainer width="100%" height="100%">
           <BarChart data={chartData}>
-            <CartesianGrid strokeDasharray="3 3" stroke="hsla(var(--border), 0.1)" />
-            <XAxis dataKey="date" stroke="hsl(var(--muted-foreground))" fontSize={10} tickLine={false} axisLine={{ stroke: "hsla(var(--border), 0.1)" }} />
-            <YAxis stroke="hsl(var(--muted-foreground))" fontSize={10} tickLine={false} axisLine={{ stroke: "hsla(var(--border), 0.1)" }} domain={['dataMin - 1', 'dataMax + 1']} />
+            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255, 255, 255, 0.05)" />
+            <XAxis dataKey="date" hide />
+            <YAxis hide domain={['dataMin - 1', 'dataMax + 1']} />
             <Tooltip
               cursor={{ fill: 'hsla(var(--primary), 0.05)' }}
               content={<CustomTooltip />}
             />
-            {/* The wick of the candle */}
-            <Bar dataKey={(d) => [d.low, d.high]} barSize={1} fill="hsla(var(--muted-foreground), 0.5)" />
-            {/* The body of the candle */}
-            <Bar dataKey={(d) => [d.open, d.close]} barSize={8}>
+            <Bar dataKey={(d: any) => [d.low, d.high]} barSize={1} fill="hsla(var(--muted-foreground), 0.5)" />
+            <Bar dataKey={(d: any) => [d.open, d.close]} barSize={8}>
               {chartData.map((entry, index) => {
                 const fillColor = entry.close >= entry.open ? 'hsl(var(--chart-2))' : 'hsl(var(--chart-5))';
                 return <Cell key={`cell-${index}`} fill={fillColor} style={{ filter: `drop-shadow(0 0 1px ${fillColor})` }}/>;
               })}
             </Bar>
           </BarChart>
-        )}
-      </ResponsiveContainer>
-    );
+        </ResponsiveContainer>
+      );
+    }
+
+    return null;
   };
 
 
   return (
-    <Card className={cn("shadow-none flex flex-col", className)}>
+    <Card className={cn("shadow-none flex flex-col border border-white/5", className)}>
       <CardHeader className="pb-2 pt-3 px-3">
         <div className="flex flex-col sm:flex-row justify-between items-center gap-2">
           {stock && stock.price > 0 ? (
@@ -248,7 +295,7 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, className }:
               onKeyDown={(e) => e.key === 'Enter' && handleManualSubmit()}
               className="h-7 text-xs flex-1 sm:flex-initial sm:w-28 bg-transparent"
             />
-            <Button variant="ghost" size="icon" onClick={handleManualSubmit} className="h-7 w-7 text-primary hover:bg-primary/10">
+            <Button variant="ghost" size="icon" onClick={handleManualSubmit} className="h-7 w-7 text-foreground hover:bg-white/10">
               <Search className="h-3.5 w-3.5" />
             </Button>
           </div>
@@ -257,23 +304,75 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, className }:
       <CardContent className="flex-1 p-1 pr-2 min-h-[250px]">
         {renderChartContent()}
       </CardContent>
-      <CardFooter className="flex flex-wrap justify-center items-center gap-1 pt-2 pb-2 px-1">
-        {['1D', '5D', '1M', '6M', '1Y', '5Y'].map((tf) => (
-          <Button key={tf} variant={timeframe === tf ? "default" : "outline"} size="sm" onClick={() => setTimeframe(tf as any)} className="h-6 text-[10px] px-2">
+      <CardFooter className="flex flex-wrap justify-start items-center gap-x-1 gap-y-2 pt-2 pb-2 px-3">
+        {['1D', '5D', '1M', '3M', '6M', 'YTD', '1Y', '5Y', 'All'].map((tf) => (
+          <Button
+            key={tf}
+            variant="ghost"
+            size="sm"
+            onClick={() => setTimeframe(tf as any)}
+            className={cn(
+              "h-6 text-[10px] px-2 font-medium",
+              timeframe === tf
+                ? "text-foreground font-bold"
+                : "text-muted-foreground hover:text-foreground hover:bg-transparent"
+            )}
+          >
             {tf}
           </Button>
         ))}
-        <div className="w-px bg-border/[.1] h-5 mx-1 hidden sm:block"></div>
+        <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground hover:text-foreground hover:bg-transparent" onClick={() => setIsDatePickerOpen(true)}>
+          <Calendar className="h-3.5 w-3.5" />
+        </Button>
+        
+        <div className="w-px bg-border/20 h-5 self-center mx-1"></div>
+
+        {['1m', '5m', '30m', '1h', 'D', 'W', 'M'].map((iv) => (
+          <Button
+            key={iv}
+            variant="ghost"
+            size="sm"
+            onClick={() => setInterval(iv as any)}
+            className={cn(
+              "h-6 text-[10px] px-2 font-medium",
+              interval === iv
+                ? "text-foreground font-bold"
+                : "text-muted-foreground hover:text-foreground hover:bg-transparent"
+            )}
+          >
+            {iv}
+          </Button>
+        ))}
+
+        <div className="w-px bg-border/20 h-5 self-center mx-1"></div>
+
         {[
           { type: 'line', label: 'Line', Icon: LineChart },
           { type: 'area', label: 'Area', Icon: AreaIcon },
           { type: 'candle', label: 'Candle', Icon: CandlestickChart },
         ].map(({ type, label, Icon }) => (
-          <Button key={type} variant={chartType === type ? "default" : "outline"} size="sm" onClick={() => setChartType(type as any)} className="h-6 text-[10px] px-2">
-            <Icon className="h-3 w-3 mr-0.5" /> {label}
+          <Button
+            key={type}
+            variant="ghost"
+            size="sm"
+            onClick={() => setChartType(type as any)}
+            className={cn(
+              "h-6 text-[10px] px-2 font-medium",
+              chartType === type
+                ? "text-foreground font-bold"
+                : "text-muted-foreground hover:text-foreground hover:bg-transparent"
+            )}
+          >
+            <Icon className="h-3 w-3 mr-0.5" />
+            {label}
           </Button>
         ))}
       </CardFooter>
+      <ChartDatePickerModal 
+        isOpen={isDatePickerOpen}
+        onClose={() => setIsDatePickerOpen(false)}
+        onGo={handleDateGo}
+      />
     </Card>
   );
 }

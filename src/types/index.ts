@@ -151,3 +151,12 @@ export type TradeStatsData = {
     mostTradedSymbol: string;
     winStreak: number;
 };
+
+export type ChartBar = {
+    t: string; // Timestamp
+    o: number; // Open
+    h: number; // High
+    l: number; // Low
+    c: number; // Close
+    v: number; // Volume
+};
