@@ -114,13 +114,13 @@ export const OrderCard: React.FC<OrderCardProps> = ({
     
     const actionConfig = {
       'Buy': {
-        selectedClassName: 'border-[hsl(var(--confirm-green))] text-[hsl(var(--confirm-green))]',
+        selectedClassName: 'bg-[hsl(var(--confirm-green))] text-[hsl(var(--confirm-green-foreground))] border-[hsl(var(--confirm-green))] hover:bg-[hsl(var(--confirm-green))]/90',
       },
       'Sell': {
-        selectedClassName: 'border-destructive text-destructive',
+        selectedClassName: 'bg-destructive text-destructive-foreground border-destructive hover:bg-destructive/90',
       },
       'Short': {
-        selectedClassName: 'border-yellow-500 text-yellow-500',
+        selectedClassName: 'bg-yellow-500 text-yellow-950 border-yellow-500 hover:bg-yellow-500/90',
       },
     };
 
@@ -162,9 +162,10 @@ export const OrderCard: React.FC<OrderCardProps> = ({
                                 key={act}
                                 variant="outline"
                                 className={cn(
-                                    "rounded-md h-9 transition-all duration-200 border-2 font-bold uppercase bg-transparent hover:bg-white/5",
-                                    "border-white/50 text-white/80",
-                                    action === act ? config.selectedClassName : "hover:border-white/70 hover:text-white"
+                                    "rounded-md h-9 transition-all duration-200 border-2 font-bold uppercase",
+                                    action === act 
+                                        ? config.selectedClassName 
+                                        : "bg-transparent border-white/50 text-white/80 hover:bg-white/5 hover:border-white/70 hover:text-white"
                                 )}
                                 onClick={() => setAction(act)}
                             >
