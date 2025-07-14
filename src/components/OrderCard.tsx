@@ -12,7 +12,7 @@ import { Separator } from '@/components/ui/separator';
 import { useOpenPositionsContext } from '@/contexts/OpenPositionsContext';
 import type { Stock, OrderActionType, TradeRequest, TradeMode, OrderSystemType, TimeInForce } from '@/types';
 import { cn } from '@/lib/utils';
-import { ArrowUpCircle, ArrowDownCircle, TrendingDown, CheckCircle, Shield, Target, DollarSign, Percent } from 'lucide-react';
+import { DollarSign, Percent, Target, Shield } from 'lucide-react';
 
 interface OrderCardProps {
     selectedStock: Stock | null;
@@ -51,6 +51,8 @@ export const OrderCard: React.FC<OrderCardProps> = ({
     const [takeProfitPrice, setTakeProfitPrice] = useState<string>('');
     const [useStopLoss, setUseStopLoss] = useState(false);
     const [stopLossPrice, setStopLossPrice] = useState<string>('');
+    const [quantityMode, setQuantityMode] = useState<'Shares' | '$' | '%'>('Shares');
+
 
     useEffect(() => {
         if (selectedStock) {
@@ -111,15 +113,15 @@ export const OrderCard: React.FC<OrderCardProps> = ({
     };
     
     const actionConfig = {
-      'Buy': {
-        className: 'border-[hsl(var(--confirm-green))] text-[hsl(var(--confirm-green))] hover:bg-[hsl(var(--confirm-green))] hover:text-[hsl(var(--confirm-green-foreground))]',
-        selectedClassName: 'bg-[hsl(var(--confirm-green))] border-[hsl(var(--confirm-green))] text-[hsl(var(--confirm-green-foreground))]',
-      },
-      'Sell': {
+      'BUY': {
         className: 'border-destructive text-destructive hover:bg-destructive hover:text-destructive-foreground',
-        selectedClassName: 'bg-destructive border-destructive text-destructive-foreground',
+        selectedClassName: 'bg-[hsl(var(--confirm-green))] border-[hsl(var(--confirm-green))] text-white',
       },
-      'Short': {
+      'SELL': {
+        className: 'border-destructive text-destructive hover:bg-destructive hover:text-destructive-foreground',
+        selectedClassName: 'bg-destructive border-destructive text-white',
+      },
+      'SHORT': {
         className: 'border-yellow-500 text-yellow-500 hover:bg-yellow-500 hover:text-yellow-950',
         selectedClassName: 'bg-yellow-500 border-yellow-500 text-yellow-950',
       },
@@ -159,7 +161,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({
                 )}
                 
                 <div className="grid grid-cols-3 gap-2">
-                    {(['Buy', 'Sell', 'Short'] as (keyof typeof actionConfig)[]).map((act) => {
+                    {(['BUY', 'SELL', 'SHORT'] as (keyof typeof actionConfig)[]).map((act) => {
                         const config = actionConfig[act];
                         return (
                             <Button
@@ -219,9 +221,23 @@ export const OrderCard: React.FC<OrderCardProps> = ({
                                 onChange={(e) => setQuantity(e.target.value)}
                                 className="bg-transparent border-white/10 h-10"
                             />
-                            <div className="absolute right-1 top-1/2 -translate-y-1/2 flex items-center">
-                                <Button variant="ghost" size="icon" className="h-7 w-7"><DollarSign className="h-3.5 w-3.5 text-muted-foreground"/></Button>
-                                <Button variant="ghost" size="icon" className="h-7 w-7"><Percent className="h-3.5 w-3.5 text-muted-foreground"/></Button>
+                            <div className="absolute right-1.5 top-1/2 -translate-y-1/2 flex items-center gap-1">
+                                {(['Shares', '$', '%'] as const).map(mode => (
+                                    <Button
+                                        key={mode}
+                                        variant="ghost"
+                                        size="sm"
+                                        onClick={() => setQuantityMode(mode)}
+                                        className={cn(
+                                            "h-7 w-auto px-2 text-xs text-white bg-black border border-transparent hover:border-white/20",
+                                            quantityMode === mode && "border-white/50"
+                                        )}
+                                    >
+                                        {mode === '$' && <DollarSign className="h-3.5 w-3.5" />}
+                                        {mode === '%' && <Percent className="h-3.5 w-3.5" />}
+                                        {mode === 'Shares' && 'Shares'}
+                                    </Button>
+                                ))}
                             </div>
                          </div>
                     </div>
@@ -264,7 +280,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({
                 <div className="flex-1"></div>
 
                 <Button 
-                    className="w-full h-12 text-base font-bold bg-neutral-800 hover:bg-neutral-700 text-neutral-300 disabled:bg-neutral-900 disabled:text-neutral-600 border border-white/10 mt-auto"
+                    className="w-full h-12 text-base font-bold bg-neutral-800 hover:bg-neutral-700 text-neutral-300 disabled:bg-neutral-900 disabled:text-neutral-600 border border-white/10"
                     disabled={!isFormValid}
                     onClick={handleFormSubmit}
                 >
@@ -274,3 +290,4 @@ export const OrderCard: React.FC<OrderCardProps> = ({
         </Card>
     );
 };
+
