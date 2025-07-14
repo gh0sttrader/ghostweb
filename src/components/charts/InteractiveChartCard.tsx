@@ -22,6 +22,8 @@ interface InteractiveChartCardProps {
   className?: string;
 }
 
+const ghostPurple = "#551faa";
+
 const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>) => {
   if (active && payload && payload.length) {
     const data = payload[0].payload;
@@ -42,9 +44,7 @@ const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>)
       );
     }
     // Default tooltip for line/area
-    const valueColor = payload[0].stroke === "hsl(var(--primary))"
-        ? 'text-primary'
-        : 'text-primary';
+    const valueColor = 'text-primary';
     
     return (
         <div className="p-2.5 text-xs bg-background/90 backdrop-blur-sm rounded-md border border-border/20 shadow-lg shadow-primary/10">
@@ -147,8 +147,6 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, className }:
     // Future logic to refetch chart data will go here.
   };
 
-  const dynamicStrokeColor = "hsl(var(--primary))"; 
-
   const handleManualSubmit = () => {
     if (manualTickerInput.trim()) {
       onManualTickerSubmit(manualTickerInput.trim().toUpperCase());
@@ -198,7 +196,7 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, className }:
               cursor={{ stroke: 'hsl(var(--foreground))', strokeWidth: 1, strokeDasharray: '3 3' }}
               content={<CustomTooltip />}
             />
-            <Line type="monotone" dataKey="price" stroke={dynamicStrokeColor} strokeWidth={2} dot={false} />
+            <Line type="monotone" dataKey="price" stroke={ghostPurple} strokeWidth={2} dot={false} />
           </LineChart>
         </ResponsiveContainer>
       );
@@ -210,8 +208,8 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, className }:
              <RechartsAreaChart data={chartData}>
                 <defs>
                     <linearGradient id={uniqueId} x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={0.2}/>
-                      <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
+                      <stop offset="0%" stopColor={ghostPurple} stopOpacity={0.2}/>
+                      <stop offset="100%" stopColor={ghostPurple} stopOpacity={0}/>
                     </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="hsla(var(--border), 0.1)" />
@@ -221,7 +219,7 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, className }:
                     cursor={{ stroke: 'hsl(var(--foreground))', strokeWidth: 1, strokeDasharray: '3 3' }}
                     content={<CustomTooltip />}
                 />
-                <Area type="monotone" dataKey="price" stroke={dynamicStrokeColor} strokeWidth={2} fillOpacity={1} fill={`url(#${uniqueId})`} dot={false} />
+                <Area type="monotone" dataKey="price" stroke={ghostPurple} strokeWidth={2} fillOpacity={1} fill={`url(#${uniqueId})`} dot={false} />
             </RechartsAreaChart>
         </ResponsiveContainer>
       );
