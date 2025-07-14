@@ -35,7 +35,7 @@
 
     --border: 260 10% 20%; /* #29262b Use a subtle border color */
     --input: 0 0% 12%; /* Darker grey for input field backgrounds */
-    --ring: 274 25% 61%; /* Soft, muted purple for focus rings */
+    --ring: 0 0% 100%; /* Pure White for focus rings */
 
     /* Chart Colors */
     --chart-1: hsl(var(--primary)); 
