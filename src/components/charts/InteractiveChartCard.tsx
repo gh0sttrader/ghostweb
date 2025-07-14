@@ -157,7 +157,7 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, className }:
     if (isLoading) {
       return (
         <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
-          <Loader2 className="h-10 w-10 mb-3 opacity-50 animate-spin text-primary" />
+          <Loader2 className="h-10 w-10 mb-3 opacity-50 animate-spin text-white" />
           <p className="text-xs text-center">Loading Chart Data...</p>
         </div>
       );
