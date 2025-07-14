@@ -47,7 +47,7 @@ const PositionRow = ({ position, onClose }: { position: OpenPosition; onClose: (
             <TableCell className="px-2 py-1.5 text-right font-bold">${position.entryPrice.toFixed(2)}</TableCell>
             <TableCell className="px-2 py-1.5 text-right font-bold">${position.currentPrice.toFixed(2)}</TableCell>
             <TableCell className={cn("px-2 py-1.5 text-right font-bold", pnlColor)}>
-                {pnl >= 0 ? '+' : ''}${pnl.toFixed(2)} ({pnlPercent.toFixed(2)}%)
+                {pnl >= 0 ? '+' : ''}{pnlPercent.toFixed(2)}%
             </TableCell>
             <TableCell className="px-2 py-1.5 text-left">
                 <Badge className={cn("border-transparent text-xs px-1.5 py-px h-auto", getSideBadgeClass(position.side))}>
