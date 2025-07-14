@@ -10,21 +10,20 @@ import { Search } from "lucide-react";
 const GhostIcon = (props: React.SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    width={48}
-    height={48}
+    width="48"
+    height="48"
+    viewBox="0 0 48 48"
     fill="none"
-    viewBox="0 0 64 64"
     {...props}
   >
     <path
-      d="M32 6c-13 0-22 9.7-22 23.5 0 10.5.1 22.5.1 22.5s2.3-2 5.5-2 5.5 2 5.5 2 2.3-2 5.5-2 5.5 2 5.5 2 2.3-2 5.5-2 5.5 2 5.5 2 2.3-2 5.5-2 5.5 2 5.5 2 .1-12 .1-22.5C54 15.7 45 6 32 6z"
-      stroke="#FFF"
-      strokeWidth={2}
+      d="M24 6c-10 0-16 7.5-16 18.5V40c0 1.5 2 1.5 2 0s2-2 4-2 4 2 4 2 2-2 4-2 4 2 4 2 2-2 4-2 4 2 4 2s2 0 2-1.5V24.5C40 13.5 34 6 24 6z"
       fill="#FFF"
-      fillOpacity={0.12}
+      stroke="#FFF"
+      strokeWidth="2"
     />
-    <circle cx={24} cy={28} r={2.5} fill="#FFF" />
-    <circle cx={40} cy={28} r={2.5} fill="#FFF" />
+    <circle cx="18" cy="20" r="2" fill="#000" />
+    <circle cx="30" cy="20" r="2" fill="#000" />
   </svg>
 );
 
