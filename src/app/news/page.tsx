@@ -55,6 +55,15 @@ const RelativeTime = ({ isoString }: { isoString: string }) => {
 };
 
 export default function NewsPage() {
+  const [alertedRows, setAlertedRows] = useState<Record<string, boolean>>({});
+
+  const handleAlertToggle = (id: string) => {
+    setAlertedRows(prev => ({
+      ...prev,
+      [id]: !prev[id]
+    }));
+  };
+
   return (
     <main className="flex flex-col flex-1 h-full overflow-hidden p-4 md:p-6 space-y-4">
         <div className="flex items-center justify-between">
@@ -107,10 +116,11 @@ export default function NewsPage() {
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                   {dummyNewsData.map((item, index) => {
+                   {dummyNewsData.map((item) => {
                        const sentiment = sentimentConfig[item.sentiment];
+                       const isAlerted = alertedRows[item.id];
                        return (
-                           <TableRow key={index} className="border-b border-border/5 hover:bg-white/5">
+                           <TableRow key={item.id} className="border-b border-border/5 hover:bg-white/5">
                                <TableCell className="text-muted-foreground font-mono text-sm whitespace-nowrap">
                                    <RelativeTime isoString={item.timestamp} />
                                </TableCell>
@@ -124,7 +134,13 @@ export default function NewsPage() {
                                </TableCell>
                                <TableCell className="text-muted-foreground">{item.provider}</TableCell>
                                <TableCell className="text-center">
-                                   {item.hasAlert && <Bell className="h-4 w-4 mx-auto text-primary" />}
+                                   <button
+                                     onClick={() => handleAlertToggle(item.id)}
+                                     aria-label="Toggle alert"
+                                     className="p-1 rounded-full hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-ring"
+                                   >
+                                     <Bell className={cn("h-4 w-4 transition-colors", isAlerted ? 'text-destructive' : 'text-foreground')} />
+                                   </button>
                                </TableCell>
                            </TableRow>
                        );
