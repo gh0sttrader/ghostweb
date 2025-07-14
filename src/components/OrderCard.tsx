@@ -112,21 +112,21 @@ export const OrderCard: React.FC<OrderCardProps> = ({
     
     const actionConfig = {
       'Buy': {
-        className: 'border-[hsl(var(--confirm-green))] text-[hsl(var(--confirm-green))] hover:bg-[hsl(var(--confirm-green))]',
+        className: 'border-[hsl(var(--confirm-green))] text-[hsl(var(--confirm-green))] hover:bg-[hsl(var(--confirm-green))] hover:text-[hsl(var(--confirm-green-foreground))]',
         selectedClassName: 'bg-[hsl(var(--confirm-green))] border-[hsl(var(--confirm-green))] text-[hsl(var(--confirm-green-foreground))]',
       },
       'Sell': {
-        className: 'border-destructive text-destructive hover:bg-destructive',
+        className: 'border-destructive text-destructive hover:bg-destructive hover:text-destructive-foreground',
         selectedClassName: 'bg-destructive border-destructive text-destructive-foreground',
       },
       'Short': {
-        className: 'border-yellow-500 text-yellow-500 hover:bg-yellow-500',
+        className: 'border-yellow-500 text-yellow-500 hover:bg-yellow-500 hover:text-yellow-950',
         selectedClassName: 'bg-yellow-500 border-yellow-500 text-yellow-950',
       },
     };
 
     return (
-        <Card className={cn("h-full flex flex-col bg-black border-white/5", className)}>
+        <Card className={cn("h-full flex flex-col bg-black/50 border-white/5", className)}>
             <CardContent className="flex-1 flex flex-col p-3 space-y-3 overflow-y-auto">
                 <div>
                     <Select onValueChange={setSelectedAccountId} defaultValue={selectedAccountId}>
@@ -166,7 +166,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({
                                 key={act}
                                 variant="outline"
                                 className={cn(
-                                    "rounded-md h-10 transition-colors duration-150 border-2 font-bold hover:text-white uppercase",
+                                    "rounded-md h-9 transition-colors duration-150 border-2 font-bold uppercase",
                                     action === act ? config.selectedClassName : `bg-transparent ${config.className}`
                                 )}
                                 onClick={() => setAction(act)}
