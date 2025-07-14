@@ -61,7 +61,7 @@ function DashboardPageContent() {
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const [activeFilters, setActiveFilters] = useState<Partial<ActiveScreenerFilters>>({});
   const [isNewsModalOpen, setIsNewsModalOpen] = useState(false);
-  const [newsModalContent, setNewsModalContent] = useState<{ articles: NewsArticle[]; title: string } | null>(null);
+  const [newsModalContent, setNewsModalContent] = useState<{ articles: any[]; title: string } | null>(null);
 
   const [visibleColumns, setVisibleColumns] = useState<Record<string, boolean>>(() => {
     const initialVisibility: Record<string, boolean> = {};
@@ -281,26 +281,38 @@ function DashboardPageContent() {
                         <SelectValue placeholder="Select a screener or rule..." />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="all" className="text-xs">
+                        <SelectItem value="all">
                             <span className="flex items-center"><List className="mr-2 h-4 w-4" /> Show All Stocks</span>
                         </SelectItem>
-                        <SelectItem value="my-watchlist" className="text-xs">
+                        <SelectItem value="my-watchlist">
                             <span className="flex items-center"><Star className="mr-2 h-4 w-4" /> My Watchlist</span>
                         </SelectItem>
-                        <SelectItem value="top-gainers" className="text-xs">
+                        <SelectItem value="top-gainers">
                             <span className="flex items-center text-[hsl(var(--confirm-green))]"><TrendingUp className="mr-2 h-4 w-4" /> Top Gainers</span>
                         </SelectItem>
-                        <SelectItem value="top-losers" className="text-xs">
+                        <SelectItem value="top-losers">
                             <span className="flex items-center text-destructive"><TrendingDown className="mr-2 h-4 w-4" /> Top Losers</span>
                         </SelectItem>
-                        <SelectItem value="active" className="text-xs">
+                        <SelectItem value="active">
                             <span className="flex items-center text-primary"><Activity className="mr-2 h-4 w-4" /> Most Active</span>
                         </SelectItem>
-                        <SelectItem value="52-week" className="text-xs">
+                        <SelectItem value="52-week">
                             <span className="flex items-center text-accent"><CalendarCheck2 className="mr-2 h-4 w-4" /> 52 Week Highs/Lows</span>
                         </SelectItem>
+                        <SelectItem value="low-float-breakout">
+                            <span className="flex items-center"><Filter className="mr-2 h-4 w-4" /> Low Float Breakout</span>
+                        </SelectItem>
+                        <SelectItem value="high-volume-movers">
+                            <span className="flex items-center"><Filter className="mr-2 h-4 w-4" /> High Volume Movers</span>
+                        </SelectItem>
+                        <SelectItem value="pre-market-gappers">
+                            <span className="flex items-center"><Filter className="mr-2 h-4 w-4" /> Pre-Market Gappers</span>
+                        </SelectItem>
+                        <SelectItem value="rsi-oversold">
+                            <span className="flex items-center"><Filter className="mr-2 h-4 w-4" /> RSI Oversold Bounce</span>
+                        </SelectItem>
                         {activeRules.map(rule => (
-                            <SelectItem key={rule.id} value={rule.id} className="text-xs">
+                            <SelectItem key={rule.id} value={rule.id}>
                             <span className="flex items-center"><Filter className="mr-2 h-4 w-4" /> {rule.name}</span>
                             </SelectItem>
                         ))}
