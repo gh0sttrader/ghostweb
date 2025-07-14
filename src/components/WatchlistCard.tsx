@@ -2,7 +2,7 @@
 "use client"
 import React from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { initialMockStocks } from '@/app/(app)/trading/dashboard/mock-data';
 import { cn } from '@/lib/utils';
@@ -25,6 +25,13 @@ export const WatchlistCard: React.FC<WatchlistCardProps> = ({ selectedStockSymbo
             <CardContent className="flex-1 p-0 overflow-hidden">
                 <ScrollArea className="h-full">
                     <Table>
+                        <TableHeader className="sticky top-0 bg-card/[.05] backdrop-blur-md z-[1]">
+                            <TableRow>
+                                <TableHead className="text-xs h-7 px-2 text-left text-muted-foreground font-medium">Symbol</TableHead>
+                                <TableHead className="text-xs h-7 px-2 text-right text-muted-foreground font-medium">Price</TableHead>
+                                <TableHead className="text-xs h-7 px-2 text-right text-muted-foreground font-medium">% Change</TableHead>
+                            </TableRow>
+                        </TableHeader>
                         <TableBody>
                             {watchlistStocks.map((stock) => (
                                 <TableRow
