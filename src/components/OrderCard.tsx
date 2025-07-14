@@ -137,7 +137,6 @@ export const OrderCard: React.FC<OrderCardProps> = ({
         <Card className={cn("h-full flex flex-col bg-black border-white/5", className)}>
             <CardContent className="flex-1 p-3 space-y-3 overflow-y-auto">
                 <div>
-                    <Label className="text-xs text-muted-foreground">Account</Label>
                     <Select onValueChange={setSelectedAccountId} defaultValue={selectedAccountId}>
                         <SelectTrigger className="bg-transparent border-white/10 h-10">
                             <SelectValue />
