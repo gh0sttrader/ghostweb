@@ -20,6 +20,8 @@ const GhostIcon = (props: React.SVGProps<SVGSVGElement>) => (
       d="M32 6c-13 0-22 9.7-22 23.5 0 10.5.1 22.5.1 22.5s2.3-2 5.5-2 5.5 2 5.5 2 2.3-2 5.5-2 5.5 2 5.5 2 2.3-2 5.5-2 5.5 2 5.5 2 2.3-2 5.5-2 5.5 2 5.5 2 .1-12 .1-22.5C54 15.7 45 6 32 6z"
       stroke="#FFF"
       strokeWidth={2}
+      fill="#FFF"
+      fillOpacity={0.12}
     />
     <circle cx={24} cy={28} r={2.5} fill="#FFF" />
     <circle cx={40} cy={28} r={2.5} fill="#FFF" />
