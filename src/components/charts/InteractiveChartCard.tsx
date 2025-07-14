@@ -8,13 +8,13 @@ import { Input } from "@/components/ui/input";
 import type { Stock } from '@/types';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, AreaChart as RechartsAreaChart, Area, BarChart, Bar, Cell } from 'recharts';
 import type { TooltipProps } from 'recharts';
-import { AreaChart as AreaIcon, CandlestickChart, Activity, Search, Loader2, Calendar, LineChart as LineChartIcon } from 'lucide-react';
+import { AreaChart as AreaIcon, CandlestickChart, Activity, Search, Loader2, Calendar, LineChart as LineChartIcon, Palette } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { getChartData } from '@/ai/flows/get-chart-data-flow';
 import { sub, formatISO, format } from 'date-fns';
 import { ChartDatePickerModal } from './ChartDatePickerModal';
 import type { DateRange } from 'react-day-picker';
-import { Tooltip as UiTooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 
 
 interface InteractiveChartCardProps {
@@ -306,28 +306,31 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, className }:
       </CardHeader>
       <CardContent className="relative flex-1 p-1 pr-2 min-h-[250px]">
         {renderChartContent()}
-        <TooltipProvider>
-            <div className="absolute bottom-2 right-4 flex gap-2 z-10">
-                {colorOptions.map(({ color, label }) => (
-                    <UiTooltip key={color}>
-                        <TooltipTrigger asChild>
-                            <button
+        <div className="absolute bottom-2 right-4 z-10">
+            <Popover>
+                <PopoverTrigger asChild>
+                    <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground/50 hover:text-foreground hover:bg-white/10 opacity-50 hover:opacity-100 transition-opacity">
+                        <Palette className="h-4 w-4" />
+                    </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-2" side="top" align="end">
+                    <div className="flex gap-2">
+                        {colorOptions.map(({ color, label }) => (
+                           <button
+                                key={color}
                                 aria-label={`Change chart color to ${label}`}
                                 className={cn(
-                                    "w-5 h-5 rounded-full border-2 transition-all",
-                                    chartColor === color ? 'border-white shadow-[0_0_8px_rgba(255,255,255,0.7)]' : 'border-gray-600/50 hover:border-gray-400'
+                                    "w-6 h-6 rounded-full border-2 transition-all",
+                                    chartColor === color ? 'border-white shadow-md' : 'border-gray-600/50 hover:border-gray-400'
                                 )}
                                 style={{ backgroundColor: color }}
                                 onClick={() => setChartColor(color)}
                             />
-                        </TooltipTrigger>
-                        <TooltipContent>
-                            <p>{label}</p>
-                        </TooltipContent>
-                    </UiTooltip>
-                ))}
-            </div>
-        </TooltipProvider>
+                        ))}
+                    </div>
+                </PopoverContent>
+            </Popover>
+        </div>
       </CardContent>
       <CardFooter className="flex flex-wrap justify-start items-center gap-x-1 gap-y-2 pt-2 pb-2 px-3">
         {['1D', '5D', '1M', '3M', '6M', 'YTD', '1Y', '5Y', 'All'].map((tf) => (
@@ -382,3 +385,4 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, className }:
     </Card>
   );
 }
+
