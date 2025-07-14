@@ -156,7 +156,7 @@ function TradingDashboardPageContent() {
                 />
               </div>
               <div className="flex-1 min-h-0 grid grid-cols-1 md:grid-cols-2 gap-1.5">
-                <Card className="h-full flex flex-col overflow-hidden border border-border">
+                <Card className="h-full flex flex-col overflow-hidden">
                     <Tabs defaultValue="positions" className="flex flex-col h-full">
                         <TabsList className="shrink-0 px-3 pt-2">
                             <TabsTrigger value="positions">Positions</TabsTrigger>

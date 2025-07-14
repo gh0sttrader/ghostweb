@@ -36,7 +36,7 @@ export const WatchlistCard: React.FC<WatchlistCardProps> = ({ selectedStockSymbo
                                 >
                                     <TableCell className="font-medium">{stock.symbol}</TableCell>
                                     <TableCell className="text-right">{`$${stock.price.toFixed(2)}`}</TableCell>
-                                    <TableCell className={cn("text-right", stock.changePercent >= 0 ? "text-[hsl(var(--confirm-green))]" : "text-red-500")}>
+                                    <TableCell className={cn("text-right", stock.changePercent >= 0 ? "text-[hsl(var(--confirm-green))]" : "text-destructive")}>
                                         {`${stock.changePercent.toFixed(2)}%`}
                                     </TableCell>
                                 </TableRow>

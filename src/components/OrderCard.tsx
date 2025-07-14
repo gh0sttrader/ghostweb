@@ -91,7 +91,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({
     };
 
     return (
-        <Card className={cn("h-full flex flex-col bg-black/80 border-white/10", className)}>
+        <Card className={cn("h-full flex flex-col", className)}>
             <CardHeader>
                 <CardTitle>Trade Panel</CardTitle>
             </CardHeader>

@@ -9,10 +9,10 @@
     --foreground: 260 10% 90%; /* text-white/90 */
 
     /* Panels and Cards will use a very dark grey to be visible against pure black */
-    --card: 240 4% 5%; /* #0c0c0e */
+    --card: 0 0% 0%; /* Jet Black */
     --card-foreground: 260 10% 90%; /* text-white/90 */
 
-    --popover: 240 4% 5%;
+    --popover: 0 0% 0%; /* Jet Black */
     --popover-foreground: 260 10% 90%; /* text-white/90 */
 
     --primary: 274 25% 61%; /* Soft, muted purple: #A088B3 */

@@ -254,7 +254,7 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, className }:
 
 
   return (
-    <Card className={cn("shadow-none flex flex-col border border-white/10 bg-card/80", className)}>
+    <Card className={cn("shadow-none flex flex-col border border-white/10", className)}>
       <CardHeader className="pb-2 pt-3 px-3">
         <div className="flex flex-col sm:flex-row justify-between items-center gap-2">
           {stock && stock.price > 0 ? (
@@ -323,25 +323,6 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, className }:
           <Calendar className="h-3.5 w-3.5" />
         </Button>
         
-        <div className="w-px bg-border/20 h-5 self-center mx-1"></div>
-
-        {['1m', '5m', '30m', '1h', 'D', 'W', 'M'].map((iv) => (
-          <Button
-            key={iv}
-            variant="ghost"
-            size="sm"
-            onClick={() => setInterval(iv as any)}
-            className={cn(
-              "h-6 text-[10px] px-2 font-medium",
-              interval === iv
-                ? "text-foreground font-bold"
-                : "text-muted-foreground hover:text-foreground hover:bg-transparent"
-            )}
-          >
-            {iv}
-          </Button>
-        ))}
-
         <div className="w-px bg-border/20 h-5 self-center mx-1"></div>
 
         {[
