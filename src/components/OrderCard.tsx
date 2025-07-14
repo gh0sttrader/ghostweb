@@ -114,7 +114,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({
     
     const actionConfig = {
       'BUY': {
-        className: 'border-destructive text-destructive hover:bg-destructive hover:text-destructive-foreground',
+        className: 'border-[hsl(var(--confirm-green))] text-[hsl(var(--confirm-green))] hover:bg-[hsl(var(--confirm-green))] hover:text-[hsl(var(--confirm-green-foreground))]',
         selectedClassName: 'bg-[hsl(var(--confirm-green))] border-[hsl(var(--confirm-green))] text-white',
       },
       'SELL': {
@@ -290,4 +290,3 @@ export const OrderCard: React.FC<OrderCardProps> = ({
         </Card>
     );
 };
-
