@@ -1,78 +1,28 @@
 
 "use client"
-import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
+import React from 'react';
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { ChevronDown, Plus } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { initialMockStocks } from '@/app/(app)/trading/dashboard/mock-data';
-import { ScrollArea } from './ui/scroll-area';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table';
-import { Card } from './ui/card';
-
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { cn } from "@/lib/utils";
+import { initialMockStocks } from "@/app/(app)/trading/dashboard/mock-data";
 
 interface WatchlistCardProps {
     className?: string;
 }
 
-const dummyWatchlists = ["My Watchlist", "Tech Stocks", "Growth", "Crypto", "High Volume"];
 const watchlistStocks = initialMockStocks.slice(0, 15);
 
-
 export const WatchlistCard: React.FC<WatchlistCardProps> = ({ className }) => {
-    const [isOpen, setIsOpen] = useState(false);
-    const [selectedWatchlist, setSelectedWatchlist] = useState("My Watchlist");
-
-    const handleSelect = (watchlist: string) => {
-        setSelectedWatchlist(watchlist);
-    };
-
     return (
-        <Card className={cn("h-full flex flex-col", className)}>
-            <div className="p-3">
-                <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
-                    <DropdownMenuTrigger asChild>
-                        <Button
-                            variant="ghost"
-                            className="flex items-center text-foreground font-bold text-base p-0 h-auto hover:bg-transparent"
-                        >
-                            {selectedWatchlist}
-                            <ChevronDown
-                                className={cn(
-                                    "ml-2 h-4 w-4 text-muted-foreground transition-transform",
-                                    isOpen && "rotate-180"
-                                )}
-                            />
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent
-                        className="w-56 backdrop-blur-md bg-black/50 border-white/10"
-                        style={{
-                            WebkitBackdropFilter: 'blur(10px)',
-                            backdropFilter: 'blur(10px)',
-                        }}
-                    >
-                        {dummyWatchlists.map((list) => (
-                             <DropdownMenuItem key={list} onSelect={() => handleSelect(list)} className="text-sm font-medium">
-                                {list}
-                            </DropdownMenuItem>
-                        ))}
-                        <DropdownMenuSeparator className="bg-white/10" />
-                        <DropdownMenuItem onSelect={() => console.log('Create new watchlist')}>
-                            <Plus className="mr-2 h-4 w-4" />
-                            <span>Create new watchlist</span>
-                        </DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
-            </div>
-            
-            <div className="flex-1 overflow-hidden px-3 pb-3">
+        <div className={cn("h-full flex flex-col", className)}>
+            <div className="flex-1 overflow-hidden px-3 pb-3 pt-2">
                 <ScrollArea className="h-full">
                     <Table>
                         <TableHeader className="sticky top-0 bg-card/[.05] backdrop-blur-md z-[1]">
@@ -99,6 +49,6 @@ export const WatchlistCard: React.FC<WatchlistCardProps> = ({ className }) => {
                     </Table>
                 </ScrollArea>
             </div>
-        </Card>
+        </div>
     );
 };

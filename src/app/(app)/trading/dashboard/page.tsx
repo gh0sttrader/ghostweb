@@ -7,6 +7,9 @@ import type { Stock, TradeRequest, OrderActionType, TradeMode, OrderSystemType }
 import { useToast } from "@/hooks/use-toast";
 import { useTradeHistoryContext } from '@/contexts/TradeHistoryContext';
 import { useOpenPositionsContext } from '@/contexts/OpenPositionsContext';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import { ChevronDown, Plus } from "lucide-react";
 
 import { OrderCard } from '@/components/OrderCard';
 import { Card } from '@/components/ui/card';
@@ -19,6 +22,9 @@ import { OrdersTable } from '@/components/market/OrdersTable';
 import { FundamentalsCard } from '@/components/FundamentalsCard';
 import { initialMockStocks } from './mock-data';
 import { NewsCard } from '@/components/NewsCard';
+import { cn } from '@/lib/utils';
+
+const dummyWatchlists = ["My Watchlist", "Tech Stocks", "Growth", "Crypto", "High Volume"];
 
 function TradingDashboardPageContent() {
   const { toast } = useToast();
@@ -35,6 +41,9 @@ function TradingDashboardPageContent() {
   const [orderCardInitialQuantity, setOrderCardInitialQuantity] = useState<string | undefined>(undefined);
   const [orderCardInitialOrderType, setOrderCardInitialOrderType] = useState<OrderSystemType | undefined>(undefined);
   const [orderCardInitialLimitPrice, setOrderCardInitialLimitPrice] = useState<string | undefined>(undefined);
+  
+  const [isWatchlistDropdownOpen, setIsWatchlistDropdownOpen] = useState(false);
+  const [selectedWatchlist, setSelectedWatchlist] = useState("My Watchlist");
 
   const handleClearOrderCard = useCallback(() => {
     setOrderCardActionType(null);
@@ -178,8 +187,40 @@ function TradingDashboardPageContent() {
                 <div className="h-full">
                     <Card className="h-full flex flex-col overflow-hidden">
                         <Tabs defaultValue="watchlist" className="flex flex-col h-full">
-                            <TabsList className="shrink-0 px-3 pt-2">
-                                <TabsTrigger value="watchlist">Watchlist</TabsTrigger>
+                            <TabsList className="shrink-0 px-3 pt-2 items-center">
+                                <DropdownMenu open={isWatchlistDropdownOpen} onOpenChange={setIsWatchlistDropdownOpen}>
+                                    <TabsTrigger value="watchlist" asChild>
+                                        <DropdownMenuTrigger asChild>
+                                            <Button variant="ghost" className="flex items-center text-base p-0 h-auto hover:bg-transparent data-[state=active]:font-semibold data-[state=active]:text-foreground data-[state=inactive]:text-muted-foreground data-[state=inactive]:font-medium pr-2">
+                                                {selectedWatchlist}
+                                                <ChevronDown
+                                                    className={cn(
+                                                        "ml-2 h-4 w-4 text-muted-foreground transition-transform",
+                                                        isWatchlistDropdownOpen && "rotate-180"
+                                                    )}
+                                                />
+                                            </Button>
+                                        </DropdownMenuTrigger>
+                                    </TabsTrigger>
+                                     <DropdownMenuContent
+                                        className="w-56 backdrop-blur-md bg-black/50 border-white/10"
+                                        style={{
+                                            WebkitBackdropFilter: 'blur(10px)',
+                                            backdropFilter: 'blur(10px)',
+                                        }}
+                                    >
+                                        {dummyWatchlists.map((list) => (
+                                             <DropdownMenuItem key={list} onSelect={() => setSelectedWatchlist(list)} className="text-sm font-medium">
+                                                {list}
+                                            </DropdownMenuItem>
+                                        ))}
+                                        <DropdownMenuSeparator className="bg-white/10" />
+                                        <DropdownMenuItem onSelect={() => console.log('Create new watchlist')}>
+                                            <Plus className="mr-2 h-4 w-4" />
+                                            <span>Create new watchlist</span>
+                                        </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
                                 <TabsTrigger value="news">News</TabsTrigger>
                             </TabsList>
                             <TabsContent value="watchlist" className="flex-1 overflow-hidden mt-0 p-0">
