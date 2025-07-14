@@ -1,7 +1,7 @@
 import * as React from "react";
 
-export const GhostIcon = (props: React.HTMLAttributes<HTMLSpanElement>) => (
-  <span {...props}>
+export const GhostIcon = ({ className }: { className?: string }) => (
+  <span className={className}>
     <svg
       xmlns="http://www.w3.org/2000/svg"
       width="1em"
