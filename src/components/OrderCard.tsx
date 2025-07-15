@@ -53,12 +53,15 @@ const DetailItem: React.FC<{ label: string; value?: string | number | null; unit
 const formatNumber = (value?: number, decimals = 2) => value?.toLocaleString(undefined, { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
 
 const featureIcons = {
-    overnight: { icon: Timer, label: "Overnight Trading", description: "This security can be traded after market hours.", style: "bg-[#44E4FF] shadow-[0_0_8px_rgba(68,228,255,0.4)]" },
-    fractional: { icon: PieChart, label: "Fractional Shares", description: "You can buy or sell less than one full share.", style: "bg-[#B2FF59] shadow-[0_0_8px_rgba(178,255,89,0.4)]" },
-    shortable: { icon: ArrowDownUp, label: "Shortable", description: "This security can be sold short.", style: "bg-[#FF61F6] shadow-[0_0_8px_rgba(255,97,246,0.4)]" },
-    marginable: { icon: Landmark, label: "Marginable", description: "You can borrow funds to trade this security.", style: "bg-[#A259FF] shadow-[0_0_8px_rgba(162,89,255,0.4)]" },
-    nasdaqTotalView: { icon: BookOpenCheck, label: "NASDAQ TotalView", description: "Deepest level of market data is available.", style: "bg-[#6C1AFF] shadow-[0_0_8px_rgba(108,26,255,0.4)]" },
+    overnight: { icon: Timer, label: "Overnight Trading", description: "This security can be traded after market hours." },
+    fractional: { icon: PieChart, label: "Fractional Shares", description: "You can buy or sell less than one full share." },
+    shortable: { icon: ArrowDownUp, label: "Shortable", description: "This security can be sold short." },
+    marginable: { icon: Landmark, label: "Marginable", description: "You can borrow funds to trade this security." },
+    nasdaqTotalView: { icon: BookOpenCheck, label: "NASDAQ TotalView", description: "Deepest level of market data is available." },
 }
+
+const iconBaseStyle = "h-7 w-7 flex items-center justify-center rounded-lg bg-[#322047]/90 transition-all duration-200 hover:scale-105 hover:-translate-y-0.5";
+const iconGlowStyle = "shadow-[0_0_12px_2px_rgba(224,214,255,0.2)] hover:shadow-[0_0_24px_6px_rgba(224,214,255,0.25)]";
 
 export const OrderCard: React.FC<OrderCardProps> = ({
     selectedStock,
@@ -270,24 +273,18 @@ export const OrderCard: React.FC<OrderCardProps> = ({
                         </div>
 
                         {selectedStock.tradingFeatures && (
-                            <div className="flex items-center justify-end gap-1 pt-1 -mt-1">
+                            <div className="flex items-center justify-end gap-2.5 pt-1 -mt-1">
                                 <TooltipProvider>
                                 {Object.entries(selectedStock.tradingFeatures).map(([key, value]) => {
                                     if (!value) return null;
                                     const feature = featureIcons[key as keyof typeof featureIcons];
                                     if (!feature) return null;
-                                    const { icon: Icon, description, style } = feature;
+                                    const { icon: Icon, description } = feature;
                                     return (
                                         <Tooltip key={key}>
                                             <TooltipTrigger asChild>
-                                                <div className={cn(
-                                                    "h-5 w-5 flex items-center justify-center rounded-md transition-all hover:brightness-125",
-                                                     style
-                                                    )}
-                                                >
-                                                    <Icon 
-                                                      className="h-3 w-3 text-white/90" 
-                                                    />
+                                                <div className={cn(iconBaseStyle, iconGlowStyle)}>
+                                                    <Icon className="h-4 w-4 text-white/80" />
                                                 </div>
                                             </TooltipTrigger>
                                             <TooltipContent>
