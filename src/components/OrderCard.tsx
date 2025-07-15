@@ -53,11 +53,11 @@ const DetailItem: React.FC<{ label: string; value?: string | number | null; unit
 const formatNumber = (value?: number, decimals = 2) => value?.toLocaleString(undefined, { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
 
 const featureIcons = {
-    overnight: { icon: Timer, label: "Overnight Trading", description: "This security can be traded after market hours.", style: "bg-[#584575] shadow-[0_0_8px_rgba(152,126,198,0.3)]" },
-    fractional: { icon: PieChart, label: "Fractional Shares", description: "You can buy or sell less than one full share.", style: "bg-[#6a528e] shadow-[0_0_8px_rgba(152,126,198,0.3)]" },
-    shortable: { icon: ArrowDownUp, label: "Shortable", description: "This security can be sold short.", style: "bg-[#7b60a6] shadow-[0_0_8px_rgba(152,126,198,0.3)]" },
-    marginable: { icon: Landmark, label: "Marginable", description: "You can borrow funds to trade this security.", style: "bg-[#8c6ec0] shadow-[0_0_8px_rgba(152,126,198,0.3)]" },
-    nasdaqTotalView: { icon: BookOpenCheck, label: "NASDAQ TotalView", description: "Deepest level of market data is available.", style: "bg-[#a088b3] shadow-[0_0_8px_rgba(152,126,198,0.3)]" },
+    overnight: { icon: Timer, label: "Overnight Trading", description: "This security can be traded after market hours.", style: "bg-[#44E4FF] shadow-[0_0_8px_rgba(68,228,255,0.4)]" },
+    fractional: { icon: PieChart, label: "Fractional Shares", description: "You can buy or sell less than one full share.", style: "bg-[#B2FF59] shadow-[0_0_8px_rgba(178,255,89,0.4)]" },
+    shortable: { icon: ArrowDownUp, label: "Shortable", description: "This security can be sold short.", style: "bg-[#FF61F6] shadow-[0_0_8px_rgba(255,97,246,0.4)]" },
+    marginable: { icon: Landmark, label: "Marginable", description: "You can borrow funds to trade this security.", style: "bg-[#A259FF] shadow-[0_0_8px_rgba(162,89,255,0.4)]" },
+    nasdaqTotalView: { icon: BookOpenCheck, label: "NASDAQ TotalView", description: "Deepest level of market data is available.", style: "bg-[#6C1AFF] shadow-[0_0_8px_rgba(108,26,255,0.4)]" },
 }
 
 export const OrderCard: React.FC<OrderCardProps> = ({
