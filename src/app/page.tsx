@@ -20,7 +20,7 @@ export default function LandingPage() {
           <h1 
             className="font-extrabold font-headline uppercase text-white"
             style={{ 
-              fontSize: 'clamp(3.5rem, 13.5vw, 10.8rem)',
+              fontSize: 'clamp(3.5rem, 13.5vw, 9.7rem)',
               textShadow: '0 0 15px rgba(255, 255, 255, 0.2)' 
             }}
           >
