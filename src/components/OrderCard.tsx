@@ -106,6 +106,31 @@ export const OrderCard: React.FC<OrderCardProps> = ({
         setStopLossPrice('');
         onClear();
     }
+    
+    const selectedAccount = useMemo(() => {
+        return accounts.find(acc => acc.id === selectedAccountId);
+    }, [accounts, selectedAccountId]);
+
+    const estimatedTotal = useMemo(() => {
+        const numQuantity = Number(quantity);
+        if (!selectedStock || isNaN(numQuantity) || numQuantity <= 0) return 0;
+    
+        const buyingPower = selectedAccount?.buyingPower || 0;
+        let price = selectedStock.price;
+        if (orderType === 'Limit' && limitPrice) {
+            price = Number(limitPrice);
+        }
+    
+        switch (quantityMode) {
+            case '$':
+                return numQuantity;
+            case '%':
+                return buyingPower * (numQuantity / 100);
+            case 'Shares':
+            default:
+                return numQuantity * price;
+        }
+    }, [quantity, quantityMode, selectedStock, orderType, limitPrice, selectedAccount]);
 
     const isFormValid = useMemo(() => {
         if (!action || !selectedStock || !quantity || Number(quantity) <= 0) {
@@ -117,32 +142,40 @@ export const OrderCard: React.FC<OrderCardProps> = ({
         if (orderType === 'Stop' && (!stopPrice || Number(stopPrice) <= 0)) {
             return false;
         }
-        return true;
-    }, [action, selectedStock, quantity, orderType, limitPrice, stopPrice]);
-    
-    const selectedAccount = useMemo(() => {
-        return accounts.find(acc => acc.id === selectedAccountId);
-    }, [accounts, selectedAccountId]);
-
-    const estimatedTotal = useMemo(() => {
-        const numQuantity = Number(quantity);
-        if (!selectedStock || !numQuantity || numQuantity <= 0) return 0;
-        
-        let price = selectedStock.price;
-        if (orderType === 'Limit' && limitPrice) {
-            price = Number(limitPrice);
+        if (estimatedTotal > (selectedAccount?.buyingPower || 0)) {
+            return false; // Not enough buying power
         }
+        return true;
+    }, [action, selectedStock, quantity, orderType, limitPrice, stopPrice, estimatedTotal, selectedAccount]);
+    
+    const quantityInShares = useMemo(() => {
+        const numQuantity = Number(quantity);
+        if (!selectedStock || isNaN(numQuantity) || numQuantity <= 0) return 0;
         
-        return numQuantity * price;
-    }, [quantity, selectedStock, orderType, limitPrice]);
+        const price = (orderType === 'Limit' && limitPrice) ? Number(limitPrice) : selectedStock.price;
+        if (price <= 0) return 0;
 
+        switch (quantityMode) {
+            case '$':
+                return numQuantity / price;
+            case '%':
+                const totalValue = (selectedAccount?.buyingPower || 0) * (numQuantity / 100);
+                return totalValue / price;
+            case 'Shares':
+            default:
+                return numQuantity;
+        }
+    }, [quantity, quantityMode, selectedStock, orderType, limitPrice, selectedAccount]);
 
     const handleFormSubmit = () => {
         if (!isFormValid || !selectedStock || !action) return;
 
+        const finalShares = Math.floor(quantityInShares); // Ensure whole shares
+        if(finalShares <= 0) return;
+
         const tradeDetails: TradeRequest = {
             symbol: selectedStock.symbol,
-            quantity: Number(quantity),
+            quantity: finalShares,
             action: action,
             orderType: orderType,
             TIF: timeInForce,
@@ -171,7 +204,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({
     };
 
     const submitButtonClass = useMemo(() => {
-        if (!isFormValid) {
+        if (!action || !selectedStock || !isFormValid) {
             return "bg-neutral-900 text-neutral-600 border-white/10";
         }
         switch (action) {
@@ -184,7 +217,20 @@ export const OrderCard: React.FC<OrderCardProps> = ({
             default:
                 return "bg-neutral-800 hover:bg-neutral-700 text-neutral-300 border-white/10";
         }
-    }, [isFormValid, action]);
+    }, [isFormValid, action, selectedStock]);
+
+    const submitButtonText = useMemo(() => {
+        if (!action || !selectedStock) return 'Select Action';
+        if (!isFormValid) {
+             if (estimatedTotal > (selectedAccount?.buyingPower || 0)) {
+                return 'Insufficient Buying Power';
+            }
+            return `Enter Order Details`;
+        }
+        const sharesText = quantityInShares.toFixed(2).replace(/\.00$/, '');
+        return `${action} ${sharesText} ${selectedStock.symbol}`;
+
+    }, [action, selectedStock, isFormValid, quantityInShares, estimatedTotal, selectedAccount]);
 
     return (
         <Card className={cn("h-full flex flex-col bg-black/50 border-white/10", className)}>
@@ -278,25 +324,33 @@ export const OrderCard: React.FC<OrderCardProps> = ({
                                     placeholder="0"
                                     value={quantity}
                                     onChange={(e) => setQuantity(e.target.value)}
-                                    className="bg-transparent border-white/10 h-10"
+                                    className="bg-transparent border-white/10 h-10 pr-28"
                                 />
                                 <div className="absolute right-1.5 top-1/2 -translate-y-1/2 flex items-center gap-1">
+                                    <TooltipProvider>
                                     {(['Shares', '$', '%'] as const).map(mode => (
-                                        <Button
-                                            key={mode}
-                                            variant="ghost"
-                                            size="sm"
-                                            onClick={() => setQuantityMode(mode)}
-                                            className={cn(
-                                                "h-7 w-auto px-2 text-xs text-white bg-black border border-transparent hover:border-white/20",
-                                                quantityMode === mode && "border-white/50"
-                                            )}
-                                        >
-                                            {mode === '$' && <DollarSign className="h-3.5 w-3.5" />}
-                                            {mode === '%' && <Percent className="h-3.5 w-3.5" />}
-                                            {mode === 'Shares' && <Layers className="h-3.5 w-3.5" />}
-                                        </Button>
+                                        <Tooltip key={mode}>
+                                            <TooltipTrigger asChild>
+                                                <Button
+                                                    variant="ghost"
+                                                    size="sm"
+                                                    onClick={() => setQuantityMode(mode)}
+                                                    className={cn(
+                                                        "h-7 w-auto px-2 text-xs text-white bg-black border border-transparent hover:border-white/20",
+                                                        quantityMode === mode && "border-white/50"
+                                                    )}
+                                                >
+                                                    {mode === '$' && <DollarSign className="h-3.5 w-3.5" />}
+                                                    {mode === '%' && <Percent className="h-3.5 w-3.5" />}
+                                                    {mode === 'Shares' && <Layers className="h-3.5 w-3.5" />}
+                                                </Button>
+                                            </TooltipTrigger>
+                                            <TooltipContent>
+                                                <p>Order by {mode === 'Shares' ? 'Number of Shares' : mode === '$' ? 'Dollar Amount' : 'Percentage of Buying Power'}</p>
+                                            </TooltipContent>
+                                        </Tooltip>
                                     ))}
+                                    </TooltipProvider>
                                 </div>
                              </div>
                         </div>
@@ -384,7 +438,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({
                     disabled={!isFormValid}
                     onClick={handleFormSubmit}
                 >
-                   {isFormValid && action && selectedStock ? `${action} ${quantity} ${selectedStock.symbol}` : 'Select Action'}
+                   {submitButtonText}
                 </Button>
             </CardContent>
         </Card>
