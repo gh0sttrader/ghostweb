@@ -32,7 +32,7 @@ export default function LandingPage() {
         </div>
         
         {/* Container for both image previews */}
-        <div className="mt-32 w-full flex flex-col items-center space-y-16">
+        <div className="mt-32 w-full flex flex-col items-center space-y-32">
           <PlatformPreviewPlaceholder />
           
           {/* This is the placeholder for your second image. 
@@ -46,3 +46,4 @@ export default function LandingPage() {
     </>
   );
 }
+
