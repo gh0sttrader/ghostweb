@@ -2,7 +2,7 @@
 "use client";
 
 import React, { useState, useMemo, useEffect, useCallback, useRef, Suspense } from 'react';
-import { useSearchParams } from 'next/navigation'; // Import useSearchParams
+import { useSearchParams } from 'next/navigation';
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -132,6 +132,7 @@ function ScreenerPageContent() {
   const filteredStocks = useMemo(() => {
     let processedStocks = [...stocks];
     
+    // 1. Apply preset rule filter
     if (selectedRuleId !== 'all') {
       switch (selectedRuleId) {
         case 'my-watchlist':
@@ -180,32 +181,27 @@ function ScreenerPageContent() {
       }
     }
     
-    const customFilterKeys = Object.entries(activeFilters)
-        .filter(([, filterValue]) => filterValue.active)
-        .map(([key]) => key);
+    // 2. Apply advanced custom filters
+    const customFilterEntries = Object.entries(activeFilters).filter(([, filterValue]) => filterValue.active);
 
-    if (customFilterKeys.length > 0) {
-        processedStocks = processedStocks.filter(stock => {
-            return customFilterKeys.every(key => {
-                const filter = activeFilters[key as keyof Stock];
-                if (!filter || !filter.active) return true;
+    if (customFilterEntries.length > 0) {
+      processedStocks = processedStocks.filter(stock => {
+        return customFilterEntries.every(([key, filter]) => {
+            const stockValue = stock[key as keyof Stock] as any;
+            if (stockValue === undefined || stockValue === null) return false;
 
-                let stockValue = stock[key as keyof Stock] as number | undefined;
-                if (stockValue === undefined || stockValue === null) return false;
+            if (typeof stockValue === 'boolean' && typeof filter.value === 'boolean') {
+                return stockValue === filter.value;
+            }
+            
+            if (filter.min && stockValue < filter.min) return false;
+            if (filter.max && stockValue > filter.max) return false;
+            if (filter.value && typeof filter.value === 'string' && typeof stockValue === 'string' && !stockValue.includes(filter.value)) return false;
+            if (filter.value && Array.isArray(filter.value) && typeof stockValue === 'string' && !filter.value.includes(stockValue)) return false;
 
-                let min = filter.min ? parseFloat(filter.min) : -Infinity;
-                let max = filter.max ? parseFloat(filter.max) : Infinity;
-
-                if (key === 'marketCap') {
-                    stockValue = stockValue / 1e9;
-                }
-
-                if (!isNaN(min) && stockValue < min) return false;
-                if (!isNaN(max) && stockValue > max) return false;
-
-                return true;
-            });
+            return true;
         });
+      });
     }
 
     return processedStocks;
