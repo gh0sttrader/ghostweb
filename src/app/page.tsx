@@ -26,7 +26,7 @@ export default function LandingPage() {
               lineHeight: 1,
             }}
           >
-            Ghost Trading
+            GHOST TRADING
           </h1>
           <p className="mt-2 text-xl font-medium text-center text-neutral-400">
             Stay in the market when others get spooked.
