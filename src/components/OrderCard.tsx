@@ -28,24 +28,30 @@ interface OrderCardProps {
     className?: string;
 }
 
-const SummaryItem = ({ label, value, tooltip }: { label: string, value: string, tooltip: string }) => (
-    <TooltipProvider delayDuration={100}>
+const DetailItem: React.FC<{ label: string; value?: string | number | null; unit?: string; valueClass?: string; description?: string }> = ({ label, value, unit, valueClass, description }) => (
+    <TooltipProvider delayDuration={200}>
         <Tooltip>
-            <div className="flex justify-between items-center text-xs">
-                <TooltipTrigger asChild>
-                    <div className="flex items-center gap-1.5 cursor-help">
-                        <span className="text-muted-foreground">{label}</span>
-                        <Info className="h-3 w-3 text-muted-foreground/70" />
-                    </div>
-                </TooltipTrigger>
-                <span className="font-mono text-foreground">{value}</span>
-            </div>
-            <TooltipContent side="top" align="center" className="max-w-xs">
-                <p>{tooltip}</p>
-            </TooltipContent>
+            <TooltipTrigger asChild>
+                <div className="flex justify-between items-baseline py-0.5">
+                    <span className="text-[11px] uppercase tracking-wider text-neutral-400 whitespace-nowrap pr-2">
+                        {label}
+                    </span>
+                    <span className={cn("text-xs font-bold text-neutral-50 text-right", valueClass)}>
+                        {value !== undefined && value !== null ? `${value}${unit || ''}` : <span className="text-neutral-500">-</span>}
+                    </span>
+                </div>
+            </TooltipTrigger>
+            {description && (
+                <TooltipContent side="right">
+                    <p>{description}</p>
+                </TooltipContent>
+            )}
         </Tooltip>
     </TooltipProvider>
 );
+
+const formatNumber = (value?: number, decimals = 2) => value?.toLocaleString(undefined, { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
+
 
 export const OrderCard: React.FC<OrderCardProps> = ({
     selectedStock,
@@ -346,27 +352,27 @@ export const OrderCard: React.FC<OrderCardProps> = ({
 
                 <div className="flex-1"></div>
 
-                <div className="mt-auto p-3 rounded-lg bg-black/40 border border-white/10 space-y-1.5">
-                    <SummaryItem
-                        label="Estimated Total"
-                        value={`$${estimatedTotal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
-                        tooltip="The estimated cost or proceeds of your trade, based on the quantity and price. Does not include fees."
+                <div className="space-y-0 p-3 mt-auto rounded-lg bg-black/40 border border-white/10">
+                    <DetailItem
+                        label="Est. Total"
+                        value={`$${formatNumber(estimatedTotal)}`}
+                        description="The estimated cost or proceeds of your trade, based on the quantity and price. Does not include fees."
                     />
-                    <SummaryItem
+                     <DetailItem
                         label="Total Cost"
-                        value={`$${estimatedTotal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
-                        tooltip="The total dollar amount you are committing in this order. This is the same as the Estimated Total."
+                        value={`$${formatNumber(estimatedTotal)}`}
+                        description="The total dollar amount you are committing in this order. This is the same as the Estimated Total."
                     />
-                    <Separator className="my-1.5 bg-white/10" />
-                     <SummaryItem
+                    <Separator className="my-1 bg-white/10" />
+                     <DetailItem
                         label="Buying Power"
-                        value={`$${selectedAccount?.buyingPower.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) ?? '0.00'}`}
-                        tooltip="The total amount of funds available for purchasing securities, including borrowed money in a margin account."
+                        value={`$${formatNumber(selectedAccount?.buyingPower)}`}
+                        description="The total amount of funds available for purchasing securities, including borrowed money in a margin account."
                     />
-                     <SummaryItem
+                    <DetailItem
                         label="Settled Cash"
-                        value={`$${selectedAccount?.settledCash.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) ?? '0.00'}`}
-                        tooltip="The amount of cash in your account that is fully cleared and available for withdrawal or to purchase securities without creating a margin debit."
+                        value={`$${formatNumber(selectedAccount?.settledCash)}`}
+                        description="The amount of cash in your account that is fully cleared and available for withdrawal or to purchase securities without creating a margin debit."
                     />
                 </div>
 
