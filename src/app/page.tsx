@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from 'react';
@@ -18,15 +17,18 @@ export default function LandingPage() {
       <GhostFloating />
       <div className="flex flex-col items-center justify-start min-h-screen bg-black text-white p-4 pt-24">
         <div className="text-center">
-          <h1 
-            className="font-extrabold font-headline uppercase text-white leading-none"
-            style={{ 
-              fontSize: 'clamp(3.5rem, 13.5vw, 9.7rem)',
-              lineHeight: 1,
-            }}
-          >
-            GHOST TRADING
-          </h1>
+          <div className="flex flex-col items-center">
+              <h1 
+                className="font-extrabold font-headline uppercase text-white leading-none"
+                style={{ 
+                  fontSize: 'clamp(3.5rem, 13.5vw, 9.7rem)',
+                  lineHeight: 1,
+                }}
+              >
+                <span>GHOST</span>
+                <span>TRADING</span>
+              </h1>
+          </div>
           <p className="mt-2 text-xl font-medium text-center text-neutral-400">
             Stay in the market when others get spooked.
           </p>
