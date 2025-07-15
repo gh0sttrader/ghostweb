@@ -12,8 +12,9 @@ import { Separator } from '@/components/ui/separator';
 import { useOpenPositionsContext } from '@/contexts/OpenPositionsContext';
 import type { Stock, OrderActionType, TradeRequest, TradeMode, OrderSystemType, TimeInForce } from '@/types';
 import { cn } from '@/lib/utils';
-import { DollarSign, Percent, Layers, Info, Timer, PieChart, ArrowDownUp, Landmark, BookOpenCheck } from 'lucide-react';
+import { DollarSign, Percent, Layers, Info } from 'lucide-react';
 import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
+import { TradingFeaturesBadges } from './TradingFeaturesBadges';
 
 interface OrderCardProps {
     selectedStock: Stock | null;
@@ -51,14 +52,6 @@ const DetailItem: React.FC<{ label: string; value?: string | number | null; unit
 );
 
 const formatNumber = (value?: number, decimals = 2) => value?.toLocaleString(undefined, { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
-
-const featureIcons = {
-    overnight: { icon: Timer, label: "Overnight Trading", description: "This security can be traded after market hours." },
-    fractional: { icon: PieChart, label: "Fractional Shares", description: "You can buy or sell less than one full share." },
-    shortable: { icon: ArrowDownUp, label: "Shortable", description: "This security can be sold short." },
-    marginable: { icon: Landmark, label: "Marginable", description: "You can borrow funds to trade this security." },
-    nasdaqTotalView: { icon: BookOpenCheck, label: "NASDAQ TotalView", description: "Deepest level of market data is available." },
-}
 
 export const OrderCard: React.FC<OrderCardProps> = ({
     selectedStock,
@@ -270,27 +263,8 @@ export const OrderCard: React.FC<OrderCardProps> = ({
                         </div>
 
                         {selectedStock.tradingFeatures && (
-                            <div className="flex items-center justify-end gap-2.5 pt-1 -mt-1">
-                                <TooltipProvider>
-                                {Object.entries(selectedStock.tradingFeatures).map(([key, value]) => {
-                                    if (!value) return null;
-                                    const feature = featureIcons[key as keyof typeof featureIcons];
-                                    if (!feature) return null;
-                                    const { icon: Icon, description } = feature;
-                                    return (
-                                        <Tooltip key={key}>
-                                            <TooltipTrigger asChild>
-                                                <div className="flex items-center justify-center w-7 h-7 bg-transparent border border-white rounded-lg transition-all duration-200 hover:shadow-[0_0_4px_#fff]">
-                                                    <Icon className="h-4 w-4 text-white" strokeWidth={2} />
-                                                </div>
-                                            </TooltipTrigger>
-                                            <TooltipContent>
-                                                <p>{description}</p>
-                                            </TooltipContent>
-                                        </Tooltip>
-                                    );
-                                })}
-                                </TooltipProvider>
+                            <div className="flex justify-end pt-1 -mt-1">
+                                <TradingFeaturesBadges features={selectedStock.tradingFeatures} />
                             </div>
                         )}
                     </>
