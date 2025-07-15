@@ -19,7 +19,7 @@ export default function LandingPage() {
           className="text-[#aaa] font-semibold mt-4"
           style={{ fontSize: 'clamp(1.25rem, 3vw, 1.75rem)' }}
         >
-          Trade. Analyze. Repeat.
+          see how deep the rabbit hole goes...
         </p>
       </div>
     </div>

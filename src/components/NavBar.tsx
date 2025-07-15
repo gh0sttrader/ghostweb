@@ -9,6 +9,10 @@ import { Search } from "lucide-react";
 import React, { useEffect, useState } from "react";
 
 const GhostIcon = (props: React.SVGProps<SVGSVGElement>) => {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  if (!mounted) return null;
+
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -78,13 +82,12 @@ const HomepageNavLinks = () => {
     return (
         <nav className="flex items-center space-x-4 lg:space-x-6 text-sm font-medium">
             {links.map((link) => (
-                <Link
+                <span
                     key={link.label}
-                    href={link.href}
-                    className="text-foreground/80 transition-colors hover:text-foreground"
+                    className="text-foreground/80 cursor-not-allowed"
                 >
                     {link.label}
-                </Link>
+                </span>
             ))}
         </nav>
     );
