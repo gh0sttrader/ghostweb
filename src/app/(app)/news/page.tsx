@@ -1,7 +1,7 @@
 
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -18,12 +18,12 @@ import type { Alert } from '@/types';
 
 const sentimentConfig = {
     Positive: { 
-        label: 'Bullish',
+        label: 'Positive',
         icon: <TrendingUp className="h-4 w-4 mr-1.5" />, 
         className: 'text-[hsl(var(--confirm-green))]' 
     },
     Negative: { 
-        label: 'Bearish',
+        label: 'Negative',
         icon: <TrendingDown className="h-4 w-4 mr-1.5" />, 
         className: 'text-destructive' 
     },
@@ -62,6 +62,7 @@ export default function NewsPage() {
   const { alerts, addAlert, removeAlert } = useAlertsContext();
   const [isAlertModalOpen, setIsAlertModalOpen] = useState(false);
   const [selectedSymbolForAlert, setSelectedSymbolForAlert] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
 
   const handleOpenAlertModal = (symbol: string) => {
     setSelectedSymbolForAlert(symbol);
@@ -82,6 +83,19 @@ export default function NewsPage() {
     return alerts.find(a => a.symbol === symbol);
   };
 
+  const filteredNewsData = useMemo(() => {
+    if (!searchTerm.trim()) {
+        return dummyNewsData;
+    }
+    const lowerCaseSearchTerm = searchTerm.toLowerCase();
+    return dummyNewsData.filter(item => 
+        item.headline.toLowerCase().includes(lowerCaseSearchTerm) ||
+        item.symbol.toLowerCase().includes(lowerCaseSearchTerm) ||
+        item.preview.toLowerCase().includes(lowerCaseSearchTerm) ||
+        item.provider.toLowerCase().includes(lowerCaseSearchTerm)
+    );
+  }, [searchTerm]);
+
   return (
     <>
       <main className="flex flex-col flex-1 h-full overflow-hidden p-4 md:p-6 space-y-4">
@@ -89,8 +103,8 @@ export default function NewsPage() {
               <h1 className="text-2xl font-bold text-foreground">News</h1>
           </div>
           
-          <div className="flex items-center justify-between gap-4">
-              <div className="flex items-center gap-2">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="flex items-center gap-2 w-full sm:w-auto">
                   <Select defaultValue="all_sources">
                       <SelectTrigger className="w-auto h-9 text-xs">
                           <SelectValue placeholder="Source" />
@@ -113,10 +127,12 @@ export default function NewsPage() {
                       </SelectContent>
                   </Select>
               </div>
-              <div className="relative w-full max-w-xs">
+              <div className="relative w-full sm:max-w-xs">
                   <Input
-                      placeholder="Search symbol..."
-                      className="h-9 w-full pl-8 rounded-full"
+                      placeholder="Search headlines, tickers..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="h-9 w-full pl-8"
                   />
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               </div>
@@ -135,7 +151,7 @@ export default function NewsPage() {
                       </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {dummyNewsData.map((item) => {
+                    {filteredNewsData.map((item) => {
                         const sentiment = sentimentConfig[item.sentiment];
                         const activeAlert = getAlertForSymbol(item.symbol);
                         return (
