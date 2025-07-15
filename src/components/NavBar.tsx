@@ -9,10 +9,6 @@ import { Search } from "lucide-react";
 import React, { useEffect, useState } from "react";
 
 const GhostIcon = (props: React.SVGProps<SVGSVGElement>) => {
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
-  if (!mounted) return null; // Renders nothing on SSR
-
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -110,19 +106,23 @@ export function NavBar() {
           </Link>
         </div>
 
-        {!isHomepage && (
-          <div className="flex-1 flex justify-center px-4">
-            <div className="relative w-full max-w-md">
-              <Input
-                placeholder="Search..."
-                className="h-9 w-full pl-8 rounded-full"
-              />
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            </div>
-          </div>
+        {mounted && (
+          <>
+            {!isHomepage && (
+              <div className="flex-1 flex justify-center px-4">
+                <div className="relative w-full max-w-md">
+                  <Input
+                    placeholder="Search..."
+                    className="h-9 w-full pl-8 rounded-full"
+                  />
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                </div>
+              </div>
+            )}
+            
+            {isHomepage ? <HomepageNavLinks /> : <AppNavLinks />}
+          </>
         )}
-        
-        {mounted && (isHomepage ? <HomepageNavLinks /> : <AppNavLinks />)}
       </div>
     </header>
   );
