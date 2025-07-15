@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from 'react';
@@ -19,14 +20,13 @@ export default function LandingPage() {
         <div className="text-center">
           <div className="flex flex-col items-center">
               <h1 
-                className="font-extrabold font-headline uppercase text-white leading-none"
+                className="font-extrabold font-headline uppercase text-white leading-none text-center"
                 style={{ 
                   fontSize: 'clamp(3.5rem, 13.5vw, 9.7rem)',
                   lineHeight: 1,
                 }}
               >
-                <span>GHOST</span>
-                <span>TRADING</span>
+                <span>GHOST</span><br /><span>TRADING</span>
               </h1>
           </div>
           <p className="mt-2 text-xl font-medium text-center text-neutral-400">
