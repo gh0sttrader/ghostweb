@@ -104,7 +104,7 @@ export function NavBar() {
 
   return (
     <header className="sticky top-0 z-50 w-full bg-black">
-      <div className="flex h-16 items-center justify-between px-4 sm:px-6">
+      <div className="flex h-16 items-center justify-between px-8 sm:px-12">
         <div className="flex items-center">
           <Link href="/trading" className="flex items-center space-x-2 transition-opacity hover:opacity-80">
             <GhostIcon />
