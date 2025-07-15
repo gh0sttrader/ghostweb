@@ -13,7 +13,7 @@ export default function LandingPage() {
             textShadow: '0 0 15px rgba(255, 255, 255, 0.2)' 
           }}
         >
-          ghost trading
+          Ghost Trading
         </h1>
         <p 
           className="text-[#aaa] font-semibold mt-4"
