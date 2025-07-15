@@ -1,68 +1,34 @@
 
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Image from 'next/image';
-import { getStorage, ref, getDownloadURL } from 'firebase/storage';
-import { app, storage } from '@/lib/firebase';
 import { Skeleton } from '@/components/ui/skeleton';
 
 export function PlatformPreviewPlaceholder() {
-    const [imageUrl, setImageUrl] = useState<string | null>(null);
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-
-    useEffect(() => {
-        const fetchImage = async () => {
-            // Gracefully handle missing Firebase config by checking if storage was initialized
-            if (!storage) {
-                console.warn("Firebase is not configured. Skipping image fetch.");
-                setError("Image not available.");
-                setIsLoading(false);
-                return;
-            }
-
-            try {
-                const imageRef = ref(storage, 'platform-preview/preview.png');
-                const url = await getDownloadURL(imageRef);
-                setImageUrl(url);
-            } catch (err: any) {
-                // If the image doesn't exist (or another error occurs), we'll just show the placeholder text.
-                // You can inspect the error in the console if needed.
-                console.warn("Could not load platform preview image:", err.code);
-                setError("Image not found.");
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        fetchImage();
-    }, []);
+    const [imageError, setImageError] = useState(false);
+    const imageUrl = "https://firebasestorage.googleapis.com/v0/b/ghost-trading.firebasestorage.app/o/Ghost_Trading.png?alt=media&token=582fe62a-2491-4acb-9fa4-02744abf05d7";
 
     const renderContent = () => {
-        if (isLoading) {
-            return <Skeleton className="w-full h-full" />;
-        }
-
-        if (imageUrl) {
+        if (imageError) {
             return (
-                <Image
-                    src={imageUrl}
-                    alt="Ghost Trading Platform Preview"
-                    layout="fill"
-                    objectFit="cover"
-                    className="rounded-xl"
-                    data-ai-hint="platform dashboard"
-                    priority
-                />
+                <p className="text-[#AAA] text-2xl font-semibold">
+                    Platform preview coming soon...
+                </p>
             );
         }
 
-        // Fallback content if there's an error or no image
         return (
-            <p className="text-[#AAA] text-2xl font-semibold">
-                Platform preview coming soon...
-            </p>
+            <Image
+                src={imageUrl}
+                alt="Ghost Trading Platform Preview"
+                layout="fill"
+                objectFit="cover"
+                className="rounded-xl"
+                data-ai-hint="platform dashboard"
+                priority
+                onError={() => setImageError(true)}
+            />
         );
     };
 
