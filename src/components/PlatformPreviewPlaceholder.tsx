@@ -1,9 +1,10 @@
+
 "use client";
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { getStorage, ref, getDownloadURL } from 'firebase/storage';
-import { app } from '@/lib/firebase';
+import { app, storage } from '@/lib/firebase';
 import { Skeleton } from '@/components/ui/skeleton';
 
 export function PlatformPreviewPlaceholder() {
@@ -13,8 +14,15 @@ export function PlatformPreviewPlaceholder() {
 
     useEffect(() => {
         const fetchImage = async () => {
+            // Gracefully handle missing Firebase config by checking if storage was initialized
+            if (!storage) {
+                console.warn("Firebase is not configured. Skipping image fetch.");
+                setError("Image not available.");
+                setIsLoading(false);
+                return;
+            }
+
             try {
-                const storage = getStorage(app);
                 const imageRef = ref(storage, 'platform-preview/preview.png');
                 const url = await getDownloadURL(imageRef);
                 setImageUrl(url);
