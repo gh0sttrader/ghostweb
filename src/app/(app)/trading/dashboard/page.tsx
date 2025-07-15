@@ -3,7 +3,7 @@
 
 import React, { useState, useMemo, Suspense, useCallback, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
-import type { Stock, TradeRequest, OrderActionType, TradeMode, OrderSystemType } from "@/types";
+import type { Stock, TradeRequest, OrderActionType, TradeMode, OrderSystemType, NewsArticle } from "@/types";
 import { useToast } from "@/hooks/use-toast";
 import { useTradeHistoryContext } from '@/contexts/TradeHistoryContext';
 import { useOpenPositionsContext } from '@/contexts/OpenPositionsContext';
@@ -30,7 +30,7 @@ function TradingDashboardPageContent() {
   const { toast } = useToast();
   const searchParams = useSearchParams();
   const { addTradeToHistory } = useTradeHistoryContext();
-  const { addOpenPosition, selectedAccountId } = useOpenPositionsContext();
+  const { openPositions, addOpenPosition, selectedAccountId } = useOpenPositionsContext();
 
   const [syncedTickerSymbol, setSyncedTickerSymbol] = useState<string>('AAPL');
   const [stockForSyncedComps, setStockForSyncedComps] = useState<Stock | null>(null);
@@ -63,6 +63,7 @@ function TradingDashboardPageContent() {
 
   useEffect(() => {
     const ticker = searchParams.get('ticker');
+    const sentiment = searchParams.get('sentiment') as NewsArticle['sentiment'] | null;
     const action = searchParams.get('action') as OrderActionType | null;
     const quantity = searchParams.get('quantity');
     const entryPrice = searchParams.get('entryPrice');
@@ -71,7 +72,29 @@ function TradingDashboardPageContent() {
     if (ticker) {
       handleSyncedTickerChange(ticker);
 
-      if (action && quantity && entryPrice && orderType) {
+      if (sentiment) {
+        const userHasPosition = openPositions.some(p => p.symbol === ticker && p.shares > 0);
+        let actionToSet: OrderActionType | null = null;
+        switch (sentiment) {
+            case 'Positive':
+                actionToSet = 'Buy';
+                break;
+            case 'Negative':
+                actionToSet = userHasPosition ? 'Sell' : 'Short';
+                break;
+            case 'Neutral':
+            default:
+                actionToSet = null;
+                break;
+        }
+        setOrderCardActionType(actionToSet);
+        if(actionToSet) {
+          toast({
+            title: "Smart Action Suggested",
+            description: `Based on news sentiment, '${actionToSet}' has been pre-selected for ${ticker}.`
+          });
+        }
+      } else if (action && quantity && entryPrice && orderType) {
         setOrderCardActionType(action);
         setOrderCardInitialQuantity(quantity);
         setOrderCardInitialOrderType(orderType);
@@ -88,7 +111,7 @@ function TradingDashboardPageContent() {
         });
       }
     }
-  }, [searchParams, toast, handleSyncedTickerChange]);
+  }, [searchParams, toast, handleSyncedTickerChange, openPositions]);
 
   useEffect(() => {
     const stockData = initialMockStocks.find(s => s.symbol.toUpperCase() === syncedTickerSymbol.toUpperCase());

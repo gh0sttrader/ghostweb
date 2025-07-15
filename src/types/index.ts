@@ -165,7 +165,7 @@ export type NewsArticle = {
     preview: string;
     provider: string;
     sentiment: 'Positive' | 'Negative' | 'Neutral';
-    alertType: 'Unusual Volume' | 'Earnings' | 'Price Spike' | 'News Catalyst';
+    alertType?: 'Unusual Volume' | 'Earnings' | 'Price Spike' | 'News Catalyst';
 };
 
 export type TradeStatsData = {
@@ -212,5 +212,3 @@ export type SavedScreener = {
     name: string;
     filters: ActiveScreenerFilters;
 }
-
-    

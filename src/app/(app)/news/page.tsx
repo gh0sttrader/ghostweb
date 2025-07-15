@@ -160,7 +160,7 @@ export default function NewsPage() {
                                     <RelativeTime isoString={item.timestamp} />
                                 </TableCell>
                                 <TableCell>
-                                    <Link href={`/trading/dashboard?ticker=${item.symbol}`}>
+                                    <Link href={`/trading/dashboard?ticker=${item.symbol}&sentiment=${item.sentiment}`}>
                                         <Badge variant="outline" className="text-sm cursor-pointer hover:bg-primary/20">{item.symbol}</Badge>
                                     </Link>
                                 </TableCell>
