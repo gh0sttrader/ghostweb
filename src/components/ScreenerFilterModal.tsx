@@ -2,7 +2,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -10,19 +10,19 @@ import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { X } from 'lucide-react';
-import type { TradingFeatures } from '@/types';
+import { X, Save } from 'lucide-react';
+import type { TradingFeatures, SavedScreener } from '@/types';
 import { cn } from '@/lib/utils';
-import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
-import { Calendar } from '@/components/ui/calendar';
-import type { DateRange } from 'react-day-picker';
-import { format } from 'date-fns';
+import { useToast } from "@/hooks/use-toast";
+import { Separator } from './ui/separator';
+
+const SAVED_SCREENERS_STORAGE_KEY = 'ghost-trading-saved-screeners';
 
 export type ActiveFilterValue = {
     active: boolean;
     min?: string;
     max?: string;
-    value?: string | number | boolean | string[] | DateRange;
+    value?: string | number | boolean | string[];
 };
 
 export type ActiveScreenerFilters = {
@@ -58,7 +58,7 @@ export type ActiveScreenerFilters = {
 
 const initialFilters: ActiveScreenerFilters = {
     price: { active: false, min: '', max: '' },
-    marketCap: { active: false, min: '', max: '' }, // in Billions
+    marketCap: { active: false, min: '', max: '' },
     volume: { active: false, min: '', max: '' },
     changePercent: { active: false, min: '', max: '' },
     sector: { active: false, value: "Any" },
@@ -67,7 +67,7 @@ const initialFilters: ActiveScreenerFilters = {
     dividendYield: { active: false, min: '', max: '' },
     peRatio: { active: false, min: '', max: '' },
     exchange: { active: false, value: "Any" },
-    floatSize: { active: false, min: '', max: '' }, // in Millions
+    floatSize: { active: false, min: '', max: '' },
     high52: { active: false, min: '', max: '' },
     low52: { active: false, min: '', max: '' },
     rsi: { active: false, min: '', max: '' },
@@ -109,6 +109,8 @@ interface ScreenerFilterModalProps {
 }
 
 export function ScreenerFilterModal({ isOpen, onClose, activeFilters: initialActiveFilters, onApplyFilters }: ScreenerFilterModalProps) {
+    const { toast } = useToast();
+    const [screenerName, setScreenerName] = useState('');
     const [filters, setFilters] = useState<ActiveScreenerFilters>(() => ({
         ...initialFilters,
         ...initialActiveFilters
@@ -156,6 +158,47 @@ export function ScreenerFilterModal({ isOpen, onClose, activeFilters: initialAct
         onClose();
     };
 
+    const handleSaveScreener = () => {
+        if (!screenerName.trim()) {
+            toast({
+                title: "Name Required",
+                description: "Please enter a name for your screener.",
+                variant: "destructive"
+            });
+            return;
+        }
+
+        const newScreener: SavedScreener = {
+            id: `screener_${Date.now()}`,
+            name: screenerName.trim(),
+            filters: filters
+        };
+
+        try {
+            const savedScreenersJSON = localStorage.getItem(SAVED_SCREENERS_STORAGE_KEY);
+            const savedScreeners: SavedScreener[] = savedScreenersJSON ? JSON.parse(savedScreenersJSON) : [];
+            savedScreeners.push(newScreener);
+            localStorage.setItem(SAVED_SCREENERS_STORAGE_KEY, JSON.stringify(savedScreeners));
+
+            toast({
+                title: "Screener Saved",
+                description: `"${newScreener.name}" has been saved.`,
+                variant: "success",
+            });
+            window.dispatchEvent(new Event('screeners-updated'));
+            onApplyFilters(filters);
+            onClose();
+
+        } catch (error) {
+            console.error("Failed to save screener to localStorage", error);
+            toast({
+                title: "Save Failed",
+                description: "Could not save the screener.",
+                variant: "destructive"
+            });
+        }
+    };
+
     const FilterSectionCard: React.FC<{ title: string; children: React.ReactNode; className?: string }> = ({ title, children, className }) => (
         <Card className={cn("bg-white/5 border-white/10 flex-1", className)}>
             <CardHeader><CardTitle className="text-base font-semibold">{title}</CardTitle></CardHeader>
@@ -177,17 +220,17 @@ export function ScreenerFilterModal({ isOpen, onClose, activeFilters: initialAct
                     <Input
                         type="number"
                         placeholder={minPlaceholder}
-                        value={filterState.min ?? ''}
+                        value={filterState?.min ?? ''}
                         onChange={(e) => handleFilterChange(filterKey, 'min', e.target.value)}
-                        className="bg-neutral-900 border-neutral-700"
+                        className="bg-neutral-900 border-neutral-700 h-9 text-xs"
                     />
                     <span className="text-muted-foreground">-</span>
                      <Input
                         type="number"
                         placeholder={maxPlaceholder}
-                        value={filterState.max ?? ''}
+                        value={filterState?.max ?? ''}
                         onChange={(e) => handleFilterChange(filterKey, 'max', e.target.value)}
-                        className="bg-neutral-900 border-neutral-700"
+                        className="bg-neutral-900 border-neutral-700 h-9 text-xs"
                     />
                 </div>
             </div>
@@ -214,7 +257,7 @@ export function ScreenerFilterModal({ isOpen, onClose, activeFilters: initialAct
                             <FilterSectionCard title="Market">
                                 <RangeFilter label="Price" filterKey="price" />
                                 <RangeFilter label="Market Cap ($B)" filterKey="marketCap" />
-                                <RangeFilter label="Volume (M)" filterKey="volume" />
+                                <RangeFilter label="Volume" filterKey="volume" />
                                 <RangeFilter label="Float Size (M)" filterKey="floatSize" />
                                 <div>
                                     <Label className="text-sm font-medium">Exchange</Label>
@@ -314,9 +357,25 @@ export function ScreenerFilterModal({ isOpen, onClose, activeFilters: initialAct
                         </div>
                     </ScrollArea>
                     
-                    <DialogFooter className="p-6 flex justify-between w-full border-t border-white/10">
-                        <Button variant="outline" onClick={resetFilters}>Reset All</Button>
+                    <DialogFooter className="p-6 flex items-center justify-between w-full border-t border-white/10">
+                        <div className='flex items-center gap-2'>
+                           <Input 
+                                placeholder="Screener Name..."
+                                value={screenerName}
+                                onChange={(e) => setScreenerName(e.target.value)}
+                                className="bg-neutral-900 border-neutral-700 h-9 text-xs w-48"
+                            />
+                            <Button 
+                                variant="outline"
+                                onClick={handleSaveScreener}
+                                className="h-9"
+                                disabled={!screenerName.trim()}
+                            >
+                                <Save className="mr-2 h-4 w-4" /> Save
+                            </Button>
+                        </div>
                         <div className="flex gap-2">
+                             <Button variant="outline" onClick={resetFilters}>Reset All</Button>
                             <Button variant="secondary" onClick={onClose}>Cancel</Button>
                             <Button className="bg-foreground text-background hover:bg-foreground/90" onClick={applyFilters}>Apply Filters</Button>
                         </div>
@@ -331,3 +390,5 @@ export function ScreenerFilterModal({ isOpen, onClose, activeFilters: initialAct
         </Dialog>
     );
 }
+
+    

@@ -1,5 +1,6 @@
 
 import type { DateRange } from "react-day-picker";
+import type { ActiveScreenerFilters } from "@/components/ScreenerFilterModal";
 
 export type TradingFeatures = {
     overnight?: boolean;
@@ -205,3 +206,11 @@ export type Alert = {
     status: 'active' | 'triggered' | 'inactive';
     createdAt: string;
 };
+
+export type SavedScreener = {
+    id: string;
+    name: string;
+    filters: ActiveScreenerFilters;
+}
+
+    

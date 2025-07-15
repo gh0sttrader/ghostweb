@@ -10,7 +10,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Checkbox } from "@/components/ui/checkbox";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { UploadCloud, Columns, Info, ListFilter, Bot, Cog, TrendingUp, TrendingDown, Activity, CalendarCheck2, Star, List, Filter, SlidersHorizontal, Newspaper, Search, Loader2 } from "lucide-react";
-import type { Stock, AlertRule, ColumnConfig } from "@/types";
+import type { Stock, AlertRule, ColumnConfig, SavedScreener } from "@/types";
 import { cn } from '@/lib/utils';
 import { ChartPreview } from '@/components/ChartPreview';
 import { exportToCSV } from '@/lib/exportCSV';
@@ -31,6 +31,7 @@ import { initialMockStocks } from '@/app/(app)/trading/dashboard/mock-data';
 
 const MOCK_INITIAL_TIMESTAMP = '2024-07-01T10:00:00.000Z';
 const RULES_STORAGE_KEY = 'tradeflow-alert-rules';
+const SAVED_SCREENERS_STORAGE_KEY = 'ghost-trading-saved-screeners';
 
 const formatDecimal = (value?: number, places = 2) => (value !== undefined && value !== null ? value.toFixed(places) : 'N/A');
 
@@ -57,6 +58,7 @@ function ScreenerPageContent() {
 
   const [stocks, setStocks] = useState<Stock[]>(initialMockStocks);
   const [rules, setRules] = useState<AlertRule[]>([]);
+  const [savedScreeners, setSavedScreeners] = useState<SavedScreener[]>([]);
   const [selectedRuleId, setSelectedRuleId] = useState<string>('all');
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const [activeFilters, setActiveFilters] = useState<Partial<ActiveScreenerFilters>>({});
@@ -93,22 +95,39 @@ function ScreenerPageContent() {
 
 
   useEffect(() => {
-    const loadRules = () => {
+    const loadData = () => {
         try {
             const savedRulesJSON = localStorage.getItem(RULES_STORAGE_KEY);
-            const initialRules = savedRulesJSON ? JSON.parse(savedRulesJSON) : []; 
-            setRules(initialRules);
+            setRules(savedRulesJSON ? JSON.parse(savedRulesJSON) : []);
+
+            const savedScreenersJSON = localStorage.getItem(SAVED_SCREENERS_STORAGE_KEY);
+            setSavedScreeners(savedScreenersJSON ? JSON.parse(savedScreenersJSON) : []);
         } catch (error) {
-            console.error("Failed to load rules from localStorage", error);
+            console.error("Failed to load data from localStorage", error);
             setRules([]);
+            setSavedScreeners([]);
         }
     };
-    loadRules();
-    window.addEventListener('rules-updated', loadRules);
+    loadData();
+    window.addEventListener('rules-updated', loadData);
+    window.addEventListener('screeners-updated', loadData);
     return () => {
-        window.removeEventListener('rules-updated', loadRules);
+        window.removeEventListener('rules-updated', loadData);
+        window.removeEventListener('screeners-updated', loadData);
     };
   }, []);
+
+  const handleSelectedScreenerChange = (value: string) => {
+    setSelectedRuleId(value);
+
+    // Reset custom filters when a preset is chosen
+    setActiveFilters({});
+
+    const savedScreener = savedScreeners.find(s => s.id === value);
+    if (savedScreener) {
+        setActiveFilters(savedScreener.filters);
+    }
+  }
 
   const activeRules = useMemo(() => rules.filter(rule => rule.isActive), [rules]);
   const activeFilterCount = Object.values(activeFilters).filter(f => f && f.active).length;
@@ -133,7 +152,7 @@ function ScreenerPageContent() {
     let processedStocks = [...stocks];
     
     // 1. Apply preset rule filter
-    if (selectedRuleId !== 'all') {
+    if (selectedRuleId !== 'all' && !savedScreeners.some(s => s.id === selectedRuleId)) {
       switch (selectedRuleId) {
         case 'my-watchlist':
           processedStocks = processedStocks.filter(stock => dummyWatchlistSymbols.includes(stock.symbol));
@@ -219,7 +238,7 @@ function ScreenerPageContent() {
     }
 
     return processedStocks;
-  }, [stocks, selectedRuleId, activeRules, activeFilters]);
+  }, [stocks, selectedRuleId, activeRules, activeFilters, savedScreeners]);
 
   return (
     <>
@@ -286,7 +305,7 @@ function ScreenerPageContent() {
                 <Button variant="outline" size="sm" onClick={() => setIsFilterModalOpen(true)} className="h-9 text-xs">
                     <SlidersHorizontal className="mr-2 h-4 w-4" /> Filters {activeFilterCount > 0 && `(${activeFilterCount})`}
                 </Button>
-                <Select value={selectedRuleId} onValueChange={(value) => setSelectedRuleId(value)}>
+                <Select value={selectedRuleId} onValueChange={handleSelectedScreenerChange}>
                     <SelectTrigger id="ruleSelect" className="w-auto h-9 text-xs min-w-[200px]">
                         <SelectValue placeholder="Select a screener or rule..." />
                     </SelectTrigger>
@@ -309,9 +328,16 @@ function ScreenerPageContent() {
                         <SelectItem value="52-week" className="text-xs">
                             <span className="flex items-center text-accent"><CalendarCheck2 className="mr-2 h-4 w-4" /> 52 Week Highs/Lows</span>
                         </SelectItem>
+                        {activeRules.length > 0 && <hr className="my-1" />}
                         {activeRules.map(rule => (
                             <SelectItem key={rule.id} value={rule.id} className="text-xs">
                             <span className="flex items-center"><Filter className="mr-2 h-4 w-4" /> {rule.name}</span>
+                            </SelectItem>
+                        ))}
+                         {savedScreeners.length > 0 && <hr className="my-1" />}
+                         {savedScreeners.map(screener => (
+                            <SelectItem key={screener.id} value={screener.id} className="text-xs">
+                            <span className="flex items-center"><Filter className="mr-2 h-4 w-4" /> {screener.name}</span>
                             </SelectItem>
                         ))}
                     </SelectContent>
@@ -396,3 +422,5 @@ export default function ScreenerPage() {
     </Suspense>
   );
 }
+
+    
