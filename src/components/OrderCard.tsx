@@ -53,11 +53,11 @@ const DetailItem: React.FC<{ label: string; value?: string | number | null; unit
 const formatNumber = (value?: number, decimals = 2) => value?.toLocaleString(undefined, { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
 
 const featureIcons = {
-    overnight: { icon: Timer, label: "Overnight Trading", description: "This security can be traded after market hours.", style: "bg-blue-900/80 shadow-md shadow-blue-500/20" },
-    fractional: { icon: PieChart, label: "Fractional Shares", description: "You can buy or sell less than one full share.", style: "bg-green-900/80 shadow-md shadow-green-500/20" },
-    shortable: { icon: ArrowDownUp, label: "Shortable", description: "This security can be sold short.", style: "bg-red-900/80 shadow-md shadow-red-500/20" },
-    marginable: { icon: Landmark, label: "Marginable", description: "You can borrow funds to trade this security.", style: "bg-yellow-900/80 shadow-md shadow-orange-500/20" },
-    nasdaqTotalView: { icon: BookOpenCheck, label: "NASDAQ TotalView", description: "Deepest level of market data is available.", style: "bg-purple-900/80 shadow-md shadow-fuchsia-500/20" },
+    overnight: { icon: Timer, label: "Overnight Trading", description: "This security can be traded after market hours.", style: "bg-[#584575] shadow-[0_0_8px_rgba(152,126,198,0.3)]" },
+    fractional: { icon: PieChart, label: "Fractional Shares", description: "You can buy or sell less than one full share.", style: "bg-[#6a528e] shadow-[0_0_8px_rgba(152,126,198,0.3)]" },
+    shortable: { icon: ArrowDownUp, label: "Shortable", description: "This security can be sold short.", style: "bg-[#7b60a6] shadow-[0_0_8px_rgba(152,126,198,0.3)]" },
+    marginable: { icon: Landmark, label: "Marginable", description: "You can borrow funds to trade this security.", style: "bg-[#8c6ec0] shadow-[0_0_8px_rgba(152,126,198,0.3)]" },
+    nasdaqTotalView: { icon: BookOpenCheck, label: "NASDAQ TotalView", description: "Deepest level of market data is available.", style: "bg-[#a088b3] shadow-[0_0_8px_rgba(152,126,198,0.3)]" },
 }
 
 export const OrderCard: React.FC<OrderCardProps> = ({
