@@ -270,7 +270,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({
                         </div>
 
                         {selectedStock.tradingFeatures && (
-                            <div className="flex items-center justify-end gap-2 pt-1 -mt-1">
+                            <div className="flex items-center justify-end gap-3 pt-1 -mt-1">
                                 <TooltipProvider>
                                 {Object.entries(selectedStock.tradingFeatures).map(([key, value]) => {
                                     if (!value) return null;
@@ -279,10 +279,8 @@ export const OrderCard: React.FC<OrderCardProps> = ({
                                     const { icon: Icon, description } = feature;
                                     return (
                                         <Tooltip key={key}>
-                                            <TooltipTrigger asChild>
-                                                <div className="group h-6 w-6 flex items-center justify-center rounded-lg bg-[#18181A] transition-colors duration-150 hover:bg-white">
-                                                    <Icon className="h-4 w-4 text-white transition-colors duration-150 group-hover:text-[#18181A]" strokeWidth={2} />
-                                                </div>
+                                            <TooltipTrigger>
+                                                <Icon className="h-5 w-5 text-white transition-all duration-150 hover:brightness-150" strokeWidth={2} />
                                             </TooltipTrigger>
                                             <TooltipContent>
                                                 <p>{description}</p>
