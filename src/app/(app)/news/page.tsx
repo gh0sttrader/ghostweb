@@ -132,7 +132,6 @@ export default function NewsPage() {
                           <TableHead className="w-[150px] bg-card hover:bg-card">Sentiment</TableHead>
                           <TableHead className="w-[150px] bg-card hover:bg-card">Provider</TableHead>
                           <TableHead className="w-[100px] text-center bg-card hover:bg-card">Alerts</TableHead>
-                          <TableHead className="w-[120px] text-center bg-card hover:bg-card">Trade</TableHead>
                       </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -145,7 +144,9 @@ export default function NewsPage() {
                                     <RelativeTime isoString={item.timestamp} />
                                 </TableCell>
                                 <TableCell>
-                                    <Badge variant="outline" className="text-sm">{item.symbol}</Badge>
+                                    <Link href={`/trading/dashboard?ticker=${item.symbol}`}>
+                                        <Badge variant="outline" className="text-sm cursor-pointer hover:bg-primary/20">{item.symbol}</Badge>
+                                    </Link>
                                 </TableCell>
                                 <TableCell className="font-medium">{item.headline}</TableCell>
                                 <TableCell className={cn("flex items-center font-semibold", sentiment.className)}>
@@ -162,14 +163,6 @@ export default function NewsPage() {
                                       <Bell className={cn("h-4 w-4 transition-colors", activeAlert ? 'text-destructive fill-destructive' : 'text-foreground')} />
                                     </button>
                                 </TableCell>
-                                <TableCell className="text-center">
-                                      <Link
-                                          href={`/trading/dashboard?ticker=${item.symbol}`}
-                                          className={cn(buttonVariants({ variant: 'outline', size: 'sm' }), "h-7 px-3 text-xs")}
-                                      >
-                                          Trade
-                                      </Link>
-                                  </TableCell>
                             </TableRow>
                         );
                     })}
