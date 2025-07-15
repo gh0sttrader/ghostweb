@@ -12,7 +12,7 @@ import { Separator } from '@/components/ui/separator';
 import { useOpenPositionsContext } from '@/contexts/OpenPositionsContext';
 import type { Stock, OrderActionType, TradeRequest, TradeMode, OrderSystemType, TimeInForce } from '@/types';
 import { cn } from '@/lib/utils';
-import { DollarSign, Percent, Layers, Info } from 'lucide-react';
+import { DollarSign, Percent, Layers, Info, Timer, PieChart, ArrowDownUp, Landmark, BookOpenCheck } from 'lucide-react';
 import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
 
 interface OrderCardProps {
@@ -52,6 +52,13 @@ const DetailItem: React.FC<{ label: string; value?: string | number | null; unit
 
 const formatNumber = (value?: number, decimals = 2) => value?.toLocaleString(undefined, { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
 
+const featureIcons = {
+    overnight: { icon: Timer, label: "Overnight Trading", description: "This security can be traded after market hours." },
+    fractional: { icon: PieChart, label: "Fractional Shares", description: "You can buy or sell less than one full share." },
+    shortable: { icon: ArrowDownUp, label: "Shortable", description: "This security can be sold short." },
+    marginable: { icon: Landmark, label: "Marginable", description: "You can borrow funds to trade this security." },
+    nasdaqTotalView: { icon: BookOpenCheck, label: "NASDAQ TotalView", description: "Deepest level of market data is available." },
+}
 
 export const OrderCard: React.FC<OrderCardProps> = ({
     selectedStock,
@@ -246,20 +253,45 @@ export const OrderCard: React.FC<OrderCardProps> = ({
                 
 
                 {selectedStock && (
-                    <div className="flex items-center justify-between">
-                        <div >
-                            <p className="text-lg font-bold text-foreground">{selectedStock.symbol}</p>
-                            <p className="text-xs text-muted-foreground">{selectedStock.name}</p>
+                    <>
+                        <div className="flex items-center justify-between">
+                            <div >
+                                <p className="text-lg font-bold text-foreground">{selectedStock.symbol}</p>
+                                <p className="text-xs text-muted-foreground">{selectedStock.name}</p>
+                            </div>
+                             <div className="text-right">
+                                 <p className={cn("text-lg font-bold", selectedStock.changePercent >= 0 ? "text-[hsl(var(--confirm-green))]" : "text-destructive")}>
+                                    ${selectedStock.price.toFixed(2)}
+                                </p>
+                                 <p className={cn("text-xs", selectedStock.changePercent >= 0 ? "text-[hsl(var(--confirm-green))]" : "text-destructive")}>
+                                     {selectedStock.changePercent >= 0 ? '+' : ''}{selectedStock.changePercent.toFixed(2)}%
+                                 </p>
+                             </div>
                         </div>
-                         <div className="text-right">
-                             <p className={cn("text-lg font-bold", selectedStock.changePercent >= 0 ? "text-[hsl(var(--confirm-green))]" : "text-destructive")}>
-                                ${selectedStock.price.toFixed(2)}
-                            </p>
-                             <p className={cn("text-xs", selectedStock.changePercent >= 0 ? "text-[hsl(var(--confirm-green))]" : "text-destructive")}>
-                                 {selectedStock.changePercent >= 0 ? '+' : ''}{selectedStock.changePercent.toFixed(2)}%
-                             </p>
-                         </div>
-                    </div>
+
+                        {selectedStock.tradingFeatures && (
+                            <div className="flex items-center gap-3 pt-1">
+                                <TooltipProvider>
+                                {Object.entries(selectedStock.tradingFeatures).map(([key, value]) => {
+                                    if (!value) return null;
+                                    const feature = featureIcons[key as keyof typeof featureIcons];
+                                    if (!feature) return null;
+                                    const { icon: Icon, description } = feature;
+                                    return (
+                                        <Tooltip key={key}>
+                                            <TooltipTrigger>
+                                                <Icon className="h-4 w-4 text-muted-foreground hover:text-foreground transition-colors" />
+                                            </TooltipTrigger>
+                                            <TooltipContent>
+                                                <p>{description}</p>
+                                            </TooltipContent>
+                                        </Tooltip>
+                                    );
+                                })}
+                                </TooltipProvider>
+                            </div>
+                        )}
+                    </>
                 )}
                 
                 <div className="grid grid-cols-3 gap-2">

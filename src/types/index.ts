@@ -1,5 +1,13 @@
 
 
+export type TradingFeatures = {
+    overnight?: boolean;
+    fractional?: boolean;
+    shortable?: boolean;
+    marginable?: boolean;
+    nasdaqTotalView?: boolean;
+};
+
 export type Stock = {
     id: string;
     symbol: string;
@@ -45,6 +53,7 @@ export type Stock = {
     afterHoursChange?: number;
     afterHoursChangePercent?: number;
     analystRating?: 'Strong Buy' | 'Buy' | 'Hold' | 'Sell' | 'Strong Sell';
+    tradingFeatures?: TradingFeatures;
 };
 
 export type AlertRule = {
