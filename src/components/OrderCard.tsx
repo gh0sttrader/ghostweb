@@ -32,7 +32,7 @@ const DetailItem: React.FC<{ label: string; value?: string | number | null; unit
     <TooltipProvider delayDuration={200}>
         <Tooltip>
             <TooltipTrigger asChild>
-                <div className="flex justify-between items-baseline py-0.5">
+                 <div className="flex justify-between items-baseline py-0.5">
                     <span className="text-[11px] uppercase tracking-wider text-neutral-400 whitespace-nowrap pr-2">
                         {label}
                     </span>
@@ -53,11 +53,11 @@ const DetailItem: React.FC<{ label: string; value?: string | number | null; unit
 const formatNumber = (value?: number, decimals = 2) => value?.toLocaleString(undefined, { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
 
 const featureIcons = {
-    overnight: { icon: Timer, label: "Overnight Trading", description: "This security can be traded after market hours.", color: "text-cyan-400" },
-    fractional: { icon: PieChart, label: "Fractional Shares", description: "You can buy or sell less than one full share.", color: "text-lime-400" },
-    shortable: { icon: ArrowDownUp, label: "Shortable", description: "This security can be sold short.", color: "text-red-500" },
-    marginable: { icon: Landmark, label: "Marginable", description: "You can borrow funds to trade this security.", color: "text-yellow-400" },
-    nasdaqTotalView: { icon: BookOpenCheck, label: "NASDAQ TotalView", description: "Deepest level of market data is available.", color: "text-purple-400" },
+    overnight: { icon: Timer, label: "Overnight Trading", description: "This security can be traded after market hours.", color: "text-cyan-400", borderColor: "border-cyan-400" },
+    fractional: { icon: PieChart, label: "Fractional Shares", description: "You can buy or sell less than one full share.", color: "text-lime-400", borderColor: "border-lime-400" },
+    shortable: { icon: ArrowDownUp, label: "Shortable", description: "This security can be sold short.", color: "text-red-500", borderColor: "border-red-500" },
+    marginable: { icon: Landmark, label: "Marginable", description: "You can borrow funds to trade this security.", color: "text-yellow-400", borderColor: "border-yellow-400" },
+    nasdaqTotalView: { icon: BookOpenCheck, label: "NASDAQ TotalView", description: "Deepest level of market data is available.", color: "text-purple-400", borderColor: "border-purple-400" },
 }
 
 export const OrderCard: React.FC<OrderCardProps> = ({
@@ -254,7 +254,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({
 
                 {selectedStock && (
                     <>
-                        <div className="flex items-center justify-between">
+                        <div className="flex items-start justify-between">
                             <div >
                                 <p className="text-lg font-bold text-foreground">{selectedStock.symbol}</p>
                                 <p className="text-xs text-muted-foreground">{selectedStock.name}</p>
@@ -270,20 +270,25 @@ export const OrderCard: React.FC<OrderCardProps> = ({
                         </div>
 
                         {selectedStock.tradingFeatures && (
-                            <div className="flex items-center gap-3 pt-1">
+                            <div className="flex items-center justify-end gap-1.5 pt-1 -mt-1">
                                 <TooltipProvider>
                                 {Object.entries(selectedStock.tradingFeatures).map(([key, value]) => {
                                     if (!value) return null;
                                     const feature = featureIcons[key as keyof typeof featureIcons];
                                     if (!feature) return null;
-                                    const { icon: Icon, description, color } = feature;
+                                    const { icon: Icon, description, color, borderColor } = feature;
                                     return (
                                         <Tooltip key={key}>
-                                            <TooltipTrigger>
-                                                <Icon 
-                                                  className={cn("h-4 w-4 transition-all hover:brightness-125", color)} 
-                                                  style={{filter: `drop-shadow(0 0 2px currentColor)`}}
-                                                />
+                                            <TooltipTrigger asChild>
+                                                <div className={cn(
+                                                    "h-6 w-6 flex items-center justify-center rounded-md border bg-transparent transition-all hover:brightness-125",
+                                                     borderColor
+                                                    )}
+                                                >
+                                                    <Icon 
+                                                      className={cn("h-3.5 w-3.5", color)} 
+                                                    />
+                                                </div>
                                             </TooltipTrigger>
                                             <TooltipContent>
                                                 <p>{description}</p>
@@ -442,26 +447,16 @@ export const OrderCard: React.FC<OrderCardProps> = ({
                 <div className="flex-1"></div>
 
                 <div className="space-y-0 p-3 mt-auto rounded-lg bg-black/40 border border-white/10">
-                    <DetailItem
+                     <DetailItem
                         label="Est. Total"
                         value={`$${formatNumber(estimatedTotal)}`}
                         description="The estimated cost or proceeds of your trade, based on the quantity and price. Does not include fees."
-                    />
-                     <DetailItem
-                        label="Total Cost"
-                        value={`$${formatNumber(estimatedTotal)}`}
-                        description="The total dollar amount you are committing in this order. This is the same as the Estimated Total."
                     />
                     <Separator className="my-1 bg-white/10" />
                      <DetailItem
                         label="Buying Power"
                         value={`$${formatNumber(selectedAccount?.buyingPower)}`}
                         description="The total amount of funds available for purchasing securities, including borrowed money in a margin account."
-                    />
-                    <DetailItem
-                        label="Settled Cash"
-                        value={`$${formatNumber(selectedAccount?.settledCash)}`}
-                        description="The amount of cash in your account that is fully cleared and available for withdrawal or to purchase securities without creating a margin debit."
                     />
                 </div>
 
