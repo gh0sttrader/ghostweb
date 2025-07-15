@@ -7,8 +7,8 @@ import { useToast } from '@/hooks/use-toast';
 
 // Mock accounts data
 const initialAccounts: Account[] = [
-    { id: 'acc_1', name: 'Margin Account', balance: 50000 },
-    { id: 'acc_2', name: 'IRA Account', balance: 120000 },
+    { id: 'acc_1', name: 'Margin Account', balance: 50000, buyingPower: 100000, settledCash: 45000 },
+    { id: 'acc_2', name: 'IRA Account', balance: 120000, buyingPower: 120000, settledCash: 120000 },
 ];
 
 const initialPositions: OpenPosition[] = [

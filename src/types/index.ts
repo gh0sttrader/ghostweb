@@ -117,6 +117,8 @@ export type Account = {
     id: string;
     name: string;
     balance: number;
+    buyingPower: number;
+    settledCash: number;
 };
 
 export type OpenPosition = {
