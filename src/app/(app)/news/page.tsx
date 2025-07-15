@@ -15,8 +15,6 @@ import Link from 'next/link';
 import { useAlertsContext } from '@/contexts/AlertsContext';
 import { AlertModal } from '@/components/AlertModal';
 import type { Alert } from '@/types';
-import { initialMockStocks } from '@/app/(app)/trading/dashboard/mock-data';
-import { TradingFeaturesBadges } from '@/components/TradingFeaturesBadges';
 
 const sentimentConfig = {
     Positive: { 
@@ -149,7 +147,6 @@ export default function NewsPage() {
                           <TableHead className="bg-card hover:bg-card">Headline</TableHead>
                           <TableHead className="w-[150px] bg-card hover:bg-card">Sentiment</TableHead>
                           <TableHead className="w-[150px] bg-card hover:bg-card">Provider</TableHead>
-                          <TableHead className="w-[200px] bg-card hover:bg-card">Trading Capabilities</TableHead>
                           <TableHead className="w-[100px] text-center bg-card hover:bg-card">Alerts</TableHead>
                       </TableRow>
                   </TableHeader>
@@ -157,7 +154,6 @@ export default function NewsPage() {
                     {filteredNewsData.map((item) => {
                         const sentiment = sentimentConfig[item.sentiment];
                         const activeAlert = getAlertForSymbol(item.symbol);
-                        const stockData = initialMockStocks.find(s => s.symbol === item.symbol);
 
                         return (
                             <TableRow key={item.id} className="border-b border-border/5 hover:bg-white/5">
@@ -175,11 +171,6 @@ export default function NewsPage() {
                                     {sentiment.label}
                                 </TableCell>
                                 <TableCell className="text-muted-foreground">{item.provider}</TableCell>
-                                <TableCell>
-                                    {stockData && stockData.tradingFeatures && (
-                                        <TradingFeaturesBadges features={stockData.tradingFeatures} />
-                                    )}
-                                </TableCell>
                                 <TableCell className="text-center">
                                     <button
                                       onClick={() => handleOpenAlertModal(item.symbol)}
