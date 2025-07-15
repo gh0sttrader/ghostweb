@@ -18,7 +18,7 @@ export default function LandingPage() {
       <div className="flex flex-col items-center justify-start min-h-screen bg-black text-white p-4 pt-24">
         <div className="text-center">
           <h1 
-            className="font-extrabold font-headline uppercase text-white"
+            className="font-extrabold font-headline uppercase text-white leading-none"
             style={{ 
               fontSize: 'clamp(3.5rem, 13.5vw, 9.7rem)',
               textShadow: '0 0 15px rgba(255, 255, 255, 0.2)' 
@@ -26,11 +26,8 @@ export default function LandingPage() {
           >
             Ghost Trading
           </h1>
-          <p className="mt-4 text-2xl font-semibold text-center text-neutral-300">
-            Stay in the market when others get spooked.
-          </p>
           <p className="mt-2 text-xl font-medium text-center text-neutral-400">
-            Stay in when others get spooked.
+            Stay in the market when others get spooked.
           </p>
         </div>
         
