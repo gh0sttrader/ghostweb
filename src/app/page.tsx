@@ -29,7 +29,7 @@ export default function LandingPage() {
                 GHOST<br />TRADING
               </h1>
           </div>
-          <p className="mt-2 text-xl font-medium text-center text-neutral-400">
+          <p className="mt-2 text-2xl font-medium text-center text-neutral-400">
             Stay in the market when others get spooked.
           </p>
         </div>
