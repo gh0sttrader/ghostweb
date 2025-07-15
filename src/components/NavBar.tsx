@@ -44,6 +44,7 @@ const AppNavLinks = () => {
     { href: "/screener", label: "SCREENER" },
     { href: "/accounts", label: "ACCOUNTS" },
     { href: "/tradehistory", label: "TRADE HISTORY" },
+    { href: "/settings", label: "SETTINGS" },
   ];
 
   const isActive = (href: string) => {
