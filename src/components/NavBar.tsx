@@ -51,6 +51,8 @@ const AppNavLinks = () => {
     if (href === "/trading") {
       return pathname.startsWith("/trading") || pathname.startsWith("/ghosttrading");
     }
+    // For other links, check if the pathname starts with the href.
+    // This correctly handles nested routes like /trading/dashboard.
     return pathname.startsWith(href);
   };
 

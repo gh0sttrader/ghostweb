@@ -21,7 +21,7 @@ import { format } from 'date-fns';
 import { ScreenerFilterModal } from '@/components/ScreenerFilterModal';
 import type { ActiveScreenerFilters } from '@/components/ScreenerFilterModal';
 import { Badge } from '@/components/ui/badge';
-import { dummyNewsData } from '@/app/news/dummy-data';
+import { dummyNewsData } from '@/app/(app)/news/dummy-data';
 import { NewsArticleModal } from '@/components/NewsArticleModal';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -51,7 +51,7 @@ const allColumnsConfig: ColumnConfig<Stock>[] = [
     { key: 'shortFloat', label: 'Short Float', defaultVisible: false, isDraggable: true, align: 'right', format: (val) => `${formatDecimal(val, 1)}%`, description: 'The percentage of a company\'s float that is shorted.' },
 ];
 
-function DashboardPageContent() {
+function ScreenerPageContent() {
   const searchParams = useSearchParams();
   const { toast } = useToast();
 
@@ -379,10 +379,10 @@ function DashboardPageContent() {
   );
 }
 
-export default function DashboardPage() {
+export default function ScreenerPage() {
   return (
-    <Suspense fallback={<div>Loading Dashboard...</div>}>
-      <DashboardPageContent />
+    <Suspense fallback={<div>Loading Screener...</div>}>
+      <ScreenerPageContent />
     </Suspense>
   );
 }
