@@ -8,6 +8,7 @@ import { PlatformPreviewPlaceholder } from '@/components/PlatformPreviewPlacehol
 import { NavBar } from '@/components/NavBar';
 import { ReviewsModal } from '@/components/ReviewsModal';
 import Image from 'next/image';
+import { Github, Twitter, Linkedin } from 'lucide-react';
 
 export default function LandingPage() {
   const [isReviewsOpen, setIsReviewsOpen] = useState(false);
@@ -50,6 +51,24 @@ export default function LandingPage() {
         </div>
         </div>
 
+        <footer className="w-full mt-32 py-12">
+            <div className="container mx-auto px-4 text-center">
+                <div className="flex justify-center space-x-6">
+                    <Link href="#" className="text-muted-foreground hover:text-foreground">
+                        <Twitter className="h-6 w-6" />
+                    </Link>
+                    <Link href="#" className="text-muted-foreground hover:text-foreground">
+                        <Github className="h-6 w-6" />
+                    </Link>
+                    <Link href="#" className="text-muted-foreground hover:text-foreground">
+                        <Linkedin className="h-6 w-6" />
+                    </Link>
+                </div>
+                <p className="text-sm text-muted-foreground mt-6">
+                    © {new Date().getFullYear()} Ghost Trading. All rights reserved.
+                </p>
+            </div>
+        </footer>
       </div>
       <ReviewsModal isOpen={isReviewsOpen} onClose={() => setIsReviewsOpen(false)} />
     </>
