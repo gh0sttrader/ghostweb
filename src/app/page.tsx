@@ -61,7 +61,15 @@ export default function LandingPage() {
           </div>
 
           <div className="w-full md:w-[65%] min-h-[320px] aspect-[16/9] bg-[#181818] rounded-[24px] neon-glow-white flex items-center justify-center p-8 relative overflow-hidden">
-            {/* This is the empty card for a future screenshot */}
+            <Image
+                src="https://firebasestorage.googleapis.com/v0/b/ghost-trading.firebasestorage.app/o/screener.png?alt=media&token=01718b94-92fd-498f-b560-56e82994b1c8"
+                alt="Screener screenshot"
+                layout="fill"
+                objectFit="cover"
+                className="rounded-xl"
+                data-ai-hint="platform screener"
+                priority
+            />
           </div>
         </div>
 
