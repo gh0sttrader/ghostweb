@@ -60,8 +60,9 @@ const featureIcons = {
     nasdaqTotalView: { icon: BookOpenCheck, label: "NASDAQ TotalView", description: "Deepest level of market data is available." },
 }
 
-const iconBaseStyle = "h-7 w-7 flex items-center justify-center rounded-lg bg-[#322047]/90 transition-all duration-200 hover:scale-105 hover:-translate-y-0.5";
+const iconBaseStyle = "h-[26px] w-[26px] flex items-center justify-center rounded-lg bg-[#322047]/90 transition-all duration-200 hover:scale-105 hover:-translate-y-0.5";
 const iconGlowStyle = "shadow-[0_0_12px_2px_rgba(224,214,255,0.2)] hover:shadow-[0_0_24px_6px_rgba(224,214,255,0.25)]";
+
 
 export const OrderCard: React.FC<OrderCardProps> = ({
     selectedStock,
