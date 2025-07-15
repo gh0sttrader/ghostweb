@@ -26,7 +26,10 @@ export default function LandingPage() {
           >
             Ghost Trading
           </h1>
-          <p className="mt-1 text-2xl font-semibold text-center text-neutral-300">
+          <p className="mt-4 text-2xl font-semibold text-center text-neutral-300">
+            Stay in the market when others get spooked.
+          </p>
+          <p className="mt-2 text-xl font-medium text-center text-neutral-400">
             Stay in when others get spooked.
           </p>
         </div>
@@ -46,4 +49,3 @@ export default function LandingPage() {
     </>
   );
 }
-
