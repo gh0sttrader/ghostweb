@@ -30,9 +30,17 @@ export default function LandingPage() {
             Stay in when others get spooked.
           </p>
         </div>
-        <div className="mt-32 w-full flex justify-center">
+        
+        {/* Container for both image previews */}
+        <div className="mt-32 w-full flex flex-col items-center space-y-16">
+          <PlatformPreviewPlaceholder />
+          
+          {/* This is the placeholder for your second image. 
+              You can replace it with a new component or modify PlatformPreviewPlaceholder 
+              to accept a different image URL prop when you're ready. */}
           <PlatformPreviewPlaceholder />
         </div>
+
       </div>
       <ReviewsModal isOpen={isReviewsOpen} onClose={() => setIsReviewsOpen(false)} />
     </>
