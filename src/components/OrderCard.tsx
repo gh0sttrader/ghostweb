@@ -53,11 +53,11 @@ const DetailItem: React.FC<{ label: string; value?: string | number | null; unit
 const formatNumber = (value?: number, decimals = 2) => value?.toLocaleString(undefined, { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
 
 const featureIcons = {
-    overnight: { icon: Timer, label: "Overnight Trading", description: "This security can be traded after market hours.", style: "bg-gradient-to-br from-cyan-400 to-blue-600 shadow-lg shadow-blue-500/30" },
-    fractional: { icon: PieChart, label: "Fractional Shares", description: "You can buy or sell less than one full share.", style: "bg-gradient-to-br from-lime-400 to-green-600 shadow-lg shadow-green-500/30" },
-    shortable: { icon: ArrowDownUp, label: "Shortable", description: "This security can be sold short.", style: "bg-gradient-to-br from-red-500 to-rose-600 shadow-lg shadow-red-500/30" },
-    marginable: { icon: Landmark, label: "Marginable", description: "You can borrow funds to trade this security.", style: "bg-gradient-to-br from-amber-400 to-orange-600 shadow-lg shadow-orange-500/30" },
-    nasdaqTotalView: { icon: BookOpenCheck, label: "NASDAQ TotalView", description: "Deepest level of market data is available.", style: "bg-gradient-to-br from-purple-500 to-fuchsia-600 shadow-lg shadow-fuchsia-500/30" },
+    overnight: { icon: Timer, label: "Overnight Trading", description: "This security can be traded after market hours.", style: "bg-blue-900/80 shadow-md shadow-blue-500/20" },
+    fractional: { icon: PieChart, label: "Fractional Shares", description: "You can buy or sell less than one full share.", style: "bg-green-900/80 shadow-md shadow-green-500/20" },
+    shortable: { icon: ArrowDownUp, label: "Shortable", description: "This security can be sold short.", style: "bg-red-900/80 shadow-md shadow-red-500/20" },
+    marginable: { icon: Landmark, label: "Marginable", description: "You can borrow funds to trade this security.", style: "bg-yellow-900/80 shadow-md shadow-orange-500/20" },
+    nasdaqTotalView: { icon: BookOpenCheck, label: "NASDAQ TotalView", description: "Deepest level of market data is available.", style: "bg-purple-900/80 shadow-md shadow-fuchsia-500/20" },
 }
 
 export const OrderCard: React.FC<OrderCardProps> = ({
@@ -270,7 +270,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({
                         </div>
 
                         {selectedStock.tradingFeatures && (
-                            <div className="flex items-center justify-end gap-1.5 pt-1 -mt-1">
+                            <div className="flex items-center justify-end gap-1 pt-1 -mt-1">
                                 <TooltipProvider>
                                 {Object.entries(selectedStock.tradingFeatures).map(([key, value]) => {
                                     if (!value) return null;
@@ -281,12 +281,12 @@ export const OrderCard: React.FC<OrderCardProps> = ({
                                         <Tooltip key={key}>
                                             <TooltipTrigger asChild>
                                                 <div className={cn(
-                                                    "h-6 w-6 flex items-center justify-center rounded-md transition-all hover:brightness-125",
+                                                    "h-5 w-5 flex items-center justify-center rounded-md transition-all hover:brightness-125",
                                                      style
                                                     )}
                                                 >
                                                     <Icon 
-                                                      className="h-3.5 w-3.5 text-white" 
+                                                      className="h-3 w-3 text-white/90" 
                                                     />
                                                 </div>
                                             </TooltipTrigger>
