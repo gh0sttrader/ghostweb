@@ -35,7 +35,7 @@ export default function LandingPage() {
         </div>
         
         {/* Container for both image previews */}
-        <div className="mt-32 w-full flex flex-col items-center space-y-32">
+        <div className="mt-32 w-full flex flex-col items-center space-y-64">
           <div className="w-full md:w-[65%] min-h-[320px] aspect-[16/9] bg-[#181818] rounded-[24px] neon-glow-white flex items-center justify-center p-8 relative overflow-hidden">
              <Image
                 src="https://firebasestorage.googleapis.com/v0/b/ghost-trading.firebasestorage.app/o/Ghost_Trading.png?alt=media&token=582fe62a-2491-4acb-9fa4-02744abf05d7"
