@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import GhostFloating from '@/components/GhostFloating';
+import { PlatformPreviewPlaceholder } from '@/components/PlatformPreviewPlaceholder';
 
 export default function LandingPage() {
   return (
@@ -22,6 +23,7 @@ export default function LandingPage() {
             Stay in when others get spooked.
           </p>
         </div>
+        <PlatformPreviewPlaceholder />
       </div>
     </>
   );
