@@ -96,7 +96,9 @@ const HomepageNavLinks = () => {
 export function NavBar() {
   const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
   
   const isHomepage = pathname === '/';
 
