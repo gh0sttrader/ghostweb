@@ -34,9 +34,11 @@ const RelativeTime = ({ isoString }: { isoString: string }) => {
 
 interface NewsCardProps {
     className?: string;
+    onSymbolSelect: (symbol: string) => void;
+    selectedSymbol: string | null;
 }
 
-export const NewsCard: React.FC<NewsCardProps> = ({ className }) => {
+export const NewsCard: React.FC<NewsCardProps> = ({ className, onSymbolSelect, selectedSymbol }) => {
     return (
         <div className={cn("h-full flex flex-col", className)}>
             <div className="flex-1 overflow-hidden px-3 pb-3">
@@ -54,6 +56,8 @@ export const NewsCard: React.FC<NewsCardProps> = ({ className }) => {
                                 <TableRow
                                     key={item.id}
                                     className="cursor-pointer"
+                                    onClick={() => onSymbolSelect(item.symbol)}
+                                    data-selected={selectedSymbol === item.symbol}
                                 >
                                     <TableCell className="px-2 py-1.5">
                                         <Badge variant="outline" className="text-xs">{item.symbol}</Badge>

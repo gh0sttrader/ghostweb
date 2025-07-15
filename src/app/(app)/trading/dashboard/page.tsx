@@ -223,10 +223,18 @@ function TradingDashboardPageContent() {
                                 <TabsTrigger value="news">News</TabsTrigger>
                             </TabsList>
                             <TabsContent value="watchlist" className="flex-1 overflow-hidden mt-0 p-0">
-                                <WatchlistCard className="h-full border-0 shadow-none rounded-none bg-transparent" />
+                                <WatchlistCard
+                                  className="h-full border-0 shadow-none rounded-none bg-transparent"
+                                  onSymbolSelect={handleSyncedTickerChange}
+                                  selectedSymbol={syncedTickerSymbol}
+                                />
                             </TabsContent>
                             <TabsContent value="news" className="flex-1 overflow-hidden mt-0 p-0">
-                                <NewsCard className="h-full border-0 shadow-none rounded-none bg-transparent" />
+                                <NewsCard
+                                  className="h-full border-0 shadow-none rounded-none bg-transparent"
+                                  onSymbolSelect={handleSyncedTickerChange}
+                                  selectedSymbol={syncedTickerSymbol}
+                                />
                             </TabsContent>
                         </Tabs>
                     </Card>

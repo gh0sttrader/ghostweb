@@ -15,6 +15,8 @@ import { initialMockStocks } from "@/app/(app)/trading/dashboard/mock-data";
 
 interface WatchlistCardProps {
     className?: string;
+    onSymbolSelect: (symbol: string) => void;
+    selectedSymbol: string | null;
 }
 
 const watchlistStocks = initialMockStocks.slice(0, 15);
@@ -30,7 +32,7 @@ const formatShortFloat = (shortFloat?: number) => {
     return `${shortFloat.toFixed(2)}%`;
 }
 
-export const WatchlistCard: React.FC<WatchlistCardProps> = ({ className }) => {
+export const WatchlistCard: React.FC<WatchlistCardProps> = ({ className, onSymbolSelect, selectedSymbol }) => {
     return (
         <div className={cn("h-full flex flex-col", className)}>
             <div className="flex-1 overflow-hidden px-3 pb-3 pt-2">
@@ -50,6 +52,8 @@ export const WatchlistCard: React.FC<WatchlistCardProps> = ({ className }) => {
                                 <TableRow
                                     key={stock.id}
                                     className="cursor-pointer"
+                                    onClick={() => onSymbolSelect(stock.symbol)}
+                                    data-selected={selectedSymbol === stock.symbol}
                                 >
                                     <TableCell className="font-medium text-xs py-1.5 px-2">{stock.symbol}</TableCell>
                                     <TableCell className="text-right text-xs py-1.5 px-2">{`$${stock.price.toFixed(2)}`}</TableCell>
