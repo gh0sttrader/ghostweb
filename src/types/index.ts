@@ -6,6 +6,7 @@ export type TradingFeatures = {
     shortable?: boolean;
     marginable?: boolean;
     nasdaqTotalView?: boolean;
+    optionsAvailable?: boolean;
 };
 
 export type Stock = {
@@ -34,10 +35,14 @@ export type Stock = {
     gapPercent?: number;
     shortFloat?: number;
     instOwn?: number;
+    insiderOwn?: number;
     premarketChange?: number;
     peRatio?: number;
     dividendYield?: number;
     sector?: string;
+    industry?: string;
+    exchange?: 'NASDAQ' | 'NYSE' | 'OTC';
+    macd?: 'Bullish Crossover' | 'Bearish Crossover' | 'Neutral';
     earningsDate?: string;
     open?: number;
     high?: number;

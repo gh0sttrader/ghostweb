@@ -181,7 +181,7 @@ function ScreenerPageContent() {
       }
     }
     
-    // 2. Apply advanced custom filters
+    // 2. Apply advanced custom filters from the modal
     const customFilterEntries = Object.entries(activeFilters).filter(([, filterValue]) => filterValue.active);
 
     if (customFilterEntries.length > 0) {
@@ -190,14 +190,19 @@ function ScreenerPageContent() {
             const stockValue = stock[key as keyof Stock] as any;
             if (stockValue === undefined || stockValue === null) return false;
 
-            if (typeof stockValue === 'boolean' && typeof filter.value === 'boolean') {
-                return stockValue === filter.value;
-            }
+            // Handle range filters (min/max)
+            if (filter.min !== undefined && stockValue < filter.min) return false;
+            if (filter.max !== undefined && stockValue < filter.max) return false;
             
-            if (filter.min && stockValue < filter.min) return false;
-            if (filter.max && stockValue > filter.max) return false;
-            if (filter.value && typeof filter.value === 'string' && typeof stockValue === 'string' && !stockValue.includes(filter.value)) return false;
-            if (filter.value && Array.isArray(filter.value) && typeof stockValue === 'string' && !filter.value.includes(stockValue)) return false;
+            // Handle boolean toggle filters
+            if (typeof filter.value === 'boolean') {
+                 if (!stock.tradingFeatures || stock.tradingFeatures[key as keyof typeof stock.tradingFeatures] === undefined) return false;
+                 return stock.tradingFeatures[key as keyof typeof stock.tradingFeatures] === filter.value;
+            }
+
+            // Handle select/multi-select filters
+            if (typeof filter.value === 'string' && filter.value !== 'Any' && stockValue !== filter.value) return false;
+            if (Array.isArray(filter.value) && filter.value.length > 0 && !filter.value.includes(stockValue)) return false;
 
             return true;
         });
