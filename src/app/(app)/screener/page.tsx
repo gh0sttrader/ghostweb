@@ -111,7 +111,7 @@ function ScreenerPageContent() {
   }, []);
 
   const activeRules = useMemo(() => rules.filter(rule => rule.isActive), [rules]);
-  const activeFilterCount = Object.values(activeFilters).filter(f => f.active).length;
+  const activeFilterCount = Object.values(activeFilters).filter(f => f && f.active).length;
   
   const handleShowNewsForStock = (stock: Stock) => {
     const matchingNews = dummyNewsData.filter(news => {
@@ -182,21 +182,23 @@ function ScreenerPageContent() {
     }
     
     // 2. Apply advanced custom filters from the modal
-    const customFilterEntries = Object.entries(activeFilters).filter(([, filterValue]) => filterValue.active);
+    const customFilterEntries = Object.entries(activeFilters).filter(([, filterValue]) => filterValue && filterValue.active);
 
     if (customFilterEntries.length > 0) {
       processedStocks = processedStocks.filter(stock => {
         return customFilterEntries.every(([key, filter]) => {
+            if (!filter) return true;
             const stockValue = stock[key as keyof Stock] as any;
             if (stockValue === undefined || stockValue === null) return false;
 
             // Handle range filters (min/max)
-            const min = filter.min;
-            const max = filter.max;
+            const min = filter.min ? parseFloat(filter.min) : undefined;
+            const max = filter.max ? parseFloat(filter.max) : undefined;
+            
             let checkVal = stockValue;
 
             if (key === 'marketCap') checkVal = stockValue / 1e9;
-            if (key === 'volume' || key === 'floatSize') checkVal = stockValue / 1e6;
+            if (key === 'volume' || key === 'floatSize') checkVal = stockValue;
             
             if (min !== undefined && checkVal < min) return false;
             if (max !== undefined && checkVal > max) return false;

@@ -9,8 +9,6 @@ export type TradingFeatures = {
     nasdaqTotalView?: boolean;
     optionsAvailable?: boolean;
     preAfterMarket?: boolean;
-    commissionFree?: boolean;
-    drip?: boolean;
 };
 
 export type Stock = {
@@ -65,14 +63,12 @@ export type Stock = {
     tradingFeatures?: TradingFeatures;
 
     // Expanded for screener
-    ipoDate?: string | DateRange;
     country?: string;
     currency?: 'USD' | 'CAD' | 'EUR' | 'GBP' | 'JPY';
     pegRatio?: number;
     movingAverageCrossover?: 'Golden Cross' | 'Death Cross' | 'None';
     volatility?: number;
     chartPattern?: 'Breakout' | 'Reversal' | 'Momentum' | 'Continuation';
-    esgScore?: number;
 };
 
 export type AlertRule = {

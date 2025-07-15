@@ -2,11 +2,10 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -21,8 +20,8 @@ import { format } from 'date-fns';
 
 export type ActiveFilterValue = {
     active: boolean;
-    min?: number;
-    max?: number;
+    min?: string;
+    max?: string;
     value?: string | number | boolean | string[] | DateRange;
 };
 
@@ -36,7 +35,6 @@ export type ActiveScreenerFilters = {
     shortFloat?: ActiveFilterValue;
     dividendYield?: ActiveFilterValue;
     peRatio?: ActiveFilterValue;
-    // Expanded filters
     exchange?: ActiveFilterValue;
     floatSize?: ActiveFilterValue;
     high52?: ActiveFilterValue;
@@ -46,7 +44,6 @@ export type ActiveScreenerFilters = {
     instOwn?: ActiveFilterValue;
     insiderOwn?: ActiveFilterValue;
     industry?: ActiveFilterValue;
-    ipoDate?: ActiveFilterValue;
     country?: ActiveFilterValue;
     currency?: ActiveFilterValue;
     pegRatio?: ActiveFilterValue;
@@ -54,40 +51,37 @@ export type ActiveScreenerFilters = {
     movingAverageCrossover?: ActiveFilterValue;
     volatility?: ActiveFilterValue;
     chartPattern?: ActiveFilterValue;
-    esgScore?: ActiveFilterValue;
 } & {
     [K in keyof TradingFeatures]?: ActiveFilterValue;
 };
 
 
 const initialFilters: ActiveScreenerFilters = {
-    price: { active: false, min: 0, max: 5000 },
-    marketCap: { active: false, min: 0, max: 2000 }, // in Billions
-    volume: { active: false, min: 100000, max: 500000000 },
-    changePercent: { active: false, min: -50, max: 50 },
+    price: { active: false, min: '', max: '' },
+    marketCap: { active: false, min: '', max: '' }, // in Billions
+    volume: { active: false, min: '', max: '' },
+    changePercent: { active: false, min: '', max: '' },
     sector: { active: false, value: "Any" },
     analystRating: { active: false, value: "Any" },
-    shortFloat: { active: false, min: 0, max: 100 },
-    dividendYield: { active: false, min: 0, max: 15 },
-    peRatio: { active: false, min: 0, max: 200 },
+    shortFloat: { active: false, min: '', max: '' },
+    dividendYield: { active: false, min: '', max: '' },
+    peRatio: { active: false, min: '', max: '' },
     exchange: { active: false, value: "Any" },
-    floatSize: { active: false, min: 0, max: 1000 }, // in Millions
-    high52: { active: false, min: 0, max: 5000 },
-    low52: { active: false, min: 0, max: 5000 },
-    rsi: { active: false, min: 0, max: 100 },
+    floatSize: { active: false, min: '', max: '' }, // in Millions
+    high52: { active: false, min: '', max: '' },
+    low52: { active: false, min: '', max: '' },
+    rsi: { active: false, min: '', max: '' },
     macd: { active: false, value: "Any" },
-    instOwn: { active: false, min: 0, max: 100 },
-    insiderOwn: { active: false, min: 0, max: 100 },
+    instOwn: { active: false, min: '', max: '' },
+    insiderOwn: { active: false, min: '', max: '' },
     industry: { active: false, value: "Any" },
-    ipoDate: { active: false, value: undefined },
     country: { active: false, value: 'Any' },
     currency: { active: false, value: 'USD' },
-    pegRatio: { active: false, min: 0, max: 5 },
-    beta: { active: false, min: 0, max: 3 },
+    pegRatio: { active: false, min: '', max: '' },
+    beta: { active: false, min: '', max: '' },
     movingAverageCrossover: { active: false, value: 'Any' },
-    volatility: { active: false, min: 0, max: 10 },
+    volatility: { active: false, min: '', max: '' },
     chartPattern: { active: false, value: 'Any' },
-    esgScore: { active: false, min: 0, max: 100 },
     marginable: { active: false, value: false },
     shortable: { active: false, value: false },
     overnight: { active: false, value: false },
@@ -95,15 +89,6 @@ const initialFilters: ActiveScreenerFilters = {
     nasdaqTotalView: { active: false, value: false },
     optionsAvailable: { active: false, value: false },
     preAfterMarket: { active: false, value: false },
-    commissionFree: { active: false, value: true },
-    drip: { active: false, value: false },
-};
-
-const formatNumber = (value: number) => {
-    if (value >= 1_000_000_000) return `${(value / 1_000_000_000).toFixed(1)}B`;
-    if (value >= 1_000_000) return `${(value / 1_000_000).toFixed(1)}M`;
-    if (value >= 1_000) return `${(value / 1_000).toFixed(1)}K`;
-    return value.toString();
 };
 
 const sectors = ["Any", "Technology", "Healthcare", "Financial Services", "Consumer Discretionary", "Communication Services", "Industrials", "Consumer Staples", "Energy", "Utilities", "Real Estate", "Materials"];
@@ -140,17 +125,13 @@ export function ScreenerFilterModal({ isOpen, onClose, activeFilters: initialAct
                 [field]: value,
                 active: true,
             };
+            if (field === 'min' || field === 'max') {
+                newFilterState.active = !!(newFilterState.min || newFilterState.max);
+            }
             return { ...prev, [key]: newFilterState };
         });
     };
     
-    const handleSliderChange = (key: keyof ActiveScreenerFilters, value: [number, number]) => {
-        setFilters(prev => ({
-            ...prev,
-            [key]: { ...prev[key], min: value[0], max: value[1], active: true },
-        }));
-    };
-
     const handleSwitchChange = (key: keyof ActiveScreenerFilters, checked: boolean) => {
         setFilters(prev => ({
             ...prev,
@@ -185,22 +166,30 @@ export function ScreenerFilterModal({ isOpen, onClose, activeFilters: initialAct
     const RangeFilter: React.FC<{
         label: string;
         filterKey: keyof ActiveScreenerFilters;
-        min: number; max: number; step: number;
-        formatVal: (val: number) => string | number;
-    }> = ({ label, filterKey, min, max, step, formatVal }) => {
-        const filterState = filters[filterKey] as Required<ActiveFilterValue>;
+        minPlaceholder?: string;
+        maxPlaceholder?: string;
+    }> = ({ label, filterKey, minPlaceholder = "Min", maxPlaceholder = "Max" }) => {
+        const filterState = filters[filterKey] as ActiveFilterValue;
         return (
             <div>
                 <Label className="text-sm font-medium">{label}</Label>
-                <div className="flex justify-between text-xs text-muted-foreground mt-1">
-                    <span>{formatVal(filterState.min ?? min)}</span>
-                    <span>{formatVal(filterState.max ?? max)}</span>
+                <div className="flex justify-between items-center gap-2 mt-1">
+                    <Input
+                        type="number"
+                        placeholder={minPlaceholder}
+                        value={filterState.min ?? ''}
+                        onChange={(e) => handleFilterChange(filterKey, 'min', e.target.value)}
+                        className="bg-neutral-900 border-neutral-700"
+                    />
+                    <span className="text-muted-foreground">-</span>
+                     <Input
+                        type="number"
+                        placeholder={maxPlaceholder}
+                        value={filterState.max ?? ''}
+                        onChange={(e) => handleFilterChange(filterKey, 'max', e.target.value)}
+                        className="bg-neutral-900 border-neutral-700"
+                    />
                 </div>
-                <Slider
-                    value={[filterState.min ?? min, filterState.max ?? max]}
-                    onValueChange={(val) => handleSliderChange(filterKey, val)}
-                    min={min} max={max} step={step}
-                />
             </div>
         );
     };
@@ -216,17 +205,17 @@ export function ScreenerFilterModal({ isOpen, onClose, activeFilters: initialAct
                   }}
                 >
                     <DialogHeader className="p-6 border-b border-white/10">
-                        <DialogTitle className="text-2xl font-bold">Advanced Screener Filters</DialogTitle>
+                        <DialogTitle className="text-2xl font-bold">Filters</DialogTitle>
                     </DialogHeader>
 
                     <ScrollArea className="h-[60vh]">
                         <div className="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                             
                             <FilterSectionCard title="Market">
-                                <RangeFilter label="Price" filterKey="price" min={0} max={5000} step={1} formatVal={(v) => `$${v}`} />
-                                <RangeFilter label="Market Cap ($B)" filterKey="marketCap" min={0} max={2000} step={10} formatVal={(v) => `$${v}B`} />
-                                <RangeFilter label="Volume (M)" filterKey="volume" min={0} max={500} step={1} formatVal={(v) => `${v}M`} />
-                                <RangeFilter label="Float Size (M)" filterKey="floatSize" min={0} max={1000} step={10} formatVal={(v) => `${v}M`} />
+                                <RangeFilter label="Price" filterKey="price" />
+                                <RangeFilter label="Market Cap ($B)" filterKey="marketCap" />
+                                <RangeFilter label="Volume (M)" filterKey="volume" />
+                                <RangeFilter label="Float Size (M)" filterKey="floatSize" />
                                 <div>
                                     <Label className="text-sm font-medium">Exchange</Label>
                                     <Select value={filters.exchange?.value as string} onValueChange={(v) => handleSelectChange('exchange', v)}>
@@ -241,46 +230,15 @@ export function ScreenerFilterModal({ isOpen, onClose, activeFilters: initialAct
                                         <SelectContent>{countries.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent>
                                     </Select>
                                 </div>
-                                <div>
-                                    <Label className="text-sm font-medium">IPO Date</Label>
-                                    <Popover>
-                                        <PopoverTrigger asChild>
-                                        <Button
-                                            variant={"outline"}
-                                            className={cn("w-full justify-start text-left font-normal", !filters.ipoDate?.value && "text-muted-foreground")}
-                                        >
-                                            {filters.ipoDate?.value && (filters.ipoDate.value as DateRange).from ? (
-                                                (filters.ipoDate.value as DateRange).to ? (
-                                                    <>{format((filters.ipoDate.value as DateRange).from!, "LLL dd, y")} - {format((filters.ipoDate.value as DateRange).to!, "LLL dd, y")}</>
-                                                ) : (
-                                                    format((filters.ipoDate.value as DateRange).from!, "LLL dd, y")
-                                                )
-                                                ) : (
-                                                <span>Pick a date range</span>
-                                            )}
-                                        </Button>
-                                        </PopoverTrigger>
-                                        <PopoverContent className="w-auto p-0" align="start">
-                                            <Calendar
-                                                initialFocus
-                                                mode="range"
-                                                defaultMonth={(filters.ipoDate?.value as DateRange)?.from}
-                                                selected={filters.ipoDate?.value as DateRange}
-                                                onSelect={(date) => handleFilterChange('ipoDate', 'value', date)}
-                                                numberOfMonths={2}
-                                            />
-                                        </PopoverContent>
-                                    </Popover>
-                                </div>
                             </FilterSectionCard>
 
                             <FilterSectionCard title="Valuation & Technicals">
-                                <RangeFilter label="% Change" filterKey="changePercent" min={-50} max={50} step={1} formatVal={(v) => `${v}%`} />
-                                <RangeFilter label="P/E Ratio" filterKey="peRatio" min={0} max={200} step={1} formatVal={(v) => v} />
-                                <RangeFilter label="Dividend Yield (%)" filterKey="dividendYield" min={0} max={20} step={0.5} formatVal={(v) => `${v}%`} />
-                                <RangeFilter label="RSI" filterKey="rsi" min={0} max={100} step={1} formatVal={(v) => v} />
-                                <RangeFilter label="PEG Ratio" filterKey="pegRatio" min={0} max={5} step={0.1} formatVal={(v) => v.toFixed(1)} />
-                                <RangeFilter label="Beta" filterKey="beta" min={0} max={3} step={0.1} formatVal={(v) => v.toFixed(1)} />
+                                <RangeFilter label="% Change" filterKey="changePercent" />
+                                <RangeFilter label="P/E Ratio" filterKey="peRatio" />
+                                <RangeFilter label="Dividend Yield (%)" filterKey="dividendYield" />
+                                <RangeFilter label="RSI" filterKey="rsi" />
+                                <RangeFilter label="PEG Ratio" filterKey="pegRatio" />
+                                <RangeFilter label="Beta" filterKey="beta" />
                                 <div>
                                     <Label className="text-sm font-medium">MACD</Label>
                                     <Select value={filters.macd?.value as string} onValueChange={(v) => handleSelectChange('macd', v)}>
@@ -305,9 +263,9 @@ export function ScreenerFilterModal({ isOpen, onClose, activeFilters: initialAct
                             </FilterSectionCard>
                             
                              <FilterSectionCard title="Ownership & Vitals">
-                                <RangeFilter label="Short Interest (%)" filterKey="shortFloat" min={0} max={100} step={1} formatVal={(v) => `${v}%`} />
-                                <RangeFilter label="Institutional Own (%)" filterKey="instOwn" min={0} max={100} step={1} formatVal={(v) => `${v}%`} />
-                                <RangeFilter label="Insider Own (%)" filterKey="insiderOwn" min={0} max={100} step={1} formatVal={(v) => `${v}%`} />
+                                <RangeFilter label="Short Interest (%)" filterKey="shortFloat" />
+                                <RangeFilter label="Institutional Own (%)" filterKey="instOwn" />
+                                <RangeFilter label="Insider Own (%)" filterKey="insiderOwn" />
                                 <div>
                                     <Label className="text-sm font-medium">Analyst Rating</Label>
                                     <Select value={filters.analystRating?.value as string} onValueChange={(v) => handleSelectChange('analystRating', v)}>
@@ -329,7 +287,6 @@ export function ScreenerFilterModal({ isOpen, onClose, activeFilters: initialAct
                                         <SelectContent>{industries.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent>
                                     </Select>
                                 </div>
-                                 <RangeFilter label="ESG Score" filterKey="esgScore" min={0} max={100} step={1} formatVal={(v) => v} />
                             </FilterSectionCard>
 
                             <FilterSectionCard title="Trading Features">
@@ -342,8 +299,6 @@ export function ScreenerFilterModal({ isOpen, onClose, activeFilters: initialAct
                                     {key: 'nasdaqTotalView', label: 'NASDAQ TotalView'},
                                     {key: 'optionsAvailable', label: 'Options Trading'},
                                     {key: 'preAfterMarket', label: 'Pre/After-Market'},
-                                    {key: 'commissionFree', label: 'Commission-Free'},
-                                    {key: 'drip', label: 'DRIP Available'},
                                 ].map(({key, label}) => (
                                     <div key={key} className="flex items-center justify-between">
                                         <Label htmlFor={key} className="text-sm font-medium">{label}</Label>
