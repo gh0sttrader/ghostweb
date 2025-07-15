@@ -23,7 +23,7 @@ const PositionRow = ({ position, onClose }: { position: OpenPosition; onClose: (
 
     const getSideBadgeClass = (side: OpenPosition['side']) => {
         switch(side) {
-            case 'Buy': return 'bg-[hsl(var(--confirm-green))] text-[hsl(var(--confirm-green-foreground))] hover:bg-[hsl(var(--confirm-green))]/90';
+            case 'Long': return 'bg-[hsl(var(--confirm-green))] text-[hsl(var(--confirm-green-foreground))] hover:bg-[hsl(var(--confirm-green))]/90';
             case 'Sell': return 'bg-destructive text-destructive-foreground hover:bg-destructive/90';
             case 'Short': return 'bg-yellow-500 text-yellow-950 hover:bg-yellow-500/90';
             default: return 'bg-secondary';

@@ -147,7 +147,7 @@ function TradingDashboardPageContent() {
             shares: tradeDetails.quantity,
             origin: tradeDetails.tradeModeOrigin || 'manual',
             accountId: tradeDetails.accountId || selectedAccountId,
-            side: tradeDetails.action,
+            side: tradeDetails.action === 'Buy' ? 'Long' : 'Short',
         });
     }
   };
