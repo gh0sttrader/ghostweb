@@ -26,7 +26,7 @@ export default function LandingPage() {
                   lineHeight: 1,
                 }}
               >
-                <span>GHOST</span><br /><span>TRADING</span>
+                GHOST<br />TRADING
               </h1>
           </div>
           <p className="mt-2 text-xl font-medium text-center text-neutral-400">
@@ -35,7 +35,7 @@ export default function LandingPage() {
         </div>
         
         {/* Container for both image previews */}
-        <div className="mt-32 w-full flex flex-col items-center space-y-64">
+        <div className="mt-32 w-full flex flex-col items-center space-y-32">
           <div className="w-full md:w-[65%] min-h-[320px] aspect-[16/9] bg-[#181818] rounded-[24px] neon-glow-white flex items-center justify-center p-8 relative overflow-hidden">
              <Image
                 src="https://firebasestorage.googleapis.com/v0/b/ghost-trading.firebasestorage.app/o/Ghost_Trading.png?alt=media&token=582fe62a-2491-4acb-9fa4-02744abf05d7"
@@ -58,7 +58,11 @@ export default function LandingPage() {
                 data-ai-hint="platform mobile"
                 priority
             />
-        </div>
+          </div>
+
+          <div className="w-full md:w-[65%] min-h-[320px] aspect-[16/9] bg-[#181818] rounded-[24px] neon-glow-white flex items-center justify-center p-8 relative overflow-hidden">
+            {/* This is the empty card for a future screenshot */}
+          </div>
         </div>
 
         <footer className="w-full mt-32 py-12">
