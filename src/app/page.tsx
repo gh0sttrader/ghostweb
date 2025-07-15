@@ -1,12 +1,27 @@
 "use client";
 
-import { redirect } from 'next/navigation';
+import Link from 'next/link';
 
 export default function LandingPage() {
-  // Redirect to the new default page for the trading terminal
-  redirect('/trading/dashboard');
-  
-  // The content below is not rendered due to the redirect.
-  // It is safe to remove or keep for future reference.
-  return null;
+  return (
+    <div className="flex flex-col items-center justify-center min-h-screen bg-black text-white p-4">
+      <div className="text-center">
+        <h1 
+          className="font-extrabold font-headline uppercase text-white"
+          style={{ 
+            fontSize: 'clamp(3rem, 12vw, 9rem)',
+            textShadow: '0 0 15px rgba(255, 255, 255, 0.2)' 
+          }}
+        >
+          ghost trading
+        </h1>
+        <p 
+          className="text-[#aaa] font-semibold mt-4"
+          style={{ fontSize: 'clamp(1.25rem, 3vw, 1.75rem)' }}
+        >
+          Trade. Analyze. Repeat.
+        </p>
+      </div>
+    </div>
+  );
 }
