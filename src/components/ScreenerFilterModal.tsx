@@ -217,9 +217,6 @@ export function ScreenerFilterModal({ isOpen, onClose, activeFilters: initialAct
                 >
                     <DialogHeader className="p-6 border-b border-white/10">
                         <DialogTitle className="text-2xl font-bold">Advanced Screener Filters</DialogTitle>
-                        <DialogDescription>
-                            Refine your search with powerful market, fundamental, and technical criteria.
-                        </DialogDescription>
                     </DialogHeader>
 
                     <ScrollArea className="h-[60vh]">
