@@ -2,8 +2,9 @@
 "use client";
 
 import React from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogOverlay, DialogPortal } from '@/components/ui/dialog';
 import { AnimatePresence, motion } from 'framer-motion';
+import { cn } from '@/lib/utils';
 
 interface Review {
     name: string;
@@ -55,24 +56,23 @@ export function ReviewsModal({ isOpen, onClose }: ReviewsModalProps) {
         <AnimatePresence>
             {isOpen && (
                 <Dialog open={isOpen} onOpenChange={onClose}>
-                    <DialogContent
-                        className="bg-transparent border-white/10 p-8 sm:p-12 rounded-3xl max-w-4xl w-full"
-                        style={{
-                            backdropFilter: 'blur(16px)',
-                            WebkitBackdropFilter: 'blur(16px)',
-                        }}
-                    >
-                        <DialogHeader>
-                            <DialogTitle className="text-center text-4xl font-bold mb-8">
-                                What People Are Saying
-                            </DialogTitle>
-                        </DialogHeader>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10">
-                           {reviews.map(review => (
-                               <ReviewCard key={review.name} review={review} />
-                           ))}
-                        </div>
-                    </DialogContent>
+                    <DialogPortal>
+                         <DialogOverlay className="bg-transparent" />
+                         <DialogContent
+                            className="bg-transparent border-white/10 p-8 sm:p-12 rounded-3xl max-w-4xl w-full"
+                         >
+                            <DialogHeader>
+                                <DialogTitle className="text-center text-4xl font-bold mb-8">
+                                    What People Are Saying
+                                </DialogTitle>
+                            </DialogHeader>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10">
+                               {reviews.map(review => (
+                                   <ReviewCard key={review.name} review={review} />
+                               ))}
+                            </div>
+                        </DialogContent>
+                    </DialogPortal>
                 </Dialog>
             )}
         </AnimatePresence>
