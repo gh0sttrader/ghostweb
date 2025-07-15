@@ -5,7 +5,7 @@ import Link from 'next/link';
 
 export default function LandingPage() {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-black text-white p-4">
+    <div className="flex flex-col items-center justify-start min-h-screen bg-black text-white p-4 pt-48">
       <div className="text-center">
         <h1 
           className="font-extrabold font-headline uppercase text-white"
