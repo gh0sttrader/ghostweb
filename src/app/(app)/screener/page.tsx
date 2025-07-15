@@ -191,8 +191,15 @@ function ScreenerPageContent() {
             if (stockValue === undefined || stockValue === null) return false;
 
             // Handle range filters (min/max)
-            if (filter.min !== undefined && stockValue < filter.min) return false;
-            if (filter.max !== undefined && stockValue < filter.max) return false;
+            const min = filter.min;
+            const max = filter.max;
+            let checkVal = stockValue;
+
+            if (key === 'marketCap') checkVal = stockValue / 1e9;
+            if (key === 'volume' || key === 'floatSize') checkVal = stockValue / 1e6;
+            
+            if (min !== undefined && checkVal < min) return false;
+            if (max !== undefined && checkVal > max) return false;
             
             // Handle boolean toggle filters
             if (typeof filter.value === 'boolean') {
@@ -201,7 +208,7 @@ function ScreenerPageContent() {
             }
 
             // Handle select/multi-select filters
-            if (typeof filter.value === 'string' && filter.value !== 'Any' && stockValue !== filter.value) return false;
+            if (typeof filter.value === 'string' && filter.value !== "Any" && stockValue !== filter.value) return false;
             if (Array.isArray(filter.value) && filter.value.length > 0 && !filter.value.includes(stockValue)) return false;
 
             return true;

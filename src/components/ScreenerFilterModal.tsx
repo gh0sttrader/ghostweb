@@ -14,12 +14,16 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { X } from 'lucide-react';
 import type { TradingFeatures } from '@/types';
 import { cn } from '@/lib/utils';
+import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
+import { Calendar } from '@/components/ui/calendar';
+import type { DateRange } from 'react-day-picker';
+import { format } from 'date-fns';
 
 export type ActiveFilterValue = {
     active: boolean;
     min?: number;
     max?: number;
-    value?: string | number | boolean | string[];
+    value?: string | number | boolean | string[] | DateRange;
 };
 
 export type ActiveScreenerFilters = {
@@ -32,7 +36,7 @@ export type ActiveScreenerFilters = {
     shortFloat?: ActiveFilterValue;
     dividendYield?: ActiveFilterValue;
     peRatio?: ActiveFilterValue;
-    // Add new filters
+    // Expanded filters
     exchange?: ActiveFilterValue;
     floatSize?: ActiveFilterValue;
     high52?: ActiveFilterValue;
@@ -42,7 +46,15 @@ export type ActiveScreenerFilters = {
     instOwn?: ActiveFilterValue;
     insiderOwn?: ActiveFilterValue;
     industry?: ActiveFilterValue;
-    optionsAvailable?: ActiveFilterValue;
+    ipoDate?: ActiveFilterValue;
+    country?: ActiveFilterValue;
+    currency?: ActiveFilterValue;
+    pegRatio?: ActiveFilterValue;
+    beta?: ActiveFilterValue;
+    movingAverageCrossover?: ActiveFilterValue;
+    volatility?: ActiveFilterValue;
+    chartPattern?: ActiveFilterValue;
+    esgScore?: ActiveFilterValue;
 } & {
     [K in keyof TradingFeatures]?: ActiveFilterValue;
 };
@@ -67,12 +79,24 @@ const initialFilters: ActiveScreenerFilters = {
     instOwn: { active: false, min: 0, max: 100 },
     insiderOwn: { active: false, min: 0, max: 100 },
     industry: { active: false, value: "Any" },
+    ipoDate: { active: false, value: undefined },
+    country: { active: false, value: 'Any' },
+    currency: { active: false, value: 'USD' },
+    pegRatio: { active: false, min: 0, max: 5 },
+    beta: { active: false, min: 0, max: 3 },
+    movingAverageCrossover: { active: false, value: 'Any' },
+    volatility: { active: false, min: 0, max: 10 },
+    chartPattern: { active: false, value: 'Any' },
+    esgScore: { active: false, min: 0, max: 100 },
     marginable: { active: false, value: false },
     shortable: { active: false, value: false },
     overnight: { active: false, value: false },
     fractional: { active: false, value: false },
     nasdaqTotalView: { active: false, value: false },
     optionsAvailable: { active: false, value: false },
+    preAfterMarket: { active: false, value: false },
+    commissionFree: { active: false, value: true },
+    drip: { active: false, value: false },
 };
 
 const formatNumber = (value: number) => {
@@ -84,9 +108,13 @@ const formatNumber = (value: number) => {
 
 const sectors = ["Any", "Technology", "Healthcare", "Financial Services", "Consumer Discretionary", "Communication Services", "Industrials", "Consumer Staples", "Energy", "Utilities", "Real Estate", "Materials"];
 const industries = ["Any", "Software", "Biotechnology", "Banks", "Automobiles", "Semiconductors", "Retail", "Media"];
-const exchanges = ["Any", "NASDAQ", "NYSE", "OTC"];
+const exchanges = ["Any", "NASDAQ", "NYSE", "AMEX", "OTC"];
 const ratings = ["Any", "Strong Buy", "Buy", "Hold", "Sell", "Strong Sell"];
 const macdOptions = ["Any", "Bullish Crossover", "Bearish Crossover", "Neutral"];
+const countries = ["Any", "USA", "Canada", "UK", "Germany", "Japan", "China"];
+const currencies = ["USD", "CAD", "EUR", "GBP", "JPY"];
+const maCrossovers = ["Any", "Golden Cross", "Death Cross"];
+const chartPatterns = ["Any", "Breakout", "Reversal", "Momentum", "Continuation"];
 
 interface ScreenerFilterModalProps {
     isOpen: boolean;
@@ -172,7 +200,6 @@ export function ScreenerFilterModal({ isOpen, onClose, activeFilters: initialAct
                     value={[filterState.min ?? min, filterState.max ?? max]}
                     onValueChange={(val) => handleSliderChange(filterKey, val)}
                     min={min} max={max} step={step}
-                    className="[&>span:last-child]:bg-foreground [&>div>span]:bg-foreground"
                 />
             </div>
         );
@@ -180,9 +207,9 @@ export function ScreenerFilterModal({ isOpen, onClose, activeFilters: initialAct
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="max-w-6xl w-full bg-transparent border-0 shadow-none p-0">
+            <DialogContent className="max-w-7xl w-full bg-transparent border-0 shadow-none p-0">
                 <div 
-                  className="relative bg-transparent border border-white/10 rounded-2xl shadow-2xl backdrop-blur-2xl"
+                  className="relative bg-transparent border border-white/10 rounded-2xl shadow-2xl"
                   style={{
                       backdropFilter: 'blur(24px)',
                       WebkitBackdropFilter: 'blur(24px)',
@@ -201,7 +228,7 @@ export function ScreenerFilterModal({ isOpen, onClose, activeFilters: initialAct
                             <FilterSectionCard title="Market">
                                 <RangeFilter label="Price" filterKey="price" min={0} max={5000} step={1} formatVal={(v) => `$${v}`} />
                                 <RangeFilter label="Market Cap ($B)" filterKey="marketCap" min={0} max={2000} step={10} formatVal={(v) => `$${v}B`} />
-                                <RangeFilter label="Volume" filterKey="volume" min={0} max={500000000} step={1000000} formatVal={formatNumber} />
+                                <RangeFilter label="Volume (M)" filterKey="volume" min={0} max={500} step={1} formatVal={(v) => `${v}M`} />
                                 <RangeFilter label="Float Size (M)" filterKey="floatSize" min={0} max={1000} step={10} formatVal={(v) => `${v}M`} />
                                 <div>
                                     <Label className="text-sm font-medium">Exchange</Label>
@@ -210,6 +237,44 @@ export function ScreenerFilterModal({ isOpen, onClose, activeFilters: initialAct
                                         <SelectContent>{exchanges.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent>
                                     </Select>
                                 </div>
+                                <div>
+                                    <Label className="text-sm font-medium">Country</Label>
+                                    <Select value={filters.country?.value as string} onValueChange={(v) => handleSelectChange('country', v)}>
+                                        <SelectTrigger><SelectValue /></SelectTrigger>
+                                        <SelectContent>{countries.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent>
+                                    </Select>
+                                </div>
+                                <div>
+                                    <Label className="text-sm font-medium">IPO Date</Label>
+                                    <Popover>
+                                        <PopoverTrigger asChild>
+                                        <Button
+                                            variant={"outline"}
+                                            className={cn("w-full justify-start text-left font-normal", !filters.ipoDate?.value && "text-muted-foreground")}
+                                        >
+                                            {filters.ipoDate?.value && (filters.ipoDate.value as DateRange).from ? (
+                                                (filters.ipoDate.value as DateRange).to ? (
+                                                    <>{format((filters.ipoDate.value as DateRange).from!, "LLL dd, y")} - {format((filters.ipoDate.value as DateRange).to!, "LLL dd, y")}</>
+                                                ) : (
+                                                    format((filters.ipoDate.value as DateRange).from!, "LLL dd, y")
+                                                )
+                                                ) : (
+                                                <span>Pick a date range</span>
+                                            )}
+                                        </Button>
+                                        </PopoverTrigger>
+                                        <PopoverContent className="w-auto p-0" align="start">
+                                            <Calendar
+                                                initialFocus
+                                                mode="range"
+                                                defaultMonth={(filters.ipoDate?.value as DateRange)?.from}
+                                                selected={filters.ipoDate?.value as DateRange}
+                                                onSelect={(date) => handleFilterChange('ipoDate', 'value', date)}
+                                                numberOfMonths={2}
+                                            />
+                                        </PopoverContent>
+                                    </Popover>
+                                </div>
                             </FilterSectionCard>
 
                             <FilterSectionCard title="Valuation & Technicals">
@@ -217,6 +282,8 @@ export function ScreenerFilterModal({ isOpen, onClose, activeFilters: initialAct
                                 <RangeFilter label="P/E Ratio" filterKey="peRatio" min={0} max={200} step={1} formatVal={(v) => v} />
                                 <RangeFilter label="Dividend Yield (%)" filterKey="dividendYield" min={0} max={20} step={0.5} formatVal={(v) => `${v}%`} />
                                 <RangeFilter label="RSI" filterKey="rsi" min={0} max={100} step={1} formatVal={(v) => v} />
+                                <RangeFilter label="PEG Ratio" filterKey="pegRatio" min={0} max={5} step={0.1} formatVal={(v) => v.toFixed(1)} />
+                                <RangeFilter label="Beta" filterKey="beta" min={0} max={3} step={0.1} formatVal={(v) => v.toFixed(1)} />
                                 <div>
                                     <Label className="text-sm font-medium">MACD</Label>
                                     <Select value={filters.macd?.value as string} onValueChange={(v) => handleSelectChange('macd', v)}>
@@ -224,11 +291,26 @@ export function ScreenerFilterModal({ isOpen, onClose, activeFilters: initialAct
                                         <SelectContent>{macdOptions.map(r => <SelectItem key={r} value={r}>{r}</SelectItem>)}</SelectContent>
                                     </Select>
                                 </div>
+                                 <div>
+                                    <Label className="text-sm font-medium">Moving Average</Label>
+                                    <Select value={filters.movingAverageCrossover?.value as string} onValueChange={(v) => handleSelectChange('movingAverageCrossover', v)}>
+                                        <SelectTrigger><SelectValue /></SelectTrigger>
+                                        <SelectContent>{maCrossovers.map(r => <SelectItem key={r} value={r}>{r}</SelectItem>)}</SelectContent>
+                                    </Select>
+                                </div>
+                                 <div>
+                                    <Label className="text-sm font-medium">Chart Pattern</Label>
+                                    <Select value={filters.chartPattern?.value as string} onValueChange={(v) => handleSelectChange('chartPattern', v)}>
+                                        <SelectTrigger><SelectValue /></SelectTrigger>
+                                        <SelectContent>{chartPatterns.map(r => <SelectItem key={r} value={r}>{r}</SelectItem>)}</SelectContent>
+                                    </Select>
+                                </div>
                             </FilterSectionCard>
                             
                              <FilterSectionCard title="Ownership & Vitals">
                                 <RangeFilter label="Short Interest (%)" filterKey="shortFloat" min={0} max={100} step={1} formatVal={(v) => `${v}%`} />
                                 <RangeFilter label="Institutional Own (%)" filterKey="instOwn" min={0} max={100} step={1} formatVal={(v) => `${v}%`} />
+                                <RangeFilter label="Insider Own (%)" filterKey="insiderOwn" min={0} max={100} step={1} formatVal={(v) => `${v}%`} />
                                 <div>
                                     <Label className="text-sm font-medium">Analyst Rating</Label>
                                     <Select value={filters.analystRating?.value as string} onValueChange={(v) => handleSelectChange('analystRating', v)}>
@@ -250,17 +332,21 @@ export function ScreenerFilterModal({ isOpen, onClose, activeFilters: initialAct
                                         <SelectContent>{industries.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent>
                                     </Select>
                                 </div>
+                                 <RangeFilter label="ESG Score" filterKey="esgScore" min={0} max={100} step={1} formatVal={(v) => v} />
                             </FilterSectionCard>
 
-                            <FilterSectionCard title="Trading Features" className="space-y-4">
+                            <FilterSectionCard title="Trading Features">
                                <div className="flex flex-col space-y-3 pt-2">
                                 {[
                                     {key: 'marginable', label: 'Marginable'},
                                     {key: 'shortable', label: 'Shortable'},
-                                    {key: 'overnight', label: 'Overnight'},
-                                    {key: 'fractional', label: 'Fractional'},
+                                    {key: 'overnight', label: 'Overnight Trading'},
+                                    {key: 'fractional', label: 'Fractional Shares'},
                                     {key: 'nasdaqTotalView', label: 'NASDAQ TotalView'},
                                     {key: 'optionsAvailable', label: 'Options Trading'},
+                                    {key: 'preAfterMarket', label: 'Pre/After-Market'},
+                                    {key: 'commissionFree', label: 'Commission-Free'},
+                                    {key: 'drip', label: 'DRIP Available'},
                                 ].map(({key, label}) => (
                                     <div key={key} className="flex items-center justify-between">
                                         <Label htmlFor={key} className="text-sm font-medium">{label}</Label>
@@ -268,7 +354,6 @@ export function ScreenerFilterModal({ isOpen, onClose, activeFilters: initialAct
                                             id={key}
                                             checked={!!filters[key as keyof ActiveScreenerFilters]?.value} 
                                             onCheckedChange={(c) => handleSwitchChange(key as keyof ActiveScreenerFilters, c)}
-                                            className="data-[state=checked]:bg-foreground data-[state=unchecked]:bg-neutral-700"
                                         />
                                     </div>
                                 ))}

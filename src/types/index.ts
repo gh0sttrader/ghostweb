@@ -1,4 +1,5 @@
 
+import type { DateRange } from "react-day-picker";
 
 export type TradingFeatures = {
     overnight?: boolean;
@@ -7,6 +8,9 @@ export type TradingFeatures = {
     marginable?: boolean;
     nasdaqTotalView?: boolean;
     optionsAvailable?: boolean;
+    preAfterMarket?: boolean;
+    commissionFree?: boolean;
+    drip?: boolean;
 };
 
 export type Stock = {
@@ -41,7 +45,7 @@ export type Stock = {
     dividendYield?: number;
     sector?: string;
     industry?: string;
-    exchange?: 'NASDAQ' | 'NYSE' | 'OTC';
+    exchange?: 'NASDAQ' | 'NYSE' | 'AMEX' | 'OTC';
     macd?: 'Bullish Crossover' | 'Bearish Crossover' | 'Neutral';
     earningsDate?: string;
     open?: number;
@@ -59,6 +63,16 @@ export type Stock = {
     afterHoursChangePercent?: number;
     analystRating?: 'Strong Buy' | 'Buy' | 'Hold' | 'Sell' | 'Strong Sell';
     tradingFeatures?: TradingFeatures;
+
+    // Expanded for screener
+    ipoDate?: string | DateRange;
+    country?: string;
+    currency?: 'USD' | 'CAD' | 'EUR' | 'GBP' | 'JPY';
+    pegRatio?: number;
+    movingAverageCrossover?: 'Golden Cross' | 'Death Cross' | 'None';
+    volatility?: number;
+    chartPattern?: 'Breakout' | 'Reversal' | 'Momentum' | 'Continuation';
+    esgScore?: number;
 };
 
 export type AlertRule = {
