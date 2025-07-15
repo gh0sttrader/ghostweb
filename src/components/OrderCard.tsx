@@ -60,10 +60,6 @@ const featureIcons = {
     nasdaqTotalView: { icon: BookOpenCheck, label: "NASDAQ TotalView", description: "Deepest level of market data is available." },
 }
 
-const iconBaseStyle = "h-[26px] w-[26px] flex items-center justify-center rounded-lg bg-[#322047]/90 transition-all duration-200 hover:scale-105 hover:-translate-y-0.5";
-const iconGlowStyle = "shadow-[0_0_12px_2px_rgba(224,214,255,0.2)] hover:shadow-[0_0_24px_6px_rgba(224,214,255,0.25)]";
-
-
 export const OrderCard: React.FC<OrderCardProps> = ({
     selectedStock,
     initialActionType,
@@ -274,7 +270,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({
                         </div>
 
                         {selectedStock.tradingFeatures && (
-                            <div className="flex items-center justify-end gap-2.5 pt-1 -mt-1">
+                            <div className="flex items-center justify-end gap-2 pt-1 -mt-1">
                                 <TooltipProvider>
                                 {Object.entries(selectedStock.tradingFeatures).map(([key, value]) => {
                                     if (!value) return null;
@@ -284,8 +280,8 @@ export const OrderCard: React.FC<OrderCardProps> = ({
                                     return (
                                         <Tooltip key={key}>
                                             <TooltipTrigger asChild>
-                                                <div className={cn(iconBaseStyle, iconGlowStyle)}>
-                                                    <Icon className="h-4 w-4 text-white/80" />
+                                                <div className="group h-6 w-6 flex items-center justify-center rounded-lg bg-[#18181A] transition-colors duration-150 hover:bg-white">
+                                                    <Icon className="h-4 w-4 text-white transition-colors duration-150 group-hover:text-[#18181A]" strokeWidth={2} />
                                                 </div>
                                             </TooltipTrigger>
                                             <TooltipContent>
