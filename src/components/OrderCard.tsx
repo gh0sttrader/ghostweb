@@ -53,11 +53,11 @@ const DetailItem: React.FC<{ label: string; value?: string | number | null; unit
 const formatNumber = (value?: number, decimals = 2) => value?.toLocaleString(undefined, { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
 
 const featureIcons = {
-    overnight: { icon: Timer, label: "Overnight Trading", description: "This security can be traded after market hours." },
-    fractional: { icon: PieChart, label: "Fractional Shares", description: "You can buy or sell less than one full share." },
-    shortable: { icon: ArrowDownUp, label: "Shortable", description: "This security can be sold short." },
-    marginable: { icon: Landmark, label: "Marginable", description: "You can borrow funds to trade this security." },
-    nasdaqTotalView: { icon: BookOpenCheck, label: "NASDAQ TotalView", description: "Deepest level of market data is available." },
+    overnight: { icon: Timer, label: "Overnight Trading", description: "This security can be traded after market hours.", color: "text-cyan-400" },
+    fractional: { icon: PieChart, label: "Fractional Shares", description: "You can buy or sell less than one full share.", color: "text-lime-400" },
+    shortable: { icon: ArrowDownUp, label: "Shortable", description: "This security can be sold short.", color: "text-red-500" },
+    marginable: { icon: Landmark, label: "Marginable", description: "You can borrow funds to trade this security.", color: "text-yellow-400" },
+    nasdaqTotalView: { icon: BookOpenCheck, label: "NASDAQ TotalView", description: "Deepest level of market data is available.", color: "text-purple-400" },
 }
 
 export const OrderCard: React.FC<OrderCardProps> = ({
@@ -276,11 +276,14 @@ export const OrderCard: React.FC<OrderCardProps> = ({
                                     if (!value) return null;
                                     const feature = featureIcons[key as keyof typeof featureIcons];
                                     if (!feature) return null;
-                                    const { icon: Icon, description } = feature;
+                                    const { icon: Icon, description, color } = feature;
                                     return (
                                         <Tooltip key={key}>
                                             <TooltipTrigger>
-                                                <Icon className="h-4 w-4 text-muted-foreground hover:text-foreground transition-colors" />
+                                                <Icon 
+                                                  className={cn("h-4 w-4 transition-all hover:brightness-125", color)} 
+                                                  style={{filter: `drop-shadow(0 0 2px currentColor)`}}
+                                                />
                                             </TooltipTrigger>
                                             <TooltipContent>
                                                 <p>{description}</p>
