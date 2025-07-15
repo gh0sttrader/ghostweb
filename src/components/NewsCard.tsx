@@ -5,7 +5,7 @@ import React, { useState, useEffect } from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
-import { dummyNewsData } from '@/app/news/dummy-data';
+import { dummyNewsData } from '@/app/(app)/news/dummy-data';
 import { Badge } from '@/components/ui/badge';
 import { formatDistanceToNowStrict } from 'date-fns';
 import { Newspaper } from 'lucide-react';
