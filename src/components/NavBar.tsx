@@ -15,21 +15,13 @@ const GhostIcon = (props: React.SVGProps<SVGSVGElement>) => {
 
   return (
     <svg
+      viewBox="0 0 40 40"
+      fill="white"
       xmlns="http://www.w3.org/2000/svg"
-      width={48}
-      height={48}
-      viewBox="0 0 48 48"
-      fill="none"
+      aria-label="Ghost Trading Logo"
       {...props}
     >
-      <path
-        d="M24 6c-10 0-16 7.5-16 18.5V40c0 1.5 2 1.5 2 0s2-2 4-2 4 2 4 2 2-2 4-2 4 2 4 2 2-2 4-2 4 2 4 2 2 0 2-1.5V24.5C40 13.5 34 6 24 6z"
-        fill="#FFF"
-        stroke="#FFF"
-        strokeWidth={2}
-      />
-      <circle cx={18} cy={20} r={2} fill="#000" />
-      <circle cx={30} cy={20} r={2} fill="#000" />
+      <path d="M20 4C12 4 6 10 6 18v10c0 2 1 3 3 3s2-1 4-1 3 1 5 1 3-1 5-1 3 1 5 1c2 0 3-1 3-3V18c0-8-6-14-14-14zM14 20a2 2 0 110-4 2 2 0 010 4zm12 0a2 2 0 110-4 2 2 0 010 4z" />
     </svg>
   );
 };
@@ -115,7 +107,7 @@ export function NavBar({ onReviewClick }: { onReviewClick?: () => void }) {
       <div className="flex h-16 items-center justify-between px-8 sm:px-12">
         <div className="flex items-center">
           <Link href="/trading" className="flex items-center space-x-2 transition-opacity hover:opacity-80">
-            <GhostIcon />
+            <GhostIcon className="h-8 w-8" />
           </Link>
         </div>
 
