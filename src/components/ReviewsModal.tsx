@@ -56,7 +56,7 @@ export function ReviewsModal({ isOpen, onClose }: ReviewsModalProps) {
             {isOpen && (
                 <Dialog open={isOpen} onOpenChange={onClose}>
                     <DialogContent
-                        className="bg-black/30 border-white/10 p-8 sm:p-12 rounded-3xl max-w-4xl w-full"
+                        className="bg-transparent border-white/10 p-8 sm:p-12 rounded-3xl max-w-4xl w-full"
                         style={{
                             backdropFilter: 'blur(16px)',
                             WebkitBackdropFilter: 'blur(16px)',
