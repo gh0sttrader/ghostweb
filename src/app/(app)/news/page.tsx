@@ -2,11 +2,14 @@
 "use client";
 
 import React, { useState, useEffect, useMemo } from 'react';
-import { Button, buttonVariants } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Search, Loader2, TrendingUp, TrendingDown, Minus, Bell } from 'lucide-react';
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
+import { Search, ChevronDown, Bell, TrendingUp, TrendingDown, Minus, X } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import { dummyNewsData } from './dummy-data';
 import { Badge } from '@/components/ui/badge';
@@ -17,6 +20,7 @@ import { AlertModal } from '@/components/AlertModal';
 import type { Alert, Stock } from '@/types';
 import { initialMockStocks } from '@/app/(app)/trading/dashboard/mock-data';
 import { TradingFeaturesBadges } from '@/components/TradingFeaturesBadges';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 const sentimentConfig = {
     Positive: { 
@@ -35,6 +39,11 @@ const sentimentConfig = {
         className: 'text-muted-foreground' 
     },
 };
+
+const suggestedKeywords = [
+    "Earnings", "Upgrade", "Downgrade", "Lawsuit", "AI", "FDA", 
+    "Partnership", "Buyout", "Innovation", "Guidance"
+];
 
 const RelativeTime = ({ isoString }: { isoString: string }) => {
     const [relativeTime, setRelativeTime] = useState('');
@@ -64,7 +73,9 @@ export default function NewsPage() {
   const { alerts, addAlert, removeAlert } = useAlertsContext();
   const [isAlertModalOpen, setIsAlertModalOpen] = useState(false);
   const [selectedSymbolForAlert, setSelectedSymbolForAlert] = useState<string | null>(null);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [tickerSearchTerm, setTickerSearchTerm] = useState('');
+  const [selectedKeywords, setSelectedKeywords] = useState<string[]>([]);
+  const [isKeywordPopoverOpen, setIsKeywordPopoverOpen] = useState(false);
 
   const handleOpenAlertModal = (symbol: string) => {
     setSelectedSymbolForAlert(symbol);
@@ -85,18 +96,28 @@ export default function NewsPage() {
     return alerts.find(a => a.symbol === symbol);
   };
 
-  const filteredNewsData = useMemo(() => {
-    if (!searchTerm.trim()) {
-        return dummyNewsData;
-    }
-    const lowerCaseSearchTerm = searchTerm.toLowerCase();
-    return dummyNewsData.filter(item => 
-        item.headline.toLowerCase().includes(lowerCaseSearchTerm) ||
-        item.symbol.toLowerCase().includes(lowerCaseSearchTerm) ||
-        item.preview.toLowerCase().includes(lowerCaseSearchTerm) ||
-        item.provider.toLowerCase().includes(lowerCaseSearchTerm)
+  const handleKeywordChange = (keyword: string, checked: boolean) => {
+    setSelectedKeywords(prev => 
+        checked ? [...prev, keyword] : prev.filter(k => k !== keyword)
     );
-  }, [searchTerm]);
+  };
+
+  const filteredNewsData = useMemo(() => {
+    const lowerCaseTicker = tickerSearchTerm.toLowerCase();
+    const lowerCaseKeywords = selectedKeywords.map(k => k.toLowerCase());
+
+    return dummyNewsData.filter(item => {
+        const headlineMatchesTicker = !lowerCaseTicker || item.symbol.toLowerCase().includes(lowerCaseTicker);
+
+        const headlineMatchesKeywords = lowerCaseKeywords.length === 0 || 
+            lowerCaseKeywords.every(keyword => 
+                item.headline.toLowerCase().includes(keyword) || 
+                item.preview.toLowerCase().includes(keyword)
+            );
+
+        return headlineMatchesTicker && headlineMatchesKeywords;
+    });
+  }, [tickerSearchTerm, selectedKeywords]);
   
   const getStockBySymbol = (symbol: string): Stock | undefined => {
       return initialMockStocks.find(stock => stock.symbol.toUpperCase() === symbol.toUpperCase());
@@ -132,12 +153,45 @@ export default function NewsPage() {
                           <SelectItem value="crypto">Crypto</SelectItem>
                       </SelectContent>
                   </Select>
+                  <Popover open={isKeywordPopoverOpen} onOpenChange={setIsKeywordPopoverOpen}>
+                      <PopoverTrigger asChild>
+                          <Button variant="outline" size="sm" className="h-9 text-xs w-auto">
+                              Keywords {selectedKeywords.length > 0 && `(${selectedKeywords.length})`}
+                              <ChevronDown className="ml-2 h-4 w-4" />
+                          </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-64 p-3" align="start">
+                          <div className="space-y-2">
+                              <h4 className="font-medium text-sm leading-none">Filter by Keyword</h4>
+                              <p className="text-xs text-muted-foreground">Select keywords to filter headlines.</p>
+                          </div>
+                          <ScrollArea className="h-48 mt-3">
+                              <div className="space-y-2 p-1">
+                                  {suggestedKeywords.map(keyword => (
+                                      <div key={keyword} className="flex items-center space-x-2">
+                                          <Checkbox
+                                              id={`kw-${keyword}`}
+                                              checked={selectedKeywords.includes(keyword)}
+                                              onCheckedChange={(checked) => handleKeywordChange(keyword, !!checked)}
+                                          />
+                                          <Label htmlFor={`kw-${keyword}`} className="text-xs font-normal">{keyword}</Label>
+                                      </div>
+                                  ))}
+                              </div>
+                          </ScrollArea>
+                          {selectedKeywords.length > 0 && (
+                            <Button variant="ghost" size="sm" className="w-full mt-2 text-xs" onClick={() => setSelectedKeywords([])}>
+                                Clear Filters
+                            </Button>
+                          )}
+                      </PopoverContent>
+                  </Popover>
               </div>
               <div className="relative w-full sm:max-w-xs">
                   <Input
-                      placeholder="Search headlines, tickers..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
+                      placeholder="Search ticker..."
+                      value={tickerSearchTerm}
+                      onChange={(e) => setTickerSearchTerm(e.target.value)}
                       className="h-9 w-full pl-8"
                   />
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -211,3 +265,5 @@ export default function NewsPage() {
     </>
   );
 }
+
+    
