@@ -35,7 +35,17 @@ export default function LandingPage() {
         
         {/* Container for both image previews */}
         <div className="mt-32 w-full flex flex-col items-center space-y-32">
-          <PlatformPreviewPlaceholder />
+          <div className="w-full md:w-[65%] min-h-[320px] aspect-[16/9] bg-[#181818] rounded-[24px] shadow-[0_0_25px_rgba(255,255,255,0.2)] flex items-center justify-center p-8 relative overflow-hidden">
+             <Image
+                src="https://firebasestorage.googleapis.com/v0/b/ghost-trading.firebasestorage.app/o/Ghost_Trading.png?alt=media&token=582fe62a-2491-4acb-9fa4-02744abf05d7"
+                alt="Ghost Trading Platform Preview"
+                layout="fill"
+                objectFit="cover"
+                className="rounded-xl"
+                data-ai-hint="platform dashboard"
+                priority
+            />
+          </div>
           
            <div className="w-full md:w-[65%] min-h-[320px] aspect-[16/9] bg-[#181818] rounded-[24px] shadow-[0_0_25px_rgba(255,255,255,0.2)] flex items-center justify-center p-8 relative overflow-hidden">
             <Image
