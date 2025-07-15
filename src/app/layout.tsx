@@ -37,7 +37,7 @@ export default function RootLayout({
           <TradeHistoryProvider>
             <AlertsProvider>
               <div className="flex flex-col h-screen w-full">
-                <NavBar />
+                {/* The NavBar will be handled within page components for homepage-specific logic */}
                 <div className="flex-1 overflow-auto">
                   {children}
                 </div>

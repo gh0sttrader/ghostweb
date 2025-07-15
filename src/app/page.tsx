@@ -1,14 +1,21 @@
+
 "use client";
 
+import { useState } from 'react';
 import Link from 'next/link';
 import GhostFloating from '@/components/GhostFloating';
 import { PlatformPreviewPlaceholder } from '@/components/PlatformPreviewPlaceholder';
+import { NavBar } from '@/components/NavBar';
+import { ReviewsModal } from '@/components/ReviewsModal';
 
 export default function LandingPage() {
+  const [isReviewsOpen, setIsReviewsOpen] = useState(false);
+
   return (
     <>
+      <NavBar onReviewClick={() => setIsReviewsOpen(true)} />
       <GhostFloating />
-      <div className="flex flex-col items-center justify-start min-h-screen bg-black text-white p-4 pt-48">
+      <div className="flex flex-col items-center justify-start min-h-screen bg-black text-white p-4 pt-24">
         <div className="text-center">
           <h1 
             className="font-extrabold font-headline uppercase text-white"
@@ -25,6 +32,7 @@ export default function LandingPage() {
         </div>
         <PlatformPreviewPlaceholder />
       </div>
+      <ReviewsModal isOpen={isReviewsOpen} onClose={() => setIsReviewsOpen(false)} />
     </>
   );
 }

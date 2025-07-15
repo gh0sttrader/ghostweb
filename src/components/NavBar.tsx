@@ -73,11 +73,10 @@ const AppNavLinks = () => {
   );
 };
 
-const HomepageNavLinks = () => {
+const HomepageNavLinks = ({ onReviewClick }: { onReviewClick: () => void }) => {
     const links = [
         { href: "#", label: "Login" },
         { href: "#", label: "Sign up" },
-        { href: "#", label: "Review" },
     ];
 
     return (
@@ -90,11 +89,17 @@ const HomepageNavLinks = () => {
                     {link.label}
                 </span>
             ))}
+             <button
+                onClick={onReviewClick}
+                className="text-foreground/80 hover:text-foreground transition-colors"
+            >
+                Review
+            </button>
         </nav>
     );
 };
 
-export function NavBar() {
+export function NavBar({ onReviewClick }: { onReviewClick?: () => void }) {
   const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
   useEffect(() => {
@@ -126,7 +131,7 @@ export function NavBar() {
               </div>
             )}
             
-            {isHomepage ? <HomepageNavLinks /> : <AppNavLinks />}
+            {isHomepage && onReviewClick ? <HomepageNavLinks onReviewClick={onReviewClick} /> : <AppNavLinks />}
           </>
         )}
       </div>
