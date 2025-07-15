@@ -7,6 +7,7 @@ import GhostFloating from '@/components/GhostFloating';
 import { PlatformPreviewPlaceholder } from '@/components/PlatformPreviewPlaceholder';
 import { NavBar } from '@/components/NavBar';
 import { ReviewsModal } from '@/components/ReviewsModal';
+import Image from 'next/image';
 
 export default function LandingPage() {
   const [isReviewsOpen, setIsReviewsOpen] = useState(false);
@@ -21,7 +22,8 @@ export default function LandingPage() {
             className="font-extrabold font-headline uppercase text-white leading-none"
             style={{ 
               fontSize: 'clamp(3.5rem, 13.5vw, 9.7rem)',
-              textShadow: '0 0 15px rgba(255, 255, 255, 0.2)' 
+              textShadow: '0 0 15px rgba(255, 255, 255, 0.2)',
+              lineHeight: 1,
             }}
           >
             Ghost Trading
@@ -35,10 +37,17 @@ export default function LandingPage() {
         <div className="mt-32 w-full flex flex-col items-center space-y-32">
           <PlatformPreviewPlaceholder />
           
-          {/* This is the placeholder for your second image. 
-              You can replace it with a new component or modify PlatformPreviewPlaceholder 
-              to accept a different image URL prop when you're ready. */}
-          <PlatformPreviewPlaceholder />
+           <div className="w-full md:w-[65%] min-h-[320px] aspect-[16/9] bg-[#181818] rounded-[24px] shadow-lg flex items-center justify-center p-8 relative overflow-hidden">
+            <Image
+                src="https://firebasestorage.googleapis.com/v0/b/ghost-trading.firebasestorage.app/o/Ghost_Trading.png?alt=media&token=582fe62a-2491-4acb-9fa4-02744abf05d7"
+                alt="Ghost Trading Platform Preview 2"
+                layout="fill"
+                objectFit="cover"
+                className="rounded-xl"
+                data-ai-hint="platform mobile"
+                priority
+            />
+        </div>
         </div>
 
       </div>
