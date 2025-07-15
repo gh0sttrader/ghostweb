@@ -345,16 +345,16 @@ function ScreenerPageContent() {
             </div>
         </div>
 
-        <div className="flex-1 overflow-auto rounded-lg border border-border/10">
+        <div className="flex-1 overflow-auto rounded-lg border border-border/10 bg-card">
           <Table>
-            <TableHeader className="sticky top-0 bg-[#0d0d0d] z-10">
-              <TableRow className="h-10">
+            <TableHeader className="sticky top-0 z-10">
+              <TableRow className="hover:bg-card">
                 {columnsToDisplay.map(col => (
-                     <TableHead key={col.key} className={cn("px-4 py-2 font-headline uppercase text-[15px] font-bold text-neutral-100", `text-${col.align || 'left'}`)}>
+                     <TableHead key={col.key} className={cn("bg-card hover:bg-card", `text-${col.align || 'left'}`)}>
                         {col.label}
                     </TableHead>
                 ))}
-                <TableHead className="px-4 py-2 text-right font-headline uppercase text-[15px] font-bold text-neutral-100">
+                <TableHead className="text-right bg-card hover:bg-card">
                     News
                 </TableHead>
               </TableRow>
@@ -364,13 +364,13 @@ function ScreenerPageContent() {
                 filteredStocks.map((stock) => (
                   <TableRow
                     key={stock.id}
-                    className="cursor-pointer h-10 border-b border-border/5 last:border-b-0 hover:bg-white/5"
+                    className="cursor-pointer border-b border-border/5 hover:bg-white/5"
                     onClick={() => handleShowNewsForStock(stock)}
                   >
                     {columnsToDisplay.map(col => {
                         const value = stock[col.key as keyof Stock];
                         return (
-                            <TableCell key={col.key} className={cn("px-4 py-2 font-bold text-foreground", `text-${col.align || 'left'}`)}>
+                            <TableCell key={col.key} className={cn("font-medium", `text-${col.align || 'left'}`)}>
                                 {col.key === 'changePercent' ? (
                                     <span className={cn(Number(value) >= 0 ? "text-[hsl(var(--confirm-green))]" : "text-destructive")}>
                                         {col.format ? col.format(value, stock) : value}
@@ -383,7 +383,7 @@ function ScreenerPageContent() {
                             </TableCell>
                         )
                     })}
-                    <TableCell className="px-4 py-2 text-right">
+                    <TableCell className="text-right">
                         <Button variant="ghost" size="icon" className="h-7 w-7"><Newspaper className="h-4 w-4"/></Button>
                     </TableCell>
                   </TableRow>
