@@ -1,5 +1,6 @@
 
 import type {Metadata} from 'next';
+import { NavBar } from '@/components/NavBar';
 
 export const metadata: Metadata = {
   title: 'Ghost Trading Terminal',
@@ -11,5 +12,12 @@ export default function AppLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return <>{children}</>;
+  return (
+    <div className="flex flex-col h-screen w-full">
+      <NavBar />
+      <div className="flex-1 overflow-auto">
+        {children}
+      </div>
+    </div>
+  );
 }
