@@ -39,7 +39,7 @@ export function ChartDatePickerModal({ isOpen, onClose, onGo }: ChartDatePickerM
                 </div>
                 <DialogFooter>
                     <Button variant="outline" onClick={onClose}>Cancel</Button>
-                    <Button onClick={handleGoClick}>Go</Button>
+                    <Button variant="outline" onClick={handleGoClick}>Go</Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>
