@@ -1,4 +1,3 @@
-
 "use client";
 
 import Link from 'next/link';
@@ -16,12 +15,6 @@ export default function LandingPage() {
         >
           Ghost Trading
         </h1>
-        <p 
-          className="text-[#aaa] font-semibold mt-8"
-          style={{ fontSize: 'clamp(1.25rem, 3vw, 1.75rem)' }}
-        >
-          see how deep the rabbit hole goes...
-        </p>
       </div>
     </div>
   );
