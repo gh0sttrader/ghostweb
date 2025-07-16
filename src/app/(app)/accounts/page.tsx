@@ -22,16 +22,13 @@ export default function AccountsPage() {
     };
 
     return (
-        <main className="flex flex-col flex-1 h-full overflow-hidden p-4 md:p-6 pt-8 space-y-4">
+        <main className="flex flex-1 items-center justify-center h-full overflow-hidden p-4 md:p-6">
             <div className="w-full max-w-6xl">
                  <InteractiveChartCard
                     stock={accountData}
                     onManualTickerSubmit={handleTickerSubmit}
                     variant="account"
                 />
-            </div>
-            <div className="flex-1 w-full max-w-6xl rounded-lg border border-border/10 bg-card p-4">
-                {/* Additional content for accounts page will go here */}
             </div>
         </main>
     );
