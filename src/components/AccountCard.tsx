@@ -33,49 +33,47 @@ export const AccountCard: React.FC<AccountCardProps> = ({ account, isSelected, o
             )}
             onClick={onClick}
         >
-            <div>
-                <CardHeader className="pb-2">
-                    <CardTitle className="text-base font-bold flex items-center justify-between">
-                        {account.name}
-                        {isSelected && <ArrowRight className="h-4 w-4 text-primary" />}
-                    </CardTitle>
-                </CardHeader>
-                <CardContent className="pb-4">
-                    <p className="text-2xl font-bold text-foreground">
-                        ${formatCurrency(account.balance)}
-                    </p>
-                    <div className="flex items-center text-sm mt-1">
-                        <span className={cn("flex items-center", isPositivePnl ? "text-[hsl(var(--confirm-green))]" : "text-destructive")}>
-                            {isPositivePnl ? <TrendingUp className="h-4 w-4 mr-1" /> : <TrendingDown className="h-4 w-4 mr-1" />}
-                            {isPositivePnl ? '+' : ''}
-                            ${formatCurrency(dailyPnl)}
-                        </span>
-                        <span className="text-muted-foreground ml-2">
-                            Today
-                        </span>
+            <CardHeader className="pb-2">
+                <CardTitle className="text-base font-bold flex items-center justify-between">
+                    {account.name}
+                    {isSelected && <ArrowRight className="h-4 w-4 text-primary" />}
+                </CardTitle>
+            </CardHeader>
+            <CardContent className="flex flex-col flex-1 pb-4">
+                <p className="text-2xl font-bold text-foreground">
+                    ${formatCurrency(account.balance)}
+                </p>
+                <div className="flex items-center text-sm mt-1">
+                    <span className={cn("flex items-center", isPositivePnl ? "text-[hsl(var(--confirm-green))]" : "text-destructive")}>
+                        {isPositivePnl ? <TrendingUp className="h-4 w-4 mr-1" /> : <TrendingDown className="h-4 w-4 mr-1" />}
+                        {isPositivePnl ? '+' : ''}
+                        ${formatCurrency(dailyPnl)}
+                    </span>
+                    <span className="text-muted-foreground ml-2">
+                        Today
+                    </span>
+                </div>
+
+                <div className="mt-4 space-y-2">
+                    <div className="flex justify-between items-baseline text-lg">
+                        <span className="text-muted-foreground">Holdings</span>
+                        <span className="font-bold text-foreground">{account.holdingsCount || 0}</span>
                     </div>
-                </CardContent>
-            </div>
-            <CardFooter className="p-3 pt-2 border-t border-white/10">
-                <div className="flex justify-between w-full text-xs">
-                    <div className="text-center">
-                        <p className="text-muted-foreground">Holdings</p>
-                        <p className="font-bold">{account.holdingsCount || 0}</p>
+                     <div className="flex justify-between items-baseline text-lg">
+                        <span className="text-muted-foreground">Cash</span>
+                        <span className="font-bold text-foreground">${formatCurrency(account.cash || 0)}</span>
                     </div>
-                    <div className="w-px bg-white/10"></div>
-                    <div className="text-center">
-                        <p className="text-muted-foreground">Cash</p>
-                        <p className="font-bold">${formatCurrency(account.cash || 0)}</p>
-                    </div>
-                     <div className="w-px bg-white/10"></div>
-                    <div className="text-center">
-                        <p className="text-muted-foreground">YTD Return</p>
-                        <p className={cn("font-bold", isPositiveReturn ? "text-[hsl(var(--confirm-green))]" : "text-destructive")}>
+                     <div className="flex justify-between items-baseline text-lg">
+                        <span className="text-muted-foreground">YTD Return</span>
+                        <span className={cn("font-bold", isPositiveReturn ? "text-[hsl(var(--confirm-green))]" : "text-destructive")}>
                            {account.ytdReturn ? `${account.ytdReturn.toFixed(2)}%` : 'N/A'}
-                        </p>
+                        </span>
                     </div>
                 </div>
-            </CardFooter>
+                
+                <div className="flex-1"></div>
+
+            </CardContent>
         </Card>
     );
 };
