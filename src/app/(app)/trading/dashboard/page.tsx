@@ -23,6 +23,7 @@ import { FundamentalsCard } from '@/components/FundamentalsCard';
 import { initialMockStocks } from './mock-data';
 import { NewsCard } from '@/components/NewsCard';
 import { cn } from '@/lib/utils';
+import { ScreenerWatchlist } from '@/components/ScreenerWatchlist';
 
 const dummyWatchlists = ["My Watchlist", "Tech Stocks", "Growth", "Crypto", "High Volume"];
 
@@ -243,10 +244,18 @@ function TradingDashboardPageContent() {
                                         </DropdownMenuItem>
                                     </DropdownMenuContent>
                                 </DropdownMenu>
+                                <TabsTrigger value="screener">Screener</TabsTrigger>
                                 <TabsTrigger value="news">News</TabsTrigger>
                             </TabsList>
                             <TabsContent value="watchlist" className="flex-1 overflow-hidden mt-0 p-0">
                                 <WatchlistCard
+                                  className="h-full border-0 shadow-none rounded-none bg-transparent"
+                                  onSymbolSelect={handleSyncedTickerChange}
+                                  selectedSymbol={syncedTickerSymbol}
+                                />
+                            </TabsContent>
+                            <TabsContent value="screener" className="flex-1 overflow-hidden mt-0 p-0">
+                                <ScreenerWatchlist
                                   className="h-full border-0 shadow-none rounded-none bg-transparent"
                                   onSymbolSelect={handleSyncedTickerChange}
                                   selectedSymbol={syncedTickerSymbol}
