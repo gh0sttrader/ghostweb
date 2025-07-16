@@ -353,7 +353,6 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, className, v
         {[
           { type: 'line', label: 'Line', Icon: LineChartIcon },
           { type: 'area', label: 'Area', Icon: AreaIcon },
-          { type: 'candle', label: 'Candle', Icon: CandlestickChart },
         ].map(({ type, label, Icon }) => (
           <Button
             key={type}
