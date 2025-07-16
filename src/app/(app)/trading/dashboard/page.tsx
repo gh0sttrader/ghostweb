@@ -26,6 +26,7 @@ import { cn } from '@/lib/utils';
 import { ScreenerWatchlist } from '@/components/ScreenerWatchlist';
 
 const dummyWatchlists = ["My Watchlist", "Tech Stocks", "Growth", "Crypto", "High Volume"];
+const dummyScreeners = ["Top Gainers", "High Volume", "Unusual Options"];
 
 function TradingDashboardPageContent() {
   const { toast } = useToast();
@@ -45,6 +46,9 @@ function TradingDashboardPageContent() {
   
   const [isWatchlistDropdownOpen, setIsWatchlistDropdownOpen] = useState(false);
   const [selectedWatchlist, setSelectedWatchlist] = useState("My Watchlist");
+  
+  const [isScreenerDropdownOpen, setIsScreenerDropdownOpen] = useState(false);
+  const [selectedScreener, setSelectedScreener] = useState("Top Gainers");
 
   const handleClearOrderCard = useCallback(() => {
     setOrderCardActionType(null);
@@ -216,22 +220,11 @@ function TradingDashboardPageContent() {
                                         <DropdownMenuTrigger asChild>
                                             <Button variant="ghost" className="flex items-center text-base p-0 h-auto hover:bg-transparent data-[state=active]:font-semibold data-[state=active]:text-foreground data-[state=inactive]:text-muted-foreground data-[state=inactive]:font-medium pr-2">
                                                 {selectedWatchlist}
-                                                <ChevronDown
-                                                    className={cn(
-                                                        "ml-2 h-4 w-4 text-muted-foreground transition-transform",
-                                                        isWatchlistDropdownOpen && "rotate-180"
-                                                    )}
-                                                />
+                                                <ChevronDown className={cn("ml-2 h-4 w-4 text-muted-foreground transition-transform", isWatchlistDropdownOpen && "rotate-180")} />
                                             </Button>
                                         </DropdownMenuTrigger>
                                     </TabsTrigger>
-                                     <DropdownMenuContent
-                                        className="w-56 backdrop-blur-md bg-black/50 border-white/10"
-                                        style={{
-                                            WebkitBackdropFilter: 'blur(10px)',
-                                            backdropFilter: 'blur(10px)',
-                                        }}
-                                    >
+                                     <DropdownMenuContent className="w-56 backdrop-blur-md bg-black/50 border-white/10" style={{ WebkitBackdropFilter: 'blur(10px)', backdropFilter: 'blur(10px)' }}>
                                         {dummyWatchlists.map((list) => (
                                              <DropdownMenuItem key={list} onSelect={() => setSelectedWatchlist(list)} className="text-sm font-medium">
                                                 {list}
@@ -244,7 +237,25 @@ function TradingDashboardPageContent() {
                                         </DropdownMenuItem>
                                     </DropdownMenuContent>
                                 </DropdownMenu>
-                                <TabsTrigger value="screener">Screener</TabsTrigger>
+                                
+                                <DropdownMenu open={isScreenerDropdownOpen} onOpenChange={setIsScreenerDropdownOpen}>
+                                    <TabsTrigger value="screener" asChild>
+                                        <DropdownMenuTrigger asChild>
+                                            <Button variant="ghost" className="flex items-center text-base p-0 h-auto hover:bg-transparent data-[state=active]:font-semibold data-[state=active]:text-foreground data-[state=inactive]:text-muted-foreground data-[state=inactive]:font-medium pr-2">
+                                                {selectedScreener}
+                                                <ChevronDown className={cn("ml-2 h-4 w-4 text-muted-foreground transition-transform", isScreenerDropdownOpen && "rotate-180")} />
+                                            </Button>
+                                        </DropdownMenuTrigger>
+                                    </TabsTrigger>
+                                     <DropdownMenuContent className="w-56 backdrop-blur-md bg-black/50 border-white/10" style={{ WebkitBackdropFilter: 'blur(10px)', backdropFilter: 'blur(10px)' }}>
+                                        {dummyScreeners.map((list) => (
+                                             <DropdownMenuItem key={list} onSelect={() => setSelectedScreener(list)} className="text-sm font-medium">
+                                                {list}
+                                            </DropdownMenuItem>
+                                        ))}
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+
                                 <TabsTrigger value="news">News</TabsTrigger>
                             </TabsList>
                             <TabsContent value="watchlist" className="flex-1 overflow-hidden mt-0 p-0">
