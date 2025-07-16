@@ -35,9 +35,9 @@ const ghostMessages = [
 ];
 
 export const OpenPositionsProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-    const [openPositions, setOpenPositions] = React.useState<OpenPosition[]>(initialPositions);
-    const [accounts] = React.useState<Account[]>(initialAccounts);
-    const [selectedAccountId, setSelectedAccountId] = React.useState<string>(initialAccounts[0].id);
+    const [openPositions, setOpenPositions] = useState<OpenPosition[]>(initialPositions);
+    const [accounts] = useState<Account[]>(initialAccounts);
+    const [selectedAccountId, setSelectedAccountId] = useState<string>(initialAccounts[0].id);
     const { toast } = useToast();
 
     const addOpenPosition = (position: Omit<OpenPosition, 'id' | 'currentPrice'>) => {
