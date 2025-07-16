@@ -2,10 +2,11 @@
 "use client";
 
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import type { Account } from '@/types';
 import { TrendingUp, TrendingDown, ArrowRight } from 'lucide-react';
+import { Separator } from './ui/separator';
 
 interface AccountCardProps {
     account: Account;
@@ -13,41 +14,68 @@ interface AccountCardProps {
     onClick: () => void;
 }
 
+const formatCurrency = (value: number) => {
+    return value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
 export const AccountCard: React.FC<AccountCardProps> = ({ account, isSelected, onClick }) => {
     const dailyPnl = account.pnl?.daily || 0;
-    const isPositive = dailyPnl >= 0;
+    const isPositivePnl = dailyPnl >= 0;
+    const isPositiveReturn = (account.ytdReturn || 0) >= 0;
     
     return (
         <Card 
             className={cn(
-                "cursor-pointer transition-all duration-200 border-2",
+                "cursor-pointer transition-all duration-200 border-2 flex flex-col justify-between",
                 isSelected 
                     ? "border-white shadow-lg shadow-white/20" 
                     : "border-white/10 hover:border-white/30 hover:bg-white/5"
             )}
             onClick={onClick}
         >
-            <CardHeader className="pb-2">
-                <CardTitle className="text-base font-bold flex items-center justify-between">
-                    {account.name}
-                    {isSelected && <ArrowRight className="h-4 w-4 text-primary" />}
-                </CardTitle>
-            </CardHeader>
-            <CardContent>
-                <p className="text-2xl font-bold text-foreground">
-                    ${account.balance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                </p>
-                <div className="flex items-center text-sm mt-1">
-                    <span className={cn("flex items-center", isPositive ? "text-[hsl(var(--confirm-green))]" : "text-destructive")}>
-                        {isPositive ? <TrendingUp className="h-4 w-4 mr-1" /> : <TrendingDown className="h-4 w-4 mr-1" />}
-                        {isPositive ? '+' : ''}
-                        ${dailyPnl.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                    </span>
-                    <span className="text-muted-foreground ml-2">
-                        Today
-                    </span>
+            <div>
+                <CardHeader className="pb-2">
+                    <CardTitle className="text-base font-bold flex items-center justify-between">
+                        {account.name}
+                        {isSelected && <ArrowRight className="h-4 w-4 text-primary" />}
+                    </CardTitle>
+                </CardHeader>
+                <CardContent className="pb-4">
+                    <p className="text-2xl font-bold text-foreground">
+                        ${formatCurrency(account.balance)}
+                    </p>
+                    <div className="flex items-center text-sm mt-1">
+                        <span className={cn("flex items-center", isPositivePnl ? "text-[hsl(var(--confirm-green))]" : "text-destructive")}>
+                            {isPositivePnl ? <TrendingUp className="h-4 w-4 mr-1" /> : <TrendingDown className="h-4 w-4 mr-1" />}
+                            {isPositivePnl ? '+' : ''}
+                            ${formatCurrency(dailyPnl)}
+                        </span>
+                        <span className="text-muted-foreground ml-2">
+                            Today
+                        </span>
+                    </div>
+                </CardContent>
+            </div>
+            <CardFooter className="p-3 pt-2 border-t border-white/10">
+                <div className="flex justify-between w-full text-xs">
+                    <div className="text-center">
+                        <p className="text-muted-foreground">Holdings</p>
+                        <p className="font-bold">{account.holdingsCount || 0}</p>
+                    </div>
+                    <div className="w-px bg-white/10"></div>
+                    <div className="text-center">
+                        <p className="text-muted-foreground">Cash</p>
+                        <p className="font-bold">${formatCurrency(account.cash || 0)}</p>
+                    </div>
+                     <div className="w-px bg-white/10"></div>
+                    <div className="text-center">
+                        <p className="text-muted-foreground">YTD Return</p>
+                        <p className={cn("font-bold", isPositiveReturn ? "text-[hsl(var(--confirm-green))]" : "text-destructive")}>
+                           {account.ytdReturn ? `${account.ytdReturn.toFixed(2)}%` : 'N/A'}
+                        </p>
+                    </div>
                 </div>
-            </CardContent>
+            </CardFooter>
         </Card>
     );
 };

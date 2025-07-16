@@ -7,8 +7,28 @@ import { InteractiveChartCard } from '@/components/charts/InteractiveChartCard';
 import { AccountCard } from '@/components/AccountCard';
 
 const mockAccounts: Account[] = [
-    { id: 'acc_1', name: 'Margin Account', balance: 170000, buyingPower: 100000, settledCash: 45000, pnl: { daily: 1250.75, weekly: 3400.20, percent: 1.2 } },
-    { id: 'acc_2', name: 'IRA Account', balance: 120000, buyingPower: 120000, settledCash: 120000, pnl: { daily: -500.50, weekly: 1200.00, percent: -0.4 } },
+    { 
+        id: 'acc_1', 
+        name: 'Margin Account', 
+        balance: 170000, 
+        buyingPower: 100000, 
+        settledCash: 45000, 
+        pnl: { daily: 1250.75, weekly: 3400.20, percent: 1.2 },
+        holdingsCount: 15,
+        cash: 5000,
+        ytdReturn: 4.56,
+    },
+    { 
+        id: 'acc_2', 
+        name: 'IRA Account', 
+        balance: 120000, 
+        buyingPower: 120000, 
+        settledCash: 120000, 
+        pnl: { daily: -500.50, weekly: 1200.00, percent: -0.4 },
+        holdingsCount: 8,
+        cash: 120000,
+        ytdReturn: -1.23,
+    },
 ];
 
 const totalAccount: Account = {
@@ -21,10 +41,13 @@ const totalAccount: Account = {
         daily: mockAccounts.reduce((acc, curr) => acc + (curr.pnl?.daily || 0), 0),
         weekly: mockAccounts.reduce((acc, curr) => acc + (curr.pnl?.weekly || 0), 0),
         percent: 0.75
-    }
+    },
+    holdingsCount: mockAccounts.reduce((acc, curr) => acc + (curr.holdingsCount || 0), 0),
+    cash: mockAccounts.reduce((acc, curr) => acc + (curr.cash || 0), 0),
+    ytdReturn: mockAccounts.reduce((acc, curr) => acc + (curr.ytdReturn || 0), 0) / mockAccounts.length, // Average return for total
 };
 
-const allAccounts = [...mockAccounts, totalAccount];
+const allAccounts = [totalAccount, ...mockAccounts];
 
 const accountToStock = (account: Account): Stock => ({
     id: account.id,

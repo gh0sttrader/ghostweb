@@ -151,6 +151,9 @@ export type Account = {
     buyingPower: number;
     settledCash: number;
     pnl?: AccountPnl;
+    holdingsCount?: number;
+    cash?: number;
+    ytdReturn?: number;
 };
 
 export type OpenPosition = {
