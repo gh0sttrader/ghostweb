@@ -22,7 +22,7 @@ export default function AccountsPage() {
     };
 
     return (
-        <main className="flex flex-col flex-1 h-full overflow-hidden p-4 md:p-6 space-y-4 items-center">
+        <main className="flex flex-col flex-1 h-full overflow-hidden p-4 md:p-6 pt-8 space-y-4">
             <div className="w-full max-w-6xl">
                  <InteractiveChartCard
                     stock={accountData}
