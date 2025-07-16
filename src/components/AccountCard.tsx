@@ -22,7 +22,7 @@ export const AccountCard: React.FC<AccountCardProps> = ({ account, isSelected, o
             className={cn(
                 "cursor-pointer transition-all duration-200 border-2",
                 isSelected 
-                    ? "border-primary shadow-lg shadow-primary/20" 
+                    ? "border-white shadow-lg shadow-white/20" 
                     : "border-white/10 hover:border-white/30 hover:bg-white/5"
             )}
             onClick={onClick}
