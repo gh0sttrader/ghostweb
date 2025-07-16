@@ -21,6 +21,7 @@ interface InteractiveChartCardProps {
   stock: Stock | null;
   onManualTickerSubmit: (symbol: string) => void;
   className?: string;
+  variant?: 'trading' | 'account';
 }
 
 const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>) => {
@@ -85,7 +86,7 @@ const getTimeframeParams = (timeframe: '1D' | '5D' | '1M' | '3M' | '6M' | 'YTD' 
 };
 
 
-export function InteractiveChartCard({ stock, onManualTickerSubmit, className }: InteractiveChartCardProps) {
+export function InteractiveChartCard({ stock, onManualTickerSubmit, className, variant = 'trading' }: InteractiveChartCardProps) {
   const [chartType, setChartType] = useState<'line' | 'area' | 'candle'>('area');
   const [timeframe, setTimeframe] = useState<'1D' | '5D' | '1M' | '3M' | '6M' | 'YTD' | '1Y' | '5Y' | 'All'>('1M');
   const [manualTickerInput, setManualTickerInput] = useState('');
@@ -120,6 +121,19 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, className }:
         setChartData([]);
         return;
       }
+      // Use mock historical data for account variant, otherwise fetch
+      if (variant === 'account' && stock.historicalPrices) {
+        const formattedData = stock.historicalPrices.map((price, index) => ({
+            date: `Day ${index + 1}`,
+            price: price,
+            open: price * (1 - (Math.random() - 0.5) * 0.02),
+            high: price * (1 + Math.random() * 0.02),
+            low: price * (1 - Math.random() * 0.02),
+            close: price
+        }));
+        setChartData(formattedData);
+        return;
+      }
       setIsLoading(true);
       setError(null);
       try {
@@ -145,7 +159,7 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, className }:
     };
     
     fetchAndSetChartData();
-  }, [stock, timeframe]);
+  }, [stock, timeframe, variant]);
 
   const handleDateGo = (date: Date | DateRange) => {
     console.log("Selected date/range:", date);
@@ -262,7 +276,7 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, className }:
     <Card className={cn("shadow-none flex flex-col border border-white/10 relative", className)}>
       <CardHeader className="pb-2 pt-3 px-3">
         <div className="flex flex-col sm:flex-row justify-between items-center gap-2">
-          {stock && stock.price > 0 ? (
+          {variant === 'trading' && stock && stock.price > 0 ? (
             <div className="flex items-baseline gap-x-2.5 gap-y-1 flex-wrap flex-1 min-w-0">
               <h3 className="text-base font-bold text-neutral-50 truncate" title={stock.name}>
                 {stock.symbol}
@@ -284,24 +298,30 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, className }:
               )}
             </div>
           ) : (
-              <CardTitle className="text-lg font-headline text-foreground flex-1">
-                Trading Chart
-              </CardTitle>
+              <div className="flex-1">
+                 {variant === 'trading' && (
+                    <CardTitle className="text-lg font-headline text-foreground">
+                      Trading Chart
+                    </CardTitle>
+                  )}
+              </div>
           )}
-          <div className="flex items-center gap-1 w-full sm:w-auto">
-            <Input
-              ref={inputRef}
-              type="text"
-              placeholder="Symbol"
-              value={manualTickerInput}
-              onChange={(e) => setManualTickerInput(e.target.value.toUpperCase())}
-              onKeyDown={(e) => e.key === 'Enter' && handleManualSubmit()}
-              className="h-7 text-xs flex-1 sm:flex-initial sm:w-28 bg-transparent"
-            />
-            <Button variant="ghost" size="icon" onClick={handleManualSubmit} className="h-7 w-7 text-foreground hover:bg-white/10">
-              <Search className="h-3.5 w-3.5" />
-            </Button>
-          </div>
+          {variant === 'trading' && (
+            <div className="flex items-center gap-1 w-full sm:w-auto">
+              <Input
+                ref={inputRef}
+                type="text"
+                placeholder="Symbol"
+                value={manualTickerInput}
+                onChange={(e) => setManualTickerInput(e.target.value.toUpperCase())}
+                onKeyDown={(e) => e.key === 'Enter' && handleManualSubmit()}
+                className="h-7 text-xs flex-1 sm:flex-initial sm:w-28 bg-transparent"
+              />
+              <Button variant="ghost" size="icon" onClick={handleManualSubmit} className="h-7 w-7 text-foreground hover:bg-white/10">
+                <Search className="h-3.5 w-3.5" />
+              </Button>
+            </div>
+          )}
         </div>
       </CardHeader>
       <CardContent className="relative flex-1 p-1 pr-2 min-h-[250px]">
