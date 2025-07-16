@@ -163,7 +163,6 @@ export default function NewsPage() {
                       <PopoverContent className="w-64 p-3" align="start">
                           <div className="space-y-2">
                               <h4 className="font-medium text-sm leading-none">Filter by Keyword</h4>
-                              <p className="text-xs text-muted-foreground">Select keywords to filter headlines.</p>
                           </div>
                           <ScrollArea className="h-48 mt-3">
                               <div className="space-y-2 p-1">
@@ -265,5 +264,7 @@ export default function NewsPage() {
     </>
   );
 }
+
+    
 
     
