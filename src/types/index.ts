@@ -138,12 +138,19 @@ export type TradeHistoryEntry = {
     stopLoss?: number;
 };
 
+export type AccountPnl = {
+    daily: number;
+    weekly: number;
+    percent: number;
+}
+
 export type Account = {
     id: string;
     name: string;
     balance: number;
     buyingPower: number;
     settledCash: number;
+    pnl?: AccountPnl;
 };
 
 export type OpenPosition = {
