@@ -219,7 +219,7 @@ function TradingDashboardPageContent() {
                                     <TabsTrigger value="watchlist" asChild>
                                         <DropdownMenuTrigger asChild>
                                             <Button variant="ghost" className="flex items-center text-base p-0 h-auto hover:bg-transparent data-[state=active]:font-semibold data-[state=active]:text-foreground data-[state=inactive]:text-muted-foreground data-[state=inactive]:font-medium pr-2">
-                                                {selectedWatchlist}
+                                                My Watchlist
                                                 <ChevronDown className={cn("ml-2 h-4 w-4 text-muted-foreground transition-transform", isWatchlistDropdownOpen && "rotate-180")} />
                                             </Button>
                                         </DropdownMenuTrigger>
@@ -242,7 +242,7 @@ function TradingDashboardPageContent() {
                                     <TabsTrigger value="screener" asChild>
                                         <DropdownMenuTrigger asChild>
                                             <Button variant="ghost" className="flex items-center text-base p-0 h-auto hover:bg-transparent data-[state=active]:font-semibold data-[state=active]:text-foreground data-[state=inactive]:text-muted-foreground data-[state=inactive]:font-medium pr-2">
-                                                {selectedScreener}
+                                                Screeners
                                                 <ChevronDown className={cn("ml-2 h-4 w-4 text-muted-foreground transition-transform", isScreenerDropdownOpen && "rotate-180")} />
                                             </Button>
                                         </DropdownMenuTrigger>
