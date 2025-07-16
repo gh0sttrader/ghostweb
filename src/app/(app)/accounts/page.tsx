@@ -28,7 +28,7 @@ export default function AccountsPage() {
                     stock={accountData}
                     onManualTickerSubmit={handleTickerSubmit}
                     variant="account"
-                    className="h-[75vh]"
+                    className="h-[64vh]"
                 />
             </div>
         </main>
