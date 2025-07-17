@@ -151,7 +151,7 @@ export default function AccountsPage() {
                         className="flex-1 min-h-[400px]"
                     />
                  </div>
-                 <div className="flex flex-col gap-4 w-full max-w-xs">
+                 <div className="flex flex-col gap-4 w-full max-w-sm">
                     {allAccounts.map((account) => (
                         <AccountCard 
                             key={account.id}
