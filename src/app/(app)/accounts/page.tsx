@@ -141,8 +141,9 @@ export default function AccountsPage() {
 
     return (
         <main className="flex flex-col flex-1 h-full overflow-hidden p-4 md:p-6 lg:p-8 gap-4">
-             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 h-full">
-                 <div className="flex flex-col lg:col-span-2">
+             <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-8 h-full">
+                 <div className="flex flex-col">
+                    <AccountSummaryHeader account={selectedAccount} />
                     <InteractiveChartCard
                         stock={chartData}
                         onManualTickerSubmit={handleTickerSubmit}
@@ -150,15 +151,14 @@ export default function AccountsPage() {
                         className="flex-1 min-h-[400px]"
                     />
                  </div>
-                 <div className="flex flex-col gap-4">
-                    <AccountSummaryHeader account={selectedAccount} />
+                 <div className="flex flex-col gap-4 w-full max-w-xs">
                     {allAccounts.map((account) => (
-                            <AccountCard 
-                                key={account.id}
-                                account={account}
-                                isSelected={selectedAccount.id === account.id}
-                                onClick={() => setSelectedAccount(account)}
-                            />
+                        <AccountCard 
+                            key={account.id}
+                            account={account}
+                            isSelected={selectedAccount.id === account.id}
+                            onClick={() => setSelectedAccount(account)}
+                        />
                     ))}
                  </div>
              </div>
