@@ -9,17 +9,18 @@ import { TrendingUp, TrendingDown, PackageSearch } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 const mockHoldings: Holding[] = [
-    { symbol: 'AAPL', name: 'Apple Inc.', shares: 50, marketPrice: 170.34, unrealizedGain: 1250.75, totalValue: 8517 },
-    { symbol: 'NVDA', name: 'NVIDIA Corp.', shares: 20, marketPrice: 900.50, unrealizedGain: 500.20, totalValue: 18010 },
-    { symbol: 'GOOGL', name: 'Alphabet Inc.', shares: 30, marketPrice: 140.22, unrealizedGain: -150.10, totalValue: 4206.60 },
-    { symbol: 'TSLA', name: 'Tesla, Inc.', shares: 10, marketPrice: 180.01, unrealizedGain: 85.50, totalValue: 1800.10 },
+    { symbol: 'AAPL', name: 'Apple Inc.', shares: 50, marketPrice: 170.34, unrealizedGain: 1250.75, totalValue: 8517, logo: 'https://placehold.co/40x40.png' },
+    { symbol: 'NVDA', name: 'NVIDIA Corp.', shares: 20, marketPrice: 900.50, unrealizedGain: 500.20, totalValue: 18010, logo: 'https://placehold.co/40x40.png' },
+    { symbol: 'GOOGL', name: 'Alphabet Inc.', shares: 30, marketPrice: 140.22, unrealizedGain: -150.10, totalValue: 4206.60, logo: 'https://placehold.co/40x40.png' },
+    { symbol: 'TSLA', name: 'Tesla, Inc.', shares: 10, marketPrice: 180.01, unrealizedGain: 85.50, totalValue: 1800.10, logo: 'https://placehold.co/40x40.png' },
 ];
 
 const mockIraHoldings: Holding[] = [
-    { symbol: 'MSFT', name: 'Microsoft Corp.', shares: 100, marketPrice: 420.72, unrealizedGain: -500.50, totalValue: 42072 },
-    { symbol: 'AMZN', name: 'Amazon.com, Inc.', shares: 25, marketPrice: 183.63, unrealizedGain: 1200.00, totalValue: 4590.75 },
+    { symbol: 'MSFT', name: 'Microsoft Corp.', shares: 100, marketPrice: 420.72, unrealizedGain: -500.50, totalValue: 42072, logo: 'https://placehold.co/40x40.png' },
+    { symbol: 'AMZN', name: 'Amazon.com, Inc.', shares: 25, marketPrice: 183.63, unrealizedGain: 1200.00, totalValue: 4590.75, logo: 'https://placehold.co/40x40.png' },
 ];
 
 const mockAccounts: Account[] = [
@@ -30,7 +31,7 @@ const mockAccounts: Account[] = [
         buyingPower: 100000, 
         settledCash: 45000, 
         pnl: { daily: 1250.75, weekly: 3400.20, percent: 1.2 },
-        holdingsCount: 15,
+        holdingsCount: 4,
         cash: 5000,
         ytdReturn: 4.56,
         netContributions: 150000,
@@ -46,7 +47,7 @@ const mockAccounts: Account[] = [
         buyingPower: 120000, 
         settledCash: 120000, 
         pnl: { daily: -500.50, weekly: 1200.00, percent: -0.4 },
-        holdingsCount: 8,
+        holdingsCount: 2,
         cash: 120000,
         ytdReturn: -1.23,
         netContributions: 125000,
@@ -119,7 +120,7 @@ const AccountSummaryHeader = ({ account }: { account: Account }) => {
     const isPositivePnl = dailyPnl >= 0;
 
     return (
-        <div className="mb-8">
+        <div className="mb-8 min-h-[148px]">
             <h1 className="text-4xl font-bold text-foreground">
                 {formatCurrency(account.balance)}
             </h1>
@@ -244,7 +245,9 @@ export default function AccountsPage() {
                 />
              </div>
              
-             <AccountSelector accounts={allAccounts} selected={selectedAccount} onSelect={setSelectedAccount} />
+             <div className="flex items-center h-16">
+                 <AccountSelector accounts={allAccounts} selected={selectedAccount} onSelect={setSelectedAccount} />
+             </div>
 
              <section className="w-full">
                 <Separator className="bg-border/20 mb-6" />
@@ -254,3 +257,5 @@ export default function AccountsPage() {
         </main>
     );
 }
+
+    
