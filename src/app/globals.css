@@ -155,8 +155,8 @@
     height: 8px;
     border-right: 2px solid rgba(255,255,255,0.4);
     border-bottom: 2px solid rgba(255,255,255,0.4);
+    cursor: se-resize;
   }
-
 }
 
 @keyframes ticker {
@@ -172,5 +172,3 @@
 .animate-ticker-fast {
   animation: ticker 15s linear infinite;
 }
-
-    

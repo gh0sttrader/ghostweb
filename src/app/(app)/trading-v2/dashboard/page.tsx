@@ -215,6 +215,7 @@ function TradingDashboardPageContentV2() {
             draggableHandle=".drag-handle"
             isResizable
             isDraggable
+            resizeHandles={['se', 'e', 's', 'w', 'n', 'sw', 'ne', 'nw']}
         >
             <div key="chart">
                 <DraggableCard className="h-full">
@@ -358,5 +359,3 @@ export default function TradingDashboardPage() {
     </Suspense>
   );
 }
-
-    
