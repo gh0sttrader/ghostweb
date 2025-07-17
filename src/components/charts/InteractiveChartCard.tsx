@@ -203,8 +203,7 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, className, v
     }
 
     const uniqueId = `chart-gradient-${stock?.id || 'default'}`;
-    const chartGrid = <CartesianGrid stroke="#ffffff12" strokeDasharray="4 6" vertical={true} horizontal={true} />;
-
+    
     if (chartType === 'line') {
       return (
         <ResponsiveContainer width="100%" height="100%">
@@ -273,7 +272,7 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, className, v
 
 
   return (
-    <Card className={cn("shadow-none flex flex-col border border-white/10 relative", className)}>
+    <Card className={cn("shadow-none flex flex-col border-none bg-transparent relative", className)}>
       <CardHeader className="pb-2 pt-3 px-3">
         <div className="flex flex-col sm:flex-row justify-between items-center gap-2">
           {variant === 'trading' && stock && stock.price > 0 ? (
