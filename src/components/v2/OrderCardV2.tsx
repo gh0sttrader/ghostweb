@@ -393,6 +393,12 @@ export const OrderCardV2: React.FC<OrderCardProps> = ({
                         value={`$${formatNumber(selectedAccount?.buyingPower)}`}
                         description="The total amount of funds available for purchasing securities, including borrowed money in a margin account."
                     />
+                    <Separator className="my-1 bg-white/10" />
+                     <DetailItem
+                        label="Cash"
+                        value={`$${formatNumber(selectedAccount?.settledCash)}`}
+                        description="The amount of settled cash in your account available for trading."
+                    />
                 </div>
 
                 <Button 
