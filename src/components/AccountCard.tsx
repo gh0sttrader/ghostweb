@@ -26,7 +26,7 @@ export const AccountCard: React.FC<AccountCardProps> = ({ account, isSelected, o
     return (
         <Card 
             className={cn(
-                "cursor-pointer transition-all duration-200 border-2 flex flex-col justify-between",
+                "cursor-pointer transition-all duration-200 border-2 flex flex-col justify-between flex-1",
                 isSelected 
                     ? "border-white shadow-lg shadow-white/20" 
                     : "border-white/10 hover:border-white/30 hover:bg-white/5"
