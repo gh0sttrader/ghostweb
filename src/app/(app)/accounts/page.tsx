@@ -161,7 +161,7 @@ const AccountSummaryHeader = ({ account }: { account: Account }) => {
 const HoldingsTable = ({ holdings }: { holdings: Holding[] }) => {
     if (!holdings || holdings.length === 0) {
         return (
-            <div className="flex flex-col items-center justify-center text-center py-16 text-muted-foreground rounded-2xl bg-[#111]">
+            <div className="flex flex-col items-center justify-center text-center py-16 text-muted-foreground rounded-2xl bg-card">
                 <PackageSearch className="h-12 w-12 mb-4 opacity-30" />
                 <p className="font-semibold">No holdings to display.</p>
                 <p className="text-sm">Your portfolio positions will appear here.</p>
@@ -170,20 +170,20 @@ const HoldingsTable = ({ holdings }: { holdings: Holding[] }) => {
     }
 
     return (
-        <div className="overflow-x-auto rounded-2xl bg-[#111]">
+        <div className="overflow-x-auto rounded-2xl bg-card">
             <Table>
                 <TableHeader>
-                    <TableRow className="border-b border-[#222]">
-                        <TableHead className="text-left py-3 px-6 font-bold">Company</TableHead>
-                        <TableHead className="text-center py-3 px-6 font-bold">Shares</TableHead>
-                        <TableHead className="text-center py-3 px-6 font-bold">Market Price</TableHead>
-                        <TableHead className="text-center py-3 px-6 font-bold">Unrealized Gain</TableHead>
-                        <TableHead className="text-right py-3 px-6 font-bold">Total Value</TableHead>
+                    <TableRow className="border-b border-white/10">
+                        <TableHead className="py-3 px-6 text-left font-bold">Company</TableHead>
+                        <TableHead className="py-3 px-6 text-center font-bold">Shares</TableHead>
+                        <TableHead className="py-3 px-6 text-center font-bold">Market Price</TableHead>
+                        <TableHead className="py-3 px-6 text-center font-bold">Unrealized Gain</TableHead>
+                        <TableHead className="py-3 px-6 text-right font-bold">Total Value</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
                     {holdings.map((holding) => (
-                        <TableRow key={holding.symbol} className="hover:bg-[#181818] transition-colors border-none">
+                        <TableRow key={holding.symbol} className="transition-colors border-none hover:bg-white/5">
                             <TableCell className="flex items-center gap-4 py-3 px-6">
                                 <Avatar>
                                     <AvatarImage src={holding.logo} alt={`${holding.name} logo`} />
