@@ -50,19 +50,31 @@ const AppNavLinks = () => {
 
   return (
     <nav className="flex items-center space-x-4 lg:space-x-6 text-sm font-medium">
-      {links.map((link) => (
-        <Link
-          key={link.href}
-          href={link.href}
-          className={cn(
-            "transition-colors hover:text-foreground/80",
-            isActive(link.href) ? "text-foreground" : "text-foreground/60",
-             isActive(link.href) && link.href.startsWith('/trading') ? "font-bold" : ""
-          )}
-        >
-          {link.label}
-        </Link>
-      ))}
+      {links.map((link) => {
+          if (link.href.startsWith('/trading')) {
+              return (
+                  <Link
+                      key={link.href}
+                      href={link.href}
+                      className="bg-neutral-50 text-black font-bold px-5 py-2 rounded-full shadow-md tracking-wider hover:bg-neutral-200 transition"
+                  >
+                      {link.label}
+                  </Link>
+              );
+          }
+          return (
+              <Link
+                  key={link.href}
+                  href={link.href}
+                  className={cn(
+                      "transition-colors hover:text-foreground/80",
+                      isActive(link.href) ? "text-foreground" : "text-foreground/60"
+                  )}
+              >
+                  {link.label}
+              </Link>
+          );
+      })}
     </nav>
   );
 };
