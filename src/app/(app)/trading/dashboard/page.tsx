@@ -165,8 +165,6 @@ function TradingDashboardPageContent() {
       averagePrice: (tradeDetails.orderType === "Limit" && tradeDetails.limitPrice) ? tradeDetails.limitPrice : (stockInfo?.price || 0),
       tradeModeOrigin: tradeDetails.tradeModeOrigin || 'manual',
       accountId: tradeDetails.accountId || selectedAccountId,
-      takeProfit: tradeDetails.takeProfit,
-      stopLoss: tradeDetails.stopLoss,
     });
     if (tradeDetails.action === 'Buy' || tradeDetails.action === 'Short') {
         addOpenPosition({

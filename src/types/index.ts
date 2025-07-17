@@ -113,8 +113,6 @@ export type TradeRequest = {
     allowExtendedHours?: boolean;
     tradeModeOrigin?: TradeMode;
     accountId?: string;
-    takeProfit?: number;
-    stopLoss?: number;
 };
 
 export type TradeHistoryEntry = {
