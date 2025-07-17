@@ -205,7 +205,7 @@ function TradingDashboardPageContentV2() {
   }
 
   return (
-    <main className="w-full h-full flex flex-col bg-background bg-dot-grid p-4 md:p-8 overflow-auto">
+    <main className="w-full h-full flex flex-col bg-background bg-dot-grid overflow-auto">
         <GridLayout 
             className="layout"
             layout={layout}
@@ -215,7 +215,9 @@ function TradingDashboardPageContentV2() {
             draggableHandle=".drag-handle"
             isResizable
             isDraggable
-            resizeHandles={['se', 'e', 's', 'w', 'n', 'sw', 'ne', 'nw']}
+            resizeHandles={['se', 'e', 's', 'n', 'w', 'sw', 'ne', 'nw']}
+            margin={[0, 0]}
+            containerPadding={[0, 0]}
         >
             <div key="chart">
                 <DraggableCard className="h-full">
