@@ -10,7 +10,9 @@ import { useOpenPositionsContext } from '@/contexts/OpenPositionsContext';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { ChevronDown, Plus } from "lucide-react";
-import GridLayout from 'react-grid-layout';
+import { Responsive, WidthProvider } from 'react-grid-layout';
+const ResponsiveGridLayout = WidthProvider(Responsive);
+
 
 import { OrderCardV2 } from '@/components/v2/OrderCardV2';
 import { Card, CardHeader } from '@/components/ui/card';
@@ -205,16 +207,15 @@ function TradingDashboardPageContentV2() {
   }
 
   return (
-    <main className="w-full h-full flex flex-col bg-background bg-dot-grid overflow-auto">
-        <GridLayout 
+    <main className="w-full h-full flex flex-col bg-background bg-dot-grid overflow-hidden">
+        <ResponsiveGridLayout 
             className="layout"
-            layout={layout}
-            cols={12}
+            layouts={{ lg: layout }}
+            breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
+            cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
             rowHeight={32}
-            width={1800} // This should ideally be responsive
             draggableHandle=".drag-handle"
             isResizable
-            isDraggable
             resizeHandles={['se', 'e', 's', 'n', 'w', 'sw', 'ne', 'nw']}
             margin={[0, 0]}
             containerPadding={[0, 0]}
@@ -349,7 +350,7 @@ function TradingDashboardPageContentV2() {
                     />
                 </DraggableCard>
             </div>
-        </GridLayout>
+        </ResponsiveGridLayout>
     </main>
   );
 }
