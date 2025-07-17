@@ -31,7 +31,7 @@ const AppNavLinks = () => {
   const pathname = usePathname();
 
   const links = [
-    { href: "/trading", label: "GHOST TRADING" },
+    { href: "/trading", label: "GHOST TRADING 2.0" },
     { href: "/ghosttrading", label: "Ghost Trading" },
     { href: "/accounts", label: "ACCOUNTS" },
     { href: "/news", label: "NEWS" },
@@ -41,18 +41,22 @@ const AppNavLinks = () => {
   ];
 
   const isActive = (href: string) => {
-    if (href === "/trading" || href === "/ghosttrading") {
+    if (href === "/trading") {
+      // Special check for the main portal button to also be active for dashboard
       return pathname.startsWith("/trading") || pathname.startsWith("/ghosttrading");
     }
+    if (href === "/ghosttrading") {
+        return pathname.startsWith("/ghosttrading") || pathname.startsWith("/trading/dashboard")
+    }
     // For other links, check if the pathname starts with the href.
-    // This correctly handles nested routes like /trading/dashboard.
+    // This correctly handles nested routes.
     return pathname.startsWith(href);
   };
 
   return (
     <nav className="flex items-center space-x-4 lg:space-x-6 text-sm font-medium">
       {links.map((link) => {
-          if (link.label === 'GHOST TRADING') {
+          if (link.label === 'GHOST TRADING 2.0') {
               return (
                   <Link
                       key={link.href}
