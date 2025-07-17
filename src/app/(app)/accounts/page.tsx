@@ -140,15 +140,15 @@ export default function AccountsPage() {
     };
 
     return (
-        <main className="flex flex-col flex-1 h-full overflow-hidden p-4 md:p-6 lg:p-8 gap-4">
+        <main className="flex flex-col flex-1 h-full overflow-hidden p-4 md:p-6 lg:p-8">
              <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-8 h-full">
-                 <div className="flex flex-col">
+                 <div className="flex flex-col flex-1">
                     <AccountSummaryHeader account={selectedAccount} />
                     <InteractiveChartCard
                         stock={chartData}
                         onManualTickerSubmit={handleTickerSubmit}
                         variant="account"
-                        className="flex-1 min-h-[400px]"
+                        className="flex-1 min-h-0"
                     />
                  </div>
                  <div className="flex flex-col gap-4 w-full max-w-sm">
