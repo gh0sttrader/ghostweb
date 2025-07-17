@@ -106,7 +106,7 @@ const AccountSummaryHeader = ({ account }: { account: Account }) => {
                     Today
                 </span>
             </div>
-            <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-2 text-sm">
+            <div className="mt-4 grid grid-cols-2 md:grid-cols-2 gap-x-6 gap-y-2 text-sm">
                 <div className="flex flex-col">
                     <span className="text-muted-foreground">Net Contributions</span>
                     <span className="font-semibold text-foreground">{formatCurrency(account.netContributions)}</span>
@@ -141,9 +141,8 @@ export default function AccountsPage() {
 
     return (
         <main className="flex flex-col flex-1 h-full overflow-hidden p-4 md:p-6 lg:p-8 gap-4">
-             <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-8">
-                 <div className="flex flex-col">
-                    <AccountSummaryHeader account={selectedAccount} />
+             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 h-full">
+                 <div className="flex flex-col lg:col-span-2">
                     <InteractiveChartCard
                         stock={chartData}
                         onManualTickerSubmit={handleTickerSubmit}
@@ -152,6 +151,7 @@ export default function AccountsPage() {
                     />
                  </div>
                  <div className="flex flex-col gap-4">
+                    <AccountSummaryHeader account={selectedAccount} />
                     {allAccounts.map((account) => (
                             <AccountCard 
                                 key={account.id}
