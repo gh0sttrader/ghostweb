@@ -184,11 +184,7 @@ const HoldingsTable = ({ holdings }: { holdings: Holding[] }) => {
                 <TableBody>
                     {holdings.map((holding) => (
                         <TableRow key={holding.symbol} className="transition-colors border-none hover:bg-white/5">
-                            <TableCell className="flex items-center gap-4 py-3 px-6">
-                                <Avatar>
-                                    <AvatarImage src={holding.logo} alt={`${holding.name} logo`} />
-                                    <AvatarFallback>{holding.symbol.charAt(0)}</AvatarFallback>
-                                </Avatar>
+                            <TableCell className="py-3 px-6">
                                 <span className="font-semibold">{holding.symbol}</span>
                             </TableCell>
                             <TableCell className="text-center py-3 px-6">{holding.shares.toFixed(4)}</TableCell>
@@ -224,7 +220,7 @@ export default function AccountsPage() {
                         stock={chartData}
                         onManualTickerSubmit={handleTickerSubmit}
                         variant="account"
-                        className="flex-1"
+                        className="flex-1 min-h-0"
                     />
                  </div>
                  <div className="flex flex-col gap-4 w-full max-w-sm">
