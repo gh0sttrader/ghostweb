@@ -4,23 +4,22 @@
 import { useState, useMemo } from 'react';
 import type { Stock, Account, Holding } from '@/types';
 import { InteractiveChartCard } from '@/components/charts/InteractiveChartCard';
-import { AccountCard } from '@/components/AccountCard';
 import { cn } from '@/lib/utils';
 import { TrendingUp, TrendingDown, PackageSearch } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from '@/components/ui/separator';
+import { Button } from '@/components/ui/button';
 
 const mockHoldings: Holding[] = [
-    { symbol: 'AAPL', name: 'Apple Inc.', logo: 'https://placehold.co/40x40.png', shares: 50, marketPrice: 170.34, unrealizedGain: 1250.75, totalValue: 8517 },
-    { symbol: 'NVDA', name: 'NVIDIA Corp.', logo: 'https://placehold.co/40x40.png', shares: 20, marketPrice: 900.50, unrealizedGain: 500.20, totalValue: 18010 },
-    { symbol: 'GOOGL', name: 'Alphabet Inc.', logo: 'https://placehold.co/40x40.png', shares: 30, marketPrice: 140.22, unrealizedGain: -150.10, totalValue: 4206.60 },
-    { symbol: 'TSLA', name: 'Tesla, Inc.', logo: 'https://placehold.co/40x40.png', shares: 10, marketPrice: 180.01, unrealizedGain: 85.50, totalValue: 1800.10 },
+    { symbol: 'AAPL', name: 'Apple Inc.', shares: 50, marketPrice: 170.34, unrealizedGain: 1250.75, totalValue: 8517 },
+    { symbol: 'NVDA', name: 'NVIDIA Corp.', shares: 20, marketPrice: 900.50, unrealizedGain: 500.20, totalValue: 18010 },
+    { symbol: 'GOOGL', name: 'Alphabet Inc.', shares: 30, marketPrice: 140.22, unrealizedGain: -150.10, totalValue: 4206.60 },
+    { symbol: 'TSLA', name: 'Tesla, Inc.', shares: 10, marketPrice: 180.01, unrealizedGain: 85.50, totalValue: 1800.10 },
 ];
 
 const mockIraHoldings: Holding[] = [
-    { symbol: 'MSFT', name: 'Microsoft Corp.', logo: 'https://placehold.co/40x40.png', shares: 100, marketPrice: 420.72, unrealizedGain: -500.50, totalValue: 42072 },
-    { symbol: 'AMZN', name: 'Amazon.com, Inc.', logo: 'https://placehold.co/40x40.png', shares: 25, marketPrice: 183.63, unrealizedGain: 1200.00, totalValue: 4590.75 },
+    { symbol: 'MSFT', name: 'Microsoft Corp.', shares: 100, marketPrice: 420.72, unrealizedGain: -500.50, totalValue: 42072 },
+    { symbol: 'AMZN', name: 'Amazon.com, Inc.', shares: 25, marketPrice: 183.63, unrealizedGain: 1200.00, totalValue: 4590.75 },
 ];
 
 const mockAccounts: Account[] = [
@@ -201,6 +200,28 @@ const HoldingsTable = ({ holdings }: { holdings: Holding[] }) => {
     );
 };
 
+const AccountSelector = ({ accounts, selected, onSelect }: { accounts: Account[], selected: Account, onSelect: (account: Account) => void }) => {
+  return (
+    <div className="flex items-center gap-2 mt-6 mb-3 p-1 rounded-full bg-neutral-900 border border-neutral-800 w-min">
+      {accounts.map((acct) => (
+        <Button
+          key={acct.id}
+          variant="ghost"
+          size="sm"
+          className={cn(
+            "px-5 py-1.5 h-auto rounded-full text-sm font-medium transition-all duration-300",
+            selected.id === acct.id
+              ? "bg-foreground text-background shadow-md shadow-white/10"
+              : "bg-transparent text-muted-foreground hover:bg-neutral-800 hover:text-foreground"
+          )}
+          onClick={() => onSelect(acct)}
+        >
+          {acct.name}
+        </Button>
+      ))}
+    </div>
+  );
+};
 
 export default function AccountsPage() {
     const [selectedAccount, setSelectedAccount] = useState<Account>(totalAccount);
@@ -213,27 +234,17 @@ export default function AccountsPage() {
 
     return (
         <main className="flex flex-col flex-1 h-full p-4 md:p-6 lg:p-8 space-y-8">
-             <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-8">
-                 <div className="flex flex-col flex-1 min-h-0">
-                    <AccountSummaryHeader account={selectedAccount} />
-                    <InteractiveChartCard
-                        stock={chartData}
-                        onManualTickerSubmit={handleTickerSubmit}
-                        variant="account"
-                        className="flex-1 min-h-0"
-                    />
-                 </div>
-                 <div className="flex flex-col gap-4 w-full max-w-sm">
-                    {allAccounts.map((account) => (
-                        <AccountCard 
-                            key={account.id}
-                            account={account}
-                            isSelected={selectedAccount.id === account.id}
-                            onClick={() => setSelectedAccount(account)}
-                        />
-                    ))}
-                 </div>
+             <div className="flex flex-col flex-1 min-h-0">
+                <AccountSummaryHeader account={selectedAccount} />
+                <InteractiveChartCard
+                    stock={chartData}
+                    onManualTickerSubmit={handleTickerSubmit}
+                    variant="account"
+                    className="flex-1 min-h-0"
+                />
              </div>
+             
+             <AccountSelector accounts={allAccounts} selected={selectedAccount} onSelect={setSelectedAccount} />
 
              <section className="w-full">
                 <Separator className="bg-border/20 mb-6" />
