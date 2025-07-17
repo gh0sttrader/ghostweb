@@ -144,6 +144,16 @@ export type AccountPnl = {
     percent: number;
 }
 
+export type Holding = {
+    symbol: string;
+    name: string;
+    logo: string;
+    shares: number;
+    marketPrice: number;
+    unrealizedGain: number;
+    totalValue: number;
+}
+
 export type Account = {
     id: string;
     name: string;
@@ -154,6 +164,11 @@ export type Account = {
     holdingsCount?: number;
     cash?: number;
     ytdReturn?: number;
+    netContributions?: number;
+    totalGains?: number;
+    marketGains?: number;
+    dividends?: number;
+    holdings?: Holding[];
 };
 
 export type OpenPosition = {
