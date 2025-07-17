@@ -32,6 +32,7 @@ const AppNavLinks = () => {
 
   const links = [
     { href: "/trading", label: "GHOST TRADING" },
+    { href: "/ghosttrading", label: "Ghost Trading" },
     { href: "/accounts", label: "ACCOUNTS" },
     { href: "/news", label: "NEWS" },
     { href: "/screener", label: "SCREENER" },
@@ -40,7 +41,7 @@ const AppNavLinks = () => {
   ];
 
   const isActive = (href: string) => {
-    if (href === "/trading") {
+    if (href === "/trading" || href === "/ghosttrading") {
       return pathname.startsWith("/trading") || pathname.startsWith("/ghosttrading");
     }
     // For other links, check if the pathname starts with the href.
@@ -51,12 +52,12 @@ const AppNavLinks = () => {
   return (
     <nav className="flex items-center space-x-4 lg:space-x-6 text-sm font-medium">
       {links.map((link) => {
-          if (link.href.startsWith('/trading')) {
+          if (link.label === 'GHOST TRADING') {
               return (
                   <Link
                       key={link.href}
                       href={link.href}
-                      className="bg-neutral-50 text-black font-bold px-5 py-2 rounded-full shadow-md tracking-wider hover:bg-neutral-200 transition"
+                      className="bg-[#FAFAFA] text-black font-bold px-5 py-2 rounded-full shadow-md tracking-wider hover:bg-[#F0F0F0] transition"
                   >
                       {link.label}
                   </Link>
