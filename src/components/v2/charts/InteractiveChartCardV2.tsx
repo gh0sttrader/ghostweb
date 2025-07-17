@@ -273,7 +273,7 @@ export function InteractiveChartCardV2({ stock, onManualTickerSubmit, className,
 
   return (
     <Card className={cn("shadow-none flex flex-col border-none bg-transparent relative", className)}>
-      <CardHeader className="pb-2 pt-3 px-3">
+      <CardHeader className="pb-2 pt-3 px-3 cursor-move">
         <div className="flex flex-col sm:flex-row justify-between items-center gap-2">
           {variant === 'trading' && stock && stock.price > 0 ? (
             <div className="flex items-baseline gap-x-2.5 gap-y-1 flex-wrap flex-1 min-w-0">
@@ -403,3 +403,5 @@ export function InteractiveChartCardV2({ stock, onManualTickerSubmit, className,
     </Card>
   );
 }
+
+    

@@ -1,4 +1,7 @@
 
+@import "react-grid-layout/css/styles.css";
+@import "react-resizable/css/styles.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -126,6 +129,34 @@
     background-image: radial-gradient(rgba(255, 255, 255, 0.13) 1px, transparent 0);
     background-size: 32px 32px;
   }
+
+  .react-grid-item.react-grid-placeholder {
+    background: hsl(var(--primary)) !important;
+    opacity: 0.2;
+    transition-duration: 100ms;
+    z-index: 2;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+  }
+
+  .react-resizable-handle {
+    background: none !important;
+  }
+  
+  .react-resizable-handle::after {
+    content: '';
+    position: absolute;
+    right: 4px;
+    bottom: 4px;
+    width: 8px;
+    height: 8px;
+    border-right: 2px solid rgba(255,255,255,0.4);
+    border-bottom: 2px solid rgba(255,255,255,0.4);
+  }
+
 }
 
 @keyframes ticker {
@@ -141,3 +172,5 @@
 .animate-ticker-fast {
   animation: ticker 15s linear infinite;
 }
+
+    
