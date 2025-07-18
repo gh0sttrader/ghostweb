@@ -13,7 +13,7 @@ const ResponsiveGridLayout = WidthProvider(Responsive);
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 import { OrderCardV2 } from '@/components/v2/OrderCardV2';
-import { CardHeader } from '@/components/ui/card';
+import { CardHeader, CardTitle } from '@/components/ui/card';
 import { InteractiveChartCardV2 } from '@/components/v2/charts/InteractiveChartCardV2';
 import { WatchlistCardV2 } from '@/components/v2/WatchlistCardV2';
 import { OpenPositionsCardV2 } from '@/components/v2/OpenPositionsCardV2';
@@ -70,11 +70,11 @@ function TradingDashboardPageContentV2() {
     chart: ['chart'],
     order: ['order'],
     positions: ['positions'],
+    orders: ['orders'],
+    history: ['history'],
     watchlist: ['watchlist'],
     screeners: ['screeners'],
     news: ['news'],
-    orders: ['orders'],
-    history: ['history'],
   });
 
   const [activeTabs, setActiveTabs] = useState<Record<string, WidgetKey>>({});
@@ -109,7 +109,6 @@ function TradingDashboardPageContentV2() {
               delete newGroups[groupKey];
           } else {
               newGroups[groupKey] = group.filter(wId => wId !== widgetKey);
-              // if the active tab was deleted, reset to the first one
               if (activeTabs[groupKey] === widgetKey) {
                   setActiveTabs(prevTabs => ({...prevTabs, [groupKey]: newGroups[groupKey][0]}));
               }
@@ -149,7 +148,6 @@ function TradingDashboardPageContentV2() {
           if (!targetGroup.includes(widgetKey)) {
               newGroups[targetGroupKey] = [...targetGroup, widgetKey];
           }
-          // Remove the standalone version if it exists
           delete newGroups[widgetKey];
           return newGroups;
       });
@@ -408,7 +406,8 @@ function TradingDashboardPageContentV2() {
                        const activeWidgetId = activeTabs[groupKey] || widgetIds[0];
                        const activeWidget = WIDGET_COMPONENTS[activeWidgetId];
                        
-                       const isChartOrOrder = groupKey === 'chart' || groupKey === 'order';
+                       const isChart = groupKey === 'chart';
+                       const isOrder = groupKey === 'order';
 
                        return (
                            <div key={groupKey} id={groupKey} className="overflow-hidden">
@@ -431,7 +430,7 @@ function TradingDashboardPageContentV2() {
                                                 <Button variant="link" className="ml-auto text-destructive text-xs h-auto py-0 px-2" onClick={() => uncombineGroup(groupKey)}>Separate</Button>
                                                 <div className="no-drag ml-2">
                                                     <CardMenu
-                                                        showAddWidget={!isChartOrOrder}
+                                                        showAddWidget={!isChart && !isOrder}
                                                         onAddWidget={() => setPopoverState({ open: true, groupKey })}
                                                         onCustomize={() => toast({ title: `Customize ${activeWidget.label}`})}
                                                         onDelete={() => handleDeleteWidget(groupKey, activeWidgetId)}
@@ -444,10 +443,10 @@ function TradingDashboardPageContentV2() {
                                         </>
                                     ) : (
                                         <>
-                                          <div className={cn("absolute top-2 right-2 z-10", isChartOrOrder ? 'drag-handle' : 'no-drag')}>
+                                          <div className={cn("absolute top-2 right-2 z-10 no-drag")}>
                                               <CardMenu
-                                                  showAddWidget={!isChartOrOrder}
-                                                  showCustomize={!isChartOrOrder && activeWidget.id !== 'order'}
+                                                  showAddWidget={!isChart && !isOrder}
+                                                  showCustomize={!isChart && !isOrder}
                                                   onAddWidget={() => setPopoverState({ open: true, groupKey })}
                                                   onCustomize={() => toast({ title: `Customize ${activeWidget.label}` })}
                                                   onDelete={() => handleDeleteWidget(groupKey, activeWidgetId)}
