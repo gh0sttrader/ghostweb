@@ -31,8 +31,8 @@ const AppNavLinks = () => {
   const pathname = usePathname();
 
   const links = [
-    { href: "/trading", label: "GHOST TRADING 2.0" },
-    { href: "/ghosttrading", label: "GHOST TRADING" },
+    { href: "/trading-v2/dashboard", label: "GHOST TRADING 2.0" },
+    { href: "/trading/dashboard", label: "GHOST TRADING" },
     { href: "/accounts", label: "ACCOUNTS" },
     { href: "/news", label: "NEWS" },
     { href: "/screener", label: "SCREENER" },
@@ -41,12 +41,9 @@ const AppNavLinks = () => {
   ];
 
   const isActive = (href: string) => {
-    if (href === "/trading") {
+    if (href === "/trading/dashboard") {
       // Special check for the main portal button to also be active for dashboard
-      return pathname.startsWith("/trading") || pathname.startsWith("/ghosttrading");
-    }
-    if (href === "/ghosttrading") {
-        return pathname.startsWith("/ghosttrading") || pathname.startsWith("/trading/dashboard")
+      return pathname.startsWith("/trading/dashboard") || pathname.startsWith("/ghosttrading");
     }
     // For other links, check if the pathname starts with the href.
     // This correctly handles nested routes.
@@ -118,6 +115,18 @@ export function NavBar({ onReviewClick }: { onReviewClick?: () => void }) {
   }, []);
   
   const isHomepage = pathname === '/';
+  const isTradingV2 = pathname.startsWith('/trading-v2');
+
+  // Do not render the full bar on the V2 trading page, only the logo part.
+  if (isTradingV2) {
+    return (
+       <header className="sticky top-0 z-50 w-full bg-black h-16 flex items-center px-8 sm:px-12">
+           <Link href="/accounts" className="flex items-center space-x-2 transition-opacity hover:opacity-80">
+                <GhostIcon className="h-8 w-8" />
+           </Link>
+       </header>
+    );
+  }
 
   return (
     <header className="sticky top-0 z-50 w-full bg-black">

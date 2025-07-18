@@ -242,7 +242,7 @@ function TradingDashboardPageContentV2() {
                         initialQuantity={orderCardInitialQuantity}
                         initialOrderType={orderCardInitialOrderType}
                         initialLimitPrice={orderCardInitialLimitPrice}
-                        className="h-full"
+                        className="h-full drag-handle"
                     />
                  </DraggableCard>
             </div>
