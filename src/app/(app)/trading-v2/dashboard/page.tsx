@@ -200,7 +200,9 @@ function TradingDashboardPageContentV2() {
     { i: 'order', x: 9, y: 0, w: 3, h: 10, minW: 3, minH: 10 },
     { i: 'positions', x: 0, y: 10, w: 6, h: 8, minW: 4, minH: 6 },
     { i: 'watchlist', x: 6, y: 10, w: 3, h: 8, minW: 3, minH: 6 },
-    { i: 'fundamentals', x: 9, y: 10, w: 3, h: 8, minW: 3, minH: 8 },
+    { i: 'screeners', x: 9, y: 10, w: 3, h: 8, minW: 3, minH: 6 },
+    { i: 'news', x: 0, y: 18, w: 9, h: 8, minW: 3, minH: 6 },
+    { i: 'fundamentals', x: 9, y: 18, w: 3, h: 8, minW: 3, minH: 8 },
   ];
 
   if (!isMounted) {
@@ -275,73 +277,40 @@ function TradingDashboardPageContentV2() {
 
                   <div key="watchlist" className="overflow-hidden">
                       <DraggableCard>
-                          <Tabs defaultValue="watchlist" className="flex flex-col h-full">
-                              <TabsList className="shrink-0 px-3 pt-2 items-center drag-handle cursor-move">
-                                  <DropdownMenu open={isWatchlistDropdownOpen} onOpenChange={setIsWatchlistDropdownOpen}>
-                                      <TabsTrigger value="watchlist" asChild>
-                                          <DropdownMenuTrigger asChild>
-                                              <Button variant="ghost" className="flex items-center text-base p-0 h-auto hover:bg-transparent data-[state=active]:font-semibold data-[state=active]:text-foreground data-[state=inactive]:text-muted-foreground data-[state=inactive]:font-medium pr-2">
-                                                  My Watchlist
-                                                  <ChevronDown className={cn("ml-2 h-4 w-4 text-muted-foreground transition-transform", isWatchlistDropdownOpen && "rotate-180")} />
-                                              </Button>
-                                          </DropdownMenuTrigger>
-                                      </TabsTrigger>
-                                      <DropdownMenuContent className="w-56 backdrop-blur-md bg-black/50 border-white/10" style={{ WebkitBackdropFilter: 'blur(10px)', backdropFilter: 'blur(10px)' }}>
-                                          {dummyWatchlists.map((list) => (
-                                              <DropdownMenuItem key={list} onSelect={() => setSelectedWatchlist(list)} className="text-sm font-medium">
-                                                  {list}
-                                              </DropdownMenuItem>
-                                          ))}
-                                          <DropdownMenuSeparator className="bg-white/10" />
-                                          <DropdownMenuItem onSelect={() => console.log('Create new watchlist')}>
-                                              <Plus className="mr-2 h-4 w-4" />
-                                              <span>Create new watchlist</span>
-                                          </DropdownMenuItem>
-                                      </DropdownMenuContent>
-                                  </DropdownMenu>
-                                  
-                                  <DropdownMenu open={isScreenerDropdownOpen} onOpenChange={setIsScreenerDropdownOpen}>
-                                      <TabsTrigger value="screener" asChild>
-                                          <DropdownMenuTrigger asChild>
-                                              <Button variant="ghost" className="flex items-center text-base p-0 h-auto hover:bg-transparent data-[state=active]:font-semibold data-[state=active]:text-foreground data-[state=inactive]:text-muted-foreground data-[state=inactive]:font-medium pr-2">
-                                                  Screeners
-                                                  <ChevronDown className={cn("ml-2 h-4 w-4 text-muted-foreground transition-transform", isScreenerDropdownOpen && "rotate-180")} />
-                                              </Button>
-                                          </DropdownMenuTrigger>
-                                      </TabsTrigger>
-                                      <DropdownMenuContent className="w-56 backdrop-blur-md bg-black/50 border-white/10" style={{ WebkitBackdropFilter: 'blur(10px)', backdropFilter: 'blur(10px)' }}>
-                                          {dummyScreeners.map((list) => (
-                                              <DropdownMenuItem key={list} onSelect={() => setSelectedScreener(list)} className="text-sm font-medium">
-                                                  {list}
-                                              </DropdownMenuItem>
-                                          ))}
-                                      </DropdownMenuContent>
-                                  </DropdownMenu>
+                          <CardHeader className="drag-handle cursor-move p-3">
+                            <CardTitle className="text-base">Watchlist</CardTitle>
+                          </CardHeader>
+                          <WatchlistCardV2
+                            className="h-full border-0 shadow-none rounded-none bg-transparent"
+                            onSymbolSelect={handleSyncedTickerChange}
+                            selectedSymbol={syncedTickerSymbol}
+                          />
+                      </DraggableCard>
+                  </div>
 
-                                  <TabsTrigger value="news">News</TabsTrigger>
-                              </TabsList>
-                              <TabsContent value="watchlist" className="flex-1 overflow-hidden mt-0 p-0">
-                                  <WatchlistCardV2
-                                    className="h-full border-0 shadow-none rounded-none bg-transparent"
-                                    onSymbolSelect={handleSyncedTickerChange}
-                                    selectedSymbol={syncedTickerSymbol}
-                                  />
-                              </TabsContent>
-                              <TabsContent value="screener" className="flex-1 overflow-hidden mt-0 p-0">
-                                  <ScreenerWatchlistV2
-                                    className="h-full border-0 shadow-none rounded-none bg-transparent"
-                                    onSymbolSelect={handleSyncedTickerChange}
-                                    selectedSymbol={syncedTickerSymbol}
-                                  />
-                              </TabsContent>
-                              <TabsContent value="news" className="flex-1 overflow-hidden mt-0 p-0">
-                                  <NewsCardV2
-                                    className="h-full border-0 shadow-none rounded-none bg-transparent"
-                                    onSymbolSelect={handleSyncedTickerChange}
-                                    selectedSymbol={syncedTickerSymbol}
-                                  />
-                              </TabsContent>
-                          </Tabs>
+                  <div key="screeners" className="overflow-hidden">
+                      <DraggableCard>
+                          <CardHeader className="drag-handle cursor-move p-3">
+                              <CardTitle className="text-base">Screeners</CardTitle>
+                          </CardHeader>
+                          <ScreenerWatchlistV2
+                            className="h-full border-0 shadow-none rounded-none bg-transparent"
+                            onSymbolSelect={handleSyncedTickerChange}
+                            selectedSymbol={syncedTickerSymbol}
+                          />
+                      </DraggableCard>
+                  </div>
+                  
+                   <div key="news" className="overflow-hidden">
+                      <DraggableCard>
+                          <CardHeader className="drag-handle cursor-move p-3">
+                              <CardTitle className="text-base">News</CardTitle>
+                          </CardHeader>
+                          <NewsCardV2
+                            className="h-full border-0 shadow-none rounded-none bg-transparent"
+                            onSymbolSelect={handleSyncedTickerChange}
+                            selectedSymbol={syncedTickerSymbol}
+                          />
                       </DraggableCard>
                   </div>
 
