@@ -15,7 +15,7 @@ const ResponsiveGridLayout = WidthProvider(Responsive);
 
 
 import { OrderCardV2 } from '@/components/v2/OrderCardV2';
-import { Card, CardHeader } from '@/components/ui/card';
+import { Card, CardHeader, CardTitle } from '@/components/ui/card';
 import { InteractiveChartCardV2 } from '@/components/v2/charts/InteractiveChartCardV2';
 import { WatchlistCardV2 } from '@/components/v2/WatchlistCardV2';
 import { OpenPositionsCardV2 } from '@/components/v2/OpenPositionsCardV2';
@@ -198,11 +198,10 @@ function TradingDashboardPageContentV2() {
   const layout = [
     { i: 'chart', x: 0, y: 0, w: 9, h: 10, minW: 6, minH: 8 },
     { i: 'order', x: 9, y: 0, w: 3, h: 10, minW: 3, minH: 10 },
-    { i: 'positions', x: 0, y: 10, w: 6, h: 8, minW: 4, minH: 6 },
-    { i: 'watchlist', x: 6, y: 10, w: 3, h: 8, minW: 3, minH: 6 },
-    { i: 'screeners', x: 9, y: 10, w: 3, h: 8, minW: 3, minH: 6 },
-    { i: 'news', x: 0, y: 18, w: 9, h: 8, minW: 3, minH: 6 },
-    { i: 'fundamentals', x: 9, y: 18, w: 3, h: 8, minW: 3, minH: 8 },
+    { i: 'positions', x: 0, y: 10, w: 12, h: 8, minW: 4, minH: 6 },
+    { i: 'watchlist', x: 0, y: 18, w: 4, h: 8, minW: 3, minH: 6 },
+    { i: 'screeners', x: 4, y: 18, w: 4, h: 8, minW: 3, minH: 6 },
+    { i: 'news', x: 8, y: 18, w: 4, h: 8, minW: 3, minH: 6 },
   ];
 
   if (!isMounted) {
@@ -212,7 +211,8 @@ function TradingDashboardPageContentV2() {
   return (
     <main className="w-full h-full flex flex-col bg-background relative bg-dot-grid">
         <GhostTradingTopBar />
-        <div className="flex-1 w-full h-full pt-[50px] overflow-hidden">
+        <div className="w-full h-full pt-[50px] overflow-hidden">
+             <div className="h-full w-full overflow-hidden">
               <ResponsiveGridLayout 
                   className="layout"
                   layouts={{ lg: layout }}
@@ -263,13 +263,19 @@ function TradingDashboardPageContentV2() {
                                   <TabsTrigger value="history">History</TabsTrigger>
                               </TabsList>
                               <TabsContent value="positions" className="flex-1 overflow-hidden mt-0 p-0">
-                                  <OpenPositionsCardV2 className="h-full border-0 shadow-none rounded-none bg-transparent" />
+                                  <div className="h-full overflow-x-auto">
+                                    <OpenPositionsCardV2 className="h-full border-0 shadow-none rounded-none bg-transparent" />
+                                  </div>
                               </TabsContent>
                               <TabsContent value="orders" className="flex-1 overflow-hidden mt-0 p-0">
+                                <div className="h-full overflow-x-auto">
                                   <OrdersTableV2 className="h-full border-0 shadow-none rounded-none bg-transparent" />
+                                </div>
                               </TabsContent>
                               <TabsContent value="history" className="flex-1 overflow-hidden mt-0 p-0">
-                                <TradeHistoryTableV2 className="h-full border-0 shadow-none rounded-none bg-transparent" syncedTickerSymbol={syncedTickerSymbol} />
+                                <div className="h-full overflow-x-auto">
+                                 <TradeHistoryTableV2 className="h-full border-0 shadow-none rounded-none bg-transparent" syncedTickerSymbol={syncedTickerSymbol} />
+                                </div>
                               </TabsContent>
                           </Tabs>
                       </DraggableCard>
@@ -313,16 +319,8 @@ function TradingDashboardPageContentV2() {
                           />
                       </DraggableCard>
                   </div>
-
-                  <div key="fundamentals" className="overflow-hidden">
-                      <DraggableCard>
-                          <FundamentalsCardV2 
-                              stock={stockForSyncedComps}
-                              className="h-full drag-handle"
-                          />
-                      </DraggableCard>
-                  </div>
               </ResponsiveGridLayout>
+            </div>
         </div>
     </main>
   );
