@@ -25,7 +25,7 @@ export function AlertsOverlay({ isOpen, onClose }: AlertsOverlayProps) {
       {isOpen && (
         <Dialog open={isOpen} onOpenChange={onClose}>
             <DialogPortal>
-                <DialogOverlay className="bg-background/10 backdrop-blur-md" />
+                <DialogOverlay className="gt2-alerts-overlay" />
                 <DialogContent 
                     className="bg-transparent border-none shadow-none w-full max-w-md p-0"
                     onInteractOutside={onClose}
@@ -35,22 +35,23 @@ export function AlertsOverlay({ isOpen, onClose }: AlertsOverlayProps) {
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.95 }}
                     transition={{ duration: 0.2 }}
-                    className="relative bg-neutral-900/90 border border-white/10 p-6 rounded-2xl shadow-2xl text-white"
+                    className="gt2-alerts-card"
                   >
                     <DialogHeader>
-                      <DialogTitle className="text-xl font-bold mb-4">Alerts</DialogTitle>
+                      <DialogTitle asChild>
+                        <h2>ALERTS</h2>
+                      </DialogTitle>
                       <DialogClose asChild>
-                         <button className="absolute top-4 right-4 text-white/60 hover:text-white transition-colors" onClick={onClose}>
-                            <X size={20} />
-                            <span className="sr-only">Close</span>
+                         <button className="gt2-alerts-close" onClick={onClose} aria-label="Close alerts">
+                            <X size={22} />
                         </button>
                       </DialogClose>
                     </DialogHeader>
                     
-                    <ul className="space-y-3">
-                      <li className="text-sm">🔔 <b>TSLA</b> is up 5% today.</li>
-                      <li className="text-sm">🔔 <b>AAPL</b> earnings tomorrow at 3:30pm.</li>
-                      <li className="text-sm">🔔 <b>NVDA</b> hit a new 52-week high.</li>
+                    <ul>
+                      <li><span role="img" aria-label="bell">🔔</span> <b>TSLA</b> is up 5% today.</li>
+                      <li><span role="img" aria-label="bell">🔔</span> <b>AAPL</b> earnings tomorrow at 3:30pm.</li>
+                      <li><span role="img" aria-label="bell">🔔</span> <b>NVDA</b> hit a new 52-week high.</li>
                     </ul>
                   </motion.div>
                 </DialogContent>
