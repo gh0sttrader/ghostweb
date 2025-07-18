@@ -83,12 +83,12 @@ function TradingDashboardPageContentV2() {
   const initialLayouts: Record<WidgetKey, ReactGridLayout.Layout> = {
     chart: { i: 'chart', x: 0, y: 0, w: 9, h: 10, minW: 6, minH: 8 },
     order: { i: 'order', x: 9, y: 0, w: 3, h: 10, minW: 2, minH: 10 },
-    positions: { i: 'positions', x: 0, y: 10, w: 6, h: 8, minW: 4, minH: 6 },
-    orders: { i: 'orders', x: 6, y: 10, w: 6, h: 8, minW: 4, minH: 6 },
-    history: { i: 'history', x: 0, y: 18, w: 12, h: 8, minW: 4, minH: 6 },
-    watchlist: { i: 'watchlist', x: 0, y: 26, w: 4, h: 8, minW: 2, minH: 6 },
-    screeners: { i: 'screeners', x: 4, y: 26, w: 4, h: 8, minW: 2, minH: 6 },
-    news: { i: 'news', x: 8, y: 26, w: 4, h: 8, minW: 2, minH: 6 },
+    positions: { i: 'positions', x: 0, y: 10, w: 4, h: 8, minW: 3, minH: 6 },
+    orders: { i: 'orders', x: 4, y: 10, w: 4, h: 8, minW: 3, minH: 6 },
+    history: { i: 'history', x: 8, y: 10, w: 4, h: 8, minW: 3, minH: 6 },
+    watchlist: { i: 'watchlist', x: 0, y: 18, w: 4, h: 8, minW: 2, minH: 6 },
+    screeners: { i: 'screeners', x: 4, y: 18, w: 4, h: 8, minW: 2, minH: 6 },
+    news: { i: 'news', x: 8, y: 18, w: 4, h: 8, minW: 2, minH: 6 },
   };
   
   const [layouts, setLayouts] = useState<ReactGridLayout.Layout[]>(Object.values(initialLayouts));
@@ -407,8 +407,8 @@ function TradingDashboardPageContentV2() {
                                     ) : (
                                         <>
                                             <CardHeader className="drag-handle cursor-move p-3 flex-row items-center justify-between">
-                                                {activeWidget.id !== 'order' && <CardTitle className="text-base">{activeWidget.label}</CardTitle>}
-                                                {activeWidget.id === 'order' && <div />}
+                                                {activeWidget.id !== 'order' && activeWidget.id !== 'chart' && <CardTitle className="text-base">{activeWidget.label}</CardTitle>}
+                                                {(activeWidget.id === 'order' || activeWidget.id === 'chart') && <div />}
                                                 <div className="no-drag">
                                                     <CardMenu
                                                         showCustomize={activeWidget.id !== 'order'}
