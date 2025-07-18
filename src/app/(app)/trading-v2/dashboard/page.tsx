@@ -208,7 +208,7 @@ function TradingDashboardPageContentV2() {
   }
 
   return (
-    <main className="w-full h-full flex flex-col bg-background relative overflow-hidden bg-dot-grid">
+    <main className="w-full h-full flex flex-col bg-background relative">
         <GhostTradingTopBar />
         <div className="flex-1 w-full h-full pt-[50px] overflow-hidden">
               <ResponsiveGridLayout 
@@ -219,11 +219,13 @@ function TradingDashboardPageContentV2() {
                   rowHeight={32}
                   draggableHandle=".drag-handle"
                   isResizable
-                  resizeHandles={["s", "e"]}
+                  resizeHandles={['se', 'sw', 'ne', 'nw']}
                   margin={[16, 16]}
                   containerPadding={[0, 0]}
+                  preventCollision={true}
+                  compactType={null}
               >
-                  <div key="chart">
+                  <div key="chart" className="overflow-hidden">
                       <DraggableCard>
                           <InteractiveChartCardV2
                               stock={stockForSyncedComps}
@@ -233,7 +235,7 @@ function TradingDashboardPageContentV2() {
                       </DraggableCard>
                   </div>
 
-                  <div key="order">
+                  <div key="order" className="overflow-hidden">
                       <DraggableCard>
                           <OrderCardV2
                               selectedStock={stockForSyncedComps}
@@ -250,7 +252,7 @@ function TradingDashboardPageContentV2() {
                       </DraggableCard>
                   </div>
                   
-                  <div key="positions">
+                  <div key="positions" className="overflow-hidden">
                       <DraggableCard>
                           <Tabs defaultValue="positions" className="flex flex-col h-full">
                               <TabsList className="shrink-0 px-3 pt-2 drag-handle cursor-move">
@@ -271,7 +273,7 @@ function TradingDashboardPageContentV2() {
                       </DraggableCard>
                   </div>
 
-                  <div key="watchlist">
+                  <div key="watchlist" className="overflow-hidden">
                       <DraggableCard>
                           <Tabs defaultValue="watchlist" className="flex flex-col h-full">
                               <TabsList className="shrink-0 px-3 pt-2 items-center drag-handle cursor-move">
@@ -343,7 +345,7 @@ function TradingDashboardPageContentV2() {
                       </DraggableCard>
                   </div>
 
-                  <div key="fundamentals">
+                  <div key="fundamentals" className="overflow-hidden">
                       <DraggableCard>
                           <FundamentalsCardV2 
                               stock={stockForSyncedComps}

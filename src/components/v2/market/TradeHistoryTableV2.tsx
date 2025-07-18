@@ -29,9 +29,9 @@ export function TradeHistoryTableV2({ className, syncedTickerSymbol }: TradeHist
 
   return (
     <div className={cn("h-full flex flex-col", className)}>
-      <div className="p-0 flex-1 overflow-hidden">
-        <ScrollArea className="h-full">
-          <Table className="table-fixed">
+      <div className="p-0 flex-1 overflow-auto">
+        <div className="h-full overflow-x-auto">
+          <Table className="min-w-[550px]">
             <TableHeader className="sticky top-0 bg-card/[.05] backdrop-blur-md z-[1]">
               <TableRow>
                 <TableHead className="text-xs h-7 px-2 text-left text-muted-foreground font-medium">Symbol</TableHead>
@@ -70,7 +70,7 @@ export function TradeHistoryTableV2({ className, syncedTickerSymbol }: TradeHist
               )}
             </TableBody>
           </Table>
-        </ScrollArea>
+        </div>
       </div>
     </div>
   );
