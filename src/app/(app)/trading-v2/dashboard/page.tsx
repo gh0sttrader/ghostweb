@@ -253,6 +253,7 @@ function TradingDashboardPageContentV2() {
                   cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
                   rowHeight={32}
                   draggableHandle=".drag-handle"
+                  draggableCancel=".no-drag"
                   isResizable
                   resizeHandles={['se', 'sw', 'ne', 'nw']}
                   margin={[16, 16]}
@@ -290,7 +291,7 @@ function TradingDashboardPageContentV2() {
                               initialLimitPrice={orderCardInitialLimitPrice}
                               className="h-full"
                           />
-                          <div className="drag-handle absolute top-0 left-0 w-full h-4 cursor-move"></div>
+                          <div className="drag-handle absolute top-0 left-0 w-full h-12 cursor-move"></div>
                           <div className="absolute top-2 right-2 z-10">
                                 <CardMenu
                                     onCustomize={() => toast({ title: "Customize Columns clicked for Order Card" })}

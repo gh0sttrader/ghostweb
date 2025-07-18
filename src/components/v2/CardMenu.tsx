@@ -3,6 +3,7 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import { MoreHorizontal, Trash2, Settings2 } from 'lucide-react';
+import { cn } from "@/lib/utils";
 
 interface CardMenuProps {
   onCustomize: () => void;
@@ -24,11 +25,18 @@ export function CardMenu({ onCustomize, onDelete }: CardMenuProps) {
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
+  const handleInteraction = (e: React.MouseEvent | React.TouchEvent) => {
+    e.stopPropagation();
+  }
+
   return (
-    <div className="relative" ref={ref}>
+    <div className="relative no-drag" ref={ref} onMouseDown={handleInteraction} onTouchStart={handleInteraction}>
       <button
         className="p-1 rounded-full text-muted-foreground hover:bg-white/10 hover:text-foreground"
-        onClick={() => setOpen((o) => !o)}
+        onClick={(e) => {
+            e.stopPropagation();
+            setOpen((o) => !o)
+        }}
         aria-label="Card options"
       >
         <MoreHorizontal size={18} />
