@@ -148,7 +148,11 @@ function TradingDashboardPageContentV2() {
           if (!targetGroup.includes(widgetKey)) {
               newGroups[targetGroupKey] = [...targetGroup, widgetKey];
           }
-          delete newGroups[widgetKey];
+          // Remove the widget from its own group if it existed as a single card
+          const sourceGroupKey = Object.keys(newGroups).find(key => newGroups[key].length === 1 && newGroups[key][0] === widgetKey);
+          if (sourceGroupKey) {
+              delete newGroups[sourceGroupKey];
+          }
           return newGroups;
       });
 
@@ -344,7 +348,7 @@ function TradingDashboardPageContentV2() {
   };
 
   const WIDGET_COMPONENTS: Record<WidgetKey, Widget> = {
-    chart: { id: 'chart', label: 'Chart', component: <InteractiveChartCardV2 stock={stockForSyncedComps} onManualTickerSubmit={handleSyncedTickerChange} className="drag-handle" />, layout: initialLayouts.chart },
+    chart: { id: 'chart', label: 'Chart', component: <InteractiveChartCardV2 stock={stockForSyncedComps} onManualTickerSubmit={handleSyncedTickerChange} />, layout: initialLayouts.chart },
     order: { id: 'order', label: 'Trading Card', component: <OrderCardV2 selectedStock={stockForSyncedComps} initialActionType={orderCardActionType} initialTradeMode={orderCardInitialTradeMode} miloActionContextText={orderCardMiloActionContext} onSubmit={handleTradeSubmit} onClear={handleClearOrderCard} initialQuantity={orderCardInitialQuantity} initialOrderType={orderCardInitialOrderType} initialLimitPrice={orderCardInitialLimitPrice} className="h-full" />, layout: initialLayouts.order },
     positions: { id: 'positions', label: 'Positions', component: <OpenPositionsCardV2 className="h-full border-0 shadow-none rounded-none bg-transparent" />, layout: initialLayouts.positions },
     orders: { id: 'orders', label: 'Open Orders', component: <OrdersTableV2 className="h-full border-0 shadow-none rounded-none bg-transparent" />, layout: initialLayouts.orders },
@@ -365,7 +369,7 @@ function TradingDashboardPageContentV2() {
       widget.id !== 'chart' &&
       widget.id !== 'order'
     );
-  }, [popoverState.groupKey, widgetGroups]);
+  }, [popoverState.groupKey, widgetGroups, allPossibleWidgets]);
 
   const currentLayout = useMemo(() => {
       return Object.keys(widgetGroups).map(groupKey => {
@@ -443,23 +447,27 @@ function TradingDashboardPageContentV2() {
                                         </>
                                     ) : (
                                         <>
-                                          <div className={cn("absolute top-2 right-2 z-10 no-drag")}>
-                                              <CardMenu
-                                                  showAddWidget={!isChart && !isOrder}
-                                                  showCustomize={!isChart && !isOrder}
-                                                  onAddWidget={() => setPopoverState({ open: true, groupKey })}
-                                                  onCustomize={() => toast({ title: `Customize ${activeWidget.label}` })}
-                                                  onDelete={() => handleDeleteWidget(groupKey, activeWidgetId)}
-                                              />
-                                          </div>
-                                          {activeWidget.id !== 'order' && activeWidget.id !== 'chart' && (
-                                              <CardHeader className="drag-handle cursor-move p-3 flex-row items-center justify-between">
-                                                  <CardTitle className="text-base">{activeWidget.label}</CardTitle>
-                                              </CardHeader>
-                                          )}
-                                          <div className="flex-1 overflow-hidden h-full">
-                                              {activeWidget.component}
-                                          </div>
+                                            <div className="absolute top-0 left-0 right-0 h-10 flex items-center justify-end px-2 z-10">
+                                                {activeWidget.id === 'order' && <div className="flex-1 drag-handle cursor-move h-full" />}
+                                                <div className="no-drag">
+                                                    <CardMenu
+                                                        showAddWidget={!isChart && !isOrder}
+                                                        showCustomize={!isChart && !isOrder && activeWidget.id !== 'order'}
+                                                        onAddWidget={() => setPopoverState({ open: true, groupKey })}
+                                                        onCustomize={() => toast({ title: `Customize ${activeWidget.label}`})}
+                                                        onDelete={() => handleDeleteWidget(groupKey, activeWidgetId)}
+                                                    />
+                                                </div>
+                                            </div>
+
+                                            {activeWidget.id !== 'order' && activeWidget.id !== 'chart' && (
+                                                <CardHeader className="drag-handle cursor-move p-3 flex-row items-center justify-between">
+                                                    <CardTitle className="text-base">{activeWidget.label}</CardTitle>
+                                                </CardHeader>
+                                            )}
+                                            <div className={cn("flex-1 overflow-hidden h-full", (isOrder || isChart) && "pt-10")}>
+                                                {activeWidget.component}
+                                            </div>
                                         </>
                                     )}
                                </DraggableCard>
