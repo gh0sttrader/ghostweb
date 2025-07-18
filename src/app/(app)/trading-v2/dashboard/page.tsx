@@ -210,8 +210,7 @@ function TradingDashboardPageContentV2() {
   return (
     <main className="w-full h-full flex flex-col bg-background relative overflow-hidden bg-dot-grid">
         <GhostTradingTopBar />
-        <div className="flex-1 w-full h-full pt-[50px]">
-          <div className="w-full h-full pt-4">
+        <div className="flex-1 w-full h-full pt-[50px] overflow-hidden">
               <ResponsiveGridLayout 
                   className="layout"
                   layouts={{ lg: layout }}
@@ -353,7 +352,6 @@ function TradingDashboardPageContentV2() {
                       </DraggableCard>
                   </div>
               </ResponsiveGridLayout>
-            </div>
         </div>
     </main>
   );
