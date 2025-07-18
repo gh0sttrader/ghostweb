@@ -207,7 +207,7 @@ function TradingDashboardPageContentV2() {
   }
 
   return (
-    <main className="w-full h-full flex flex-col bg-background overflow-hidden">
+    <main className="w-full h-full flex flex-col bg-background bg-dot-grid overflow-hidden">
         <ResponsiveGridLayout 
             className="layout"
             layouts={{ lg: layout }}
@@ -217,7 +217,7 @@ function TradingDashboardPageContentV2() {
             draggableHandle=".drag-handle"
             isResizable
             resizeHandles={['n', 's', 'e', 'w', 'ne', 'nw', 'se', 'sw']}
-            margin={[0, 0]}
+            margin={[16, 16]}
             containerPadding={[0, 0]}
         >
             <div key="chart">
