@@ -120,7 +120,7 @@ export function NavBar({ onReviewClick }: { onReviewClick?: () => void }) {
   // Do not render the full bar on the V2 trading page, only the logo part.
   if (isTradingV2) {
     return (
-       <header className="sticky top-0 z-50 w-full bg-black h-16 flex items-center px-8 sm:px-12">
+       <header className="sticky top-0 z-50 w-full bg-black h-12 flex items-center px-8 sm:px-12">
            <Link href="/accounts" className="flex items-center space-x-2 transition-opacity hover:opacity-80">
                 <GhostIcon className="h-8 w-8" />
            </Link>
