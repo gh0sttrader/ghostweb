@@ -196,11 +196,11 @@ function TradingDashboardPageContentV2() {
   };
   
   const layout = [
-    { i: 'chart', x: 0, y: 0, w: 9, h: 10, minH: 8, minW: 6 },
-    { i: 'order', x: 9, y: 0, w: 3, h: 10, minH: 10, minW: 3 },
-    { i: 'positions', x: 0, y: 10, w: 6, h: 8, minH: 6, minW: 4 },
-    { i: 'watchlist', x: 6, y: 10, w: 3, h: 8, minH: 6, minW: 3 },
-    { i: 'fundamentals', x: 9, y: 10, w: 3, h: 8, minH: 8, minW: 3 },
+    { i: 'chart', x: 0, y: 0, w: 9, h: 10, minW: 6, minH: 8 },
+    { i: 'order', x: 9, y: 0, w: 3, h: 10, minW: 3, minH: 10 },
+    { i: 'positions', x: 0, y: 10, w: 6, h: 8, minW: 4, minH: 6 },
+    { i: 'watchlist', x: 6, y: 10, w: 3, h: 8, minW: 3, minH: 6 },
+    { i: 'fundamentals', x: 9, y: 10, w: 3, h: 8, minW: 3, minH: 8 },
   ];
 
   if (!isMounted) {
@@ -208,7 +208,7 @@ function TradingDashboardPageContentV2() {
   }
 
   return (
-    <main className="w-full h-full flex flex-col bg-background relative">
+    <main className="w-full h-full flex flex-col bg-background relative bg-dot-grid">
         <GhostTradingTopBar />
         <div className="flex-1 w-full h-full pt-[50px] overflow-hidden">
               <ResponsiveGridLayout 
@@ -223,7 +223,7 @@ function TradingDashboardPageContentV2() {
                   margin={[16, 16]}
                   containerPadding={[0, 0]}
                   preventCollision={true}
-                  compactType={null}
+                  compactType={"vertical"}
               >
                   <div key="chart" className="overflow-hidden">
                       <DraggableCard>
