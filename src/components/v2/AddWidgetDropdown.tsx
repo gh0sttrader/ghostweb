@@ -3,12 +3,14 @@
 
 import * as React from 'react';
 import { Button } from '@/components/ui/button';
-import { ChartBar, Newspaper, ScanSearch, Table2, ShoppingCart } from 'lucide-react';
+import { ChartBar, Newspaper, ScanSearch, Table2, ShoppingCart, ListOrdered, History } from 'lucide-react';
 
 const WIDGETS = [
   { key: "chart", label: "Chart", icon: ChartBar },
   { key: "order", label: "Trading Card", icon: ShoppingCart },
   { key: "positions", label: "Positions", icon: Table2 },
+  { key: "orders", label: "Open Orders", icon: ListOrdered },
+  { key: "history", label: "History", icon: History },
   { key: "watchlist", label: "Watchlist", icon: Table2 },
   { key: "screeners", label: "Screeners", icon: ScanSearch },
   { key: "news", label: "News", icon: Newspaper },
@@ -51,7 +53,7 @@ export function AddWidgetDropdown({ onAddWidget }: AddWidgetDropdownProps) {
             p-1
           "
           style={{
-            background: "rgba(24, 24, 27, 0.01)",
+            background: "rgba(24, 24, 27, 0.5)",
             backdropFilter: "blur(18px)",
             WebkitBackdropFilter: "blur(18px)",
           }}

@@ -72,6 +72,8 @@ function TradingDashboardPageContentV2() {
     chart: true,
     order: true,
     positions: true,
+    orders: false,
+    history: false,
     watchlist: true,
     screeners: true,
     news: true,
@@ -228,9 +230,11 @@ function TradingDashboardPageContentV2() {
     { i: 'chart', x: 0, y: 0, w: 9, h: 10, minW: 6, minH: 8 },
     { i: 'order', x: 9, y: 0, w: 3, h: 10, minW: 3, minH: 10 },
     { i: 'positions', x: 0, y: 10, w: 12, h: 8, minW: 4, minH: 6 },
-    { i: 'watchlist', x: 0, y: 18, w: 4, h: 8, minW: 3, minH: 6 },
-    { i: 'screeners', x: 4, y: 18, w: 4, h: 8, minW: 3, minH: 6 },
-    { i: 'news', x: 8, y: 18, w: 4, h: 8, minW: 3, minH: 6 },
+    { i: 'orders', x: 0, y: 18, w: 6, h: 8, minW: 4, minH: 6 },
+    { i: 'history', x: 6, y: 18, w: 6, h: 8, minW: 4, minH: 6 },
+    { i: 'watchlist', x: 0, y: 26, w: 4, h: 8, minW: 3, minH: 6 },
+    { i: 'screeners', x: 4, y: 26, w: 4, h: 8, minW: 3, minH: 6 },
+    { i: 'news', x: 8, y: 26, w: 4, h: 8, minW: 3, minH: 6 },
   ];
 
   if (!isMounted) {
@@ -298,34 +302,40 @@ function TradingDashboardPageContentV2() {
                   
                   {visibleWidgets.positions && <div key="positions" className="overflow-hidden">
                       <DraggableCard>
-                          <Tabs defaultValue="positions" className="flex flex-col h-full">
-                              <div className='flex items-center justify-between pr-2'>
-                                <TabsList className="shrink-0 px-3 pt-2 drag-handle cursor-move">
-                                    <TabsTrigger value="positions">Positions</TabsTrigger>
-                                    <TabsTrigger value="orders">Open Orders</TabsTrigger>
-                                    <TabsTrigger value="history">History</TabsTrigger>
-                                </TabsList>
-                                <CardMenu
-                                    onCustomize={() => toast({ title: "Customize Columns clicked for Positions" })}
-                                    onDelete={() => handleDeleteWidget('positions')}
-                                />
-                              </div>
-                              <TabsContent value="positions" className="flex-1 overflow-hidden mt-0 p-0">
-                                  <div className="h-full overflow-x-auto">
-                                    <OpenPositionsCardV2 className="h-full border-0 shadow-none rounded-none bg-transparent" />
-                                  </div>
-                              </TabsContent>
-                              <TabsContent value="orders" className="flex-1 overflow-hidden mt-0 p-0">
-                                <div className="h-full overflow-x-auto">
-                                  <OrdersTableV2 className="h-full border-0 shadow-none rounded-none bg-transparent" />
-                                </div>
-                              </TabsContent>
-                              <TabsContent value="history" className="flex-1 overflow-hidden mt-0 p-0">
-                                <div className="h-full overflow-x-auto">
-                                 <TradeHistoryTableV2 className="h-full border-0 shadow-none rounded-none bg-transparent" syncedTickerSymbol={syncedTickerSymbol} />
-                                </div>
-                              </TabsContent>
-                          </Tabs>
+                          <CardHeader className="drag-handle cursor-move p-3 flex-row items-center justify-between">
+                            <CardTitle className="text-base">Positions</CardTitle>
+                             <CardMenu
+                                onCustomize={() => toast({ title: "Customize Columns clicked for Positions" })}
+                                onDelete={() => handleDeleteWidget('positions')}
+                            />
+                          </CardHeader>
+                          <OpenPositionsCardV2 className="h-full border-0 shadow-none rounded-none bg-transparent" />
+                      </DraggableCard>
+                  </div>}
+
+                  {visibleWidgets.orders && <div key="orders" className="overflow-hidden">
+                      <DraggableCard>
+                          <CardHeader className="drag-handle cursor-move p-3 flex-row items-center justify-between">
+                            <CardTitle className="text-base">Open Orders</CardTitle>
+                             <CardMenu
+                                onCustomize={() => toast({ title: "Customize Columns clicked for Open Orders" })}
+                                onDelete={() => handleDeleteWidget('orders')}
+                            />
+                          </CardHeader>
+                          <OrdersTableV2 className="h-full border-0 shadow-none rounded-none bg-transparent" />
+                      </DraggableCard>
+                  </div>}
+
+                  {visibleWidgets.history && <div key="history" className="overflow-hidden">
+                      <DraggableCard>
+                          <CardHeader className="drag-handle cursor-move p-3 flex-row items-center justify-between">
+                            <CardTitle className="text-base">History</CardTitle>
+                             <CardMenu
+                                onCustomize={() => toast({ title: "Customize Columns clicked for History" })}
+                                onDelete={() => handleDeleteWidget('history')}
+                            />
+                          </CardHeader>
+                          <TradeHistoryTableV2 className="h-full border-0 shadow-none rounded-none bg-transparent" syncedTickerSymbol={syncedTickerSymbol} />
                       </DraggableCard>
                   </div>}
 
