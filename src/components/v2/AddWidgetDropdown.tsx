@@ -3,7 +3,7 @@
 
 import * as React from 'react';
 import { Button } from '@/components/ui/button';
-import { ChartBar, Newspaper, ScanSearch, Table2, ShoppingCart, ListOrdered, History } from 'lucide-react';
+import { ChartBar, Newspaper, ScanSearch, Table2, ShoppingCart, ListOrdered, History, Plus } from 'lucide-react';
 
 const WIDGETS = [
   { key: "chart", label: "Chart", icon: ChartBar },
@@ -37,9 +37,11 @@ export function AddWidgetDropdown({ onAddWidget }: AddWidgetDropdownProps) {
   return (
     <div className="relative inline-block" ref={ref}>
       <Button 
-        className="bg-white text-black font-semibold rounded-full h-8 px-5 text-sm hover:bg-neutral-200 w-32 justify-center"
+        variant="ghost"
+        className="flex items-center justify-center gap-1.5 text-white font-medium h-8 px-3 text-sm hover:bg-white/10"
         onClick={() => setOpen(!open)}
       >
+        <Plus size={16} />
         Add Widget
       </Button>
       {open && (
@@ -53,6 +55,8 @@ export function AddWidgetDropdown({ onAddWidget }: AddWidgetDropdownProps) {
             p-1
           "
           style={{
+            background: "rgba(24, 24, 27, 0.5)",
+            backdropFilter: "blur(18px)",
             WebkitBackdropFilter: "blur(18px)",
           }}
         >
@@ -61,7 +65,7 @@ export function AddWidgetDropdown({ onAddWidget }: AddWidgetDropdownProps) {
             return (
               <button
                 key={widget.key}
-                className="w-full flex items-center px-4 py-3 rounded-xl text-left text-white transition font-medium cursor-pointer"
+                className="w-full flex items-center px-4 py-3 rounded-xl text-left text-white transition font-medium cursor-pointer hover:bg-white/5"
                 style={{
                   background: "none",
                   boxShadow: "none",
