@@ -51,7 +51,7 @@ export function AddWidgetDropdown({ onAddWidget }: AddWidgetDropdownProps) {
             p-1
           "
           style={{
-            background: "rgba(24, 24, 27, 0.5)",
+            background: "rgba(24, 24, 27, 0.01)",
             backdropFilter: "blur(18px)",
             WebkitBackdropFilter: "blur(18px)",
           }}
@@ -61,7 +61,13 @@ export function AddWidgetDropdown({ onAddWidget }: AddWidgetDropdownProps) {
             return (
               <button
                 key={widget.key}
-                className="w-full flex items-center px-4 py-3 rounded-xl text-left hover:bg-white/5 text-white transition font-medium"
+                className="w-full flex items-center px-4 py-3 rounded-xl text-left text-white transition font-medium cursor-pointer"
+                style={{
+                  background: "none",
+                  boxShadow: "none",
+                  outline: "none",
+                  border: "none",
+                }}
                 onClick={() => {
                   setOpen(false);
                   onAddWidget(widget.key);
