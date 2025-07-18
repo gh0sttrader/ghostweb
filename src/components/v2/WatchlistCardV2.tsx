@@ -35,9 +35,9 @@ const formatShortFloat = (shortFloat?: number) => {
 export const WatchlistCardV2: React.FC<WatchlistCardProps> = ({ className, onSymbolSelect, selectedSymbol }) => {
     return (
         <div className={cn("h-full flex flex-col", className)}>
-            <div className="flex-1 overflow-hidden px-3 pb-3 pt-2">
-                <ScrollArea className="h-full">
-                    <Table>
+            <div className="flex-1 overflow-auto px-3 pb-3 pt-2">
+                <div className="h-full overflow-x-auto">
+                    <Table className="min-w-[400px]">
                         <TableHeader className="sticky top-0 bg-card/[.05] backdrop-blur-md z-[1]">
                             <TableRow>
                                 <TableHead className="text-xs h-7 px-2 text-left text-muted-foreground font-medium">Symbol</TableHead>
@@ -66,7 +66,7 @@ export const WatchlistCardV2: React.FC<WatchlistCardProps> = ({ className, onSym
                             ))}
                         </TableBody>
                     </Table>
-                </ScrollArea>
+                </div>
             </div>
         </div>
     );
