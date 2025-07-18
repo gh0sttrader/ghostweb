@@ -36,7 +36,7 @@ interface Widget {
 
 const DraggableCard = ({ children, className, isOver }: { children: React.ReactNode, className?: string, isOver?: boolean }) => (
     <div className={cn(
-        "bg-card border border-white/10 rounded-lg flex flex-col overflow-hidden h-full transition-all duration-200", 
+        "bg-card border border-white/10 rounded-lg flex flex-col overflow-hidden h-full transition-all duration-200 relative", 
         className,
         isOver && "ring-2 ring-primary ring-offset-2 ring-offset-background"
         )}>
@@ -406,20 +406,28 @@ function TradingDashboardPageContentV2() {
                                         </>
                                     ) : (
                                         <>
-                                            <CardHeader className="drag-handle cursor-move p-3 flex-row items-center justify-between">
-                                                {activeWidget.id !== 'order' && activeWidget.id !== 'chart' && <CardTitle className="text-base">{activeWidget.label}</CardTitle>}
-                                                {(activeWidget.id === 'order' || activeWidget.id === 'chart') && <div />}
-                                                <div className="no-drag">
-                                                    <CardMenu
-                                                        showCustomize={activeWidget.id !== 'order'}
-                                                        onCustomize={() => toast({ title: `Customize ${activeWidget.label}` })}
-                                                        onDelete={() => handleDeleteWidget(groupKey, activeWidgetId)}
-                                                    />
-                                                </div>
-                                            </CardHeader>
-                                            <div className="flex-1 overflow-hidden">
-                                                {activeWidget.component}
+                                          {(activeWidget.id !== 'order' && activeWidget.id !== 'chart') ? (
+                                              <CardHeader className="drag-handle cursor-move p-3 flex-row items-center justify-between">
+                                                  <CardTitle className="text-base">{activeWidget.label}</CardTitle>
+                                                  <div className="no-drag">
+                                                      <CardMenu
+                                                          onCustomize={() => toast({ title: `Customize ${activeWidget.label}` })}
+                                                          onDelete={() => handleDeleteWidget(groupKey, activeWidgetId)}
+                                                      />
+                                                  </div>
+                                              </CardHeader>
+                                          ) : (
+                                            <div className="absolute top-2 right-2 z-10 no-drag">
+                                                <CardMenu
+                                                    showCustomize={activeWidget.id !== 'order'}
+                                                    onCustomize={() => toast({ title: `Customize ${activeWidget.label}` })}
+                                                    onDelete={() => handleDeleteWidget(groupKey, activeWidgetId)}
+                                                />
                                             </div>
+                                          )}
+                                          <div className="flex-1 overflow-hidden h-full">
+                                              {activeWidget.component}
+                                          </div>
                                         </>
                                     )}
                                </DraggableCard>
