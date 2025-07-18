@@ -61,18 +61,20 @@ export function GhostTradingTopBar() {
           backdropFilter: 'blur(10px)',
         }}
       >
-        <Link href="/accounts" className="flex items-center space-x-2 transition-opacity hover:opacity-80">
-          <GhostIcon className="h-8 w-8" />
-        </Link>
+        <div className="flex items-center">
+            <Link href="/accounts" className="flex items-center space-x-2 transition-opacity hover:opacity-80">
+                <GhostIcon className="h-8 w-8" />
+            </Link>
+        </div>
         
         <div className="flex items-center gap-4">
-           <Button className="bg-white text-black font-semibold rounded-full h-8 px-5 text-sm hover:bg-neutral-200">
+           <Button className="bg-white text-black font-semibold rounded-full h-8 px-5 text-sm hover:bg-neutral-200 w-32">
               Add widget
           </Button>
           <div className="relative" ref={dropdownRef}>
-            <Button variant="ghost" onClick={() => setIsAccountDropdownOpen(o => !o)} className="flex items-center gap-1.5 text-white font-medium h-8 px-3 text-sm hover:bg-white/10">
-                {selectedAccount?.name || 'Select Account'}
-                <ChevronDown size={16} className={cn("text-muted-foreground transition-transform", isAccountDropdownOpen && "rotate-180")} />
+            <Button variant="ghost" onClick={() => setIsAccountDropdownOpen(o => !o)} className="flex items-center justify-between gap-1.5 text-white font-medium h-8 px-3 text-sm hover:bg-white/10 w-40">
+                <span className="truncate">{selectedAccount?.name || 'Select Account'}</span>
+                <ChevronDown size={16} className={cn("text-muted-foreground transition-transform shrink-0", isAccountDropdownOpen && "rotate-180")} />
             </Button>
             {isAccountDropdownOpen && (
               <div className="absolute top-full mt-2 right-0 min-w-[180px] bg-[#181818e6] rounded-lg shadow-2xl p-1 z-[101] border border-white/10">
