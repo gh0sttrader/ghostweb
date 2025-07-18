@@ -23,7 +23,7 @@ export default function AppLayout({
 
   return (
     <div className="flex flex-col h-screen w-full">
-      <NavBar />
+      {!isTradingV2 && <NavBar />}
       <div className={cn("flex-1 overflow-auto", isTradingV2 && "h-full")}>
         {children}
       </div>

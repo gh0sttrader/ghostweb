@@ -27,6 +27,7 @@ import { initialMockStocks } from '@/app/(app)/trading/dashboard/mock-data';
 import { NewsCardV2 } from '@/components/v2/NewsCardV2';
 import { cn } from '@/lib/utils';
 import { ScreenerWatchlistV2 } from '@/components/v2/ScreenerWatchlistV2';
+import { GhostTradingTopBar } from '@/components/v2/GhostTradingTopBar';
 
 const dummyWatchlists = ["My Watchlist", "Tech Stocks", "Growth", "Crypto", "High Volume"];
 const dummyScreeners = ["Top Gainers", "High Volume", "Unusual Options"];
@@ -207,7 +208,8 @@ function TradingDashboardPageContentV2() {
   }
 
   return (
-    <main className="w-full h-full flex flex-col bg-background overflow-hidden bg-dot-grid">
+    <main className="w-full h-full flex flex-col bg-background relative overflow-hidden bg-dot-grid">
+        <GhostTradingTopBar />
         <ResponsiveGridLayout 
             className="layout"
             layouts={{ lg: layout }}
@@ -216,9 +218,9 @@ function TradingDashboardPageContentV2() {
             rowHeight={32}
             draggableHandle=".drag-handle"
             isResizable
-            resizeHandles={['n', 's', 'e', 'w', 'ne', 'nw', 'se', 'sw']}
+            resizeHandles={["n", "s", "e", "w", "ne", "nw", "se", "sw"]}
             margin={[16, 16]}
-            containerPadding={[16, 16]}
+            containerPadding={[0, 0]}
         >
             <div key="chart">
                 <DraggableCard>
