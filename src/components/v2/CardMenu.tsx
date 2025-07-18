@@ -6,11 +6,12 @@ import { MoreHorizontal, Trash2, Settings2 } from 'lucide-react';
 import { cn } from "@/lib/utils";
 
 interface CardMenuProps {
+  showCustomize?: boolean;
   onCustomize: () => void;
   onDelete: () => void;
 }
 
-export function CardMenu({ onCustomize, onDelete }: CardMenuProps) {
+export function CardMenu({ onCustomize, onDelete, showCustomize = true }: CardMenuProps) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -57,13 +58,15 @@ export function CardMenu({ onCustomize, onDelete }: CardMenuProps) {
             WebkitBackdropFilter: "blur(18px)",
           }}
         >
-          <button
-            className="w-full flex items-center gap-2 px-3 py-2 text-sm text-left hover:bg-white/5 text-white transition-colors"
-            onClick={() => { setOpen(false); onCustomize(); }}
-          >
-            <Settings2 size={16} className="text-muted-foreground" />
-            <span>Customize Columns</span>
-          </button>
+          {showCustomize && (
+              <button
+                className="w-full flex items-center gap-2 px-3 py-2 text-sm text-left hover:bg-white/5 text-white transition-colors"
+                onClick={() => { setOpen(false); onCustomize(); }}
+              >
+                <Settings2 size={16} className="text-muted-foreground" />
+                <span>Customize Columns</span>
+              </button>
+          )}
           <button
             className="w-full flex items-center gap-2 px-3 py-2 text-sm text-left hover:bg-white/5 text-destructive font-medium transition-colors"
             onClick={() => { setOpen(false); onDelete(); }}
