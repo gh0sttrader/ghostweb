@@ -28,6 +28,7 @@ import { NewsCardV2 } from '@/components/v2/NewsCardV2';
 import { cn } from '@/lib/utils';
 import { ScreenerWatchlistV2 } from '@/components/v2/ScreenerWatchlistV2';
 import { GhostTradingTopBar } from '@/components/v2/GhostTradingTopBar';
+import { CardMenu } from '@/components/v2/CardMenu';
 
 const dummyWatchlists = ["My Watchlist", "Tech Stocks", "Growth", "Crypto", "High Volume"];
 const dummyScreeners = ["Top Gainers", "High Volume", "Unusual Options"];
@@ -85,6 +86,14 @@ function TradingDashboardPageContentV2() {
         return;
     }
     setVisibleWidgets(prev => ({ ...prev, [widgetKey]: true }));
+  };
+  
+  const handleDeleteWidget = (widgetKey: keyof typeof visibleWidgets) => {
+    setVisibleWidgets(prev => ({ ...prev, [widgetKey]: false }));
+    toast({
+        title: "Widget Removed",
+        description: "The widget has been removed from your dashboard.",
+    });
   };
 
   const handleClearOrderCard = useCallback(() => {
@@ -254,6 +263,12 @@ function TradingDashboardPageContentV2() {
                               onManualTickerSubmit={handleSyncedTickerChange}
                               className="drag-handle"
                           />
+                           <div className="absolute top-2 right-2 z-10">
+                                <CardMenu
+                                    onCustomize={() => toast({ title: "Customize Columns clicked for Chart" })}
+                                    onDelete={() => handleDeleteWidget('chart')}
+                                />
+                            </div>
                       </DraggableCard>
                   </div>}
 
@@ -269,19 +284,32 @@ function TradingDashboardPageContentV2() {
                               initialQuantity={orderCardInitialQuantity}
                               initialOrderType={orderCardInitialOrderType}
                               initialLimitPrice={orderCardInitialLimitPrice}
-                              className="h-full drag-handle"
+                              className="h-full"
                           />
+                          <div className="drag-handle absolute top-0 left-0 w-full h-4 cursor-move"></div>
+                          <div className="absolute top-2 right-2 z-10">
+                                <CardMenu
+                                    onCustomize={() => toast({ title: "Customize Columns clicked for Order Card" })}
+                                    onDelete={() => handleDeleteWidget('order')}
+                                />
+                           </div>
                       </DraggableCard>
                   </div>}
                   
                   {visibleWidgets.positions && <div key="positions" className="overflow-hidden">
                       <DraggableCard>
                           <Tabs defaultValue="positions" className="flex flex-col h-full">
-                              <TabsList className="shrink-0 px-3 pt-2 drag-handle cursor-move">
-                                  <TabsTrigger value="positions">Positions</TabsTrigger>
-                                  <TabsTrigger value="orders">Open Orders</TabsTrigger>
-                                  <TabsTrigger value="history">History</TabsTrigger>
-                              </TabsList>
+                              <div className='flex items-center justify-between pr-2'>
+                                <TabsList className="shrink-0 px-3 pt-2 drag-handle cursor-move">
+                                    <TabsTrigger value="positions">Positions</TabsTrigger>
+                                    <TabsTrigger value="orders">Open Orders</TabsTrigger>
+                                    <TabsTrigger value="history">History</TabsTrigger>
+                                </TabsList>
+                                <CardMenu
+                                    onCustomize={() => toast({ title: "Customize Columns clicked for Positions" })}
+                                    onDelete={() => handleDeleteWidget('positions')}
+                                />
+                              </div>
                               <TabsContent value="positions" className="flex-1 overflow-hidden mt-0 p-0">
                                   <div className="h-full overflow-x-auto">
                                     <OpenPositionsCardV2 className="h-full border-0 shadow-none rounded-none bg-transparent" />
@@ -303,8 +331,12 @@ function TradingDashboardPageContentV2() {
 
                   {visibleWidgets.watchlist && <div key="watchlist" className="overflow-hidden">
                       <DraggableCard>
-                          <CardHeader className="drag-handle cursor-move p-3">
+                          <CardHeader className="drag-handle cursor-move p-3 flex-row items-center justify-between">
                             <CardTitle className="text-base">Watchlist</CardTitle>
+                             <CardMenu
+                                onCustomize={() => toast({ title: "Customize Columns clicked for Watchlist" })}
+                                onDelete={() => handleDeleteWidget('watchlist')}
+                            />
                           </CardHeader>
                           <WatchlistCardV2
                             className="h-full border-0 shadow-none rounded-none bg-transparent"
@@ -316,8 +348,12 @@ function TradingDashboardPageContentV2() {
 
                   {visibleWidgets.screeners && <div key="screeners" className="overflow-hidden">
                       <DraggableCard>
-                          <CardHeader className="drag-handle cursor-move p-3">
+                          <CardHeader className="drag-handle cursor-move p-3 flex-row items-center justify-between">
                               <CardTitle className="text-base">Screeners</CardTitle>
+                               <CardMenu
+                                  onCustomize={() => toast({ title: "Customize Columns clicked for Screeners" })}
+                                  onDelete={() => handleDeleteWidget('screeners')}
+                              />
                           </CardHeader>
                           <ScreenerWatchlistV2
                             className="h-full border-0 shadow-none rounded-none bg-transparent"
@@ -329,8 +365,12 @@ function TradingDashboardPageContentV2() {
                   
                    {visibleWidgets.news && <div key="news" className="overflow-hidden">
                       <DraggableCard>
-                          <CardHeader className="drag-handle cursor-move p-3">
+                          <CardHeader className="drag-handle cursor-move p-3 flex-row items-center justify-between">
                               <CardTitle className="text-base">News</CardTitle>
+                               <CardMenu
+                                  onCustomize={() => toast({ title: "Customize Columns clicked for News" })}
+                                  onDelete={() => handleDeleteWidget('news')}
+                              />
                           </CardHeader>
                           <NewsCardV2
                             className="h-full border-0 shadow-none rounded-none bg-transparent"
@@ -353,5 +393,3 @@ export default function TradingDashboardPage() {
     </Suspense>
   );
 }
-
-    
