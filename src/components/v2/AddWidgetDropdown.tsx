@@ -1,7 +1,7 @@
 
 "use client";
 
-import React, 'react';
+import * as React from 'react';
 import { Button } from '@/components/ui/button';
 import { ChartBar, Newspaper, ScanSearch, Table2, ShoppingCart } from 'lucide-react';
 
