@@ -210,147 +210,149 @@ function TradingDashboardPageContentV2() {
   return (
     <main className="w-full h-full flex flex-col bg-background relative overflow-hidden bg-dot-grid">
         <GhostTradingTopBar />
-        <ResponsiveGridLayout 
-            className="layout"
-            layouts={{ lg: layout }}
-            breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
-            cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
-            rowHeight={32}
-            draggableHandle=".drag-handle"
-            isResizable
-            resizeHandles={["n", "s", "e", "w", "ne", "nw", "se", "sw"]}
-            margin={[16, 16]}
-            containerPadding={[0, 0]}
-        >
-            <div key="chart">
-                <DraggableCard>
-                    <InteractiveChartCardV2
-                        stock={stockForSyncedComps}
-                        onManualTickerSubmit={handleSyncedTickerChange}
-                        className="drag-handle"
-                    />
-                </DraggableCard>
-            </div>
+        <div className="flex-1 w-full h-full pt-[50px]">
+            <ResponsiveGridLayout 
+                className="layout"
+                layouts={{ lg: layout }}
+                breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
+                cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
+                rowHeight={32}
+                draggableHandle=".drag-handle"
+                isResizable
+                resizeHandles={["n", "s", "e", "w", "ne", "nw", "se", "sw"]}
+                margin={[16, 16]}
+                containerPadding={[0, 0]}
+            >
+                <div key="chart">
+                    <DraggableCard>
+                        <InteractiveChartCardV2
+                            stock={stockForSyncedComps}
+                            onManualTickerSubmit={handleSyncedTickerChange}
+                            className="drag-handle"
+                        />
+                    </DraggableCard>
+                </div>
 
-            <div key="order">
-                 <DraggableCard>
-                    <OrderCardV2
-                        selectedStock={stockForSyncedComps}
-                        initialActionType={orderCardActionType}
-                        initialTradeMode={orderCardInitialTradeMode}
-                        miloActionContextText={orderCardMiloActionContext}
-                        onSubmit={handleTradeSubmit}
-                        onClear={handleClearOrderCard}
-                        initialQuantity={orderCardInitialQuantity}
-                        initialOrderType={orderCardInitialOrderType}
-                        initialLimitPrice={orderCardInitialLimitPrice}
-                        className="h-full drag-handle"
-                    />
-                 </DraggableCard>
-            </div>
-            
-            <div key="positions">
-                <DraggableCard>
-                    <Tabs defaultValue="positions" className="flex flex-col h-full">
-                        <TabsList className="shrink-0 px-3 pt-2 drag-handle cursor-move">
-                            <TabsTrigger value="positions">Positions</TabsTrigger>
-                            <TabsTrigger value="orders">Open Orders</TabsTrigger>
-                            <TabsTrigger value="history">History</TabsTrigger>
-                        </TabsList>
-                        <TabsContent value="positions" className="flex-1 overflow-hidden mt-0 p-0">
-                            <OpenPositionsCardV2 className="h-full border-0 shadow-none rounded-none bg-transparent" />
-                        </TabsContent>
-                        <TabsContent value="orders" className="flex-1 overflow-hidden mt-0 p-0">
-                            <OrdersTableV2 className="h-full border-0 shadow-none rounded-none bg-transparent" />
-                        </TabsContent>
-                        <TabsContent value="history" className="flex-1 overflow-hidden mt-0 p-0">
-                           <TradeHistoryTableV2 className="h-full border-0 shadow-none rounded-none bg-transparent" syncedTickerSymbol={syncedTickerSymbol} />
-                        </TabsContent>
-                    </Tabs>
-                </DraggableCard>
-            </div>
+                <div key="order">
+                     <DraggableCard>
+                        <OrderCardV2
+                            selectedStock={stockForSyncedComps}
+                            initialActionType={orderCardActionType}
+                            initialTradeMode={orderCardInitialTradeMode}
+                            miloActionContextText={orderCardMiloActionContext}
+                            onSubmit={handleTradeSubmit}
+                            onClear={handleClearOrderCard}
+                            initialQuantity={orderCardInitialQuantity}
+                            initialOrderType={orderCardInitialOrderType}
+                            initialLimitPrice={orderCardInitialLimitPrice}
+                            className="h-full drag-handle"
+                        />
+                     </DraggableCard>
+                </div>
+                
+                <div key="positions">
+                    <DraggableCard>
+                        <Tabs defaultValue="positions" className="flex flex-col h-full">
+                            <TabsList className="shrink-0 px-3 pt-2 drag-handle cursor-move">
+                                <TabsTrigger value="positions">Positions</TabsTrigger>
+                                <TabsTrigger value="orders">Open Orders</TabsTrigger>
+                                <TabsTrigger value="history">History</TabsTrigger>
+                            </TabsList>
+                            <TabsContent value="positions" className="flex-1 overflow-hidden mt-0 p-0">
+                                <OpenPositionsCardV2 className="h-full border-0 shadow-none rounded-none bg-transparent" />
+                            </TabsContent>
+                            <TabsContent value="orders" className="flex-1 overflow-hidden mt-0 p-0">
+                                <OrdersTableV2 className="h-full border-0 shadow-none rounded-none bg-transparent" />
+                            </TabsContent>
+                            <TabsContent value="history" className="flex-1 overflow-hidden mt-0 p-0">
+                               <TradeHistoryTableV2 className="h-full border-0 shadow-none rounded-none bg-transparent" syncedTickerSymbol={syncedTickerSymbol} />
+                            </TabsContent>
+                        </Tabs>
+                    </DraggableCard>
+                </div>
 
-            <div key="watchlist">
-                <DraggableCard>
-                    <Tabs defaultValue="watchlist" className="flex flex-col h-full">
-                        <TabsList className="shrink-0 px-3 pt-2 items-center drag-handle cursor-move">
-                            <DropdownMenu open={isWatchlistDropdownOpen} onOpenChange={setIsWatchlistDropdownOpen}>
-                                <TabsTrigger value="watchlist" asChild>
-                                    <DropdownMenuTrigger asChild>
-                                        <Button variant="ghost" className="flex items-center text-base p-0 h-auto hover:bg-transparent data-[state=active]:font-semibold data-[state=active]:text-foreground data-[state=inactive]:text-muted-foreground data-[state=inactive]:font-medium pr-2">
-                                            My Watchlist
-                                            <ChevronDown className={cn("ml-2 h-4 w-4 text-muted-foreground transition-transform", isWatchlistDropdownOpen && "rotate-180")} />
-                                        </Button>
-                                    </DropdownMenuTrigger>
-                                </TabsTrigger>
-                                 <DropdownMenuContent className="w-56 backdrop-blur-md bg-black/50 border-white/10" style={{ WebkitBackdropFilter: 'blur(10px)', backdropFilter: 'blur(10px)' }}>
-                                    {dummyWatchlists.map((list) => (
-                                         <DropdownMenuItem key={list} onSelect={() => setSelectedWatchlist(list)} className="text-sm font-medium">
-                                            {list}
+                <div key="watchlist">
+                    <DraggableCard>
+                        <Tabs defaultValue="watchlist" className="flex flex-col h-full">
+                            <TabsList className="shrink-0 px-3 pt-2 items-center drag-handle cursor-move">
+                                <DropdownMenu open={isWatchlistDropdownOpen} onOpenChange={setIsWatchlistDropdownOpen}>
+                                    <TabsTrigger value="watchlist" asChild>
+                                        <DropdownMenuTrigger asChild>
+                                            <Button variant="ghost" className="flex items-center text-base p-0 h-auto hover:bg-transparent data-[state=active]:font-semibold data-[state=active]:text-foreground data-[state=inactive]:text-muted-foreground data-[state=inactive]:font-medium pr-2">
+                                                My Watchlist
+                                                <ChevronDown className={cn("ml-2 h-4 w-4 text-muted-foreground transition-transform", isWatchlistDropdownOpen && "rotate-180")} />
+                                            </Button>
+                                        </DropdownMenuTrigger>
+                                    </TabsTrigger>
+                                     <DropdownMenuContent className="w-56 backdrop-blur-md bg-black/50 border-white/10" style={{ WebkitBackdropFilter: 'blur(10px)', backdropFilter: 'blur(10px)' }}>
+                                        {dummyWatchlists.map((list) => (
+                                             <DropdownMenuItem key={list} onSelect={() => setSelectedWatchlist(list)} className="text-sm font-medium">
+                                                {list}
+                                            </DropdownMenuItem>
+                                        ))}
+                                        <DropdownMenuSeparator className="bg-white/10" />
+                                        <DropdownMenuItem onSelect={() => console.log('Create new watchlist')}>
+                                            <Plus className="mr-2 h-4 w-4" />
+                                            <span>Create new watchlist</span>
                                         </DropdownMenuItem>
-                                    ))}
-                                    <DropdownMenuSeparator className="bg-white/10" />
-                                    <DropdownMenuItem onSelect={() => console.log('Create new watchlist')}>
-                                        <Plus className="mr-2 h-4 w-4" />
-                                        <span>Create new watchlist</span>
-                                    </DropdownMenuItem>
-                                </DropdownMenuContent>
-                            </DropdownMenu>
-                            
-                            <DropdownMenu open={isScreenerDropdownOpen} onOpenChange={setIsScreenerDropdownOpen}>
-                                <TabsTrigger value="screener" asChild>
-                                    <DropdownMenuTrigger asChild>
-                                        <Button variant="ghost" className="flex items-center text-base p-0 h-auto hover:bg-transparent data-[state=active]:font-semibold data-[state=active]:text-foreground data-[state=inactive]:text-muted-foreground data-[state=inactive]:font-medium pr-2">
-                                            Screeners
-                                            <ChevronDown className={cn("ml-2 h-4 w-4 text-muted-foreground transition-transform", isScreenerDropdownOpen && "rotate-180")} />
-                                        </Button>
-                                    </DropdownMenuTrigger>
-                                </TabsTrigger>
-                                 <DropdownMenuContent className="w-56 backdrop-blur-md bg-black/50 border-white/10" style={{ WebkitBackdropFilter: 'blur(10px)', backdropFilter: 'blur(10px)' }}>
-                                    {dummyScreeners.map((list) => (
-                                         <DropdownMenuItem key={list} onSelect={() => setSelectedScreener(list)} className="text-sm font-medium">
-                                            {list}
-                                        </DropdownMenuItem>
-                                    ))}
-                                </DropdownMenuContent>
-                            </DropdownMenu>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+                                
+                                <DropdownMenu open={isScreenerDropdownOpen} onOpenChange={setIsScreenerDropdownOpen}>
+                                    <TabsTrigger value="screener" asChild>
+                                        <DropdownMenuTrigger asChild>
+                                            <Button variant="ghost" className="flex items-center text-base p-0 h-auto hover:bg-transparent data-[state=active]:font-semibold data-[state=active]:text-foreground data-[state=inactive]:text-muted-foreground data-[state=inactive]:font-medium pr-2">
+                                                Screeners
+                                                <ChevronDown className={cn("ml-2 h-4 w-4 text-muted-foreground transition-transform", isScreenerDropdownOpen && "rotate-180")} />
+                                            </Button>
+                                        </DropdownMenuTrigger>
+                                    </TabsTrigger>
+                                     <DropdownMenuContent className="w-56 backdrop-blur-md bg-black/50 border-white/10" style={{ WebkitBackdropFilter: 'blur(10px)', backdropFilter: 'blur(10px)' }}>
+                                        {dummyScreeners.map((list) => (
+                                             <DropdownMenuItem key={list} onSelect={() => setSelectedScreener(list)} className="text-sm font-medium">
+                                                {list}
+                                            </DropdownMenuItem>
+                                        ))}
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
 
-                            <TabsTrigger value="news">News</TabsTrigger>
-                        </TabsList>
-                        <TabsContent value="watchlist" className="flex-1 overflow-hidden mt-0 p-0">
-                            <WatchlistCardV2
-                              className="h-full border-0 shadow-none rounded-none bg-transparent"
-                              onSymbolSelect={handleSyncedTickerChange}
-                              selectedSymbol={syncedTickerSymbol}
-                            />
-                        </TabsContent>
-                        <TabsContent value="screener" className="flex-1 overflow-hidden mt-0 p-0">
-                            <ScreenerWatchlistV2
-                              className="h-full border-0 shadow-none rounded-none bg-transparent"
-                              onSymbolSelect={handleSyncedTickerChange}
-                              selectedSymbol={syncedTickerSymbol}
-                            />
-                        </TabsContent>
-                        <TabsContent value="news" className="flex-1 overflow-hidden mt-0 p-0">
-                            <NewsCardV2
-                              className="h-full border-0 shadow-none rounded-none bg-transparent"
-                              onSymbolSelect={handleSyncedTickerChange}
-                              selectedSymbol={syncedTickerSymbol}
-                            />
-                        </TabsContent>
-                    </Tabs>
-                </DraggableCard>
-            </div>
+                                <TabsTrigger value="news">News</TabsTrigger>
+                            </TabsList>
+                            <TabsContent value="watchlist" className="flex-1 overflow-hidden mt-0 p-0">
+                                <WatchlistCardV2
+                                  className="h-full border-0 shadow-none rounded-none bg-transparent"
+                                  onSymbolSelect={handleSyncedTickerChange}
+                                  selectedSymbol={syncedTickerSymbol}
+                                />
+                            </TabsContent>
+                            <TabsContent value="screener" className="flex-1 overflow-hidden mt-0 p-0">
+                                <ScreenerWatchlistV2
+                                  className="h-full border-0 shadow-none rounded-none bg-transparent"
+                                  onSymbolSelect={handleSyncedTickerChange}
+                                  selectedSymbol={syncedTickerSymbol}
+                                />
+                            </TabsContent>
+                            <TabsContent value="news" className="flex-1 overflow-hidden mt-0 p-0">
+                                <NewsCardV2
+                                  className="h-full border-0 shadow-none rounded-none bg-transparent"
+                                  onSymbolSelect={handleSyncedTickerChange}
+                                  selectedSymbol={syncedTickerSymbol}
+                                />
+                            </TabsContent>
+                        </Tabs>
+                    </DraggableCard>
+                </div>
 
-            <div key="fundamentals">
-                <DraggableCard>
-                    <FundamentalsCardV2 
-                        stock={stockForSyncedComps}
-                        className="h-full drag-handle"
-                    />
-                </DraggableCard>
-            </div>
-        </ResponsiveGridLayout>
+                <div key="fundamentals">
+                    <DraggableCard>
+                        <FundamentalsCardV2 
+                            stock={stockForSyncedComps}
+                            className="h-full drag-handle"
+                        />
+                    </DraggableCard>
+                </div>
+            </ResponsiveGridLayout>
+        </div>
     </main>
   );
 }
