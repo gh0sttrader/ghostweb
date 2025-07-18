@@ -223,16 +223,6 @@ export const OrderCardV2: React.FC<OrderCardProps> = ({
     return (
         <Card className={cn("h-full flex flex-col bg-black/50 border-white/10", className)}>
             <CardContent className="flex-1 flex flex-col p-3 space-y-3 overflow-y-auto">
-                <Select onValueChange={setSelectedAccountId} defaultValue={selectedAccountId}>
-                    <SelectTrigger className="bg-transparent border-white/10 h-10">
-                        <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                        {accounts.map(acc => <SelectItem key={acc.id} value={acc.id}>{acc.name} (${acc.balance.toLocaleString()})</SelectItem>)}
-                    </SelectContent>
-                </Select>
-                
-
                 {selectedStock && (
                     <>
                         <div className="flex items-start justify-between">
