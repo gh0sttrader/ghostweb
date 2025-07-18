@@ -53,8 +53,6 @@ export function AddWidgetDropdown({ onAddWidget }: AddWidgetDropdownProps) {
             p-1
           "
           style={{
-            background: "rgba(24, 24, 27, 0.5)",
-            backdropFilter: "blur(18px)",
             WebkitBackdropFilter: "blur(18px)",
           }}
         >
