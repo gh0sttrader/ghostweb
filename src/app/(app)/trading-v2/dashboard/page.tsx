@@ -33,7 +33,7 @@ const dummyScreeners = ["Top Gainers", "High Volume", "Unusual Options"];
 
 
 const DraggableCard = ({ children, className }: { children: React.ReactNode, className?: string }) => (
-    <div className={cn("bg-card border border-white/10 rounded-lg flex flex-col overflow-hidden", className)}>
+    <div className={cn("bg-card border border-white/10 rounded-lg flex flex-col overflow-hidden h-full", className)}>
         {children}
     </div>
 );
@@ -207,7 +207,7 @@ function TradingDashboardPageContentV2() {
   }
 
   return (
-    <main className="w-full h-full flex flex-col bg-background overflow-hidden">
+    <main className="w-full h-full flex flex-col bg-background overflow-hidden bg-dot-grid">
         <ResponsiveGridLayout 
             className="layout"
             layouts={{ lg: layout }}
@@ -218,20 +218,20 @@ function TradingDashboardPageContentV2() {
             isResizable
             resizeHandles={['n', 's', 'e', 'w', 'ne', 'nw', 'se', 'sw']}
             margin={[16, 16]}
-            containerPadding={[0, 0]}
+            containerPadding={[16, 16]}
         >
             <div key="chart">
-                <DraggableCard className="h-full">
+                <DraggableCard>
                     <InteractiveChartCardV2
                         stock={stockForSyncedComps}
                         onManualTickerSubmit={handleSyncedTickerChange}
-                        className="h-full drag-handle"
+                        className="drag-handle"
                     />
                 </DraggableCard>
             </div>
 
             <div key="order">
-                 <DraggableCard className="h-full">
+                 <DraggableCard>
                     <OrderCardV2
                         selectedStock={stockForSyncedComps}
                         initialActionType={orderCardActionType}
@@ -248,7 +248,7 @@ function TradingDashboardPageContentV2() {
             </div>
             
             <div key="positions">
-                <DraggableCard className="h-full">
+                <DraggableCard>
                     <Tabs defaultValue="positions" className="flex flex-col h-full">
                         <TabsList className="shrink-0 px-3 pt-2 drag-handle cursor-move">
                             <TabsTrigger value="positions">Positions</TabsTrigger>
@@ -269,7 +269,7 @@ function TradingDashboardPageContentV2() {
             </div>
 
             <div key="watchlist">
-                <DraggableCard className="h-full">
+                <DraggableCard>
                     <Tabs defaultValue="watchlist" className="flex flex-col h-full">
                         <TabsList className="shrink-0 px-3 pt-2 items-center drag-handle cursor-move">
                             <DropdownMenu open={isWatchlistDropdownOpen} onOpenChange={setIsWatchlistDropdownOpen}>
@@ -341,11 +341,10 @@ function TradingDashboardPageContentV2() {
             </div>
 
             <div key="fundamentals">
-                <DraggableCard className="h-full">
-                    <CardHeader className="drag-handle cursor-move p-0 h-4"></CardHeader>
+                <DraggableCard>
                     <FundamentalsCardV2 
                         stock={stockForSyncedComps}
-                        className="h-full"
+                        className="h-full drag-handle"
                     />
                 </DraggableCard>
             </div>

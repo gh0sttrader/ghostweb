@@ -142,6 +142,11 @@
     user-select: none;
   }
 
+  .react-grid-item.react-draggable-dragging {
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
   .react-resizable-handle {
     background: none !important;
   }
