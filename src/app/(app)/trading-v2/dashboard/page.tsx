@@ -13,7 +13,7 @@ const ResponsiveGridLayout = WidthProvider(Responsive);
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 import { OrderCardV2 } from '@/components/v2/OrderCardV2';
-import { CardHeader, CardTitle } from '@/components/ui/card';
+import { CardHeader } from '@/components/ui/card';
 import { InteractiveChartCardV2 } from '@/components/v2/charts/InteractiveChartCardV2';
 import { WatchlistCardV2 } from '@/components/v2/WatchlistCardV2';
 import { OpenPositionsCardV2 } from '@/components/v2/OpenPositionsCardV2';
@@ -149,19 +149,12 @@ function TradingDashboardPageContentV2() {
           if (!targetGroup.includes(widgetKey)) {
               newGroups[targetGroupKey] = [...targetGroup, widgetKey];
           }
+          // Remove the standalone version if it exists
+          delete newGroups[widgetKey];
           return newGroups;
       });
 
-      // Also remove the standalone version if it exists
-      const standaloneKey = Object.keys(widgetGroups).find(key => widgetGroups[key].length === 1 && widgetGroups[key][0] === widgetKey);
-      if (standaloneKey) {
-          setWidgetGroups(prev => {
-              const newGroups = {...prev};
-              delete newGroups[standaloneKey];
-              return newGroups;
-          });
-      }
-
+      setActiveTabs(prev => ({ ...prev, [targetGroupKey]: widgetKey }));
       setPopoverState({ open: false, groupKey: null });
   };
 
@@ -367,7 +360,9 @@ function TradingDashboardPageContentV2() {
   const availableWidgetsForPopover = useMemo(() => {
     if (!popoverState.groupKey) return [];
     const currentGroupWidgets = widgetGroups[popoverState.groupKey] || [];
+    const allVisibleWidgets = Object.values(widgetGroups).flat();
     return allPossibleWidgets.filter(widget => 
+      !allVisibleWidgets.includes(widget.id) &&
       !currentGroupWidgets.includes(widget.id) &&
       widget.id !== 'chart' &&
       widget.id !== 'order'
@@ -426,7 +421,7 @@ function TradingDashboardPageContentV2() {
                                                         key={widgetId} 
                                                         className={cn(
                                                             "px-3 py-2 text-sm font-medium border-b-2",
-                                                            activeWidgetId === widgetId ? "text-foreground border-primary" : "text-muted-foreground border-transparent hover:text-foreground"
+                                                            activeWidgetId === widgetId ? "text-foreground border-white" : "text-muted-foreground border-transparent hover:text-foreground"
                                                         )}
                                                         onClick={() => setActiveTabs(prev => ({...prev, [groupKey]: widgetId}))}
                                                     >
@@ -449,10 +444,10 @@ function TradingDashboardPageContentV2() {
                                         </>
                                     ) : (
                                         <>
-                                          <div className={cn("absolute top-2 right-2 z-10 no-drag", (activeWidget.id === 'chart' || activeWidget.id === 'order') && 'drag-handle')}>
+                                          <div className={cn("absolute top-2 right-2 z-10", isChartOrOrder ? 'drag-handle' : 'no-drag')}>
                                               <CardMenu
-                                                  showCustomize={!isChartOrOrder}
                                                   showAddWidget={!isChartOrOrder}
+                                                  showCustomize={!isChartOrOrder && activeWidget.id !== 'order'}
                                                   onAddWidget={() => setPopoverState({ open: true, groupKey })}
                                                   onCustomize={() => toast({ title: `Customize ${activeWidget.label}` })}
                                                   onDelete={() => handleDeleteWidget(groupKey, activeWidgetId)}
