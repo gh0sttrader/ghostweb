@@ -4,7 +4,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Bell, ChevronDown, Maximize2 } from "lucide-react";
+import { Bell, ChevronDown, Maximize2, Minimize2 } from "lucide-react";
 import Link from 'next/link';
 import { useOpenPositionsContext } from '@/contexts/OpenPositionsContext';
 import { cn } from '@/lib/utils';
@@ -39,6 +39,7 @@ export function GhostTradingTopBar({ onAddWidget }: GhostTradingTopBarProps) {
   const [isAccountDropdownOpen, setIsAccountDropdownOpen] = useState(false);
   const [isAlertsOpen, setIsAlertsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   const selectedAccount = accounts.find(acc => acc.id === selectedAccountId);
 
@@ -49,13 +50,48 @@ export function GhostTradingTopBar({ onAddWidget }: GhostTradingTopBarProps) {
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+
+    const handleFullscreenChange = () => {
+        setIsFullscreen(!!document.fullscreenElement);
+    };
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+
+    return () => {
+        document.removeEventListener("mousedown", handleClickOutside);
+        document.removeEventListener('fullscreenchange', handleFullscreenChange);
+    };
   }, [dropdownRef]);
 
   const handleAccountSelect = (accountId: string) => {
     setSelectedAccountId(accountId);
     setIsAccountDropdownOpen(false);
   };
+
+  const toggleFullscreen = () => {
+    const el = document.documentElement as any;
+    if (!document.fullscreenElement) {
+        if (el.requestFullscreen) {
+            el.requestFullscreen();
+        } else if (el.mozRequestFullScreen) { // Firefox
+            el.mozRequestFullScreen();
+        } else if (el.webkitRequestFullscreen) { // Safari
+            el.webkitRequestFullscreen();
+        } else if (el.msRequestFullscreen) { // IE/Edge
+            el.msRequestFullscreen();
+        }
+    } else {
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        } else if ((document as any).mozCancelFullScreen) { // Firefox
+            (document as any).mozCancelFullScreen();
+        } else if ((document as any).webkitExitFullscreen) { // Safari
+            (document as any).webkitExitFullscreen();
+        } else if ((document as any).msExitFullscreen) { // IE/Edge
+            (document as any).msExitFullscreen();
+        }
+    }
+  };
+
 
   return (
     <>
@@ -106,8 +142,8 @@ export function GhostTradingTopBar({ onAddWidget }: GhostTradingTopBarProps) {
               <AvatarFallback>U</AvatarFallback>
           </Avatar>
 
-          <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-white/10 text-muted-foreground" tabIndex={-1}>
-              <Maximize2 size={18} />
+          <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-white/10 text-muted-foreground" onClick={toggleFullscreen}>
+              {isFullscreen ? <Minimize2 size={18} /> : <Maximize2 size={18} />}
           </Button>
         </div>
       </header>
@@ -115,5 +151,3 @@ export function GhostTradingTopBar({ onAddWidget }: GhostTradingTopBarProps) {
     </>
   );
 }
-
-    
