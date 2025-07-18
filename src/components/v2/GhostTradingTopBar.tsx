@@ -10,6 +10,25 @@ import { useOpenPositionsContext } from '@/contexts/OpenPositionsContext';
 import { cn } from '@/lib/utils';
 import { AlertsOverlay } from './AlertsOverlay';
 
+const GhostIcon = (props: React.SVGProps<SVGSVGElement>) => {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  if (!mounted) return null;
+
+  return (
+    <svg
+      viewBox="0 0 40 40"
+      fill="white"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-label="Ghost Trading Logo"
+      {...props}
+    >
+      <path d="M20 4C12 4 6 10 6 18v10c0 2 1 3 3 3s2-1 4-1 3 1 5 1 3-1 5-1 3 1 5 1c2 0 3-1 3-3V18c0-8-6-14-14-14zM14 20a2 2 0 110-4 2 2 0 010 4zm12 0a2 2 0 110-4 2 2 0 010 4z" />
+    </svg>
+  );
+};
+
+
 export function GhostTradingTopBar() {
   const { accounts, selectedAccountId, setSelectedAccountId } = useOpenPositionsContext();
   const [isAccountDropdownOpen, setIsAccountDropdownOpen] = useState(false);
@@ -36,19 +55,20 @@ export function GhostTradingTopBar() {
   return (
     <>
       <header 
-        className="absolute top-0 left-0 w-full h-[50px] bg-background/90 backdrop-blur-md flex items-center z-50 px-6 border-b border-white/10"
+        className="absolute top-0 left-0 w-full h-[50px] bg-background/90 backdrop-blur-md flex items-center justify-between z-50 px-6 border-b border-white/10"
         style={{
           WebkitBackdropFilter: 'blur(10px)',
           backdropFilter: 'blur(10px)',
         }}
       >
-        <Link href="/accounts">
-          <Button className="bg-white text-black font-semibold rounded-full h-8 px-5 text-sm hover:bg-neutral-200">
-              Add widget
-          </Button>
+        <Link href="/accounts" className="flex items-center space-x-2 transition-opacity hover:opacity-80">
+          <GhostIcon className="h-8 w-8" />
         </Link>
         
-        <div className="ml-auto flex items-center gap-4">
+        <div className="flex items-center gap-4">
+           <Button className="bg-white text-black font-semibold rounded-full h-8 px-5 text-sm hover:bg-neutral-200">
+              Add widget
+          </Button>
           <div className="relative" ref={dropdownRef}>
             <Button variant="ghost" onClick={() => setIsAccountDropdownOpen(o => !o)} className="flex items-center gap-1.5 text-white font-medium h-8 px-3 text-sm hover:bg-white/10">
                 {selectedAccount?.name || 'Select Account'}
