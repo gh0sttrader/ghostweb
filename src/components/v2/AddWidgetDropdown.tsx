@@ -1,7 +1,7 @@
 
 "use client";
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, 'react';
 import { Button } from '@/components/ui/button';
 import { ChartBar, Newspaper, ScanSearch, Table2, ShoppingCart } from 'lucide-react';
 
@@ -19,10 +19,10 @@ interface AddWidgetDropdownProps {
 }
 
 export function AddWidgetDropdown({ onAddWidget }: AddWidgetDropdownProps) {
-  const [open, setOpen] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
+  const [open, setOpen] = React.useState(false);
+  const ref = React.useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
+  React.useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (ref.current && !ref.current.contains(event.target as Node)) {
         setOpen(false);
@@ -46,13 +46,12 @@ export function AddWidgetDropdown({ onAddWidget }: AddWidgetDropdownProps) {
             absolute z-50 mt-2 w-56
             rounded-2xl shadow-xl
             bg-transparent
-            backdrop-blur-lg
-            ring-1 ring-white/10
-            border border-white/10
+            backdrop-blur-2xl
+            border border-white/15
             p-1
           "
           style={{
-            background: "rgba(24, 24, 27, 0.1)",
+            background: "rgba(24, 24, 27, 0.5)",
             backdropFilter: "blur(18px)",
             WebkitBackdropFilter: "blur(18px)",
           }}
@@ -78,5 +77,3 @@ export function AddWidgetDropdown({ onAddWidget }: AddWidgetDropdownProps) {
     </div>
   );
 }
-
-    
