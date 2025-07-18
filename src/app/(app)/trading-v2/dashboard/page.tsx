@@ -459,12 +459,15 @@ function TradingDashboardPageContentV2() {
                                                     />
                                                 </div>
                                             </div>
+                                            
+                                            <div className="drag-handle cursor-move">
+                                                {activeWidget.id !== 'order' && activeWidget.id !== 'chart' && (
+                                                    <CardHeader className="p-3 flex-row items-center justify-between">
+                                                        <CardTitle className="text-base font-semibold">{activeWidget.label}</CardTitle>
+                                                    </CardHeader>
+                                                )}
+                                            </div>
 
-                                            {activeWidget.id !== 'order' && activeWidget.id !== 'chart' && (
-                                                <CardHeader className="drag-handle cursor-move p-3 flex-row items-center justify-between">
-                                                    <CardTitle className="text-base font-semibold">{activeWidget.label}</CardTitle>
-                                                </CardHeader>
-                                            )}
                                             <div className="flex-1 overflow-hidden h-full">
                                                 {activeWidget.component}
                                             </div>
