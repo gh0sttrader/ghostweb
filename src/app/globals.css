@@ -154,12 +154,54 @@
   .react-resizable-handle::after {
     content: '';
     position: absolute;
-    right: 4px;
-    bottom: 4px;
+    right: 3px;
+    bottom: 3px;
     width: 8px;
     height: 8px;
-    border-right: 2px solid rgba(255,255,255,0.4);
-    border-bottom: 2px solid rgba(255,255,255,0.4);
+    border-right: 2px solid rgba(255,255,255,0);
+    border-bottom: 2px solid rgba(255,255,255,0);
+    transition: all 0.2s ease-in-out;
+  }
+
+  .react-resizable-handle.react-resizable-handle-s {
+    width: 100%;
+    height: 8px;
+    bottom: -4px;
+    left: 0;
+    cursor: ns-resize;
+  }
+
+  .react-resizable-handle.react-resizable-handle-e {
+    width: 8px;
+    height: 100%;
+    right: -4px;
+    top: 0;
+    cursor: ew-resize;
+  }
+
+  .react-resizable-handle.react-resizable-handle-s:hover::after,
+  .react-resizable-handle.react-resizable-handle-e:hover::after {
+    border-color: rgba(255, 255, 255, 0.4);
+  }
+
+  .react-resizable-handle.react-resizable-handle-s::after {
+    width: 20px;
+    height: 2px;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 5px;
+    border-right: 0;
+    border-bottom: 2px solid rgba(255,255,255,0);
+  }
+
+  .react-resizable-handle.react-resizable-handle-e::after {
+    height: 20px;
+    width: 2px;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 5px;
+    border-bottom: 0;
+    border-right: 2px solid rgba(255,255,255,0);
   }
 
   .gt2-alerts-overlay {
