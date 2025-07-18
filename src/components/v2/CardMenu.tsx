@@ -2,20 +2,21 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import { MoreHorizontal, Trash2, Settings2 } from 'lucide-react';
+import { MoreHorizontal, Trash2, Settings2, Plus } from 'lucide-react';
 import { cn } from "@/lib/utils";
 
 interface CardMenuProps {
   showCustomize?: boolean;
+  showAddWidget?: boolean;
   onCustomize: () => void;
   onDelete: () => void;
+  onAddWidget: () => void;
 }
 
-export function CardMenu({ onCustomize, onDelete, showCustomize = true }: CardMenuProps) {
+export function CardMenu({ onCustomize, onDelete, onAddWidget, showCustomize = true, showAddWidget = true }: CardMenuProps) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
-  // Close dropdown if clicked outside
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (ref.current && !ref.current.contains(e.target as Node)) {
@@ -58,6 +59,15 @@ export function CardMenu({ onCustomize, onDelete, showCustomize = true }: CardMe
             WebkitBackdropFilter: "blur(18px)",
           }}
         >
+          {showAddWidget && (
+            <button
+                className="w-full flex items-center gap-2 px-3 py-2 text-sm text-left hover:bg-white/5 text-white transition-colors"
+                onClick={() => { setOpen(false); onAddWidget(); }}
+              >
+                <Plus size={16} className="text-muted-foreground" />
+                <span>Add Widget</span>
+            </button>
+          )}
           {showCustomize && (
               <button
                 className="w-full flex items-center gap-2 px-3 py-2 text-sm text-left hover:bg-white/5 text-white transition-colors"

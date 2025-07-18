@@ -10,6 +10,7 @@ import { useOpenPositionsContext } from '@/contexts/OpenPositionsContext';
 import { Button } from "@/components/ui/button";
 import { Responsive, WidthProvider } from 'react-grid-layout';
 const ResponsiveGridLayout = WidthProvider(Responsive);
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 import { OrderCardV2 } from '@/components/v2/OrderCardV2';
 import { CardHeader, CardTitle } from '@/components/ui/card';
@@ -36,7 +37,7 @@ interface Widget {
 
 const DraggableCard = ({ children, className, isOver }: { children: React.ReactNode, className?: string, isOver?: boolean }) => (
     <div className={cn(
-        "bg-card border border-white/10 rounded-lg flex flex-col overflow-hidden h-full transition-all duration-200 relative", 
+        "bg-card border border-white/10 rounded-lg flex flex-col overflow-hidden h-full transition-all duration-200 relative",
         className,
         isOver && "ring-2 ring-primary ring-offset-2 ring-offset-background"
         )}>
@@ -79,6 +80,8 @@ function TradingDashboardPageContentV2() {
   const [activeTabs, setActiveTabs] = useState<Record<string, WidgetKey>>({});
   const [draggedItem, setDraggedItem] = useState<ReactGridLayout.Layout | null>(null);
   const [dropTarget, setDropTarget] = useState<string | null>(null);
+  const [popoverState, setPopoverState] = useState<{ open: boolean; groupKey: string | null }>({ open: false, groupKey: null });
+
 
   const initialLayouts: Record<WidgetKey, ReactGridLayout.Layout> = {
     chart: { i: 'chart', x: 0, y: 0, w: 9, h: 10, minW: 6, minH: 8 },
@@ -134,6 +137,33 @@ function TradingDashboardPageContentV2() {
           [widgetKey]: [widgetKey]
       }));
   }
+
+  const handleAddWidgetAsTab = (widgetKey: WidgetKey) => {
+      if (!popoverState.groupKey) return;
+      
+      const targetGroupKey = popoverState.groupKey;
+      
+      setWidgetGroups(prev => {
+          const newGroups = {...prev};
+          const targetGroup = newGroups[targetGroupKey] || [];
+          if (!targetGroup.includes(widgetKey)) {
+              newGroups[targetGroupKey] = [...targetGroup, widgetKey];
+          }
+          return newGroups;
+      });
+
+      // Also remove the standalone version if it exists
+      const standaloneKey = Object.keys(widgetGroups).find(key => widgetGroups[key].length === 1 && widgetGroups[key][0] === widgetKey);
+      if (standaloneKey) {
+          setWidgetGroups(prev => {
+              const newGroups = {...prev};
+              delete newGroups[standaloneKey];
+              return newGroups;
+          });
+      }
+
+      setPopoverState({ open: false, groupKey: null });
+  };
 
   const handleClearOrderCard = useCallback(() => {
     setOrderCardActionType(null);
@@ -282,12 +312,10 @@ function TradingDashboardPageContentV2() {
       const sourceWidgets = widgetGroups[sourceGroupKey];
       const targetWidgets = widgetGroups[targetGroupKey];
       
-      // Prevent combining with chart or order card
       const isTargetProtected = targetGroupKey === 'chart' || targetGroupKey === 'order';
       const isSourceProtected = sourceGroupKey === 'chart' || sourceGroupKey === 'order';
 
       if (sourceWidgets && targetWidgets && !isTargetProtected && !isSourceProtected) {
-          // Combine groups
           const newWidgetGroups = { ...widgetGroups };
           delete newWidgetGroups[sourceGroupKey];
           newWidgetGroups[targetGroupKey] = [...targetWidgets, ...sourceWidgets];
@@ -334,6 +362,17 @@ function TradingDashboardPageContentV2() {
     screeners: { id: 'screeners', label: 'Screeners', component: <ScreenerWatchlistV2 className="h-full border-0 shadow-none rounded-none bg-transparent" onSymbolSelect={handleSyncedTickerChange} selectedSymbol={syncedTickerSymbol} />, layout: initialLayouts.screeners },
     news: { id: 'news', label: 'News', component: <NewsCardV2 className="h-full border-0 shadow-none rounded-none bg-transparent" onSymbolSelect={handleSyncedTickerChange} selectedSymbol={syncedTickerSymbol} />, layout: initialLayouts.news },
   };
+  
+  const allPossibleWidgets = Object.values(WIDGET_COMPONENTS);
+  const availableWidgetsForPopover = useMemo(() => {
+    if (!popoverState.groupKey) return [];
+    const currentGroupWidgets = widgetGroups[popoverState.groupKey] || [];
+    return allPossibleWidgets.filter(widget => 
+      !currentGroupWidgets.includes(widget.id) &&
+      widget.id !== 'chart' &&
+      widget.id !== 'order'
+    );
+  }, [popoverState.groupKey, widgetGroups]);
 
   const currentLayout = useMemo(() => {
       return Object.keys(widgetGroups).map(groupKey => {
@@ -351,29 +390,31 @@ function TradingDashboardPageContentV2() {
         <GhostTradingTopBar onAddWidget={(key) => addWidget(key as WidgetKey)} />
         <div className="w-full h-full pt-[50px] overflow-hidden">
              <div className="h-full w-full overflow-hidden">
-              <ResponsiveGridLayout 
-                  className="layout"
-                  layouts={{ lg: currentLayout }}
-                  breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
-                  cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
-                  rowHeight={32}
-                  draggableHandle=".drag-handle"
-                  draggableCancel=".no-drag"
-                  isResizable
-                  onLayoutChange={handleLayoutChange}
-                  onDrop={onDrop}
-                  onDragStart={onDragStart}
-                  onDragStop={onDragStop}
-                  resizeHandles={['se']}
-                  margin={[16, 16]}
-                  containerPadding={[0, 0]}
-                  preventCollision={true}
-                  compactType={"vertical"}
-              >
+                <ResponsiveGridLayout
+                    className="layout"
+                    layouts={{ lg: currentLayout }}
+                    breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
+                    cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
+                    rowHeight={32}
+                    draggableHandle=".drag-handle"
+                    draggableCancel=".no-drag"
+                    isResizable
+                    onLayoutChange={handleLayoutChange}
+                    onDrop={onDrop}
+                    onDragStart={onDragStart}
+                    onDragStop={onDragStop}
+                    resizeHandles={['se']}
+                    margin={[16, 16]}
+                    containerPadding={[0, 0]}
+                    preventCollision={true}
+                    compactType={"vertical"}
+                >
                   {Object.entries(widgetGroups).map(([groupKey, widgetIds]) => {
                        const activeWidgetId = activeTabs[groupKey] || widgetIds[0];
                        const activeWidget = WIDGET_COMPONENTS[activeWidgetId];
                        
+                       const isChartOrOrder = groupKey === 'chart' || groupKey === 'order';
+
                        return (
                            <div key={groupKey} id={groupKey} className="overflow-hidden">
                                 <DraggableCard isOver={dropTarget === groupKey}>
@@ -395,6 +436,8 @@ function TradingDashboardPageContentV2() {
                                                 <Button variant="link" className="ml-auto text-destructive text-xs h-auto py-0 px-2" onClick={() => uncombineGroup(groupKey)}>Separate</Button>
                                                 <div className="no-drag ml-2">
                                                     <CardMenu
+                                                        showAddWidget={!isChartOrOrder}
+                                                        onAddWidget={() => setPopoverState({ open: true, groupKey })}
                                                         onCustomize={() => toast({ title: `Customize ${activeWidget.label}`})}
                                                         onDelete={() => handleDeleteWidget(groupKey, activeWidgetId)}
                                                     />
@@ -406,24 +449,19 @@ function TradingDashboardPageContentV2() {
                                         </>
                                     ) : (
                                         <>
-                                          {(activeWidget.id !== 'order' && activeWidget.id !== 'chart') ? (
+                                          <div className={cn("absolute top-2 right-2 z-10 no-drag", (activeWidget.id === 'chart' || activeWidget.id === 'order') && 'drag-handle')}>
+                                              <CardMenu
+                                                  showCustomize={!isChartOrOrder}
+                                                  showAddWidget={!isChartOrOrder}
+                                                  onAddWidget={() => setPopoverState({ open: true, groupKey })}
+                                                  onCustomize={() => toast({ title: `Customize ${activeWidget.label}` })}
+                                                  onDelete={() => handleDeleteWidget(groupKey, activeWidgetId)}
+                                              />
+                                          </div>
+                                          {activeWidget.id !== 'order' && activeWidget.id !== 'chart' && (
                                               <CardHeader className="drag-handle cursor-move p-3 flex-row items-center justify-between">
                                                   <CardTitle className="text-base">{activeWidget.label}</CardTitle>
-                                                  <div className="no-drag">
-                                                      <CardMenu
-                                                          onCustomize={() => toast({ title: `Customize ${activeWidget.label}` })}
-                                                          onDelete={() => handleDeleteWidget(groupKey, activeWidgetId)}
-                                                      />
-                                                  </div>
                                               </CardHeader>
-                                          ) : (
-                                            <div className="absolute top-2 right-2 z-10 no-drag">
-                                                <CardMenu
-                                                    showCustomize={activeWidget.id !== 'order'}
-                                                    onCustomize={() => toast({ title: `Customize ${activeWidget.label}` })}
-                                                    onDelete={() => handleDeleteWidget(groupKey, activeWidgetId)}
-                                                />
-                                            </div>
                                           )}
                                           <div className="flex-1 overflow-hidden h-full">
                                               {activeWidget.component}
@@ -437,6 +475,29 @@ function TradingDashboardPageContentV2() {
               </ResponsiveGridLayout>
             </div>
         </div>
+        <Popover open={popoverState.open} onOpenChange={(open) => setPopoverState(p => ({ ...p, open }))}>
+            <PopoverTrigger asChild>
+                <button aria-hidden="true" style={{ display: 'none' }}>Trigger</button>
+            </PopoverTrigger>
+            <PopoverContent className="w-56 p-2">
+                <div className="space-y-1">
+                    <h4 className="font-medium text-sm px-2 pb-1">Add to Tab Group</h4>
+                    {availableWidgetsForPopover.map(widget => (
+                        <Button 
+                            key={widget.id}
+                            variant="ghost"
+                            className="w-full justify-start font-normal"
+                            onClick={() => handleAddWidgetAsTab(widget.id)}
+                        >
+                            {widget.label}
+                        </Button>
+                    ))}
+                    {availableWidgetsForPopover.length === 0 && (
+                        <p className="text-xs text-muted-foreground p-2">No more widgets to add.</p>
+                    )}
+                </div>
+            </PopoverContent>
+        </Popover>
     </main>
   );
 }
