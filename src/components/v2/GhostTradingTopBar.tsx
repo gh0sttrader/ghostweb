@@ -9,6 +9,7 @@ import Link from 'next/link';
 import { useOpenPositionsContext } from '@/contexts/OpenPositionsContext';
 import { cn } from '@/lib/utils';
 import { AlertsOverlay } from './AlertsOverlay';
+import { AddWidgetDropdown } from './AddWidgetDropdown';
 
 const GhostIcon = (props: React.SVGProps<SVGSVGElement>) => {
   const [mounted, setMounted] = useState(false);
@@ -28,8 +29,12 @@ const GhostIcon = (props: React.SVGProps<SVGSVGElement>) => {
   );
 };
 
+interface GhostTradingTopBarProps {
+    onAddWidget: (widgetKey: string) => void;
+}
 
-export function GhostTradingTopBar() {
+
+export function GhostTradingTopBar({ onAddWidget }: GhostTradingTopBarProps) {
   const { accounts, selectedAccountId, setSelectedAccountId } = useOpenPositionsContext();
   const [isAccountDropdownOpen, setIsAccountDropdownOpen] = useState(false);
   const [isAlertsOpen, setIsAlertsOpen] = useState(false);
@@ -68,9 +73,7 @@ export function GhostTradingTopBar() {
         </div>
         
         <div className="flex items-center gap-4">
-           <Button className="bg-white text-black font-semibold rounded-full h-8 px-5 text-sm hover:bg-neutral-200 w-32 justify-center">
-              Add widget
-          </Button>
+          <AddWidgetDropdown onAddWidget={onAddWidget} />
           <div className="relative" ref={dropdownRef}>
             <Button variant="ghost" onClick={() => setIsAccountDropdownOpen(o => !o)} className="flex items-center justify-between gap-1.5 text-white font-medium h-8 px-3 text-sm hover:bg-white/10 w-40">
                 <span className="truncate">{selectedAccount?.name || 'Select Account'}</span>
@@ -112,3 +115,5 @@ export function GhostTradingTopBar() {
     </>
   );
 }
+
+    

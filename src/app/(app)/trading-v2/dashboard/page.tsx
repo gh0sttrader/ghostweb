@@ -67,6 +67,26 @@ function TradingDashboardPageContentV2() {
     setIsMounted(true);
   }, []);
 
+  const [visibleWidgets, setVisibleWidgets] = useState({
+    chart: true,
+    order: true,
+    positions: true,
+    watchlist: true,
+    screeners: true,
+    news: true,
+  });
+
+  const handleAddWidget = (widgetKey: keyof typeof visibleWidgets) => {
+    if (visibleWidgets[widgetKey]) {
+        toast({
+            title: "Widget already visible",
+            description: "This widget is already on your dashboard.",
+        });
+        return;
+    }
+    setVisibleWidgets(prev => ({ ...prev, [widgetKey]: true }));
+  };
+
   const handleClearOrderCard = useCallback(() => {
     setOrderCardActionType(null);
     setOrderCardInitialTradeMode(undefined);
@@ -210,7 +230,7 @@ function TradingDashboardPageContentV2() {
 
   return (
     <main className="w-full h-full flex flex-col bg-background relative bg-dot-grid">
-        <GhostTradingTopBar />
+        <GhostTradingTopBar onAddWidget={handleAddWidget} />
         <div className="w-full h-full pt-[50px] overflow-hidden">
              <div className="h-full w-full overflow-hidden">
               <ResponsiveGridLayout 
@@ -227,7 +247,7 @@ function TradingDashboardPageContentV2() {
                   preventCollision={true}
                   compactType={"vertical"}
               >
-                  <div key="chart" className="overflow-hidden">
+                  {visibleWidgets.chart && <div key="chart" className="overflow-hidden">
                       <DraggableCard>
                           <InteractiveChartCardV2
                               stock={stockForSyncedComps}
@@ -235,9 +255,9 @@ function TradingDashboardPageContentV2() {
                               className="drag-handle"
                           />
                       </DraggableCard>
-                  </div>
+                  </div>}
 
-                  <div key="order" className="overflow-hidden">
+                  {visibleWidgets.order && <div key="order" className="overflow-hidden">
                       <DraggableCard>
                           <OrderCardV2
                               selectedStock={stockForSyncedComps}
@@ -252,9 +272,9 @@ function TradingDashboardPageContentV2() {
                               className="h-full drag-handle"
                           />
                       </DraggableCard>
-                  </div>
+                  </div>}
                   
-                  <div key="positions" className="overflow-hidden">
+                  {visibleWidgets.positions && <div key="positions" className="overflow-hidden">
                       <DraggableCard>
                           <Tabs defaultValue="positions" className="flex flex-col h-full">
                               <TabsList className="shrink-0 px-3 pt-2 drag-handle cursor-move">
@@ -279,9 +299,9 @@ function TradingDashboardPageContentV2() {
                               </TabsContent>
                           </Tabs>
                       </DraggableCard>
-                  </div>
+                  </div>}
 
-                  <div key="watchlist" className="overflow-hidden">
+                  {visibleWidgets.watchlist && <div key="watchlist" className="overflow-hidden">
                       <DraggableCard>
                           <CardHeader className="drag-handle cursor-move p-3">
                             <CardTitle className="text-base">Watchlist</CardTitle>
@@ -292,9 +312,9 @@ function TradingDashboardPageContentV2() {
                             selectedSymbol={syncedTickerSymbol}
                           />
                       </DraggableCard>
-                  </div>
+                  </div>}
 
-                  <div key="screeners" className="overflow-hidden">
+                  {visibleWidgets.screeners && <div key="screeners" className="overflow-hidden">
                       <DraggableCard>
                           <CardHeader className="drag-handle cursor-move p-3">
                               <CardTitle className="text-base">Screeners</CardTitle>
@@ -305,9 +325,9 @@ function TradingDashboardPageContentV2() {
                             selectedSymbol={syncedTickerSymbol}
                           />
                       </DraggableCard>
-                  </div>
+                  </div>}
                   
-                   <div key="news" className="overflow-hidden">
+                   {visibleWidgets.news && <div key="news" className="overflow-hidden">
                       <DraggableCard>
                           <CardHeader className="drag-handle cursor-move p-3">
                               <CardTitle className="text-base">News</CardTitle>
@@ -318,7 +338,7 @@ function TradingDashboardPageContentV2() {
                             selectedSymbol={syncedTickerSymbol}
                           />
                       </DraggableCard>
-                  </div>
+                  </div>}
               </ResponsiveGridLayout>
             </div>
         </div>
@@ -333,3 +353,5 @@ export default function TradingDashboardPage() {
     </Suspense>
   );
 }
+
+    
