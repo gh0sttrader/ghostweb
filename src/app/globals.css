@@ -30,7 +30,7 @@
     --accent: 0 0% 15%; /* Muted dark gray for subtle highlights */
     --accent-foreground: 0 0% 80%;
 
-    --destructive: 0 100% 65%; /* #FF4C4C Error Red */
+    --destructive: 359.7 91.1% 51.8%; /* #F41415 Error Red */
     --destructive-foreground: 0 0% 100%; /* White text for destructive elements */
     
     --confirm-green: 158 100% 46%; /* #00ec95 Confirm Green */
@@ -162,6 +162,34 @@
     border-bottom: 2px solid rgba(255,255,255,0);
     transition: all 0.2s ease-in-out;
   }
+  
+  .react-resizable-handle.react-resizable-handle-se {
+      cursor: se-resize;
+  }
+  .react-resizable-handle.react-resizable-handle-sw {
+      cursor: sw-resize;
+      right: auto;
+      left: 3px;
+      transform: rotate(90deg);
+  }
+  .react-resizable-handle.react-resizable-handle-ne {
+      cursor: ne-resize;
+      bottom: auto;
+      top: 3px;
+      transform: rotate(-90deg);
+  }
+  .react-resizable-handle.react-resizable-handle-nw {
+      cursor: nw-resize;
+      right: auto;
+      left: 3px;
+      bottom: auto;
+      top: 3px;
+      transform: rotate(180deg);
+  }
+
+  .react-grid-item:hover .react-resizable-handle::after {
+      border-color: rgba(255, 255, 255, 0.4);
+  }
 
   .react-resizable-handle.react-resizable-handle-s {
     width: 100%;
@@ -179,8 +207,8 @@
     cursor: ew-resize;
   }
 
-  .react-resizable-handle.react-resizable-handle-s:hover::after,
-  .react-resizable-handle.react-resizable-handle-e:hover::after {
+  .react-grid-item:hover .react-resizable-handle.react-resizable-handle-s::after,
+  .react-grid-item:hover .react-resizable-handle.react-resizable-handle-e::after {
     border-color: rgba(255, 255, 255, 0.4);
   }
 

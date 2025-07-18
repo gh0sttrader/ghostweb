@@ -68,7 +68,7 @@ export function GhostTradingTopBar() {
         </div>
         
         <div className="flex items-center gap-4">
-           <Button className="bg-white text-black font-semibold rounded-full h-8 px-5 text-sm hover:bg-neutral-200 w-32">
+           <Button className="bg-white text-black font-semibold rounded-full h-8 px-5 text-sm hover:bg-neutral-200 w-32 justify-center">
               Add widget
           </Button>
           <div className="relative" ref={dropdownRef}>
@@ -95,7 +95,7 @@ export function GhostTradingTopBar() {
           </div>
 
           <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-white/10" onClick={() => setIsAlertsOpen(true)}>
-              <Bell size={18} fill="#ef4444" className="text-red-500" />
+              <Bell size={18} fill="hsl(var(--destructive))" className="text-destructive" />
           </Button>
           
           <Avatar className="h-8 w-8 border-2 border-neutral-700">

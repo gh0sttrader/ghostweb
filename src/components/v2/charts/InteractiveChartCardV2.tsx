@@ -101,7 +101,7 @@ export function InteractiveChartCardV2({ stock, onManualTickerSubmit, className,
   const colorOptions = [
       { color: '#5721aa', label: 'Purple' },
       { color: '#00ec95', label: 'Green' },
-      { color: '#ff395b', label: 'Red' },
+      { color: '#F41415', label: 'Red' },
       { color: '#e6e6e6', label: 'Silver' },
       { color: '#1450fa', label: 'Navy Blue' },
   ];
@@ -403,5 +403,3 @@ export function InteractiveChartCardV2({ stock, onManualTickerSubmit, className,
     </Card>
   );
 }
-
-    

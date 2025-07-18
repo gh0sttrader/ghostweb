@@ -54,7 +54,7 @@ const getAnalystRatingColor = (rating?: Stock['analystRating']) => {
         case 'Buy': return 'text-[hsl(var(--confirm-green))]';
         case 'Hold': return 'text-yellow-400';
         case 'Sell': return 'text-orange-400';
-        case 'Strong Sell': return 'text-red-500 font-bold';
+        case 'Strong Sell': return 'text-destructive font-bold';
         default: return 'text-neutral-50';
     }
 };
@@ -85,8 +85,8 @@ export function FundamentalsCardV2({ stock, className }: FundamentalsCardProps) 
         };
     }, [stock]);
 
-    const macdColor = technicalData.macd.includes('Bullish') ? 'text-[hsl(var(--confirm-green))]' : technicalData.macd.includes('Bearish') ? 'text-red-500' : 'text-neutral-50';
-    const trendColor = technicalData.trend.includes('Up') ? 'text-[hsl(var(--confirm-green))]' : technicalData.trend.includes('Down') ? 'text-red-500' : 'text-neutral-50';
+    const macdColor = technicalData.macd.includes('Bullish') ? 'text-[hsl(var(--confirm-green))]' : technicalData.macd.includes('Bearish') ? 'text-destructive' : 'text-neutral-50';
+    const trendColor = technicalData.trend.includes('Up') ? 'text-[hsl(var(--confirm-green))]' : technicalData.trend.includes('Down') ? 'text-destructive' : 'text-neutral-50';
 
     if (!stock) {
         return (
@@ -105,8 +105,8 @@ export function FundamentalsCardV2({ stock, className }: FundamentalsCardProps) 
     
     const netChange = stock.price && stock.prevClose ? stock.price - stock.prevClose : stock.price * (stock.changePercent / 100);
     const netChangePercent = stock.price && stock.prevClose ? (netChange / stock.prevClose) * 100 : stock.changePercent;
-    const changeColor = netChange >= 0 ? 'text-[hsl(var(--confirm-green))]' : 'text-red-500';
-    const afterHoursChangeColor = stock.afterHoursChange && stock.afterHoursChange >= 0 ? 'text-[hsl(var(--confirm-green))]' : 'text-red-500';
+    const changeColor = netChange >= 0 ? 'text-[hsl(var(--confirm-green))]' : 'text-destructive';
+    const afterHoursChangeColor = stock.afterHoursChange && stock.afterHoursChange >= 0 ? 'text-[hsl(var(--confirm-green))]' : 'text-destructive';
 
     return (
         <Card className={cn("flex flex-col", className)}>
