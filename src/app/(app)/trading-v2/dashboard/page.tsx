@@ -207,7 +207,7 @@ function TradingDashboardPageContentV2() {
   }
 
   return (
-    <main className="w-full h-full flex flex-col bg-background bg-dot-grid overflow-hidden">
+    <main className="w-full h-full flex flex-col bg-background overflow-hidden">
         <ResponsiveGridLayout 
             className="layout"
             layouts={{ lg: layout }}
@@ -232,7 +232,6 @@ function TradingDashboardPageContentV2() {
 
             <div key="order">
                  <DraggableCard className="h-full">
-                    <div className="drag-handle cursor-move h-4 w-full"></div>
                     <OrderCardV2
                         selectedStock={stockForSyncedComps}
                         initialActionType={orderCardActionType}
