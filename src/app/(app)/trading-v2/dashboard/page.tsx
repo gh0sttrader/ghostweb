@@ -228,13 +228,13 @@ function TradingDashboardPageContentV2() {
   
   const layout = [
     { i: 'chart', x: 0, y: 0, w: 9, h: 10, minW: 6, minH: 8 },
-    { i: 'order', x: 9, y: 0, w: 3, h: 10, minW: 3, minH: 10 },
+    { i: 'order', x: 9, y: 0, w: 3, h: 10, minW: 2, minH: 10 },
     { i: 'positions', x: 0, y: 10, w: 12, h: 8, minW: 4, minH: 6 },
     { i: 'orders', x: 0, y: 18, w: 6, h: 8, minW: 4, minH: 6 },
     { i: 'history', x: 6, y: 18, w: 6, h: 8, minW: 4, minH: 6 },
-    { i: 'watchlist', x: 0, y: 26, w: 4, h: 8, minW: 3, minH: 6 },
-    { i: 'screeners', x: 4, y: 26, w: 4, h: 8, minW: 3, minH: 6 },
-    { i: 'news', x: 8, y: 26, w: 4, h: 8, minW: 3, minH: 6 },
+    { i: 'watchlist', x: 0, y: 26, w: 4, h: 8, minW: 2, minH: 6 },
+    { i: 'screeners', x: 4, y: 26, w: 4, h: 8, minW: 2, minH: 6 },
+    { i: 'news', x: 8, y: 26, w: 4, h: 8, minW: 2, minH: 6 },
   ];
 
   if (!isMounted) {
