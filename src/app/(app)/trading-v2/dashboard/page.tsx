@@ -447,7 +447,7 @@ function TradingDashboardPageContentV2() {
                                         </>
                                     ) : (
                                         <>
-                                            <div className="absolute top-0 left-0 right-0 h-10 flex items-center justify-end px-2 z-10">
+                                            <div className="absolute top-0 right-0 h-10 flex items-center justify-end px-2 z-10">
                                                 {activeWidget.id === 'order' && <div className="flex-1 drag-handle cursor-move h-full" />}
                                                 <div className="no-drag">
                                                     <CardMenu
@@ -462,10 +462,10 @@ function TradingDashboardPageContentV2() {
 
                                             {activeWidget.id !== 'order' && activeWidget.id !== 'chart' && (
                                                 <CardHeader className="drag-handle cursor-move p-3 flex-row items-center justify-between">
-                                                    <CardTitle className="text-base">{activeWidget.label}</CardTitle>
+                                                    <CardTitle className="text-base font-semibold">{activeWidget.label}</CardTitle>
                                                 </CardHeader>
                                             )}
-                                            <div className={cn("flex-1 overflow-hidden h-full", (isOrder || isChart) && "pt-10")}>
+                                            <div className="flex-1 overflow-hidden h-full">
                                                 {activeWidget.component}
                                             </div>
                                         </>
