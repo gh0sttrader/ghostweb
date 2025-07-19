@@ -19,45 +19,46 @@ const GhostIcon = (props: React.SVGProps<SVGSVGElement>) => (
 const containerVariants = {
     initial: { opacity: 0 },
     animate: { opacity: 1, transition: { duration: 0.4, ease: "linear" } },
-    exit: { opacity: 0, transition: { duration: 0.4, ease: "linear", delay: 0.2 } },
+    exit: { opacity: 0, transition: { duration: 0.4, ease: "linear" } },
 };
 
-const iconVariants = {
-    initial: { opacity: 0, scale: 0.8 },
+const iconAndTextVariants = {
+    initial: { scale: 0.8, opacity: 0 },
     animate: { 
+        scale: 1.25, 
         opacity: 1, 
-        scale: 1,
-        filter: [
-            "drop-shadow(0 0 0px white)",
-            "drop-shadow(0 0 30px white)",
-            "drop-shadow(0 0 18px white)",
-        ],
+        filter: "drop-shadow(0 0 60px #fff)",
         transition: { 
-            duration: 1.1, 
-            ease: "easeInOut",
-            delay: 0.4 
+            duration: 0.8, 
+            ease: "easeOut",
+            delay: 0.4
         } 
     },
 };
 
-const textVariants = {
-    initial: { opacity: 0, y: 10 },
-    animate: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut", delay: 1.2 } },
+const whiteOutVariants = {
+    initial: { opacity: 0 },
+    animate: { opacity: 1, transition: { duration: 1, ease: "easeInOut" } },
 };
+
 
 export function SplashScreen({ onFinish }: { onFinish: () => void }) {
     const [isVisible, setIsVisible] = useState(true);
+    const [fadeToWhite, setFadeToWhite] = useState(false);
 
     useEffect(() => {
-        const timeout = setTimeout(() => {
-            setIsVisible(false);
-        }, 2400); // Total splash screen time before starting exit animation
+        const whiteOutTimer = setTimeout(() => {
+            setFadeToWhite(true);
+        }, 1300); // Start white-out after 1.3s
 
-        const finishTimeout = setTimeout(onFinish, 2800); // 2.4s + 0.4s exit transition
+        const finishTimer = setTimeout(() => {
+            setIsVisible(false);
+            onFinish();
+        }, 2300); // Total splash time (1.3s hold + 1s fade)
 
         return () => {
-            clearTimeout(timeout);
-            clearTimeout(finishTimeout);
+            clearTimeout(whiteOutTimer);
+            clearTimeout(finishTimer);
         };
     }, [onFinish]);
     
@@ -70,18 +71,27 @@ export function SplashScreen({ onFinish }: { onFinish: () => void }) {
                     animate="animate"
                     exit="exit"
                     className="fixed inset-0 bg-black flex flex-col items-center justify-center z-[9999]"
+                    style={{ pointerEvents: "none" }}
                 >
-                    <div className="relative flex flex-col items-center">
-                         <motion.div variants={iconVariants}>
-                            <GhostIcon className="w-24 h-24" />
-                        </motion.div>
-                        <motion.span
-                            variants={textVariants}
-                            className="mt-8 text-white text-2xl font-bold tracking-wide"
+                    <motion.div
+                        variants={iconAndTextVariants}
+                        className="flex flex-col items-center"
+                    >
+                         <GhostIcon className="w-40 h-40 mb-2" />
+                        <span
+                            className="text-4xl md:text-5xl font-bold text-white tracking-wide"
+                            style={{ textShadow: '0 0 32px #fff, 0 0 8px #fff' }}
                         >
                             Ghost Trading 2.0
-                        </motion.span>
-                    </div>
+                        </span>
+                    </motion.div>
+                    
+                    <motion.div
+                        initial="initial"
+                        animate={fadeToWhite ? "animate" : "initial"}
+                        variants={whiteOutVariants}
+                        className="absolute inset-0 bg-white"
+                    />
                 </motion.div>
             )}
         </AnimatePresence>
