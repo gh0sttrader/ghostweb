@@ -35,38 +35,38 @@ const formatShortFloat = (shortFloat?: number) => {
 export const WatchlistCardV2: React.FC<WatchlistCardProps> = ({ className, onSymbolSelect, selectedSymbol }) => {
     return (
         <div className={cn("h-full flex flex-col", className)}>
-            <div className="flex-1 overflow-auto px-3 pb-3 pt-2">
-                <div className="h-full overflow-x-auto">
-                    <Table>
-                        <TableHeader className="sticky top-0 bg-card/[.05] backdrop-blur-md z-[1]">
-                            <TableRow>
-                                <TableHead className="text-xs h-7 px-2 text-left text-muted-foreground font-medium">Symbol</TableHead>
-                                <TableHead className="text-xs h-7 px-2 text-right text-muted-foreground font-medium">Price</TableHead>
-                                <TableHead className="text-xs h-7 px-2 text-right text-muted-foreground font-medium">Volume</TableHead>
-                                <TableHead className="text-xs h-7 px-2 text-right text-muted-foreground font-medium">Short %</TableHead>
-                                <TableHead className="text-xs h-7 px-2 text-right text-muted-foreground font-medium">% Change</TableHead>
+            <div className="flex-1 overflow-hidden px-3 pb-3 pt-2">
+                <Table>
+                    <TableHeader className="sticky top-0 bg-card/[.05] backdrop-blur-md z-[1]">
+                        <TableRow>
+                            <TableHead className="text-xs h-7 px-2 text-left text-muted-foreground font-medium">Symbol</TableHead>
+                            <TableHead className="text-xs h-7 px-2 text-right text-muted-foreground font-medium">Price</TableHead>
+                            <TableHead className="text-xs h-7 px-2 text-right text-muted-foreground font-medium">Volume</TableHead>
+                            <TableHead className="text-xs h-7 px-2 text-right text-muted-foreground font-medium">Short %</TableHead>
+                            <TableHead className="text-xs h-7 px-2 text-right text-muted-foreground font-medium">% Change</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <ScrollArea className="h-[calc(100%-28px)]">
+                    <TableBody>
+                        {watchlistStocks.map((stock) => (
+                            <TableRow
+                                key={stock.id}
+                                className="cursor-pointer"
+                                onClick={() => onSymbolSelect(stock.symbol)}
+                                data-selected={selectedSymbol === stock.symbol}
+                            >
+                                <TableCell className="font-medium text-xs py-1.5 px-2">{stock.symbol}</TableCell>
+                                <TableCell className="text-right text-xs py-1.5 px-2">{`$${stock.price.toFixed(2)}`}</TableCell>
+                                <TableCell className="text-right text-xs py-1.5 px-2">{formatVolume(stock.volume)}</TableCell>
+                                <TableCell className="text-right text-xs py-1.5 px-2">{formatShortFloat(stock.shortFloat)}</TableCell>
+                                <TableCell className={cn("text-right text-xs py-1.5 px-2", stock.changePercent >= 0 ? "text-[hsl(var(--confirm-green))]" : "text-destructive")}>
+                                    {`${stock.changePercent.toFixed(2)}%`}
+                                </TableCell>
                             </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {watchlistStocks.map((stock) => (
-                                <TableRow
-                                    key={stock.id}
-                                    className="cursor-pointer"
-                                    onClick={() => onSymbolSelect(stock.symbol)}
-                                    data-selected={selectedSymbol === stock.symbol}
-                                >
-                                    <TableCell className="font-medium text-xs py-1.5 px-2">{stock.symbol}</TableCell>
-                                    <TableCell className="text-right text-xs py-1.5 px-2">{`$${stock.price.toFixed(2)}`}</TableCell>
-                                    <TableCell className="text-right text-xs py-1.5 px-2">{formatVolume(stock.volume)}</TableCell>
-                                    <TableCell className="text-right text-xs py-1.5 px-2">{formatShortFloat(stock.shortFloat)}</TableCell>
-                                    <TableCell className={cn("text-right text-xs py-1.5 px-2", stock.changePercent >= 0 ? "text-[hsl(var(--confirm-green))]" : "text-destructive")}>
-                                        {`${stock.changePercent.toFixed(2)}%`}
-                                    </TableCell>
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                </div>
+                        ))}
+                    </TableBody>
+                    </ScrollArea>
+                </Table>
             </div>
         </div>
     );
