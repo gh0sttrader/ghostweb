@@ -273,7 +273,7 @@ export function InteractiveChartCardV2({ stock, onManualTickerSubmit, className,
 
   return (
     <Card className={cn("shadow-none flex flex-col border-none bg-transparent relative", className)}>
-      <CardHeader className="pb-2 pt-3 px-3 cursor-move">
+      <CardHeader className="pb-2 pt-3 px-3 drag-handle cursor-move">
         <div className="flex flex-col sm:flex-row justify-between items-center gap-2">
           {variant === 'trading' && stock && stock.price > 0 ? (
             <div className="flex items-baseline gap-x-2.5 gap-y-1 flex-wrap flex-1 min-w-0">
@@ -306,7 +306,7 @@ export function InteractiveChartCardV2({ stock, onManualTickerSubmit, className,
               </div>
           )}
           {variant === 'trading' && (
-            <div className="flex items-center gap-1 w-full sm:w-auto">
+            <div className="flex items-center gap-1 w-full sm:w-auto no-drag">
               <Input
                 ref={inputRef}
                 type="text"
@@ -334,7 +334,7 @@ export function InteractiveChartCardV2({ stock, onManualTickerSubmit, className,
             size="sm"
             onClick={() => setTimeframe(tf as any)}
             className={cn(
-              "h-8 text-base px-3 font-medium",
+              "h-8 text-base px-3 font-medium no-drag",
               timeframe === tf
                 ? "text-foreground font-bold"
                 : "text-muted-foreground hover:text-foreground hover:bg-transparent"
@@ -343,7 +343,7 @@ export function InteractiveChartCardV2({ stock, onManualTickerSubmit, className,
             {tf}
           </Button>
         ))}
-        <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-transparent" onClick={() => setIsDatePickerOpen(true)}>
+        <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-transparent no-drag" onClick={() => setIsDatePickerOpen(true)}>
           <Calendar className="h-5 w-5" />
         </Button>
         
@@ -359,7 +359,7 @@ export function InteractiveChartCardV2({ stock, onManualTickerSubmit, className,
             size="sm"
             onClick={() => setChartType(type as any)}
             className={cn(
-              "h-8 text-base px-3 font-medium",
+              "h-8 text-base px-3 font-medium no-drag",
               chartType === type
                 ? "text-foreground font-bold"
                 : "text-muted-foreground hover:text-foreground hover:bg-transparent"
@@ -370,7 +370,7 @@ export function InteractiveChartCardV2({ stock, onManualTickerSubmit, className,
           </Button>
         ))}
       </CardFooter>
-      <div className="absolute bottom-3 right-3 z-10">
+      <div className="absolute bottom-3 right-3 z-10 no-drag">
           <Popover>
               <PopoverTrigger asChild>
                   <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground/50 hover:text-foreground hover:bg-white/10 opacity-50 hover:opacity-100 transition-opacity">

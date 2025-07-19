@@ -447,8 +447,8 @@ function TradingDashboardPageContentV2() {
                                         </>
                                     ) : (
                                         <>
-                                            <div className="absolute top-0 right-0 h-10 flex items-center justify-end px-2 z-10">
-                                                {activeWidget.id === 'order' && <div className="flex-1 drag-handle cursor-move h-full" />}
+                                            <div className="absolute top-0 right-0 h-10 flex items-center justify-end px-2 z-10 w-full">
+                                                {activeWidget.id === 'order' && <div className="drag-handle cursor-move h-full flex-1" />}
                                                 <div className="no-drag">
                                                     <CardMenu
                                                         showAddWidget={!isChart && !isOrder}
@@ -460,15 +460,11 @@ function TradingDashboardPageContentV2() {
                                                 </div>
                                             </div>
                                             
-                                            <div className="drag-handle cursor-move">
-                                                {activeWidget.id !== 'order' && activeWidget.id !== 'chart' && (
-                                                    <CardHeader className="p-3 flex-row items-center justify-between">
-                                                        <CardTitle className="text-base font-semibold">{activeWidget.label}</CardTitle>
-                                                    </CardHeader>
-                                                )}
-                                            </div>
-
-                                            <div className="flex-1 overflow-hidden h-full">
+                                            <CardHeader className={cn("drag-handle cursor-move p-3 flex-row items-center justify-between", {'sr-only': activeWidget.id === 'order'})}>
+                                                <CardTitle className="text-base font-semibold">{activeWidget.label}</CardTitle>
+                                            </CardHeader>
+                                           
+                                            <div className={cn("flex-1 overflow-hidden h-full", {'-mt-12': activeWidget.id !== 'order' && activeWidget.id !== 'chart'})}>
                                                 {activeWidget.component}
                                             </div>
                                         </>
