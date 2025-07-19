@@ -261,11 +261,11 @@ const HoldingsTable = ({ holdings }: { holdings: Holding[] }) => {
                 <TableHeader>
                     <TableRow className="border-b border-white/10">
                         <TableHead className="py-3 px-6 text-left font-bold">Ticker</TableHead>
-                        <TableHead className="py-3 px-6 text-center font-bold">Day's P&L %</TableHead>
+                        <TableHead className="py-3 px-6 text-center font-bold">Day’s P&L %</TableHead>
                         <TableHead className="py-3 px-6 text-center font-bold">Open P&L %</TableHead>
-                        <TableHead className="py-3 px-6 text-center font-bold">Current Price</TableHead>
-                        <TableHead className="py-3 px-6 text-center font-bold">Average Price</TableHead>
                         <TableHead className="py-3 px-6 text-center font-bold">Market Value</TableHead>
+                        <TableHead className="py-3 px-6 text-center font-bold">Average Price</TableHead>
+                        <TableHead className="py-3 px-6 text-center font-bold">Current Price</TableHead>
                         <TableHead className="py-3 px-6 text-right font-bold">Shares</TableHead>
                     </TableRow>
                 </TableHeader>
@@ -281,9 +281,9 @@ const HoldingsTable = ({ holdings }: { holdings: Holding[] }) => {
                             <TableCell className={cn("text-center py-3 px-6", (holding.openPnlPercent || 0) >= 0 ? 'text-[hsl(var(--confirm-green))]' : 'text-destructive')}>
                                 {formatPercent(holding.openPnlPercent)}
                             </TableCell>
-                            <TableCell className="text-center py-3 px-6">{formatCurrency(holding.marketPrice)}</TableCell>
-                            <TableCell className="text-center py-3 px-6">{formatCurrency(holding.averagePrice)}</TableCell>
                             <TableCell className="text-center py-3 px-6 font-semibold">{formatCurrency(holding.totalValue)}</TableCell>
+                            <TableCell className="text-center py-3 px-6">{formatCurrency(holding.averagePrice)}</TableCell>
+                            <TableCell className="text-center py-3 px-6">{formatCurrency(holding.marketPrice)}</TableCell>
                             <TableCell className="text-right py-3 px-6">{holding.shares.toFixed(4)}</TableCell>
                         </TableRow>
                     ))}
