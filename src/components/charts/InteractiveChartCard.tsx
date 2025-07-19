@@ -25,38 +25,16 @@ interface InteractiveChartCardProps {
 }
 
 const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>) => {
-  if (active && payload && payload.length) {
-    const data = payload[0].payload;
-    const color = payload[0].color || 'hsl(var(--primary))';
-    // Candlestick data
-    if (data.open !== undefined) { 
-      const isUp = data.close >= data.open;
-      const valueColor = isUp ? 'text-[hsl(var(--confirm-green))]' : 'text-destructive';
-      return (
-        <div className="p-2.5 text-xs bg-background/90 backdrop-blur-sm rounded-md border border-border/20 shadow-lg shadow-primary/10">
-          <p className="label text-muted-foreground font-semibold mb-1">{`${label}`}</p>
-          <div className="intro space-y-1">
-            <div className="flex justify-between items-baseline"><span className="text-foreground">Open:</span> <span className={cn("font-bold ml-2", valueColor)}>${data.open.toFixed(2)}</span></div>
-            <div className="flex justify-between items-baseline"><span className="text-foreground">High:</span> <span className={cn("font-bold ml-2", valueColor)}>${data.high.toFixed(2)}</span></div>
-            <div className="flex justify-between items-baseline"><span className="text-foreground">Low:</span> <span className={cn("font-bold ml-2", valueColor)}>${data.low.toFixed(2)}</span></div>
-            <div className="flex justify-between items-baseline"><span className="text-foreground">Close:</span> <span className={cn("font-bold ml-2", valueColor)}>${data.close.toFixed(2)}</span></div>
-          </div>
-        </div>
-      );
-    }
-    
+  if (active && label) {
     return (
-        <div className="p-2.5 text-xs bg-background/90 backdrop-blur-sm rounded-md border border-border/20 shadow-lg shadow-primary/10">
-            <p className="label text-muted-foreground font-semibold mb-1">{`${label}`}</p>
-            <div className="flex justify-between items-baseline">
-                <span className="text-foreground">Price:</span>
-                <span className="font-bold ml-2" style={{ color }}>${payload[0].value?.toFixed(2)}</span>
-            </div>
-        </div>
+      <div className="p-2 text-xs bg-background/90 backdrop-blur-sm rounded-md border border-border/20 shadow-lg">
+        <p className="font-semibold text-foreground">{`${label}`}</p>
+      </div>
     );
   }
   return null;
 };
+
 
 // Map UI timeframes to Alpaca API parameters
 const getTimeframeParams = (timeframe: '1D' | '5D' | '1M' | '3M' | '6M' | 'YTD' | '1Y' | '5Y' | 'All') => {
@@ -326,52 +304,6 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, className, v
       <CardContent className="relative flex-1 p-1 pr-2 min-h-[250px]">
         {renderChartContent()}
       </CardContent>
-      {variant === 'trading' && (
-      <CardFooter className="flex flex-wrap justify-start items-center gap-x-1 gap-y-2 pt-2 pb-2 px-3">
-        {['1D', '5D', '1M', '3M', '6M', 'YTD', '1Y', '5Y', 'All'].map((tf) => (
-          <Button
-            key={tf}
-            variant="ghost"
-            size="sm"
-            onClick={() => setTimeframe(tf as any)}
-            className={cn(
-              "h-8 text-base px-3 font-medium",
-              timeframe === tf
-                ? "text-foreground font-bold"
-                : "text-muted-foreground hover:text-foreground hover:bg-transparent"
-            )}
-          >
-            {tf}
-          </Button>
-        ))}
-        <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-transparent" onClick={() => setIsDatePickerOpen(true)}>
-          <Calendar className="h-5 w-5" />
-        </Button>
-        
-        <div className="w-px bg-border/20 h-6 self-center mx-1"></div>
-
-        {[
-          { type: 'line', label: 'Line', Icon: LineChartIcon },
-          { type: 'area', label: 'Area', Icon: AreaIcon },
-        ].map(({ type, label, Icon }) => (
-          <Button
-            key={type}
-            variant="ghost"
-            size="sm"
-            onClick={() => setChartType(type as any)}
-            className={cn(
-              "h-8 text-base px-3 font-medium",
-              chartType === type
-                ? "text-foreground font-bold"
-                : "text-muted-foreground hover:text-foreground hover:bg-transparent"
-            )}
-          >
-            <Icon className="h-5 w-5 mr-1.5" />
-            {label}
-          </Button>
-        ))}
-      </CardFooter>
-      )}
       <div className="absolute bottom-3 right-3 z-10">
           <Popover>
               <PopoverTrigger asChild>
