@@ -419,6 +419,7 @@ function TradingDashboardPageContentV2() {
                        
                        const isChart = groupKey === 'chart';
                        const isOrder = groupKey === 'order';
+                       const isProtected = isChart || isOrder;
 
                        return (
                            <div key={groupKey} id={groupKey} className="overflow-hidden">
@@ -441,7 +442,7 @@ function TradingDashboardPageContentV2() {
                                                 <Button variant="link" className="ml-auto text-destructive text-xs h-auto py-0 px-2" onClick={() => uncombineGroup(groupKey)}>Separate</Button>
                                                 <div className="no-drag ml-2">
                                                     <CardMenu
-                                                        showAddWidget={!isChart && !isOrder}
+                                                        showAddWidget={!isProtected}
                                                         onAddWidget={() => setPopoverState({ open: true, groupKey })}
                                                         onCustomize={() => toast({ title: `Customize ${activeWidget.label}`})}
                                                         onDelete={() => handleDeleteWidget(groupKey, activeWidgetId)}
@@ -454,18 +455,16 @@ function TradingDashboardPageContentV2() {
                                         </>
                                     ) : (
                                         <>
-                                            <CardHeader className={cn("p-3 flex-row items-center justify-between drag-handle cursor-move", {'no-drag !cursor-default': isChart || isOrder })}>
-                                                {isChart && <div className="drag-handle cursor-move h-full flex-1" />}
-                                                {isOrder && <div className="drag-handle cursor-move h-full flex-1" />}
+                                            <CardHeader className={cn("p-3 flex-row items-center justify-between", {'drag-handle cursor-move': !isProtected, 'no-drag': isProtected})}>
                                                 
                                                 {activeWidget.id !== 'order' && activeWidget.id !== 'chart' && (
                                                     <CardTitle className="text-base font-semibold">{activeWidget.label}</CardTitle>
                                                 )}
                                                 
-                                                <div className="no-drag ml-auto">
+                                                <div className="ml-auto no-drag">
                                                     <CardMenu
-                                                        showAddWidget={!isChart && !isOrder}
-                                                        showCustomize={!isChart && !isOrder && activeWidget.id !== 'order'}
+                                                        showAddWidget={!isProtected}
+                                                        showCustomize={!isProtected}
                                                         onAddWidget={() => setPopoverState({ open: true, groupKey })}
                                                         onCustomize={() => toast({ title: `Customize ${activeWidget.label}`})}
                                                         onDelete={() => handleDeleteWidget(groupKey, activeWidgetId)}
@@ -519,5 +518,3 @@ export default function TradingDashboardPage() {
     </Suspense>
   );
 }
-
-    

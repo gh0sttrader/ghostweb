@@ -227,37 +227,35 @@ export const OrderCardV2: React.FC<OrderCardProps> = ({
         <Card className={cn("h-full flex flex-col bg-transparent border-none", className)}>
             <CardContent className="flex-1 flex flex-col p-3 space-y-3 overflow-y-auto">
                 {selectedStock && (
-                    <>
-                        <div className="flex items-center justify-between">
-                            <div className="flex items-baseline gap-2 flex-1 min-w-0">
-                                <p className="text-2xl font-bold text-foreground truncate">{selectedStock.symbol}</p>
-                                <p className={cn("text-xl font-semibold", selectedStock.changePercent >= 0 ? "text-[hsl(var(--confirm-green))]" : "text-destructive")}>
-                                    ${selectedStock.price.toFixed(2)}
-                                </p>
-                                <p className={cn("text-sm font-medium", selectedStock.changePercent >= 0 ? "text-[hsl(var(--confirm-green))]" : "text-destructive")}>
-                                     {selectedStock.changePercent >= 0 ? '+' : ''}{selectedStock.changePercent.toFixed(2)}%
-                                </p>
-                            </div>
-                             <div className="no-drag">
-                                <CardMenu
-                                    showAddWidget={false}
-                                    showCustomize={false}
-                                    onCustomize={() => toast({ title: "Customize Panel"})}
-                                    onDelete={() => toast({ title: "Delete Panel", variant: "destructive"})}
-                                    onAddWidget={() => {}}
-                                />
-                            </div>
+                    <div className="flex items-center justify-between drag-handle cursor-move py-1">
+                        <div className="flex items-baseline gap-2 flex-1 min-w-0 no-drag">
+                            <p className="text-2xl font-bold text-foreground truncate">{selectedStock.symbol}</p>
+                            <p className={cn("text-xl font-semibold", selectedStock.changePercent >= 0 ? "text-[hsl(var(--confirm-green))]" : "text-destructive")}>
+                                ${selectedStock.price.toFixed(2)}
+                            </p>
+                            <p className={cn("text-sm font-medium", selectedStock.changePercent >= 0 ? "text-[hsl(var(--confirm-green))]" : "text-destructive")}>
+                                    {selectedStock.changePercent >= 0 ? '+' : ''}{selectedStock.changePercent.toFixed(2)}%
+                            </p>
                         </div>
-
-                        {selectedStock.tradingFeatures && (
-                            <div className="flex justify-start pt-1 -mt-2">
-                                <TradingFeaturesBadges features={selectedStock.tradingFeatures} />
-                            </div>
-                        )}
-                    </>
+                            <div className="no-drag">
+                            <CardMenu
+                                showAddWidget={false}
+                                showCustomize={false}
+                                onCustomize={() => toast({ title: "Customize Panel"})}
+                                onDelete={() => toast({ title: "Delete Panel", variant: "destructive"})}
+                                onAddWidget={() => {}}
+                            />
+                        </div>
+                    </div>
                 )}
                 
-                <div className="grid grid-cols-3 gap-2">
+                {selectedStock?.tradingFeatures && (
+                    <div className="flex justify-start pt-1 -mt-2 no-drag">
+                        <TradingFeaturesBadges features={selectedStock.tradingFeatures} />
+                    </div>
+                )}
+                
+                <div className="grid grid-cols-3 gap-2 no-drag">
                     {(['Buy', 'Sell', 'Short'] as OrderActionType[]).map((act) => {
                         const config = actionConfig[act];
                         return (
@@ -280,7 +278,7 @@ export const OrderCardV2: React.FC<OrderCardProps> = ({
 
                 <Separator className="bg-white/10" />
 
-                <div className="space-y-3">
+                <div className="space-y-3 no-drag">
                     <div className="grid grid-cols-2 gap-2">
                         <div>
                             <Label className="text-xs text-muted-foreground">Order Type</Label>
@@ -380,7 +378,7 @@ export const OrderCardV2: React.FC<OrderCardProps> = ({
 
                 <div className="flex-1"></div>
 
-                <div className="space-y-0 p-3 mt-auto rounded-lg bg-black/40 border border-white/10">
+                <div className="space-y-0 p-3 mt-auto rounded-lg bg-black/40 border border-white/10 no-drag">
                      <DetailItem
                         label="Est. Total"
                         value={`$${formatNumber(estimatedTotal)}`}
@@ -402,7 +400,7 @@ export const OrderCardV2: React.FC<OrderCardProps> = ({
 
                 <Button 
                     className={cn(
-                        "w-full h-12 text-base font-bold transition-all duration-300",
+                        "w-full h-12 text-base font-bold transition-all duration-300 no-drag",
                         submitButtonClass
                     )}
                     disabled={!isFormValid}
