@@ -69,47 +69,6 @@ const mockAccounts: Account[] = [
     },
 ];
 
-const totalHoldings = [...mockHoldings, ...mockIraHoldings].reduce((acc, holding) => {
-    const existing = acc.find(h => h.symbol === holding.symbol);
-    if (existing) {
-        existing.shares += holding.shares;
-        existing.unrealizedGain += holding.unrealizedGain;
-        existing.totalValue += holding.totalValue;
-        existing.dayPnl = (existing.dayPnl || 0) + (holding.dayPnl || 0);
-        // Recalculate combined percentages if needed, or average them. Simple sum for now.
-        existing.dayPnlPercent = ((existing.dayPnl || 0) / (existing.totalValue - (existing.dayPnl || 0))) * 100;
-        existing.openPnlPercent = (existing.unrealizedGain / (existing.totalValue - existing.unrealizedGain)) * 100;
-
-    } else {
-        acc.push({ ...holding });
-    }
-    return acc;
-}, [] as Holding[]);
-
-
-const totalAccount: Account = {
-    id: 'total',
-    name: 'Total',
-    balance: mockAccounts.reduce((acc, curr) => acc + curr.balance, 0),
-    buyingPower: mockAccounts.reduce((acc, curr) => acc + curr.buyingPower, 0),
-    settledCash: mockAccounts.reduce((acc, curr) => acc + curr.settledCash, 0),
-    pnl: {
-        daily: mockAccounts.reduce((acc, curr) => acc + (curr.pnl?.daily || 0), 0),
-        weekly: mockAccounts.reduce((acc, curr) => acc + (curr.pnl?.weekly || 0), 0),
-        percent: 0.75
-    },
-    holdingsCount: mockAccounts.reduce((acc, curr) => acc + (curr.holdingsCount || 0), 0),
-    cash: mockAccounts.reduce((acc, curr) => acc + (curr.cash || 0), 0),
-    ytdReturn: mockAccounts.reduce((acc, curr) => acc + (curr.ytdReturn || 0), 0) / mockAccounts.length, // Average return for total
-    netContributions: mockAccounts.reduce((acc, curr) => acc + (curr.netContributions || 0), 0),
-    totalGains: mockAccounts.reduce((acc, curr) => acc + (curr.totalGains || 0), 0),
-    marketGains: mockAccounts.reduce((acc, curr) => acc + (curr.marketGains || 0), 0),
-    dividends: mockAccounts.reduce((acc, curr) => acc + (curr.dividends || 0), 0),
-    holdings: totalHoldings,
-};
-
-const allAccounts = [totalAccount, ...mockAccounts];
-
 const accountToStock = (account: Account): Stock => ({
     id: account.id,
     symbol: account.name.toUpperCase().replace(' ', '_'),
@@ -356,8 +315,8 @@ const AccountSelector = ({ accounts, selected, onSelect }: { accounts: Account[]
 };
 
 export default function AccountsPage() {
-    const [selectedAccount, setSelectedAccount] = useState<Account>(totalAccount);
-    const [headerValue, setHeaderValue] = useState<number>(totalAccount.balance);
+    const [selectedAccount, setSelectedAccount] = useState<Account>(mockAccounts[0]);
+    const [headerValue, setHeaderValue] = useState<number>(mockAccounts[0].balance);
 
     const chartData = useMemo(() => accountToStock(selectedAccount), [selectedAccount]);
 
@@ -401,7 +360,7 @@ export default function AccountsPage() {
 
             <div className="flex-1 flex flex-col mt-4">
                 <div className="flex items-center h-16 flex-shrink-0">
-                    <AccountSelector accounts={allAccounts} selected={selectedAccount} onSelect={setSelectedAccount} />
+                    <AccountSelector accounts={mockAccounts} selected={selectedAccount} onSelect={setSelectedAccount} />
                 </div>
                 
                 <section className="w-full">
