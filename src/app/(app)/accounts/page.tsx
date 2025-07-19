@@ -5,12 +5,17 @@ import { useState, useMemo } from 'react';
 import type { Stock, Account, Holding } from '@/types';
 import { InteractiveChartCard } from '@/components/charts/InteractiveChartCard';
 import { cn } from '@/lib/utils';
-import { TrendingUp, TrendingDown, PackageSearch } from 'lucide-react';
+import { TrendingUp, TrendingDown, PackageSearch, Calendar as CalendarIcon } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Calendar } from '@/components/ui/calendar';
+import { DateRange } from 'react-day-picker';
+import { format, addDays } from 'date-fns';
+
 
 const mockHoldings: Holding[] = [
     { symbol: 'AAPL', name: 'Apple Inc.', shares: 50, marketPrice: 170.34, unrealizedGain: 1250.75, totalValue: 8517, logo: 'https://placehold.co/40x40.png' },
@@ -116,9 +121,9 @@ const formatCurrency = (value?: number, showSign = false) => {
     return `${sign}$${Math.abs(value).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }
 
-type Timeframe = "1W" | "1M" | "6M" | "YTD" | "1Y" | "Max";
+type Timeframe = "1W" | "1M" | "6M" | "YTD" | "1Y" | "Max" | "Custom";
 
-const summaryData: Record<string, Record<Timeframe, { gain: number; percent: number; period: string }>> = {
+const summaryData: Record<string, Record<Exclude<Timeframe, "Custom">, { gain: number; percent: number; period: string }>> = {
     total: {
         "1W": { gain: -1817.62, percent: -0.63, period: "Past week" },
         "1M": { gain: 2000, percent: 0.70, period: "Past month" },
@@ -143,14 +148,36 @@ const summaryData: Record<string, Record<Timeframe, { gain: number; percent: num
         "1Y": { gain: 15000, percent: 14.28, period: "Past year" },
         "Max": { gain: 35000, percent: 41.18, period: "All time" },
     }
-}
+};
 
 const AccountSummaryHeader = ({ account }: { account: Account }) => {
     const [timeframe, setTimeframe] = useState<Timeframe>("6M");
-    const data = summaryData[account.id]?.[timeframe] || summaryData.total[timeframe];
-    const isPositive = data.gain >= 0;
+    const [dateRange, setDateRange] = useState<DateRange | undefined>({
+        from: new Date(2024, 0, 20),
+        to: addDays(new Date(2024, 0, 20), 20),
+    });
+    
+    // Simulate fetching data for a custom range
+    const customRangeData = useMemo(() => {
+        if (timeframe === 'Custom' && dateRange?.from && dateRange?.to) {
+            // In a real app, you would fetch this data. For now, we generate it.
+            const diffTime = Math.abs(dateRange.to.getTime() - dateRange.from.getTime());
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            const randomGain = (Math.random() - 0.5) * 1000 * (diffDays / 30);
+            const randomPercent = (randomGain / account.balance) * 100;
+            return {
+                gain: randomGain,
+                percent: randomPercent,
+                period: 'Custom Range'
+            };
+        }
+        return null;
+    }, [timeframe, dateRange, account.balance]);
+    
+    const data = timeframe === 'Custom' ? customRangeData : summaryData[account.id]?.[timeframe] || summaryData.total[timeframe];
+    const isPositive = data ? data.gain >= 0 : false;
 
-    const timeframeButtons: { label: Timeframe, value: Timeframe }[] = [
+    const timeframeButtons: { label: Exclude<Timeframe, "Custom">, value: Exclude<Timeframe, "Custom"> }[] = [
         { label: "1W", value: "1W" },
         { label: "1M", value: "1M" },
         { label: "6M", value: "6M" },
@@ -165,16 +192,18 @@ const AccountSummaryHeader = ({ account }: { account: Account }) => {
                 <h1 className="text-5xl font-bold text-white">
                     {formatCurrency(account.balance)}
                 </h1>
-                <div className="flex flex-col items-start pb-1">
-                     <span className={cn("text-lg font-semibold", isPositive ? "text-[hsl(var(--confirm-green))]" : "text-destructive")}>
-                        {isPositive ? "▲" : "▼"}
-                        {formatCurrency(data.gain, true)}
-                        &nbsp;({isPositive ? '+' : ''}{data.percent.toFixed(2)}%)
-                    </span>
-                    <span className="text-sm text-muted-foreground">{data.period}</span>
-                </div>
+                {data && (
+                    <div className="flex flex-col items-start pb-1">
+                        <span className={cn("text-lg font-semibold", isPositive ? "text-[hsl(var(--confirm-green))]" : "text-destructive")}>
+                            {isPositive ? "▲" : "▼"}
+                            {formatCurrency(data.gain, true)}
+                            &nbsp;({isPositive ? '+' : ''}{data.percent.toFixed(2)}%)
+                        </span>
+                        <span className="text-sm text-muted-foreground">{data.period}</span>
+                    </div>
+                )}
             </div>
-            <div className="flex mt-8 gap-1">
+            <div className="flex mt-8 gap-1 items-center">
                  {timeframeButtons.map(({ label, value }) => (
                     <Button
                         key={value}
@@ -191,6 +220,46 @@ const AccountSummaryHeader = ({ account }: { account: Account }) => {
                         {label}
                     </Button>
                 ))}
+                 <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        id="date"
+                        variant={"ghost"}
+                        size="sm"
+                        onClick={() => setTimeframe("Custom")}
+                        className={cn(
+                          "w-auto justify-start text-left font-normal px-3 py-1 h-auto rounded-md text-sm transition-colors",
+                           timeframe === 'Custom'
+                            ? "bg-neutral-800 font-bold text-white"
+                            : "text-muted-foreground hover:bg-neutral-800/50 hover:text-white"
+                        )}
+                      >
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {dateRange?.from ? (
+                          dateRange.to ? (
+                            <>
+                              {format(dateRange.from, "LLL dd, y")} -{" "}
+                              {format(dateRange.to, "LLL dd, y")}
+                            </>
+                          ) : (
+                            format(dateRange.from, "LLL dd, y")
+                          )
+                        ) : (
+                          <span>Pick a date</span>
+                        )}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        initialFocus
+                        mode="range"
+                        defaultMonth={dateRange?.from}
+                        selected={dateRange}
+                        onSelect={setDateRange}
+                        numberOfMonths={2}
+                      />
+                    </PopoverContent>
+                </Popover>
             </div>
         </div>
     );
@@ -301,5 +370,3 @@ export default function AccountsPage() {
         </main>
     );
 }
-
-    

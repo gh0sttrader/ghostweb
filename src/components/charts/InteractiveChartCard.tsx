@@ -326,6 +326,7 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, className, v
       <CardContent className="relative flex-1 p-1 pr-2 min-h-[250px]">
         {renderChartContent()}
       </CardContent>
+      {variant === 'trading' && (
       <CardFooter className="flex flex-wrap justify-start items-center gap-x-1 gap-y-2 pt-2 pb-2 px-3">
         {['1D', '5D', '1M', '3M', '6M', 'YTD', '1Y', '5Y', 'All'].map((tf) => (
           <Button
@@ -370,6 +371,7 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, className, v
           </Button>
         ))}
       </CardFooter>
+      )}
       <div className="absolute bottom-3 right-3 z-10">
           <Popover>
               <PopoverTrigger asChild>
