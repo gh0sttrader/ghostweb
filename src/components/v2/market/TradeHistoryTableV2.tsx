@@ -29,54 +29,46 @@ export function TradeHistoryTableV2({ className, syncedTickerSymbol }: TradeHist
 
   return (
     <div className={cn("h-full flex flex-col", className)}>
-      <div className="p-0 flex-1 overflow-hidden">
-        <div className="h-full flex flex-col">
-          <div className="shrink-0">
-            <Table>
-              <TableHeader className="sticky top-0 bg-card z-[1]">
-                <TableRow>
-                  <TableHead className="text-xs h-7 px-2 text-left text-muted-foreground font-medium">Symbol</TableHead>
-                  <TableHead className="text-xs h-7 px-2 text-left text-muted-foreground font-medium">Side</TableHead>
-                  <TableHead className="text-xs h-7 px-2 text-right text-muted-foreground font-medium">Qty</TableHead>
-                  <TableHead className="text-xs h-7 px-2 text-right text-muted-foreground font-medium">Avg Price</TableHead>
-                  <TableHead className="text-xs h-7 px-2 text-left text-muted-foreground font-medium">Type</TableHead>
-                  <TableHead className="text-xs h-7 px-2 text-left text-muted-foreground font-medium">Time</TableHead>
-                  <TableHead className="text-xs h-7 px-2 text-left text-muted-foreground font-medium">Status</TableHead>
-                </TableRow>
-              </TableHeader>
-            </Table>
-          </div>
-          <ScrollArea className="flex-1">
-            <Table>
-              <TableBody>
-                {filteredHistory.length > 0 ? (
-                    filteredHistory.map((trade) => (
-                      <TableRow key={trade.id} className="text-xs hover:bg-white/5">
-                        <TableCell className="px-2 py-1.5 font-bold text-left">{trade.symbol}</TableCell>
-                        <TableCell className="px-2 py-1.5 font-bold text-left">{trade.side}</TableCell>
-                        <TableCell className="px-2 py-1.5 text-right font-bold">{trade.totalQty}</TableCell>
-                        <TableCell className="px-2 py-1.5 text-right font-bold">${trade.averagePrice.toFixed(2)}</TableCell>
-                        <TableCell className="px-2 py-1.5 font-bold text-left">{trade.orderType}</TableCell>
-                        <TableCell className="px-2 py-1.5 font-bold text-left">{format(parseISO(trade.filledTime), "HH:mm:ss")}</TableCell>
-                        <TableCell className="px-2 py-1.5 font-bold text-left">{trade.orderStatus}</TableCell>
-                      </TableRow>
-                    ))
-                ) : (
-                  <TableRow>
-                      <TableCell colSpan={7} className="h-24 text-center">
-                          <div className="flex flex-col items-center justify-center text-xs py-8 px-3">
-                              <History className="mx-auto h-8 w-8 mb-2 opacity-50 text-muted-foreground" />
-                              <p className="text-muted-foreground text-center">
-                                  No trade history {syncedTickerSymbol ? `for ${syncedTickerSymbol}` : 'available'}.
-                              </p>
-                          </div>
-                      </TableCell>
+      <div className="p-0 flex-1 overflow-y-auto">
+        <Table>
+          <TableHeader className="sticky top-0 bg-card z-[1]">
+            <TableRow>
+              <TableHead className="text-xs h-7 px-2 text-left text-muted-foreground font-medium">Symbol</TableHead>
+              <TableHead className="text-xs h-7 px-2 text-left text-muted-foreground font-medium">Side</TableHead>
+              <TableHead className="text-xs h-7 px-2 text-right text-muted-foreground font-medium">Qty</TableHead>
+              <TableHead className="text-xs h-7 px-2 text-right text-muted-foreground font-medium">Avg Price</TableHead>
+              <TableHead className="text-xs h-7 px-2 text-left text-muted-foreground font-medium">Type</TableHead>
+              <TableHead className="text-xs h-7 px-2 text-left text-muted-foreground font-medium">Time</TableHead>
+              <TableHead className="text-xs h-7 px-2 text-left text-muted-foreground font-medium">Status</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {filteredHistory.length > 0 ? (
+                filteredHistory.map((trade) => (
+                  <TableRow key={trade.id} className="text-xs hover:bg-white/5">
+                    <TableCell className="px-2 py-1.5 font-bold text-left">{trade.symbol}</TableCell>
+                    <TableCell className="px-2 py-1.5 font-bold text-left">{trade.side}</TableCell>
+                    <TableCell className="px-2 py-1.5 text-right font-bold">{trade.totalQty}</TableCell>
+                    <TableCell className="px-2 py-1.5 text-right font-bold">${trade.averagePrice.toFixed(2)}</TableCell>
+                    <TableCell className="px-2 py-1.5 font-bold text-left">{trade.orderType}</TableCell>
+                    <TableCell className="px-2 py-1.5 font-bold text-left">{format(parseISO(trade.filledTime), "HH:mm:ss")}</TableCell>
+                    <TableCell className="px-2 py-1.5 font-bold text-left">{trade.orderStatus}</TableCell>
                   </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </ScrollArea>
-        </div>
+                ))
+            ) : (
+              <TableRow>
+                  <TableCell colSpan={7} className="h-24 text-center">
+                      <div className="flex flex-col items-center justify-center text-xs py-8 px-3">
+                          <History className="mx-auto h-8 w-8 mb-2 opacity-50 text-muted-foreground" />
+                          <p className="text-muted-foreground text-center">
+                              No trade history {syncedTickerSymbol ? `for ${syncedTickerSymbol}` : 'available'}.
+                          </p>
+                      </div>
+                  </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
       </div>
     </div>
   );

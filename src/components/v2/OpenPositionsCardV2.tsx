@@ -64,45 +64,37 @@ export function OpenPositionsCardV2({ className }: OpenPositionsCardProps) {
 
     return (
         <div className={cn("h-full flex flex-col", className)}>
-            <div className="p-0 flex-1 overflow-hidden">
-                <div className="h-full flex flex-col">
-                    <div className="shrink-0">
-                        <Table>
-                            <TableHeader className="sticky top-0 bg-card z-[1]">
-                                <TableRow>
-                                    <TableHead className="text-xs h-7 px-2 text-center text-muted-foreground font-medium w-20">Action</TableHead>
-                                    <TableHead className="text-xs h-7 px-2 text-left text-muted-foreground font-medium">Symbol</TableHead>
-                                    <TableHead className="text-xs h-7 px-2 text-right text-muted-foreground font-medium">Qty</TableHead>
-                                    <TableHead className="text-xs h-7 px-2 text-right text-muted-foreground font-medium">Avg Price</TableHead>
-                                    <TableHead className="text-xs h-7 px-2 text-right text-muted-foreground font-medium">Last Price</TableHead>
-                                    <TableHead className="text-xs h-7 px-2 text-right text-muted-foreground font-medium">Open P&L</TableHead>
-                                    <TableHead className="text-xs h-7 px-2 text-left text-muted-foreground font-medium">Side</TableHead>
-                                    <TableHead className="text-xs h-7 px-2 text-right text-muted-foreground font-medium">Total Cost</TableHead>
-                                </TableRow>
-                            </TableHeader>
-                        </Table>
-                    </div>
-                    <ScrollArea className="flex-1">
-                        <Table>
-                            <TableBody>
-                                {openPositions.length > 0 ? (
-                                    openPositions.map((position) => (
-                                        <PositionRow key={position.id} position={position} onClose={closePosition} />
-                                    ))
-                                ) : (
-                                    <TableRow>
-                                        <TableCell colSpan={8} className="h-24 text-center">
-                                            <div className="flex flex-col items-center justify-center text-xs py-8 px-3">
-                                                <PackageSearch className="mx-auto h-8 w-8 mb-2 opacity-50 text-muted-foreground" />
-                                                <p className="text-muted-foreground text-center">No open positions.</p>
-                                            </div>
-                                        </TableCell>
-                                    </TableRow>
-                                )}
-                            </TableBody>
-                        </Table>
-                    </ScrollArea>
-                </div>
+            <div className="p-0 flex-1 overflow-y-auto">
+                <Table>
+                    <TableHeader className="sticky top-0 bg-card z-[1]">
+                        <TableRow>
+                            <TableHead className="text-xs h-7 px-2 text-center text-muted-foreground font-medium w-20">Action</TableHead>
+                            <TableHead className="text-xs h-7 px-2 text-left text-muted-foreground font-medium">Symbol</TableHead>
+                            <TableHead className="text-xs h-7 px-2 text-right text-muted-foreground font-medium">Qty</TableHead>
+                            <TableHead className="text-xs h-7 px-2 text-right text-muted-foreground font-medium">Avg Price</TableHead>
+                            <TableHead className="text-xs h-7 px-2 text-right text-muted-foreground font-medium">Last Price</TableHead>
+                            <TableHead className="text-xs h-7 px-2 text-right text-muted-foreground font-medium">Open P&L</TableHead>
+                            <TableHead className="text-xs h-7 px-2 text-left text-muted-foreground font-medium">Side</TableHead>
+                            <TableHead className="text-xs h-7 px-2 text-right text-muted-foreground font-medium">Total Cost</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        {openPositions.length > 0 ? (
+                            openPositions.map((position) => (
+                                <PositionRow key={position.id} position={position} onClose={closePosition} />
+                            ))
+                        ) : (
+                            <TableRow>
+                                <TableCell colSpan={8} className="h-24 text-center">
+                                    <div className="flex flex-col items-center justify-center text-xs py-8 px-3">
+                                        <PackageSearch className="mx-auto h-8 w-8 mb-2 opacity-50 text-muted-foreground" />
+                                        <p className="text-muted-foreground text-center">No open positions.</p>
+                                    </div>
+                                </TableCell>
+                            </TableRow>
+                        )}
+                    </TableBody>
+                </Table>
             </div>
         </div>
     );
