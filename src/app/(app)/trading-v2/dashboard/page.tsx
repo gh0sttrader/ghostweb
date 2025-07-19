@@ -36,11 +36,12 @@ interface Widget {
     layout: ReactGridLayout.Layout;
 }
 
-const DraggableCard = ({ children, className, isOver }: { children: React.ReactNode, className?: string, isOver?: boolean }) => (
+const DraggableCard = ({ children, className, isOver, isActive }: { children: React.ReactNode, className?: string, isOver?: boolean, isActive?: boolean }) => (
     <div className={cn(
         "bg-card border border-white/10 rounded-lg flex flex-col overflow-hidden h-full transition-all duration-200 relative",
         className,
-        isOver && "ring-2 ring-primary ring-offset-2 ring-offset-background"
+        isOver && "ring-2 ring-primary ring-offset-2 ring-offset-background",
+        isActive && "border-white shadow-[0_0_12px_2px_rgba(255,255,255,0.25)]"
         )}>
         {children}
     </div>
@@ -84,6 +85,7 @@ function TradingDashboardPageContentV2() {
   const [draggedItem, setDraggedItem] = useState<ReactGridLayout.Layout | null>(null);
   const [dropTarget, setDropTarget] = useState<string | null>(null);
   const [popoverState, setPopoverState] = useState<{ open: boolean; groupKey: string | null }>({ open: false, groupKey: null });
+  const [draggedWidgetKey, setDraggedWidgetKey] = useState<string | null>(null);
 
 
   const initialLayouts: Record<WidgetKey, ReactGridLayout.Layout> = {
@@ -293,11 +295,13 @@ function TradingDashboardPageContentV2() {
 
   const onDragStart = (layout: ReactGridLayout.Layout[], oldItem: ReactGridLayout.Layout) => {
       setDraggedItem(oldItem);
+      setDraggedWidgetKey(oldItem.i);
   };
   
   const onDragStop = () => {
       setDraggedItem(null);
       setDropTarget(null);
+      setDraggedWidgetKey(null);
   };
 
   const onDrop = (layout: ReactGridLayout.Layout[], item: ReactGridLayout.Layout, e: DragEvent) => {
@@ -423,7 +427,7 @@ function TradingDashboardPageContentV2() {
 
                        return (
                            <div key={groupKey} id={groupKey} className="overflow-hidden">
-                                <DraggableCard isOver={dropTarget === groupKey}>
+                                <DraggableCard isOver={dropTarget === groupKey} isActive={draggedWidgetKey === groupKey}>
                                     {widgetIds.length > 1 ? (
                                         <>
                                             <div className="flex items-center border-b border-white/10 px-2 drag-handle cursor-move">
