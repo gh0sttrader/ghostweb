@@ -20,6 +20,8 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 interface InteractiveChartCardProps {
   stock: Stock | null;
   onManualTickerSubmit: (symbol: string) => void;
+  onChartHover?: (value: number | null) => void;
+  onChartLeave?: () => void;
   className?: string;
   variant?: 'trading' | 'account';
 }
@@ -64,7 +66,7 @@ const getTimeframeParams = (timeframe: '1D' | '5D' | '1M' | '3M' | '6M' | 'YTD' 
 };
 
 
-export function InteractiveChartCard({ stock, onManualTickerSubmit, className, variant = 'trading' }: InteractiveChartCardProps) {
+export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover, onChartLeave, className, variant = 'trading' }: InteractiveChartCardProps) {
   const [chartType, setChartType] = useState<'line' | 'area' | 'candle'>('area');
   const [timeframe, setTimeframe] = useState<'1D' | '5D' | '1M' | '3M' | '6M' | 'YTD' | '1Y' | '5Y' | 'All'>('1M');
   const [manualTickerInput, setManualTickerInput] = useState('');
@@ -150,6 +152,15 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, className, v
     }
   };
 
+  const handleChartMouseMove = (e: any) => {
+    if (onChartHover && e && e.activePayload && e.activePayload.length > 0) {
+        const payload = e.activePayload[0].payload;
+        if (payload.price !== undefined) {
+            onChartHover(payload.price);
+        }
+    }
+  };
+
   const renderChartContent = () => {
     if (isLoading) {
       return (
@@ -185,7 +196,7 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, className, v
     if (chartType === 'line') {
       return (
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={chartData}>
+          <LineChart data={chartData} onMouseMove={handleChartMouseMove} onMouseLeave={onChartLeave}>
             
             <XAxis dataKey="date" hide />
             <YAxis hide domain={['auto', 'auto']} />
@@ -202,7 +213,7 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, className, v
     if (chartType === 'area') {
       return (
         <ResponsiveContainer width="100%" height="100%">
-             <RechartsAreaChart data={chartData}>
+             <RechartsAreaChart data={chartData} onMouseMove={handleChartMouseMove} onMouseLeave={onChartLeave}>
                 <defs>
                     <linearGradient id={uniqueId} x1="0" y1="0" x2="0" y2="1">
                       <stop offset="0%" stopColor={chartColor} stopOpacity={0.2}/>
@@ -225,7 +236,7 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, className, v
     if (chartType === 'candle') {
       return (
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={chartData}>
+          <BarChart data={chartData} onMouseMove={handleChartMouseMove} onMouseLeave={onChartLeave}>
             
             <XAxis dataKey="date" hide />
             <YAxis hide domain={['dataMin - 1', 'dataMax + 1']} />

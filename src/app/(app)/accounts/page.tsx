@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import type { Stock, Account, Holding } from '@/types';
 import { InteractiveChartCard } from '@/components/charts/InteractiveChartCard';
 import { cn } from '@/lib/utils';
@@ -15,6 +15,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Calendar } from '@/components/ui/calendar';
 import { DateRange } from 'react-day-picker';
 import { format, addDays } from 'date-fns';
+import { AnimatedCounter } from '@/components/AnimatedCounter';
 
 
 const mockHoldings: Holding[] = [
@@ -30,12 +31,12 @@ const mockIraHoldings: Holding[] = [
 ];
 
 const mockAccounts: Account[] = [
-    { 
-        id: 'acc_1', 
-        name: 'Margin Account', 
-        balance: 170000, 
-        buyingPower: 100000, 
-        settledCash: 45000, 
+    {
+        id: 'acc_1',
+        name: 'Margin Account',
+        balance: 170000,
+        buyingPower: 100000,
+        settledCash: 45000,
         pnl: { daily: 1250.75, weekly: 3400.20, percent: 1.2 },
         holdingsCount: 4,
         cash: 5000,
@@ -46,12 +47,12 @@ const mockAccounts: Account[] = [
         dividends: 1500,
         holdings: mockHoldings,
     },
-    { 
-        id: 'acc_2', 
-        name: 'IRA Account', 
-        balance: 120000, 
-        buyingPower: 120000, 
-        settledCash: 120000, 
+    {
+        id: 'acc_2',
+        name: 'IRA Account',
+        balance: 120000,
+        buyingPower: 120000,
+        settledCash: 120000,
         pnl: { daily: -500.50, weekly: 1200.00, percent: -0.4 },
         holdingsCount: 2,
         cash: 120000,
@@ -155,13 +156,13 @@ const summaryData: Record<string, Record<Exclude<Timeframe, "Custom">, { gain: n
     }
 };
 
-const AccountSummaryHeader = ({ account }: { account: Account }) => {
+const AccountSummaryHeader = ({ account, onChartHover, onChartLeave }: { account: Account; onChartHover: (value: number | null) => void; onChartLeave: () => void; }) => {
     const [timeframe, setTimeframe] = useState<Timeframe>("6M");
     const [dateRange, setDateRange] = useState<DateRange | undefined>({
         from: new Date(2024, 0, 20),
         to: addDays(new Date(2024, 0, 20), 20),
     });
-    
+
     // Simulate fetching data for a custom range
     const customRangeData = useMemo(() => {
         if (timeframe === 'Custom' && dateRange?.from && dateRange?.to) {
@@ -178,7 +179,7 @@ const AccountSummaryHeader = ({ account }: { account: Account }) => {
         }
         return null;
     }, [timeframe, dateRange, account.balance]);
-    
+
     const data = timeframe === 'Custom' ? customRangeData : summaryData[account.id]?.[timeframe] || summaryData.total[timeframe];
     const isPositive = data ? data.gain >= 0 : false;
 
@@ -191,12 +192,15 @@ const AccountSummaryHeader = ({ account }: { account: Account }) => {
         { label: "Max", value: "Max" },
     ];
 
+    const handleTimeframeChange = (value: Timeframe) => {
+        setTimeframe(value);
+        onChartLeave(); // Reset header value when timeframe changes
+    };
+
     return (
         <div className="mb-8 min-h-[148px]">
             <div className="flex items-end gap-x-6 gap-y-2 flex-wrap">
-                <h1 className="text-5xl font-bold text-white">
-                    {formatCurrency(account.balance)}
-                </h1>
+                <AnimatedCounter value={account.balance} />
                 {data && (
                     <div className="flex flex-col items-start pb-1">
                         <span className={cn("text-lg font-semibold", isPositive ? "text-[hsl(var(--confirm-green))]" : "text-destructive")}>
@@ -209,7 +213,7 @@ const AccountSummaryHeader = ({ account }: { account: Account }) => {
                 )}
             </div>
             <div className="flex mt-8 gap-1 items-center">
-                 {timeframeButtons.map(({ label, value }) => (
+                {timeframeButtons.map(({ label, value }) => (
                     <Button
                         key={value}
                         variant="ghost"
@@ -220,55 +224,56 @@ const AccountSummaryHeader = ({ account }: { account: Account }) => {
                                 ? "bg-neutral-800 font-bold text-white"
                                 : "text-muted-foreground hover:bg-neutral-800/50 hover:text-white"
                         )}
-                        onClick={() => setTimeframe(value)}
+                        onClick={() => handleTimeframeChange(value)}
                     >
                         {label}
                     </Button>
                 ))}
-                 <Popover>
+                <Popover>
                     <PopoverTrigger asChild>
-                      <Button
-                        id="date"
-                        variant={"ghost"}
-                        size="sm"
-                        onClick={() => setTimeframe("Custom")}
-                        className={cn(
-                          "w-auto justify-start text-left font-normal px-3 py-1 h-auto rounded-md text-sm transition-colors",
-                           timeframe === 'Custom'
-                            ? "bg-neutral-800 font-bold text-white"
-                            : "text-muted-foreground hover:bg-neutral-800/50 hover:text-white"
-                        )}
-                      >
-                        <CalendarIcon className="h-4 w-4" />
-                        {timeframe === 'Custom' && dateRange?.from && (
-                            <span className="ml-2">
-                              {dateRange.to ? (
-                                <>
-                                  {format(dateRange.from, "LLL dd, y")} -{" "}
-                                  {format(dateRange.to, "LLL dd, y")}
-                                </>
-                              ) : (
-                                format(dateRange.from, "LLL dd, y")
-                              )}
-                            </span>
-                        )}
-                      </Button>
+                        <Button
+                            id="date"
+                            variant={"ghost"}
+                            size="sm"
+                            onClick={() => handleTimeframeChange("Custom")}
+                            className={cn(
+                                "w-auto justify-start text-left font-normal px-3 py-1 h-auto rounded-md text-sm transition-colors",
+                                timeframe === 'Custom'
+                                    ? "bg-neutral-800 font-bold text-white"
+                                    : "text-muted-foreground hover:bg-neutral-800/50 hover:text-white"
+                            )}
+                        >
+                            <CalendarIcon className="h-4 w-4" />
+                            {timeframe === 'Custom' && dateRange?.from && (
+                                <span className="ml-2">
+                                    {dateRange.to ? (
+                                        <>
+                                            {format(dateRange.from, "LLL dd, y")} -{" "}
+                                            {format(dateRange.to, "LLL dd, y")}
+                                        </>
+                                    ) : (
+                                        format(dateRange.from, "LLL dd, y")
+                                    )}
+                                </span>
+                            )}
+                        </Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar
-                        initialFocus
-                        mode="range"
-                        defaultMonth={dateRange?.from}
-                        selected={dateRange}
-                        onSelect={setDateRange}
-                        numberOfMonths={2}
-                      />
+                        <Calendar
+                            initialFocus
+                            mode="range"
+                            defaultMonth={dateRange?.from}
+                            selected={dateRange}
+                            onSelect={setDateRange}
+                            numberOfMonths={2}
+                        />
                     </PopoverContent>
                 </Popover>
             </div>
         </div>
     );
 };
+
 
 const HoldingsTable = ({ holdings }: { holdings: Holding[] }) => {
     if (!holdings || holdings.length === 0) {
@@ -310,7 +315,7 @@ const HoldingsTable = ({ holdings }: { holdings: Holding[] }) => {
                             <TableCell className={cn("text-center py-3 px-6", (holding.dayPnlPercent || 0) >= 0 ? 'text-[hsl(var(--confirm-green))]' : 'text-destructive')}>
                                 {formatPercent(holding.dayPnlPercent)}
                             </TableCell>
-                             <TableCell className={cn("text-center py-3 px-6", (holding.openPnlPercent || 0) >= 0 ? 'text-[hsl(var(--confirm-green))]' : 'text-destructive')}>
+                            <TableCell className={cn("text-center py-3 px-6", (holding.openPnlPercent || 0) >= 0 ? 'text-[hsl(var(--confirm-green))]' : 'text-destructive')}>
                                 {formatPercent(holding.openPnlPercent)}
                             </TableCell>
                             <TableCell className="text-center py-3 px-6">{formatCurrency(holding.marketPrice)}</TableCell>
@@ -326,28 +331,29 @@ const HoldingsTable = ({ holdings }: { holdings: Holding[] }) => {
 };
 
 const AccountSelector = ({ accounts, selected, onSelect }: { accounts: Account[], selected: Account, onSelect: (account: Account) => void }) => {
-  return (
-    <div className="flex justify-start gap-8 mt-4">
-      {accounts.map((acct) => (
-        <button
-          key={acct.id}
-          className={cn(
-            "relative px-2 pb-2 text-lg tracking-wide transition-colors",
-            selected.id === acct.id
-              ? "text-white font-semibold after:absolute after:left-0 after:bottom-0 after:w-full after:h-0.5 after:bg-white after:rounded-full after:shadow-[0_0_8px_white]"
-              : "text-neutral-400 font-normal hover:text-white"
-          )}
-          onClick={() => onSelect(acct)}
-        >
-          {acct.name}
-        </button>
-      ))}
-    </div>
-  );
+    return (
+        <div className="flex justify-start gap-8 mt-4">
+            {accounts.map((acct) => (
+                <button
+                    key={acct.id}
+                    className={cn(
+                        "relative px-2 pb-2 text-lg tracking-wide transition-colors",
+                        selected.id === acct.id
+                            ? "text-white font-semibold after:absolute after:left-0 after:bottom-0 after:w-full after:h-0.5 after:bg-white after:rounded-full after:shadow-[0_0_8px_white]"
+                            : "text-neutral-400 font-normal hover:text-white"
+                    )}
+                    onClick={() => onSelect(acct)}
+                >
+                    {acct.name}
+                </button>
+            ))}
+        </div>
+    );
 };
 
 export default function AccountsPage() {
     const [selectedAccount, setSelectedAccount] = useState<Account>(totalAccount);
+    const [headerValue, setHeaderValue] = useState<number>(totalAccount.balance);
 
     const chartData = useMemo(() => accountToStock(selectedAccount), [selectedAccount]);
 
@@ -355,14 +361,36 @@ export default function AccountsPage() {
         console.log("Account view switched to:", symbol);
     };
 
+    const handleChartHover = useCallback((value: number | null) => {
+        if (value !== null) {
+            setHeaderValue(value);
+        }
+    }, []);
+
+    const handleChartLeave = useCallback(() => {
+        setHeaderValue(selectedAccount.balance);
+    }, [selectedAccount.balance]);
+
+    // Update header value when selectedAccount changes
+    React.useEffect(() => {
+        setHeaderValue(selectedAccount.balance);
+    }, [selectedAccount]);
+
+
     return (
         <main className="flex flex-col flex-1 h-screen p-4 md:p-6 lg:p-8">
             {/* Top Section (Fixed Height) */}
             <div className="flex-shrink-0 h-[60vh] min-h-[500px] flex flex-col">
-                <AccountSummaryHeader account={selectedAccount} />
+                <AccountSummaryHeader
+                    account={{ ...selectedAccount, balance: headerValue }}
+                    onChartHover={handleChartHover}
+                    onChartLeave={handleChartLeave}
+                />
                 <InteractiveChartCard
                     stock={chartData}
                     onManualTickerSubmit={handleTickerSubmit}
+                    onChartHover={handleChartHover}
+                    onChartLeave={handleChartLeave}
                     variant="account"
                     className="flex-1 min-h-0"
                 />
@@ -379,7 +407,7 @@ export default function AccountsPage() {
                         <h2 className="text-white text-xl font-semibold mb-4">Holdings</h2>
                         <HoldingsTable holdings={selectedAccount.holdings || []} />
                     </section>
-                     <section className="w-full mt-10">
+                    <section className="w-full mt-10">
                         <h2 className="text-white text-xl font-semibold mb-4">PERFORMANCE</h2>
                         {/* Performance components will go here */}
                     </section>
@@ -389,5 +417,3 @@ export default function AccountsPage() {
         </main>
     );
 }
-
-    
