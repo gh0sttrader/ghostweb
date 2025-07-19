@@ -373,14 +373,21 @@ export default function AccountsPage() {
                 <div className="flex items-center h-16 flex-shrink-0">
                     <AccountSelector accounts={allAccounts} selected={selectedAccount} onSelect={setSelectedAccount} />
                 </div>
-                <ScrollArea className="flex-1">
-                    <section className="w-full pr-4">
+                <ScrollArea className="flex-1 pr-4">
+                    <section className="w-full">
                         <Separator className="bg-border/20 mb-6" />
                         <h2 className="text-white text-xl font-semibold mb-4">Holdings</h2>
                         <HoldingsTable holdings={selectedAccount.holdings || []} />
                     </section>
+                     <section className="w-full mt-10">
+                        <h2 className="text-white text-xl font-semibold mb-4">PERFORMANCE</h2>
+                        {/* Performance components will go here */}
+                    </section>
                 </ScrollArea>
+                <div className="h-12 flex-shrink-0" />
             </div>
         </main>
     );
 }
+
+    
