@@ -10,6 +10,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 const mockHoldings: Holding[] = [
     { symbol: 'AAPL', name: 'Apple Inc.', shares: 50, marketPrice: 170.34, unrealizedGain: 1250.75, totalValue: 8517, logo: 'https://placehold.co/40x40.png' },
@@ -234,8 +235,9 @@ export default function AccountsPage() {
     };
 
     return (
-        <main className="flex flex-col flex-1 h-full p-4 md:p-6 lg:p-8 space-y-8">
-             <div className="flex flex-col flex-1 min-h-0">
+        <main className="flex flex-col flex-1 h-full p-4 md:p-6 lg:p-8">
+            {/* Top Section (Fixed Height) */}
+            <div className="flex-shrink-0 h-[60vh] min-h-[500px] flex flex-col">
                 <AccountSummaryHeader account={selectedAccount} />
                 <InteractiveChartCard
                     stock={chartData}
@@ -243,19 +245,21 @@ export default function AccountsPage() {
                     variant="account"
                     className="flex-1 min-h-0"
                 />
-             </div>
-             
-             <div className="flex items-center h-16">
-                 <AccountSelector accounts={allAccounts} selected={selectedAccount} onSelect={setSelectedAccount} />
-             </div>
+            </div>
 
-             <section className="w-full">
-                <Separator className="bg-border/20 mb-6" />
-                <h2 className="text-white text-xl font-semibold mb-4">Holdings</h2>
-                <HoldingsTable holdings={selectedAccount.holdings || []} />
-             </section>
+            {/* Bottom Section (Scrollable) */}
+            <div className="flex-1 flex flex-col min-h-0 mt-4">
+                <div className="flex items-center h-16 flex-shrink-0">
+                    <AccountSelector accounts={allAccounts} selected={selectedAccount} onSelect={setSelectedAccount} />
+                </div>
+                <ScrollArea className="flex-1">
+                    <section className="w-full pr-4">
+                        <Separator className="bg-border/20 mb-6" />
+                        <h2 className="text-white text-xl font-semibold mb-4">Holdings</h2>
+                        <HoldingsTable holdings={selectedAccount.holdings || []} />
+                    </section>
+                </ScrollArea>
+            </div>
         </main>
     );
 }
-
-    
