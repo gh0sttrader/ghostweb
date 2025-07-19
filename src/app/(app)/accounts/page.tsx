@@ -23,6 +23,10 @@ const mockHoldings: Holding[] = [
     { symbol: 'NVDA', name: 'NVIDIA Corp.', shares: 20, marketPrice: 900.50, unrealizedGain: 500.20, totalValue: 18010, logo: 'https://placehold.co/40x40.png', dayPnl: -63.10, dayPnlPercent: -0.35, openPnlPercent: 2.8, averagePrice: 875.49 },
     { symbol: 'GOOGL', name: 'Alphabet Inc.', shares: 30, marketPrice: 140.22, unrealizedGain: -150.10, totalValue: 4206.60, logo: 'https://placehold.co/40x40.png', dayPnl: 42.30, dayPnlPercent: 1.01, openPnlPercent: -3.4, averagePrice: 145.22 },
     { symbol: 'TSLA', name: 'Tesla, Inc.', shares: 10, marketPrice: 180.01, unrealizedGain: 85.50, totalValue: 1800.10, logo: 'https://placehold.co/40x40.png', dayPnl: 95.60, dayPnlPercent: 5.61, openPnlPercent: 5.0, averagePrice: 171.46 },
+    { symbol: 'MSFT', name: 'Microsoft Corp.', shares: 10, marketPrice: 420.72, unrealizedGain: -50.50, totalValue: 4207.20, logo: 'https://placehold.co/40x40.png', dayPnl: -21.00, dayPnlPercent: -0.50, openPnlPercent: -1.2, averagePrice: 425.72 },
+    { symbol: 'AMZN', name: 'Amazon.com, Inc.', shares: 5, marketPrice: 183.63, unrealizedGain: 240.00, totalValue: 918.15, logo: 'https://placehold.co/40x40.png', dayPnl: 10.15, dayPnlPercent: 1.12, openPnlPercent: 35.4, averagePrice: 135.63 },
+    { symbol: 'META', name: 'Meta Platforms, Inc.', shares: 15, marketPrice: 470.91, unrealizedGain: 600.00, totalValue: 7063.65, logo: 'https://placehold.co/40x40.png', dayPnl: 150.00, dayPnlPercent: 2.17, openPnlPercent: 9.3, averagePrice: 430.91 },
+    { symbol: 'JPM', name: 'JPMorgan Chase & Co.', shares: 25, marketPrice: 195.40, unrealizedGain: -100.00, totalValue: 4885, logo: 'https://placehold.co/40x40.png', dayPnl: -12.50, dayPnlPercent: -0.25, openPnlPercent: -2.0, averagePrice: 199.40 },
 ];
 
 const mockIraHoldings: Holding[] = [
@@ -38,7 +42,7 @@ const mockAccounts: Account[] = [
         buyingPower: 100000,
         settledCash: 45000,
         pnl: { daily: 1250.75, weekly: 3400.20, percent: 1.2 },
-        holdingsCount: 4,
+        holdingsCount: 8,
         cash: 5000,
         ytdReturn: 4.56,
         netContributions: 150000,
@@ -378,8 +382,7 @@ export default function AccountsPage() {
 
 
     return (
-        <main className="flex flex-col flex-1 h-screen p-4 md:p-6 lg:p-8">
-            {/* Top Section (Fixed Height) */}
+        <main className="flex flex-col p-4 md:p-6 lg:p-8">
             <div className="flex-shrink-0 h-[60vh] min-h-[500px] flex flex-col">
                 <AccountSummaryHeader
                     account={{ ...selectedAccount, balance: headerValue }}
@@ -396,22 +399,21 @@ export default function AccountsPage() {
                 />
             </div>
 
-            {/* Bottom Section (Scrollable) */}
-            <div className="flex-1 flex flex-col min-h-0 mt-4">
+            <div className="flex-1 flex flex-col mt-4">
                 <div className="flex items-center h-16 flex-shrink-0">
                     <AccountSelector accounts={allAccounts} selected={selectedAccount} onSelect={setSelectedAccount} />
                 </div>
-                <ScrollArea className="flex-1 pr-4">
-                    <section className="w-full">
-                        <Separator className="bg-border/20 mb-6" />
-                        <h2 className="text-white text-xl font-semibold mb-4">Holdings</h2>
-                        <HoldingsTable holdings={selectedAccount.holdings || []} />
-                    </section>
-                    <section className="w-full mt-10">
-                        <h2 className="text-white text-xl font-semibold mb-4">PERFORMANCE</h2>
-                        {/* Performance components will go here */}
-                    </section>
-                </ScrollArea>
+                
+                <section className="w-full">
+                    <Separator className="bg-border/20 mb-6" />
+                    <h2 className="text-white text-xl font-semibold mb-4">Holdings</h2>
+                    <HoldingsTable holdings={selectedAccount.holdings || []} />
+                </section>
+                <section className="w-full mt-10">
+                    <h2 className="text-white text-xl font-semibold mb-4">PERFORMANCE</h2>
+                    {/* Performance components will go here */}
+                </section>
+                
                 <div className="h-12 flex-shrink-0" />
             </div>
         </main>
