@@ -239,18 +239,18 @@ const AccountSummaryHeader = ({ account }: { account: Account }) => {
                             : "text-muted-foreground hover:bg-neutral-800/50 hover:text-white"
                         )}
                       >
-                        <CalendarIcon className="mr-2 h-4 w-4" />
-                        {dateRange?.from ? (
-                          dateRange.to ? (
-                            <>
-                              {format(dateRange.from, "LLL dd, y")} -{" "}
-                              {format(dateRange.to, "LLL dd, y")}
-                            </>
-                          ) : (
-                            format(dateRange.from, "LLL dd, y")
-                          )
-                        ) : (
-                          <span>Pick a date</span>
+                        <CalendarIcon className="h-4 w-4" />
+                        {timeframe === 'Custom' && dateRange?.from && (
+                            <span className="ml-2">
+                              {dateRange.to ? (
+                                <>
+                                  {format(dateRange.from, "LLL dd, y")} -{" "}
+                                  {format(dateRange.to, "LLL dd, y")}
+                                </>
+                              ) : (
+                                format(dateRange.from, "LLL dd, y")
+                              )}
+                            </span>
                         )}
                       </Button>
                     </PopoverTrigger>
@@ -356,7 +356,7 @@ export default function AccountsPage() {
     };
 
     return (
-        <main className="flex flex-col flex-1 h-full p-4 md:p-6 lg:p-8">
+        <main className="flex flex-col flex-1 h-screen p-4 md:p-6 lg:p-8">
             {/* Top Section (Fixed Height) */}
             <div className="flex-shrink-0 h-[60vh] min-h-[500px] flex flex-col">
                 <AccountSummaryHeader account={selectedAccount} />
