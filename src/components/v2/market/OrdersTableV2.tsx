@@ -52,55 +52,61 @@ export function OrdersTableV2({ className }: OrdersTableProps) {
   return (
     <div className={cn("h-full flex flex-col", className)}>
       <div className="p-0 flex-1 overflow-hidden">
-        <Table>
-            <TableHeader className="sticky top-0 bg-card/[.05] backdrop-blur-md z-[1]">
-              <TableRow>
-                <TableHead className="text-xs h-7 px-2 text-center text-muted-foreground font-medium w-16">Action</TableHead>
-                <TableHead className="text-xs h-7 px-2 text-left text-muted-foreground font-medium">Symbol</TableHead>
-                <TableHead className="text-xs h-7 px-2 text-left text-muted-foreground font-medium">Side</TableHead>
-                <TableHead className="text-xs h-7 px-2 text-right text-muted-foreground font-medium">Qty</TableHead>
-                <TableHead className="text-xs h-7 px-2 text-left text-muted-foreground font-medium">Order Type</TableHead>
-                <TableHead className="text-xs h-7 px-2 text-right text-muted-foreground font-medium">Limit/Stop</TableHead>
-                <TableHead className="text-xs h-7 px-2 text-left text-muted-foreground font-medium">Status</TableHead>
-                <TableHead className="text-xs h-7 px-2 text-left text-muted-foreground font-medium">Time</TableHead>
-              </TableRow>
-            </TableHeader>
-            <ScrollArea className="h-[calc(100%-28px)]">
-             <TableBody>
-              {openOrders.length > 0 ? (
-                openOrders.map((order) => (
-                    <TableRow key={order.id} className="text-xs hover:bg-white/5">
-                        <TableCell className="px-2 py-1.5 text-center">
-                            <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => cancelOrder(order.id)}>
-                                <Trash2 className="h-3.5 w-3.5 text-destructive" />
-                            </Button>
-                        </TableCell>
-                        <TableCell className="px-2 py-1.5 font-bold text-left">{order.symbol}</TableCell>
-                        <TableCell className="px-2 py-1.5 text-left">
-                            <Badge className={cn("border-transparent text-xs px-1.5 py-px h-auto", getSideBadgeClass(order.side))}>
-                                {order.side}
-                            </Badge>
-                        </TableCell>
-                        <TableCell className="px-2 py-1.5 text-right font-bold">{order.quantity}</TableCell>
-                        <TableCell className="px-2 py-1.5 text-left font-bold">{order.orderType}</TableCell>
-                        <TableCell className="px-2 py-1.5 text-right font-bold">{order.limitPrice ? `$${order.limitPrice.toFixed(2)}` : '—'}</TableCell>
-                        <TableCell className="px-2 py-1.5 text-left font-bold text-yellow-400">{order.status}</TableCell>
-                        <TableCell className="px-2 py-1.5 text-left font-bold">{order.time}</TableCell>
-                    </TableRow>
-                ))
-              ) : (
+        <div className="h-full flex flex-col">
+          <div className="shrink-0">
+            <Table>
+              <TableHeader className="sticky top-0 bg-card/[.05] backdrop-blur-md z-[1]">
                 <TableRow>
-                    <TableCell colSpan={8} className="h-24 text-center">
-                       <div className="flex flex-col items-center justify-center text-xs py-8 px-3">
-                        <PackageSearch className="mx-auto h-8 w-8 mb-2 opacity-50 text-muted-foreground" />
-                        <p className="text-muted-foreground text-center">No open orders currently.</p>
-                      </div>
-                    </TableCell>
+                  <TableHead className="text-xs h-7 px-2 text-center text-muted-foreground font-medium w-16">Action</TableHead>
+                  <TableHead className="text-xs h-7 px-2 text-left text-muted-foreground font-medium">Symbol</TableHead>
+                  <TableHead className="text-xs h-7 px-2 text-left text-muted-foreground font-medium">Side</TableHead>
+                  <TableHead className="text-xs h-7 px-2 text-right text-muted-foreground font-medium">Qty</TableHead>
+                  <TableHead className="text-xs h-7 px-2 text-left text-muted-foreground font-medium">Order Type</TableHead>
+                  <TableHead className="text-xs h-7 px-2 text-right text-muted-foreground font-medium">Limit/Stop</TableHead>
+                  <TableHead className="text-xs h-7 px-2 text-left text-muted-foreground font-medium">Status</TableHead>
+                  <TableHead className="text-xs h-7 px-2 text-left text-muted-foreground font-medium">Time</TableHead>
                 </TableRow>
-              )}
-            </TableBody>
-            </ScrollArea>
-        </Table>
+              </TableHeader>
+            </Table>
+          </div>
+          <ScrollArea className="flex-1">
+            <Table>
+              <TableBody>
+                {openOrders.length > 0 ? (
+                  openOrders.map((order) => (
+                      <TableRow key={order.id} className="text-xs hover:bg-white/5">
+                          <TableCell className="px-2 py-1.5 text-center w-16">
+                              <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => cancelOrder(order.id)}>
+                                  <Trash2 className="h-3.5 w-3.5 text-destructive" />
+                              </Button>
+                          </TableCell>
+                          <TableCell className="px-2 py-1.5 font-bold text-left">{order.symbol}</TableCell>
+                          <TableCell className="px-2 py-1.5 text-left">
+                              <Badge className={cn("border-transparent text-xs px-1.5 py-px h-auto", getSideBadgeClass(order.side))}>
+                                  {order.side}
+                              </Badge>
+                          </TableCell>
+                          <TableCell className="px-2 py-1.5 text-right font-bold">{order.quantity}</TableCell>
+                          <TableCell className="px-2 py-1.5 text-left font-bold">{order.orderType}</TableCell>
+                          <TableCell className="px-2 py-1.5 text-right font-bold">{order.limitPrice ? `$${order.limitPrice.toFixed(2)}` : '—'}</TableCell>
+                          <TableCell className="px-2 py-1.5 text-left font-bold text-yellow-400">{order.status}</TableCell>
+                          <TableCell className="px-2 py-1.5 text-left font-bold">{order.time}</TableCell>
+                      </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                      <TableCell colSpan={8} className="h-24 text-center">
+                         <div className="flex flex-col items-center justify-center text-xs py-8 px-3">
+                          <PackageSearch className="mx-auto h-8 w-8 mb-2 opacity-50 text-muted-foreground" />
+                          <p className="text-muted-foreground text-center">No open orders currently.</p>
+                        </div>
+                      </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </ScrollArea>
+        </div>
       </div>
     </div>
   );
