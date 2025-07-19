@@ -238,7 +238,7 @@ export const OrderCardV2: React.FC<OrderCardProps> = ({
                                      {selectedStock.changePercent >= 0 ? '+' : ''}{selectedStock.changePercent.toFixed(2)}%
                                 </p>
                             </div>
-                            <div className="no-drag">
+                             <div className="no-drag">
                                 <CardMenu
                                     showAddWidget={false}
                                     showCustomize={false}
