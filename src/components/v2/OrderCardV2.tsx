@@ -225,24 +225,25 @@ export const OrderCardV2: React.FC<OrderCardProps> = ({
 
     return (
         <Card className={cn("h-full flex flex-col bg-transparent border-none", className)}>
-             {selectedStock && (
-                <div className="flex items-center justify-between px-4 py-3 border-b border-white/10 drag-handle cursor-move">
-                    <div className="flex items-baseline space-x-3">
-                        <span className="text-xl font-bold text-white truncate">{selectedStock.name}</span>
-                        <span className="text-base font-semibold text-neutral-400">{selectedStock.symbol}</span>
-                    </div>
-                    <div className="flex items-baseline space-x-2">
-                        <span className="text-xl font-bold text-white">${selectedStock.price.toFixed(2)}</span>
-                        <span className={cn(
-                            "text-base font-bold",
-                            selectedStock.changePercent >= 0 ? "text-[hsl(var(--confirm-green))]" : "text-destructive"
-                        )}>
-                            {selectedStock.changePercent >= 0 ? '+' : ''}{selectedStock.changePercent.toFixed(2)}%
-                        </span>
-                    </div>
-                </div>
-            )}
             <CardContent className="flex-1 flex flex-col p-3 space-y-3 overflow-y-auto">
+                 {selectedStock && (
+                    <div className="flex items-start justify-between w-full mb-2 drag-handle cursor-move">
+                      <div>
+                        <div className="text-sm font-medium text-neutral-400 mb-1">Trading</div>
+                        <div className="text-2xl font-bold tracking-tight">{selectedStock.symbol}</div>
+                        <div className="text-base text-neutral-400">{selectedStock.name}</div>
+                      </div>
+                      <div className="flex flex-col items-end">
+                        <div className="text-2xl font-bold">${selectedStock.price.toFixed(2)}</div>
+                        <div className={cn(
+                            "text-sm font-semibold",
+                             selectedStock.changePercent >= 0 ? "text-[hsl(var(--confirm-green))]" : "text-destructive"
+                        )}>
+                          {selectedStock.changePercent >= 0 ? "+" : ""}{selectedStock.changePercent.toFixed(2)}%
+                        </div>
+                      </div>
+                    </div>
+                )}
                 <div className="grid grid-cols-3 gap-2 no-drag">
                     {(['Buy', 'Sell', 'Short'] as OrderActionType[]).map((act) => {
                         const config = actionConfig[act];
