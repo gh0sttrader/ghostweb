@@ -232,32 +232,6 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
     const uniqueId = `chart-gradient-${stock?.id || 'default'}`;
     const benchmarkUniqueId = `benchmark-gradient-${benchmarkSymbol || 'default'}`;
     
-    const renderLines = () => (
-      <>
-        <Line type="monotone" dataKey="price" name={stock?.symbol || "Portfolio"} stroke={chartColor} strokeWidth={2} dot={false} />
-        {benchmarkSymbol && <Line type="monotone" dataKey="benchmark" name={benchmarkSymbol} stroke="#8884d8" strokeWidth={2} dot={false} strokeDasharray="3 3" />}
-      </>
-    );
-
-    const renderAreas = () => (
-       <>
-          <defs>
-              <linearGradient id={uniqueId} x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor={chartColor} stopOpacity={0.2}/>
-                <stop offset="100%" stopColor={chartColor} stopOpacity={0.05}/>
-              </linearGradient>
-               {benchmarkSymbol && (
-                <linearGradient id={benchmarkUniqueId} x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#8884d8" stopOpacity={0.1}/>
-                    <stop offset="100%" stopColor="#8884d8" stopOpacity={0.0}/>
-                </linearGradient>
-               )}
-          </defs>
-          <Area type="monotone" dataKey="price" name={stock?.symbol || "Portfolio"} stroke={chartColor} strokeWidth={2} fillOpacity={1} fill={`url(#${uniqueId})`} dot={false} />
-          {benchmarkSymbol && <Area type="monotone" dataKey="benchmark" name={benchmarkSymbol} stroke="#8884d8" strokeWidth={2} fillOpacity={1} fill={`url(#${benchmarkUniqueId})`} dot={false} strokeDasharray="3 3" />}
-      </>
-    );
-    
     if (chartType === 'line') {
       return (
         <ResponsiveContainer width="100%" height="100%">
@@ -269,7 +243,8 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
               content={<CustomTooltip />}
             />
             {benchmarkSymbol && <Legend verticalAlign="top" height={36} />}
-            {renderLines()}
+            <Line type="monotone" dataKey="price" name={stock?.symbol || "Portfolio"} stroke={chartColor} strokeWidth={2} dot={false} />
+            {benchmarkSymbol && <Line type="monotone" dataKey="benchmark" name={benchmarkSymbol} stroke="#8884d8" strokeWidth={2} dot={false} strokeDasharray="3 3" />}
           </LineChart>
         </ResponsiveContainer>
       );
@@ -279,7 +254,18 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
       return (
         <ResponsiveContainer width="100%" height="100%">
              <RechartsAreaChart data={chartData} onMouseMove={handleChartMouseMove} onMouseLeave={onChartLeave}>
-                {renderAreas()}
+                <defs>
+                    <linearGradient id={uniqueId} x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor={chartColor} stopOpacity={0.2}/>
+                      <stop offset="100%" stopColor={chartColor} stopOpacity={0.05}/>
+                    </linearGradient>
+                     {benchmarkSymbol && (
+                      <linearGradient id={benchmarkUniqueId} x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor="#8884d8" stopOpacity={0.1}/>
+                          <stop offset="100%" stopColor="#8884d8" stopOpacity={0.0}/>
+                      </linearGradient>
+                     )}
+                </defs>
                 <XAxis dataKey="date" hide />
                 <YAxis hide domain={['auto', 'auto']} />
                 <Tooltip
@@ -287,6 +273,8 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
                     content={<CustomTooltip />}
                 />
                  {benchmarkSymbol && <Legend verticalAlign="top" height={36} />}
+                <Area type="monotone" dataKey="price" name={stock?.symbol || "Portfolio"} stroke={chartColor} strokeWidth={2} fillOpacity={1} fill={`url(#${uniqueId})`} dot={false} />
+                {benchmarkSymbol && <Area type="monotone" dataKey="benchmark" name={benchmarkSymbol} stroke="#8884d8" strokeWidth={2} fillOpacity={1} fill={`url(#${benchmarkUniqueId})`} dot={false} strokeDasharray="3 3" />}
             </RechartsAreaChart>
         </ResponsiveContainer>
       );
@@ -435,6 +423,3 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
     </Card>
   );
 }
-
-
-    
