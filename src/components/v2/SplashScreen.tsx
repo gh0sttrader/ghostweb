@@ -38,7 +38,7 @@ const iconAndTextVariants = {
 
 const whiteOutVariants = {
     initial: { opacity: 0 },
-    animate: { opacity: 1, transition: { duration: 1, ease: "easeInOut" } },
+    animate: { opacity: 1, transition: { duration: 1.3, ease: "easeInOut" } },
 };
 
 
@@ -49,12 +49,12 @@ export function SplashScreen({ onFinish }: { onFinish: () => void }) {
     useEffect(() => {
         const whiteOutTimer = setTimeout(() => {
             setFadeToWhite(true);
-        }, 1300); // Start white-out after 1.3s
+        }, 2000); // Start white-out after 2s
 
         const finishTimer = setTimeout(() => {
             setIsVisible(false);
             onFinish();
-        }, 2300); // Total splash time (1.3s hold + 1s fade)
+        }, 3300); // Total splash time (2s hold + 1.3s fade)
 
         return () => {
             clearTimeout(whiteOutTimer);
