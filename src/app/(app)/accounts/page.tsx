@@ -311,22 +311,20 @@ const HoldingsTable = ({ holdings }: { holdings: Holding[] }) => {
 
 const AccountSelector = ({ accounts, selected, onSelect }: { accounts: Account[], selected: Account, onSelect: (account: Account) => void }) => {
   return (
-    <div className="flex items-center gap-2 mt-6 mb-3 p-1 rounded-full bg-neutral-900 border border-neutral-800 w-min">
+    <div className="flex justify-start gap-8 mt-4">
       {accounts.map((acct) => (
-        <Button
+        <button
           key={acct.id}
-          variant="ghost"
-          size="sm"
           className={cn(
-            "px-5 py-1.5 h-auto rounded-full text-sm font-medium transition-all duration-300",
+            "relative px-2 pb-2 text-lg tracking-wide transition-colors",
             selected.id === acct.id
-              ? "bg-foreground text-background shadow-md shadow-white/10"
-              : "bg-transparent text-muted-foreground hover:bg-neutral-800 hover:text-foreground"
+              ? "text-white font-semibold after:absolute after:left-0 after:bottom-0 after:w-full after:h-0.5 after:bg-white after:rounded-full after:shadow-[0_0_8px_white]"
+              : "text-neutral-400 font-normal hover:text-white"
           )}
           onClick={() => onSelect(acct)}
         >
           {acct.name}
-        </Button>
+        </button>
       ))}
     </div>
   );
