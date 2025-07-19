@@ -49,13 +49,11 @@ export function AddWidgetDropdown({ onAddWidget }: AddWidgetDropdownProps) {
           className="
             absolute z-50 mt-2 w-56
             rounded-2xl shadow-xl
-            bg-transparent
-            backdrop-blur-2xl
-            border border-white/15
             p-1
+            border border-white/15
           "
           style={{
-            background: "rgba(24, 24, 27, 0.5)",
+            background: "rgba(0, 0, 0, 0)", // Fully transparent background
             backdropFilter: "blur(18px)",
             WebkitBackdropFilter: "blur(18px)",
           }}
