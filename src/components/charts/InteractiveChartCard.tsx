@@ -6,9 +6,9 @@ import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/componen
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { Stock } from '@/types';
-import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, AreaChart as RechartsAreaChart, Area, BarChart, Bar, Cell } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, AreaChart as RechartsAreaChart, Area, BarChart, Bar, Cell, Legend } from 'recharts';
 import type { TooltipProps } from 'recharts';
-import { AreaChart as AreaIcon, CandlestickChart, Activity, Search, Loader2, Calendar, LineChart as LineChartIcon, Palette } from 'lucide-react';
+import { AreaChart as AreaIcon, CandlestickChart, Activity, Search, Loader2, Calendar, LineChart as LineChartIcon, Palette, Plus, X as XIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { getChartData } from '@/ai/flows/get-chart-data-flow';
 import { sub, formatISO, format } from 'date-fns';
@@ -77,6 +77,11 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
   const [error, setError] = useState<string | null>(null);
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
   const [chartColor, setChartColor] = useState<string>('#e6e6e6');
+  
+  const [benchmarkSymbol, setBenchmarkSymbol] = useState<string | null>(null);
+  const [benchmarkInput, setBenchmarkInput] = useState('');
+  const [showBenchmarkInput, setShowBenchmarkInput] = useState(false);
+  const benchmarkInputRef = useRef<HTMLInputElement>(null);
 
   const colorOptions = [
       { color: '#5721aa', label: 'Purple' },
@@ -120,7 +125,7 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
         const params = getTimeframeParams(timeframe);
         const data = await getChartData({ symbol: stock.symbol, ...params });
         
-        const formattedData = data.map(bar => ({
+        let formattedData = data.map(bar => ({
           date: format(new Date(bar.t), 'MMM dd'),
           price: bar.c,
           open: bar.o,
@@ -128,6 +133,20 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
           low: bar.l,
           close: bar.c
         }));
+        
+        // If benchmark is active, fetch its data and merge it
+        if (benchmarkSymbol) {
+            // In a real app, you would fetch real data for the benchmark
+            const benchmarkData = data.map(bar => ({
+                benchmark: bar.c * (1 + (Math.random() - 0.5) * 0.1) // Simulate benchmark data
+            }));
+            
+            formattedData = formattedData.map((item, index) => ({
+                ...item,
+                benchmark: benchmarkData[index].benchmark
+            }));
+        }
+
         setChartData(formattedData);
       } catch (err: any) {
         console.error("Error fetching chart data:", err);
@@ -139,7 +158,7 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
     };
     
     fetchAndSetChartData();
-  }, [stock, timeframe, variant]);
+  }, [stock, timeframe, variant, benchmarkSymbol]);
 
   const handleDateGo = (date: Date | DateRange) => {
     console.log("Selected date/range:", date);
@@ -151,6 +170,25 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
       onManualTickerSubmit(manualTickerInput.trim().toUpperCase());
     }
   };
+  
+  const handleBenchmarkSubmit = (e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === 'Enter' && benchmarkInput.trim()) {
+          setBenchmarkSymbol(benchmarkInput.trim().toUpperCase());
+          setShowBenchmarkInput(false);
+          setBenchmarkInput('');
+      }
+  };
+
+  const removeBenchmark = () => {
+      setBenchmarkSymbol(null);
+      setChartData(prevData => prevData.map(({benchmark, ...rest}) => rest));
+  };
+  
+  useEffect(() => {
+    if (showBenchmarkInput && benchmarkInputRef.current) {
+        benchmarkInputRef.current.focus();
+    }
+  }, [showBenchmarkInput]);
 
   const handleChartMouseMove = (e: any) => {
     if (onChartHover && e && e.activePayload && e.activePayload.length > 0) {
@@ -192,19 +230,46 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
     }
 
     const uniqueId = `chart-gradient-${stock?.id || 'default'}`;
+    const benchmarkUniqueId = `benchmark-gradient-${benchmarkSymbol || 'default'}`;
+    
+    const renderLines = () => (
+      <>
+        <Line type="monotone" dataKey="price" name={stock?.symbol || "Portfolio"} stroke={chartColor} strokeWidth={2} dot={false} />
+        {benchmarkSymbol && <Line type="monotone" dataKey="benchmark" name={benchmarkSymbol} stroke="#8884d8" strokeWidth={2} dot={false} strokeDasharray="3 3" />}
+      </>
+    );
+
+    const renderAreas = () => (
+       <>
+          <defs>
+              <linearGradient id={uniqueId} x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor={chartColor} stopOpacity={0.2}/>
+                <stop offset="100%" stopColor={chartColor} stopOpacity={0.05}/>
+              </linearGradient>
+               {benchmarkSymbol && (
+                <linearGradient id={benchmarkUniqueId} x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#8884d8" stopOpacity={0.1}/>
+                    <stop offset="100%" stopColor="#8884d8" stopOpacity={0.0}/>
+                </linearGradient>
+               )}
+          </defs>
+          <Area type="monotone" dataKey="price" name={stock?.symbol || "Portfolio"} stroke={chartColor} strokeWidth={2} fillOpacity={1} fill={`url(#${uniqueId})`} dot={false} />
+          {benchmarkSymbol && <Area type="monotone" dataKey="benchmark" name={benchmarkSymbol} stroke="#8884d8" strokeWidth={2} fillOpacity={1} fill={`url(#${benchmarkUniqueId})`} dot={false} strokeDasharray="3 3" />}
+      </>
+    );
     
     if (chartType === 'line') {
       return (
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={chartData} onMouseMove={handleChartMouseMove} onMouseLeave={onChartLeave}>
-            
             <XAxis dataKey="date" hide />
             <YAxis hide domain={['auto', 'auto']} />
             <Tooltip
               cursor={{ stroke: 'hsl(var(--foreground))', strokeWidth: 1, strokeDasharray: '3 3' }}
               content={<CustomTooltip />}
             />
-            <Line type="monotone" dataKey="price" stroke={chartColor} strokeWidth={2} dot={false} />
+            {benchmarkSymbol && <Legend verticalAlign="top" height={36} />}
+            {renderLines()}
           </LineChart>
         </ResponsiveContainer>
       );
@@ -214,20 +279,14 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
       return (
         <ResponsiveContainer width="100%" height="100%">
              <RechartsAreaChart data={chartData} onMouseMove={handleChartMouseMove} onMouseLeave={onChartLeave}>
-                <defs>
-                    <linearGradient id={uniqueId} x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor={chartColor} stopOpacity={0.2}/>
-                      <stop offset="100%" stopColor={chartColor} stopOpacity={0.05}/>
-                    </linearGradient>
-                </defs>
-                
+                {renderAreas()}
                 <XAxis dataKey="date" hide />
                 <YAxis hide domain={['auto', 'auto']} />
                 <Tooltip
                     cursor={{ stroke: 'hsl(var(--foreground))', strokeWidth: 1, strokeDasharray: '3 3' }}
                     content={<CustomTooltip />}
                 />
-                <Area type="monotone" dataKey="price" stroke={chartColor} strokeWidth={2} fillOpacity={1} fill={`url(#${uniqueId})`} dot={false} />
+                 {benchmarkSymbol && <Legend verticalAlign="top" height={36} />}
             </RechartsAreaChart>
         </ResponsiveContainer>
       );
@@ -262,6 +321,58 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
 
   return (
     <Card className={cn("shadow-none flex flex-col border-none bg-transparent relative", className)}>
+       <div className="absolute top-3 right-3 z-10 flex items-center gap-2">
+           {benchmarkSymbol ? (
+               <div className="bg-[#191919] text-[#87c7ff] text-xs rounded-full py-1 px-3 font-medium flex items-center gap-1.5">
+                   <span>{benchmarkSymbol}</span>
+                   <button onClick={removeBenchmark} className="text-gray-400 hover:text-white"><XIcon size={14} /></button>
+               </div>
+           ) : showBenchmarkInput ? (
+               <Input
+                   ref={benchmarkInputRef}
+                   type="text"
+                   placeholder="e.g. SPY"
+                   value={benchmarkInput}
+                   onChange={(e) => setBenchmarkInput(e.target.value)}
+                   onKeyDown={handleBenchmarkSubmit}
+                   onBlur={() => setShowBenchmarkInput(false)}
+                   className="h-7 text-xs w-28 bg-transparent border-white/20"
+               />
+           ) : (
+               <Button
+                   variant="ghost"
+                   size="icon"
+                   className="h-7 w-7 text-muted-foreground/50 hover:text-foreground hover:bg-white/10 opacity-50 hover:opacity-100 transition-opacity"
+                   onClick={() => setShowBenchmarkInput(true)}
+               >
+                   <Plus className="h-4 w-4" />
+               </Button>
+           )}
+          <Popover>
+              <PopoverTrigger asChild>
+                  <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground/50 hover:text-foreground hover:bg-white/10 opacity-50 hover:opacity-100 transition-opacity">
+                      <Palette className="h-4 w-4" />
+                  </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-2" side="top" align="end">
+                  <div className="flex gap-2">
+                      {colorOptions.map(({ color, label }) => (
+                         <button
+                              key={color}
+                              aria-label={`Change chart color to ${label}`}
+                              className={cn(
+                                  "w-6 h-6 rounded-full border-2 transition-all",
+                                  chartColor === color ? 'border-white shadow-md' : 'border-gray-600/50 hover:border-gray-400'
+                              )}
+                              style={{ backgroundColor: color }}
+                              onClick={() => setChartColor(color)}
+                          />
+                      ))}
+                  </div>
+              </PopoverContent>
+          </Popover>
+      </div>
+
       <CardHeader className="pb-2 pt-3 px-3">
         <div className="flex flex-col sm:flex-row justify-between items-center gap-2">
           {variant === 'trading' && stock && stock.price > 0 ? (
@@ -315,31 +426,7 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
       <CardContent className="relative flex-1 p-1 pr-2 min-h-[250px]">
         {renderChartContent()}
       </CardContent>
-      <div className="absolute bottom-3 right-3 z-10">
-          <Popover>
-              <PopoverTrigger asChild>
-                  <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground/50 hover:text-foreground hover:bg-white/10 opacity-50 hover:opacity-100 transition-opacity">
-                      <Palette className="h-4 w-4" />
-                  </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-2" side="top" align="end">
-                  <div className="flex gap-2">
-                      {colorOptions.map(({ color, label }) => (
-                         <button
-                              key={color}
-                              aria-label={`Change chart color to ${label}`}
-                              className={cn(
-                                  "w-6 h-6 rounded-full border-2 transition-all",
-                                  chartColor === color ? 'border-white shadow-md' : 'border-gray-600/50 hover:border-gray-400'
-                              )}
-                              style={{ backgroundColor: color }}
-                              onClick={() => setChartColor(color)}
-                          />
-                      ))}
-                  </div>
-              </PopoverContent>
-          </Popover>
-      </div>
+     
       <ChartDatePickerModal 
         isOpen={isDatePickerOpen}
         onClose={() => setIsDatePickerOpen(false)}
@@ -348,3 +435,6 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
     </Card>
   );
 }
+
+
+    
