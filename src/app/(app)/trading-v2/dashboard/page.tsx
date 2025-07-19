@@ -25,6 +25,7 @@ import { cn } from '@/lib/utils';
 import { ScreenerWatchlistV2 } from '@/components/v2/ScreenerWatchlistV2';
 import { GhostTradingTopBar } from '@/components/v2/GhostTradingTopBar';
 import { CardMenu } from '@/components/v2/CardMenu';
+import { SplashScreen } from '@/components/v2/SplashScreen';
 
 type WidgetKey = 'chart' | 'order' | 'positions' | 'orders' | 'history' | 'watchlist' | 'screeners' | 'news';
 
@@ -62,6 +63,8 @@ function TradingDashboardPageContentV2() {
   const [orderCardInitialLimitPrice, setOrderCardInitialLimitPrice] = useState<string | undefined>(undefined);
   
   const [isMounted, setIsMounted] = useState(false);
+  const [showSplash, setShowSplash] = useState(true);
+
   useEffect(() => {
     setIsMounted(true);
   }, []);
@@ -369,7 +372,7 @@ function TradingDashboardPageContentV2() {
       widget.id !== 'chart' &&
       widget.id !== 'order'
     );
-  }, [popoverState.groupKey, widgetGroups, allPossibleWidgets]);
+  }, [popoverState.groupKey, widgetGroups]);
 
   const currentLayout = useMemo(() => {
       return Object.keys(widgetGroups).map(groupKey => {
@@ -379,7 +382,11 @@ function TradingDashboardPageContentV2() {
   }, [widgetGroups, layouts]);
 
   if (!isMounted) {
-    return <div className="flex h-screen w-full items-center justify-center bg-background text-foreground">Loading Trading Terminal...</div>;
+    return <SplashScreen onFinish={() => setShowSplash(false)} />;
+  }
+  
+  if (showSplash) {
+      return <SplashScreen onFinish={() => setShowSplash(false)} />;
   }
 
   return (
@@ -447,7 +454,7 @@ function TradingDashboardPageContentV2() {
                                         </>
                                     ) : (
                                         <>
-                                            <div className="absolute top-0 right-0 h-10 flex items-center justify-end px-2 z-10 w-full">
+                                            <div className={cn("absolute top-0 right-0 h-10 flex items-center justify-end px-2 z-10 w-full", { "drag-handle cursor-move": activeWidget.id !== 'order' && activeWidget.id !== 'chart' })}>
                                                 {activeWidget.id === 'order' && <div className="drag-handle cursor-move h-full flex-1" />}
                                                 <div className="no-drag">
                                                     <CardMenu
@@ -460,9 +467,11 @@ function TradingDashboardPageContentV2() {
                                                 </div>
                                             </div>
                                             
-                                            <CardHeader className={cn("drag-handle cursor-move p-3 flex-row items-center justify-between", {'sr-only': activeWidget.id === 'order'})}>
-                                                <CardTitle className="text-base font-semibold">{activeWidget.label}</CardTitle>
-                                            </CardHeader>
+                                            {activeWidget.id !== 'order' && activeWidget.id !== 'chart' && (
+                                                <CardHeader className="drag-handle cursor-move p-3 flex-row items-center justify-between">
+                                                    <CardTitle className="text-base font-semibold">{activeWidget.label}</CardTitle>
+                                                </CardHeader>
+                                            )}
                                            
                                             <div className={cn("flex-1 overflow-hidden h-full", {'-mt-12': activeWidget.id !== 'order' && activeWidget.id !== 'chart'})}>
                                                 {activeWidget.component}
