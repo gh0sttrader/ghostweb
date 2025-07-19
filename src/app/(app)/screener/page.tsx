@@ -285,7 +285,7 @@ function ScreenerPageContent() {
                             <div className="flex justify-between items-center mt-3">
                                 <Button
                                     variant="link"
-                                    className="text-xs text-primary p-0 h-auto"
+                                    className="text-xs text-foreground p-0 h-auto"
                                     onClick={resetColumnsToDefault}
                                 >
                                     Reset to Default
@@ -422,5 +422,3 @@ export default function ScreenerPage() {
     </Suspense>
   );
 }
-
-    
