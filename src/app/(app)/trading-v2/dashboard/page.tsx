@@ -454,9 +454,15 @@ function TradingDashboardPageContentV2() {
                                         </>
                                     ) : (
                                         <>
-                                            <div className={cn("absolute top-0 right-0 h-10 flex items-center justify-end px-2 z-10 w-full", { "drag-handle cursor-move": activeWidget.id !== 'order' && activeWidget.id !== 'chart' })}>
-                                                {activeWidget.id === 'order' && <div className="drag-handle cursor-move h-full flex-1" />}
-                                                <div className="no-drag">
+                                            <CardHeader className={cn("p-3 flex-row items-center justify-between drag-handle cursor-move", {'no-drag !cursor-default': isChart || isOrder })}>
+                                                {isChart && <div className="drag-handle cursor-move h-full flex-1" />}
+                                                {isOrder && <div className="drag-handle cursor-move h-full flex-1" />}
+                                                
+                                                {activeWidget.id !== 'order' && activeWidget.id !== 'chart' && (
+                                                    <CardTitle className="text-base font-semibold">{activeWidget.label}</CardTitle>
+                                                )}
+                                                
+                                                <div className="no-drag ml-auto">
                                                     <CardMenu
                                                         showAddWidget={!isChart && !isOrder}
                                                         showCustomize={!isChart && !isOrder && activeWidget.id !== 'order'}
@@ -465,15 +471,9 @@ function TradingDashboardPageContentV2() {
                                                         onDelete={() => handleDeleteWidget(groupKey, activeWidgetId)}
                                                     />
                                                 </div>
-                                            </div>
-                                            
-                                            {activeWidget.id !== 'order' && activeWidget.id !== 'chart' && (
-                                                <CardHeader className="drag-handle cursor-move p-3 flex-row items-center justify-between">
-                                                    <CardTitle className="text-base font-semibold">{activeWidget.label}</CardTitle>
-                                                </CardHeader>
-                                            )}
+                                            </CardHeader>
                                            
-                                            <div className={cn("flex-1 overflow-hidden h-full", {'-mt-12': activeWidget.id !== 'order' && activeWidget.id !== 'chart'})}>
+                                            <div className="flex-1 overflow-hidden h-full">
                                                 {activeWidget.component}
                                             </div>
                                         </>
@@ -519,3 +519,5 @@ export default function TradingDashboardPage() {
     </Suspense>
   );
 }
+
+    
