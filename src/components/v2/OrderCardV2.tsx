@@ -12,9 +12,11 @@ import { Separator } from '@/components/ui/separator';
 import { useOpenPositionsContext } from '@/contexts/OpenPositionsContext';
 import type { Stock, OrderActionType, TradeRequest, TradeMode, OrderSystemType, TimeInForce } from '@/types';
 import { cn } from '@/lib/utils';
-import { DollarSign, Percent, Layers, Info } from 'lucide-react';
+import { DollarSign, Percent, Layers, MoreHorizontal } from 'lucide-react';
 import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
 import { TradingFeaturesBadges } from '../TradingFeaturesBadges';
+import { CardMenu } from './CardMenu';
+import { useToast } from '@/hooks/use-toast';
 
 interface OrderCardProps {
     selectedStock: Stock | null;
@@ -66,6 +68,7 @@ export const OrderCardV2: React.FC<OrderCardProps> = ({
     className,
 }) => {
     const { accounts, selectedAccountId, setSelectedAccountId } = useOpenPositionsContext();
+    const { toast } = useToast();
     const [action, setAction] = useState<OrderActionType | null>(initialActionType || null);
     const [quantity, setQuantity] = useState<string>(initialQuantity || '');
     const [orderType, setOrderType] = useState<OrderSystemType>(initialOrderType || 'Market');
@@ -221,27 +224,33 @@ export const OrderCardV2: React.FC<OrderCardProps> = ({
     }, [action, selectedStock, isFormValid, quantityInShares, estimatedTotal, selectedAccount]);
 
     return (
-        <Card className={cn("h-full flex flex-col bg-black/50 border-white/10", className)}>
+        <Card className={cn("h-full flex flex-col bg-transparent border-none", className)}>
             <CardContent className="flex-1 flex flex-col p-3 space-y-3 overflow-y-auto">
                 {selectedStock && (
                     <>
-                        <div className="flex items-start justify-between">
-                            <div >
-                                <p className="text-lg font-bold text-foreground">{selectedStock.symbol}</p>
-                                <p className="text-xs text-muted-foreground">{selectedStock.name}</p>
-                            </div>
-                             <div className="text-right">
-                                 <p className={cn("text-lg font-bold", selectedStock.changePercent >= 0 ? "text-[hsl(var(--confirm-green))]" : "text-destructive")}>
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-baseline gap-2 flex-1 min-w-0">
+                                <p className="text-2xl font-bold text-foreground truncate">{selectedStock.symbol}</p>
+                                <p className={cn("text-xl font-semibold", selectedStock.changePercent >= 0 ? "text-[hsl(var(--confirm-green))]" : "text-destructive")}>
                                     ${selectedStock.price.toFixed(2)}
                                 </p>
-                                 <p className={cn("text-xs", selectedStock.changePercent >= 0 ? "text-[hsl(var(--confirm-green))]" : "text-destructive")}>
+                                <p className={cn("text-sm font-medium", selectedStock.changePercent >= 0 ? "text-[hsl(var(--confirm-green))]" : "text-destructive")}>
                                      {selectedStock.changePercent >= 0 ? '+' : ''}{selectedStock.changePercent.toFixed(2)}%
-                                 </p>
-                             </div>
+                                </p>
+                            </div>
+                            <div className="no-drag">
+                                <CardMenu
+                                    showAddWidget={false}
+                                    showCustomize={false}
+                                    onCustomize={() => toast({ title: "Customize Panel"})}
+                                    onDelete={() => toast({ title: "Delete Panel", variant: "destructive"})}
+                                    onAddWidget={() => {}}
+                                />
+                            </div>
                         </div>
 
                         {selectedStock.tradingFeatures && (
-                            <div className="flex justify-end pt-1 -mt-1">
+                            <div className="flex justify-start pt-1 -mt-2">
                                 <TradingFeaturesBadges features={selectedStock.tradingFeatures} />
                             </div>
                         )}
