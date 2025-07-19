@@ -274,53 +274,44 @@ export function InteractiveChartCardV2({ stock, onManualTickerSubmit, className,
   return (
     <Card className={cn("shadow-none flex flex-col border-none bg-transparent relative", className)}>
       <CardHeader className="pb-2 pt-3 px-3">
-        <div className="flex flex-col sm:flex-row justify-between items-center gap-2 drag-handle cursor-move">
-          {variant === 'trading' && stock && stock.price > 0 ? (
+        <div className="flex justify-between items-center gap-2 drag-handle cursor-move w-full">
             <div className="flex items-baseline gap-x-2.5 gap-y-1 flex-wrap flex-1 min-w-0">
-              <h3 className="text-base font-bold text-neutral-50 truncate" title={stock.name}>
-                {stock.symbol}
-              </h3>
-              <p className="text-base font-bold text-foreground">
-                ${stock.price.toFixed(2)}
-              </p>
-              <p className={cn("text-xs font-bold", stock.changePercent >= 0 ? 'text-[hsl(var(--confirm-green))]' : 'text-destructive')}>
-                {stock.changePercent >= 0 ? '+' : ''}{(stock.price * (stock.changePercent / 100)).toFixed(2)}
-                <span className="ml-1">({stock.changePercent >= 0 ? '+' : ''}{stock.changePercent.toFixed(2)}%)</span>
-              </p>
-              {stock.afterHoursPrice && stock.afterHoursChange !== undefined && (
-                <p className="text-xs text-neutral-400 font-medium whitespace-nowrap">
-                  After-Hours: ${stock.afterHoursPrice.toFixed(2)}
-                  <span className={cn("ml-1", stock.afterHoursChange >= 0 ? 'text-[hsl(var(--confirm-green))]' : 'text-destructive')}>
-                    ({stock.afterHoursChange >= 0 ? '+' : ''}{stock.afterHoursChange.toFixed(2)})
-                  </span>
-                </p>
-              )}
-            </div>
-          ) : (
-              <div className="flex-1">
-                 {variant === 'trading' && (
+                {variant === 'trading' && stock && stock.price > 0 ? (
+                    <>
+                        <h3 className="text-base font-bold text-neutral-50 truncate" title={stock.name}>
+                            {stock.symbol}
+                        </h3>
+                        <p className="text-base font-bold text-foreground">
+                            ${stock.price.toFixed(2)}
+                        </p>
+                        <p className={cn("text-xs font-bold", stock.changePercent >= 0 ? 'text-[hsl(var(--confirm-green))]' : 'text-destructive')}>
+                            {stock.changePercent >= 0 ? '+' : ''}{(stock.price * (stock.changePercent / 100)).toFixed(2)}
+                            <span className="ml-1">({stock.changePercent >= 0 ? '+' : ''}{stock.changePercent.toFixed(2)}%)</span>
+                        </p>
+                    </>
+                ) : (
                     <CardTitle className="text-lg font-headline text-foreground">
-                      Trading Chart
+                        Trading Chart
                     </CardTitle>
-                  )}
-              </div>
-          )}
-          {variant === 'trading' && (
-            <div className="flex items-center gap-1 w-full sm:w-auto no-drag">
-              <Input
-                ref={inputRef}
-                type="text"
-                placeholder="Symbol"
-                value={manualTickerInput}
-                onChange={(e) => setManualTickerInput(e.target.value.toUpperCase())}
-                onKeyDown={(e) => e.key === 'Enter' && handleManualSubmit()}
-                className="h-7 text-xs flex-1 sm:flex-initial sm:w-28 bg-transparent"
-              />
-              <Button variant="ghost" size="icon" onClick={handleManualSubmit} className="h-7 w-7 text-foreground hover:bg-white/10">
-                <Search className="h-3.5 w-3.5" />
-              </Button>
+                )}
             </div>
-          )}
+
+            {variant === 'trading' && (
+                <div className="flex items-center gap-1 w-auto no-drag">
+                    <Input
+                        ref={inputRef}
+                        type="text"
+                        placeholder="Symbol"
+                        value={manualTickerInput}
+                        onChange={(e) => setManualTickerInput(e.target.value.toUpperCase())}
+                        onKeyDown={(e) => e.key === 'Enter' && handleManualSubmit()}
+                        className="h-7 text-xs w-28 bg-transparent"
+                    />
+                    <Button variant="ghost" size="icon" onClick={handleManualSubmit} className="h-7 w-7 text-foreground hover:bg-white/10">
+                        <Search className="h-3.5 w-3.5" />
+                    </Button>
+                </div>
+            )}
         </div>
       </CardHeader>
       <CardContent className="relative flex-1 p-1 pr-2 min-h-[250px]">
