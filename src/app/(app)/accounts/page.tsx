@@ -18,15 +18,15 @@ import { format, addDays } from 'date-fns';
 
 
 const mockHoldings: Holding[] = [
-    { symbol: 'AAPL', name: 'Apple Inc.', shares: 50, marketPrice: 170.34, unrealizedGain: 1250.75, totalValue: 8517, logo: 'https://placehold.co/40x40.png' },
-    { symbol: 'NVDA', name: 'NVIDIA Corp.', shares: 20, marketPrice: 900.50, unrealizedGain: 500.20, totalValue: 18010, logo: 'https://placehold.co/40x40.png' },
-    { symbol: 'GOOGL', name: 'Alphabet Inc.', shares: 30, marketPrice: 140.22, unrealizedGain: -150.10, totalValue: 4206.60, logo: 'https://placehold.co/40x40.png' },
-    { symbol: 'TSLA', name: 'Tesla, Inc.', shares: 10, marketPrice: 180.01, unrealizedGain: 85.50, totalValue: 1800.10, logo: 'https://placehold.co/40x40.png' },
+    { symbol: 'AAPL', name: 'Apple Inc.', shares: 50, marketPrice: 170.34, unrealizedGain: 1250.75, totalValue: 8517, logo: 'https://placehold.co/40x40.png', dayPnl: 105.50, dayPnlPercent: 1.25, openPnlPercent: 17.2, averagePrice: 145.32 },
+    { symbol: 'NVDA', name: 'NVIDIA Corp.', shares: 20, marketPrice: 900.50, unrealizedGain: 500.20, totalValue: 18010, logo: 'https://placehold.co/40x40.png', dayPnl: -63.10, dayPnlPercent: -0.35, openPnlPercent: 2.8, averagePrice: 875.49 },
+    { symbol: 'GOOGL', name: 'Alphabet Inc.', shares: 30, marketPrice: 140.22, unrealizedGain: -150.10, totalValue: 4206.60, logo: 'https://placehold.co/40x40.png', dayPnl: 42.30, dayPnlPercent: 1.01, openPnlPercent: -3.4, averagePrice: 145.22 },
+    { symbol: 'TSLA', name: 'Tesla, Inc.', shares: 10, marketPrice: 180.01, unrealizedGain: 85.50, totalValue: 1800.10, logo: 'https://placehold.co/40x40.png', dayPnl: 95.60, dayPnlPercent: 5.61, openPnlPercent: 5.0, averagePrice: 171.46 },
 ];
 
 const mockIraHoldings: Holding[] = [
-    { symbol: 'MSFT', name: 'Microsoft Corp.', shares: 100, marketPrice: 420.72, unrealizedGain: -500.50, totalValue: 42072, logo: 'https://placehold.co/40x40.png' },
-    { symbol: 'AMZN', name: 'Amazon.com, Inc.', shares: 25, marketPrice: 183.63, unrealizedGain: 1200.00, totalValue: 4590.75, logo: 'https://placehold.co/40x40.png' },
+    { symbol: 'MSFT', name: 'Microsoft Corp.', shares: 100, marketPrice: 420.72, unrealizedGain: -500.50, totalValue: 42072, logo: 'https://placehold.co/40x40.png', dayPnl: -210.00, dayPnlPercent: -0.50, openPnlPercent: -1.2, averagePrice: 425.72 },
+    { symbol: 'AMZN', name: 'Amazon.com, Inc.', shares: 25, marketPrice: 183.63, unrealizedGain: 1200.00, totalValue: 4590.75, logo: 'https://placehold.co/40x40.png', dayPnl: 50.75, dayPnlPercent: 1.12, openPnlPercent: 35.4, averagePrice: 135.63 },
 ];
 
 const mockAccounts: Account[] = [
@@ -70,6 +70,11 @@ const totalHoldings = [...mockHoldings, ...mockIraHoldings].reduce((acc, holding
         existing.shares += holding.shares;
         existing.unrealizedGain += holding.unrealizedGain;
         existing.totalValue += holding.totalValue;
+        existing.dayPnl = (existing.dayPnl || 0) + (holding.dayPnl || 0);
+        // Recalculate combined percentages if needed, or average them. Simple sum for now.
+        existing.dayPnlPercent = ((existing.dayPnl || 0) / (existing.totalValue - (existing.dayPnl || 0))) * 100;
+        existing.openPnlPercent = (existing.unrealizedGain / (existing.totalValue - existing.unrealizedGain)) * 100;
+
     } else {
         acc.push({ ...holding });
     }
@@ -265,7 +270,6 @@ const AccountSummaryHeader = ({ account }: { account: Account }) => {
     );
 };
 
-
 const HoldingsTable = ({ holdings }: { holdings: Holding[] }) => {
     if (!holdings || holdings.length === 0) {
         return (
@@ -277,16 +281,24 @@ const HoldingsTable = ({ holdings }: { holdings: Holding[] }) => {
         );
     }
 
+    const formatPercent = (value?: number) => {
+        if (value === undefined || value === null) return 'N/A';
+        const sign = value >= 0 ? '+' : '';
+        return `${sign}${value.toFixed(2)}%`;
+    };
+
     return (
         <div className="overflow-x-auto rounded-2xl bg-card">
             <Table>
                 <TableHeader>
                     <TableRow className="border-b border-white/10">
-                        <TableHead className="py-3 px-6 text-left font-bold">Company</TableHead>
-                        <TableHead className="py-3 px-6 text-center font-bold">Shares</TableHead>
-                        <TableHead className="py-3 px-6 text-center font-bold">Market Price</TableHead>
-                        <TableHead className="py-3 px-6 text-center font-bold">Unrealized Gain</TableHead>
-                        <TableHead className="py-3 px-6 text-right font-bold">Total Value</TableHead>
+                        <TableHead className="py-3 px-6 text-left font-bold">Ticker</TableHead>
+                        <TableHead className="py-3 px-6 text-center font-bold">Day's P&L %</TableHead>
+                        <TableHead className="py-3 px-6 text-center font-bold">Open P&L %</TableHead>
+                        <TableHead className="py-3 px-6 text-center font-bold">Current Price</TableHead>
+                        <TableHead className="py-3 px-6 text-center font-bold">Average Price</TableHead>
+                        <TableHead className="py-3 px-6 text-center font-bold">Market Value</TableHead>
+                        <TableHead className="py-3 px-6 text-right font-bold">Shares</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -295,12 +307,16 @@ const HoldingsTable = ({ holdings }: { holdings: Holding[] }) => {
                             <TableCell className="py-3 px-6">
                                 <span className="font-semibold">{holding.symbol}</span>
                             </TableCell>
-                            <TableCell className="text-center py-3 px-6">{holding.shares.toFixed(4)}</TableCell>
-                            <TableCell className="text-center py-3 px-6">{formatCurrency(holding.marketPrice)}</TableCell>
-                            <TableCell className={cn("text-center py-3 px-6", holding.unrealizedGain >= 0 ? 'text-[hsl(var(--confirm-green))]' : 'text-destructive')}>
-                                {formatCurrency(holding.unrealizedGain, true)}
+                            <TableCell className={cn("text-center py-3 px-6", (holding.dayPnlPercent || 0) >= 0 ? 'text-[hsl(var(--confirm-green))]' : 'text-destructive')}>
+                                {formatPercent(holding.dayPnlPercent)}
                             </TableCell>
-                            <TableCell className="text-right py-3 px-6 font-semibold">{formatCurrency(holding.totalValue)}</TableCell>
+                             <TableCell className={cn("text-center py-3 px-6", (holding.openPnlPercent || 0) >= 0 ? 'text-[hsl(var(--confirm-green))]' : 'text-destructive')}>
+                                {formatPercent(holding.openPnlPercent)}
+                            </TableCell>
+                            <TableCell className="text-center py-3 px-6">{formatCurrency(holding.marketPrice)}</TableCell>
+                            <TableCell className="text-center py-3 px-6">{formatCurrency(holding.averagePrice)}</TableCell>
+                            <TableCell className="text-center py-3 px-6 font-semibold">{formatCurrency(holding.totalValue)}</TableCell>
+                            <TableCell className="text-right py-3 px-6">{holding.shares.toFixed(4)}</TableCell>
                         </TableRow>
                     ))}
                 </TableBody>

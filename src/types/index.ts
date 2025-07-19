@@ -150,6 +150,10 @@ export type Holding = {
     marketPrice: number;
     unrealizedGain: number;
     totalValue: number;
+    dayPnl?: number;
+    dayPnlPercent?: number;
+    openPnlPercent?: number;
+    averagePrice?: number;
 }
 
 export type Account = {
