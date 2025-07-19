@@ -45,7 +45,7 @@ export const NewsCardV2: React.FC<NewsCardProps> = ({ className, onSymbolSelect,
                 <div className="h-full flex flex-col">
                     <div className="shrink-0">
                         <Table>
-                            <TableHeader className="sticky top-0 bg-card/[.05] backdrop-blur-md z-[1]">
+                            <TableHeader className="sticky top-0 bg-card z-[1]">
                                 <TableRow>
                                     <TableHead className="text-xs h-7 px-2 text-left text-muted-foreground font-medium w-[80px]">Symbol</TableHead>
                                     <TableHead className="text-xs h-7 px-2 text-left text-muted-foreground font-medium">Headline</TableHead>

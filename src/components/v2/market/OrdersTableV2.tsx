@@ -55,7 +55,7 @@ export function OrdersTableV2({ className }: OrdersTableProps) {
         <div className="h-full flex flex-col">
           <div className="shrink-0">
             <Table>
-              <TableHeader className="sticky top-0 bg-card/[.05] backdrop-blur-md z-[1]">
+              <TableHeader className="sticky top-0 bg-card z-[1]">
                 <TableRow>
                   <TableHead className="text-xs h-7 px-2 text-center text-muted-foreground font-medium w-16">Action</TableHead>
                   <TableHead className="text-xs h-7 px-2 text-left text-muted-foreground font-medium">Symbol</TableHead>
