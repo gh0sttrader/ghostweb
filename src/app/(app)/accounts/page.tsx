@@ -116,48 +116,86 @@ const formatCurrency = (value?: number, showSign = false) => {
     return `${sign}$${Math.abs(value).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }
 
+type Timeframe = "1W" | "1M" | "6M" | "YTD" | "1Y" | "Max";
+
+const summaryData: Record<string, Record<Timeframe, { gain: number; percent: number; period: string }>> = {
+    total: {
+        "1W": { gain: -1817.62, percent: -0.63, period: "Past week" },
+        "1M": { gain: 2000, percent: 0.70, period: "Past month" },
+        "6M": { gain: 15000, percent: 5.45, period: "Past 6 months" },
+        "YTD": { gain: 18500, percent: 6.81, period: "Year to date" },
+        "1Y": { gain: 35000, percent: 13.83, period: "Past year" },
+        "Max": { gain: 75000, percent: 34.88, period: "All time" },
+    },
+    acc_1: {
+        "1W": { gain: -1000, percent: -0.58, period: "Past week" },
+        "1M": { gain: 1500, percent: 0.88, period: "Past month" },
+        "6M": { gain: 8000, percent: 4.93, period: "Past 6 months" },
+        "YTD": { gain: 10000, percent: 6.25, period: "Year to date" },
+        "1Y": { gain: 20000, percent: 13.33, period: "Past year" },
+        "Max": { gain: 40000, percent: 30.77, period: "All time" },
+    },
+    acc_2: {
+        "1W": { gain: -817.62, percent: -0.68, period: "Past week" },
+        "1M": { gain: 500, percent: 0.42, period: "Past month" },
+        "6M": { gain: 7000, percent: 6.19, period: "Past 6 months" },
+        "YTD": { gain: 8500, percent: 7.56, period: "Year to date" },
+        "1Y": { gain: 15000, percent: 14.28, period: "Past year" },
+        "Max": { gain: 35000, percent: 41.18, period: "All time" },
+    }
+}
+
 const AccountSummaryHeader = ({ account }: { account: Account }) => {
-    const dailyPnl = account.pnl?.daily || 0;
-    const isPositivePnl = dailyPnl >= 0;
+    const [timeframe, setTimeframe] = useState<Timeframe>("6M");
+    const data = summaryData[account.id]?.[timeframe] || summaryData.total[timeframe];
+    const isPositive = data.gain >= 0;
+
+    const timeframeButtons: { label: Timeframe, value: Timeframe }[] = [
+        { label: "1W", value: "1W" },
+        { label: "1M", value: "1M" },
+        { label: "6M", value: "6M" },
+        { label: "YTD", value: "YTD" },
+        { label: "1Y", value: "1Y" },
+        { label: "Max", value: "Max" },
+    ];
 
     return (
         <div className="mb-8 min-h-[148px]">
-            <h1 className="text-4xl font-bold text-foreground">
-                {formatCurrency(account.balance)}
-            </h1>
-            <div className="flex items-center text-base mt-2">
-                <span className={cn("flex items-center", isPositivePnl ? "text-[hsl(var(--confirm-green))]" : "text-destructive")}>
-                    {isPositivePnl ? <TrendingUp className="h-4 w-4 mr-1" /> : <TrendingDown className="h-4 w-4 mr-1" />}
-                    {formatCurrency(dailyPnl, true)}
-                </span>
-                <span className={cn("ml-2 font-semibold", isPositivePnl ? "text-[hsl(var(--confirm-green))]" : "text-destructive")}>
-                    ({isPositivePnl ? '+' : ''}{(account.pnl?.percent || 0).toFixed(2)}%)
-                </span>
-                <span className="text-muted-foreground ml-2">
-                    Today
-                </span>
+            <div className="flex items-end gap-x-6 gap-y-2 flex-wrap">
+                <h1 className="text-5xl font-bold text-white">
+                    {formatCurrency(account.balance)}
+                </h1>
+                <div className="flex flex-col items-start pb-1">
+                     <span className={cn("text-lg font-semibold", isPositive ? "text-[hsl(var(--confirm-green))]" : "text-destructive")}>
+                        {isPositive ? "▲" : "▼"}
+                        {formatCurrency(data.gain, true)}
+                        &nbsp;({isPositive ? '+' : ''}{data.percent.toFixed(2)}%)
+                    </span>
+                    <span className="text-sm text-muted-foreground">{data.period}</span>
+                </div>
             </div>
-            <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-2 text-sm">
-                <div className="flex flex-col">
-                    <span className="text-muted-foreground">Net Contributions</span>
-                    <span className="font-semibold text-foreground">{formatCurrency(account.netContributions)}</span>
-                </div>
-                <div className="flex flex-col">
-                    <span className="text-muted-foreground">Total Gains/Losses</span>
-                    <span className={cn("font-semibold", (account.totalGains || 0) >= 0 ? "text-[hsl(var(--confirm-green))]" : "text-destructive")}>{formatCurrency(account.totalGains)}</span>
-                </div>
-                <div className="flex flex-col">
-                    <span className="text-muted-foreground">Market Gains</span>
-                    <span className={cn("font-semibold", (account.marketGains || 0) >= 0 ? "text-[hsl(var(--confirm-green))]" : "text-destructive")}>{formatCurrency(account.marketGains)}</span>
-                </div>
-                 <div className="flex flex-col">
-                    <span className="text-muted-foreground">Dividends</span>
-                    <span className="font-semibold text-foreground">{formatCurrency(account.dividends)}</span>
-                </div>
+            <div className="flex mt-8 gap-1">
+                 {timeframeButtons.map(({ label, value }) => (
+                    <Button
+                        key={value}
+                        variant="ghost"
+                        size="sm"
+                        className={cn(
+                            "px-3 py-1 h-auto rounded-md text-sm transition-colors",
+                            timeframe === value
+                                ? "bg-neutral-800 font-bold text-white"
+                                : "text-muted-foreground hover:bg-neutral-800/50 hover:text-white"
+                        )}
+                        onClick={() => setTimeframe(value)}
+                    >
+                        {label}
+                    </Button>
+                ))}
             </div>
         </div>
     );
 };
+
 
 const HoldingsTable = ({ holdings }: { holdings: Holding[] }) => {
     if (!holdings || holdings.length === 0) {
@@ -263,3 +301,5 @@ export default function AccountsPage() {
         </main>
     );
 }
+
+    
