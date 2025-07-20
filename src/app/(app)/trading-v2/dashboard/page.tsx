@@ -36,18 +36,11 @@ interface Widget {
     component: React.ReactNode;
 }
 
-const DraggableCard = ({ children, className, isOver, isActive }: { children: React.ReactNode, className?: string, isOver?: boolean, isActive?: boolean }) => (
-    <div className={cn(
-        "bg-card border border-white/10 rounded-lg flex flex-col overflow-hidden h-full transition-all duration-200 relative",
-        className,
-        isOver && "ring-2 ring-primary ring-offset-2 ring-offset-background",
-        isActive && "border-white shadow-[0_0_12px_2px_rgba(255,255,255,0.25)]"
-        )}>
+const DraggableCard = ({ children, className }: { children: React.ReactNode, className?: string }) => (
+    <div className={cn("bg-card border border-white/10 rounded-lg flex flex-col overflow-hidden h-full", className)}>
         {children}
     </div>
 );
-
-const LAYOUTS_STORAGE_KEY = 'ghost-trading-layouts';
 
 function TradingDashboardPageContentV2() {
   const { toast } = useToast();
@@ -68,7 +61,7 @@ function TradingDashboardPageContentV2() {
   const [isMounted, setIsMounted] = useState(false);
   const [showSplash, setShowSplash] = useState(true);
 
-  const initialLayouts: ReactGridLayout.Layout[] = [
+  const initialLayouts = [
     { i: 'chart', x: 0, y: 0, w: 9, h: 10, minW: 6, minH: 8 },
     { i: 'order', x: 9, y: 0, w: 3, h: 10, minW: 2, minH: 10 },
     { i: 'positions', x: 0, y: 10, w: 4, h: 8, minW: 3, minH: 6 },
@@ -78,109 +71,22 @@ function TradingDashboardPageContentV2() {
     { i: 'screeners', x: 4, y: 18, w: 4, h: 8, minW: 2, minH: 6 },
     { i: 'news', x: 8, y: 18, w: 4, h: 8, minW: 2, minH: 6 },
   ];
-  const initialWidgetGroups: Record<string, WidgetKey[]> = {
-    chart: ['chart'], order: ['order'], positions: ['positions'], orders: ['orders'], history: ['history'], watchlist: ['watchlist'], screeners: ['screeners'], news: ['news'],
-  };
-  
-  const [layouts, setLayouts] = useState<ReactGridLayout.Layout[]>(initialLayouts);
-  const [widgetGroups, setWidgetGroups] = useState<Record<string, WidgetKey[]>>(initialWidgetGroups);
+
+  const [layouts, setLayouts] = useState(initialLayouts);
   
   useEffect(() => {
     setIsMounted(true);
-    const savedLayoutsRaw = localStorage.getItem(LAYOUTS_STORAGE_KEY);
-    if (savedLayoutsRaw) {
-      try {
-        const savedLayouts = JSON.parse(savedLayoutsRaw);
-        const activeLayoutName = savedLayouts.activeLayout || 'Default';
-        const activeLayout = savedLayouts.layouts[activeLayoutName];
-        if (activeLayout) {
-          setLayouts(activeLayout.layouts);
-          setWidgetGroups(activeLayout.widgetGroups);
-        }
-      } catch (e) {
-        console.error("Failed to parse layouts from localStorage", e);
-      }
+    const savedLayout = localStorage.getItem("ghostLayout");
+    if (savedLayout) {
+        setLayouts(JSON.parse(savedLayout));
     }
   }, []);
 
-  const handleLayoutConfigChange = (config: { layouts: ReactGridLayout.Layout[], widgetGroups: Record<string, WidgetKey[]> }) => {
-    setLayouts(config.layouts);
-    setWidgetGroups(config.widgetGroups);
-  };
-  
-
-  const [activeTabs, setActiveTabs] = useState<Record<string, WidgetKey>>({});
-  const [draggedItem, setDraggedItem] = useState<ReactGridLayout.Layout | null>(null);
-  const [dropTarget, setDropTarget] = useState<string | null>(null);
-  const [popoverState, setPopoverState] = useState<{ open: boolean; groupKey: string | null }>({ open: false, groupKey: null });
-  const [draggedWidgetKey, setDraggedWidgetKey] = useState<string | null>(null);
-
   const handleLayoutChange = (newLayout: ReactGridLayout.Layout[]) => {
       setLayouts(newLayout);
+      localStorage.setItem("ghostLayout", JSON.stringify(newLayout));
   };
   
-  const handleDeleteWidget = (groupKey: string, widgetKey: WidgetKey) => {
-      setWidgetGroups(prev => {
-          const newGroups = {...prev};
-          const group = newGroups[groupKey];
-
-          if (group.length === 1) {
-              delete newGroups[groupKey];
-          } else {
-              newGroups[groupKey] = group.filter(wId => wId !== widgetKey);
-              if (activeTabs[groupKey] === widgetKey) {
-                  setActiveTabs(prevTabs => ({...prevTabs, [groupKey]: newGroups[groupKey][0]}));
-              }
-          }
-          return newGroups;
-      });
-      toast({
-        title: "Widget Removed",
-        description: "The widget has been removed from your dashboard.",
-    });
-  };
-
-  const addWidget = (widgetKey: WidgetKey) => {
-      const isAlreadyVisible = Object.values(widgetGroups).flat().includes(widgetKey);
-      if(isAlreadyVisible) {
-          toast({
-              title: "Widget already visible",
-              description: "This widget is already on your dashboard.",
-          });
-          return;
-      }
-      
-      const newLayoutItem = initialLayouts.find(l => l.i === widgetKey) || { i: widgetKey, x: 0, y: Infinity, w: 4, h: 8 };
-      
-      setLayouts(prev => [...prev, newLayoutItem]);
-      setWidgetGroups(prev => ({
-          ...prev,
-          [widgetKey]: [widgetKey]
-      }));
-  }
-
-  const handleAddWidgetAsTab = (widgetKey: WidgetKey) => {
-      if (!popoverState.groupKey) return;
-      
-      const targetGroupKey = popoverState.groupKey;
-      
-      setWidgetGroups(prev => {
-          const newGroups = {...prev};
-          const targetGroup = newGroups[targetGroupKey] || [];
-          if (!targetGroup.includes(widgetKey)) {
-              newGroups[targetGroupKey] = [...targetGroup, widgetKey];
-          }
-          // Remove the widget from its own group if it existed as a single card
-          const sourceGroupKey = Object.keys(newGroups).find(key => newGroups[key].length === 1 && newGroups[key][0] === widgetKey);
-          if (sourceGroupKey) {
-              delete newGroups[sourceGroupKey];
-          }
-          return newGroups;
-      });
-
-      setActiveTabs(prev => ({ ...prev, [targetGroupKey]: widgetKey }));
-      setPopoverState({ open: false, groupKey: null });
-  };
 
   const handleClearOrderCard = useCallback(() => {
     setOrderCardActionType(null);
@@ -309,67 +215,6 @@ function TradingDashboardPageContentV2() {
         });
     }
   };
-
-  const onDragStart = (layout: ReactGridLayout.Layout[], oldItem: ReactGridLayout.Layout) => {
-      setDraggedItem(oldItem);
-      setDraggedWidgetKey(oldItem.i);
-  };
-  
-  const onDragStop = () => {
-      setDraggedItem(null);
-      setDropTarget(null);
-      setDraggedWidgetKey(null);
-  };
-
-  const onDrop = (layout: ReactGridLayout.Layout[], item: ReactGridLayout.Layout, e: DragEvent) => {
-      const targetId = (e.target as HTMLElement).closest('.react-grid-item')?.id;
-      if (!targetId || !draggedItem || targetId === draggedItem.i) return;
-      
-      const sourceGroupKey = draggedItem.i;
-      const targetGroupKey = targetId;
-
-      const sourceWidgets = widgetGroups[sourceGroupKey];
-      const targetWidgets = widgetGroups[targetGroupKey];
-      
-      const isTargetProtected = targetGroupKey === 'chart';
-      const isSourceProtected = sourceGroupKey === 'chart';
-
-      if (sourceWidgets && targetWidgets && !isTargetProtected && !isSourceProtected) {
-          const newWidgetGroups = { ...widgetGroups };
-          delete newWidgetGroups[sourceGroupKey];
-          newWidgetGroups[targetGroupKey] = [...targetWidgets, ...sourceWidgets];
-          setWidgetGroups(newWidgetGroups);
-      }
-  };
-
-  const onDragOver = (e: DragEvent) => {
-      const targetElement = (e.target as HTMLElement).closest('.react-grid-item');
-      if (targetElement) {
-          const targetId = targetElement.id;
-          const isTargetProtected = targetId === 'chart';
-          const isSourceProtected = draggedItem?.i === 'chart';
-
-          if (draggedItem && targetId !== draggedItem.i && !isTargetProtected && !isSourceProtected) {
-              setDropTarget(targetId);
-          } else {
-              setDropTarget(null);
-          }
-      }
-  };
-  
-  const uncombineGroup = (groupKey: string) => {
-      const groupToSplit = widgetGroups[groupKey];
-      if (!groupToSplit || groupToSplit.length <= 1) return;
-
-      setWidgetGroups(prev => {
-          const newGroups = {...prev};
-          delete newGroups[groupKey];
-          groupToSplit.forEach(widgetId => {
-              newGroups[widgetId] = [widgetId];
-          });
-          return newGroups;
-      });
-  };
   
   const WIDGET_COMPONENTS: Record<WidgetKey, Widget> = {
     chart: { id: 'chart', label: 'Chart', component: <InteractiveChartCardV2 stock={stockForSyncedComps} onManualTickerSubmit={handleSyncedTickerChange} /> },
@@ -382,25 +227,11 @@ function TradingDashboardPageContentV2() {
     news: { id: 'news', label: 'News', component: <NewsCardV2 className="h-full border-0 shadow-none rounded-none bg-transparent" onSymbolSelect={handleSyncedTickerChange} selectedSymbol={syncedTickerSymbol} /> },
   };
 
-  const allPossibleWidgets = Object.values(WIDGET_COMPONENTS);
-  const availableWidgetsForPopover = useMemo(() => {
-    if (!popoverState.groupKey) return [];
-    const currentGroupWidgets = widgetGroups[popoverState.groupKey] || [];
-    const allVisibleWidgets = Object.values(widgetGroups).flat();
-    return allPossibleWidgets.filter(widget => 
-      !allVisibleWidgets.includes(widget.id) &&
-      !currentGroupWidgets.includes(widget.id) &&
-      widget.id !== 'chart'
-    );
-  }, [popoverState.groupKey, widgetGroups, WIDGET_COMPONENTS]);
+  const addWidget = (widgetKey: WidgetKey) => {
+    // This function will be needed if we add widgets dynamically
+    toast({ title: `Adding ${widgetKey} is not implemented yet.` });
+  }
 
-  const currentLayout = useMemo(() => {
-    return Object.keys(widgetGroups).map(groupKey => {
-        const correspondingLayout = layouts.find(l => l.i === groupKey);
-        // Fallback to initial layout if not found, this handles newly added widgets.
-        return correspondingLayout || initialLayouts.find(l => l.i === groupKey) || { i: groupKey, x: 0, y: Infinity, w: 4, h: 8 };
-    });
-  }, [widgetGroups, layouts]);
 
   if (!isMounted) {
     return <SplashScreen onFinish={() => setShowSplash(false)} />;
@@ -411,96 +242,63 @@ function TradingDashboardPageContentV2() {
   }
 
   return (
-    <main className="w-full h-full flex flex-col bg-background relative bg-dot-grid" onDragOver={onDragOver}>
+    <main className="w-full h-full flex flex-col bg-background relative bg-dot-grid">
         <GhostTradingTopBar
             onAddWidget={(key) => addWidget(key as WidgetKey)}
             currentLayouts={layouts}
-            onLayoutChange={handleLayoutConfigChange}
-            widgetGroups={widgetGroups}
-            onWidgetGroupsChange={setWidgetGroups}
+            onLayoutChange={({ layouts: newLayouts }) => setLayouts(newLayouts)}
+            widgetGroups={{}}
+            onWidgetGroupsChange={() => {}}
         />
         <div className="w-full h-full pt-[50px] overflow-hidden">
              <div className="h-full w-full overflow-hidden">
                 <ResponsiveGridLayout
                     className="layout"
-                    layouts={{ lg: currentLayout }}
+                    layouts={{ lg: layouts }}
                     breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
                     cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
                     rowHeight={32}
                     draggableHandle=".drag-handle"
-                    draggableCancel=".no-drag"
+                    onLayoutChange={(layout, allLayouts) => handleLayoutChange(layout)}
                     isResizable
-                    onLayoutChange={handleLayoutChange}
-                    onDrop={onDrop}
-                    onDragStart={onDragStart}
-                    onDragStop={onDragStop}
                     resizeHandles={['se']}
                     margin={[16, 16]}
                     containerPadding={[0, 0]}
                     preventCollision={true}
                     compactType={"vertical"}
                 >
-                  {Object.entries(widgetGroups).map(([groupKey, widgetIds]) => {
-                       const activeWidgetId = activeTabs[groupKey] || widgetIds[0];
-                       const activeWidget = WIDGET_COMPONENTS[activeWidgetId];
+                  {layouts.map(layoutItem => {
+                       const widgetKey = layoutItem.i as WidgetKey;
+                       const widget = WIDGET_COMPONENTS[widgetKey];
+                       if (!widget) return null;
                        
-                       const isChart = groupKey === 'chart';
-                       const isOrderCard = groupKey === 'order';
+                       const isChart = widget.id === 'chart';
+                       const isOrderCard = widget.id === 'order';
 
                        return (
-                           <div key={groupKey} id={groupKey} className="overflow-hidden">
-                                <DraggableCard isOver={dropTarget === groupKey && !isChart} isActive={draggedWidgetKey === groupKey}>
+                           <div key={widgetKey} className="overflow-hidden">
+                                <DraggableCard>
                                     {isChart ? (
                                         <div className="flex-1 overflow-hidden h-full">
-                                            {activeWidget.component}
+                                            {widget.component}
                                         </div>
-                                    ) : widgetIds.length > 1 ? (
-                                        <>
-                                            <div className="flex items-center border-b border-white/10 h-8 px-1.5 drag-handle cursor-move">
-                                                {widgetIds.map(widgetId => (
-                                                    <button 
-                                                        key={widgetId} 
-                                                        className={cn(
-                                                            "px-2 py-1 text-xs font-medium rounded-md",
-                                                            activeWidgetId === widgetId ? "text-foreground bg-white/10" : "text-muted-foreground hover:text-foreground"
-                                                        )}
-                                                        onClick={() => setActiveTabs(prev => ({...prev, [groupKey]: widgetId}))}
-                                                    >
-                                                        {WIDGET_COMPONENTS[widgetId].label}
-                                                    </button>
-                                                ))}
-                                                <Button variant="link" className="ml-auto text-destructive text-xs h-auto py-0 px-2" onClick={() => uncombineGroup(groupKey)}>Separate</Button>
-                                                <div className="no-drag ml-2">
-                                                    <CardMenu
-                                                        showAddWidget={true}
-                                                        onAddWidget={() => setPopoverState({ open: true, groupKey })}
-                                                        onCustomize={() => toast({ title: `Customize ${activeWidget.label}`})}
-                                                        onDelete={() => handleDeleteWidget(groupKey, activeWidgetId)}
-                                                    />
-                                                </div>
-                                            </div>
-                                            <div className="flex-1 overflow-auto">
-                                                {activeWidget.component}
-                                            </div>
-                                        </>
                                     ) : (
                                         <>
                                             <CardHeader className="py-1 px-3 border-b border-white/10 drag-handle cursor-move h-8 flex-row items-center">
                                                 <CardTitle className="text-sm font-semibold text-muted-foreground">
-                                                    {activeWidget.label}
+                                                    {widget.label}
                                                 </CardTitle>
                                                 <div className="ml-auto no-drag">
-                                                    <CardMenu
-                                                        showAddWidget={!isOrderCard}
-                                                        onAddWidget={() => setPopoverState({ open: true, groupKey })}
-                                                        onCustomize={() => toast({ title: `Customize ${activeWidget.label}`})}
-                                                        onDelete={() => handleDeleteWidget(groupKey, activeWidgetId)}
+                                                   <CardMenu
+                                                        showAddWidget={!isOrderCard && !isChart}
+                                                        onAddWidget={() => { /* Add logic */ }}
+                                                        onCustomize={() => toast({ title: `Customize ${widget.label}`})}
+                                                        onDelete={() => toast({ title: `Delete ${widget.label}` })}
                                                     />
                                                 </div>
                                             </CardHeader>
-                                            <CardContent className={cn("flex-1 overflow-auto h-full", isOrderCard && "p-3")}>
-                                              {isOrderCard && stockForSyncedComps && <FundamentalsCardV2 stock={stockForSyncedComps} />}
-                                              {activeWidget.component}
+                                            <CardContent className={cn("flex-1 overflow-auto h-full", isOrderCard && "p-0")}>
+                                              {widget.component}
                                             </CardContent>
                                         </>
                                     )}
@@ -511,29 +309,6 @@ function TradingDashboardPageContentV2() {
               </ResponsiveGridLayout>
             </div>
         </div>
-        <Popover open={popoverState.open} onOpenChange={(open) => setPopoverState(p => ({ ...p, open }))}>
-            <PopoverTrigger asChild>
-                <button aria-hidden="true" style={{ display: 'none' }}>Trigger</button>
-            </PopoverTrigger>
-            <PopoverContent className="w-56 p-2">
-                <div className="space-y-1">
-                    <h4 className="font-medium text-sm px-2 pb-1">Add to Tab Group</h4>
-                    {availableWidgetsForPopover.map(widget => (
-                        <Button 
-                            key={widget.id}
-                            variant="ghost"
-                            className="w-full justify-start font-normal"
-                            onClick={() => handleAddWidgetAsTab(widget.id)}
-                        >
-                            {widget.label}
-                        </Button>
-                    ))}
-                    {availableWidgetsForPopover.length === 0 && (
-                        <p className="text-xs text-muted-foreground p-2">No more widgets to add.</p>
-                    )}
-                </div>
-            </PopoverContent>
-        </Popover>
     </main>
   );
 }
