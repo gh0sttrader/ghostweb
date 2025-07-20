@@ -7,15 +7,11 @@ import { cn } from "@/lib/utils";
 
 interface CardMenuProps {
   showCustomize?: boolean;
-  showAddWidget?: boolean;
-  showSeparate?: boolean;
   onCustomize: () => void;
   onDelete: () => void;
-  onAddWidget: () => void;
-  onSeparate?: () => void;
 }
 
-export function CardMenu({ onCustomize, onDelete, onAddWidget, onSeparate, showCustomize = true, showAddWidget = true, showSeparate = false }: CardMenuProps) {
+export function CardMenu({ onCustomize, onDelete, showCustomize = true }: CardMenuProps) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -61,24 +57,6 @@ export function CardMenu({ onCustomize, onDelete, onAddWidget, onSeparate, showC
             WebkitBackdropFilter: "blur(18px)",
           }}
         >
-          {showAddWidget && (
-            <button
-                className="w-full flex items-center gap-2 px-3 py-2 text-sm text-left hover:bg-white/5 text-white transition-colors"
-                onClick={() => { setOpen(false); onAddWidget(); }}
-              >
-                <Plus size={16} className="text-muted-foreground" />
-                <span>Add Widget</span>
-            </button>
-          )}
-          {showSeparate && onSeparate && (
-             <button
-                className="w-full flex items-center gap-2 px-3 py-2 text-sm text-left hover:bg-white/5 text-destructive font-medium transition-colors"
-                onClick={() => { setOpen(false); onSeparate(); }}
-              >
-                <LogOut size={16} />
-                <span>Separate Widget</span>
-            </button>
-          )}
           {showCustomize && (
               <button
                 className="w-full flex items-center gap-2 px-3 py-2 text-sm text-left hover:bg-white/5 text-white transition-colors"
@@ -100,3 +78,5 @@ export function CardMenu({ onCustomize, onDelete, onAddWidget, onSeparate, showC
     </div>
   );
 }
+
+    
