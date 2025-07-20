@@ -163,7 +163,6 @@ function TradingDashboardPageContentV2() {
       }
   }, [isMounted]);
 
-
   useEffect(() => {
     const ticker = searchParams.get('ticker');
     const sentiment = searchParams.get('sentiment') as NewsArticle['sentiment'] | null;
@@ -191,12 +190,6 @@ function TradingDashboardPageContentV2() {
                 break;
         }
         setOrderCardActionType(actionToSet);
-        if(actionToSet) {
-          toast({
-            title: "Smart Action Suggested",
-            description: `Based on news sentiment, '${actionToSet}' has been pre-selected for ${ticker}.`
-          });
-        }
       } else if (action && quantity && entryPrice && orderType) {
         setOrderCardActionType(action);
         setOrderCardInitialQuantity(quantity);
@@ -208,30 +201,37 @@ function TradingDashboardPageContentV2() {
         }
         setOrderCardInitialTradeMode('manual');
         setOrderCardMiloActionContext(`Trade plan loaded from alerts for ${ticker}.`);
-        toast({
-            title: "Trade Plan Loaded",
-            description: `${action} ${quantity} shares of ${ticker} at ~$${entryPrice} loaded into trade panel.`
-        });
       }
     }
-  }, [searchParams, toast, handleSyncedTickerChange, openPositions]);
+  }, [searchParams, handleSyncedTickerChange, openPositions]);
+  
+  // This useEffect is dedicated to showing toasts after state has been updated from URL params.
+  useEffect(() => {
+    const ticker = searchParams.get('ticker');
+    const sentiment = searchParams.get('sentiment');
+    const action = searchParams.get('action');
+
+    if (!ticker) return;
+
+    if (sentiment && orderCardActionType) {
+       toast({
+          title: "Smart Action Suggested",
+          description: `Based on news sentiment, '${orderCardActionType}' has been pre-selected for ${ticker}.`
+        });
+    } else if (action && orderCardActionType) {
+        toast({
+            title: "Trade Plan Loaded",
+            description: `${orderCardActionType} ${orderCardInitialQuantity} shares of ${ticker} at ~$${orderCardInitialLimitPrice} loaded into trade panel.`
+        });
+    }
+
+  }, [orderCardActionType, orderCardInitialQuantity, orderCardInitialLimitPrice, searchParams, toast]);
 
   useEffect(() => {
     const stockData = initialMockStocks.find(s => s.symbol.toUpperCase() === syncedTickerSymbol.toUpperCase());
     if (stockData) {
       setStockForSyncedComps(stockData);
     } else {
-      setStockForSyncedComps({
-        id: syncedTickerSymbol,
-        symbol: syncedTickerSymbol,
-        name: `Data for ${syncedTickerSymbol}`,
-        price: 0,
-        changePercent: 0,
-        float: 0,
-        volume: 0,
-        lastUpdated: new Date().toISOString(),
-        historicalPrices: []
-      });
       toast({
           variant: "destructive",
           title: "Ticker Not Found",
@@ -401,7 +401,7 @@ function TradingDashboardPageContentV2() {
                                                     />
                                                 </div>
                                             </CardHeader>
-                                            <CardContent className={cn("flex-1 overflow-y-auto h-full p-3")}>
+                                            <CardContent className={cn("flex-1 overflow-y-auto h-full p-0")}>
                                               {WIDGET_COMPONENTS[widgetsInGroup[0]].component}
                                             </CardContent>
                                         </>
@@ -458,7 +458,7 @@ function TradingDashboardPageContentV2() {
                                                 </div>
                                             </CardHeader>
                                             {widgetsInGroup.map(widgetKey => (
-                                                <TabsContent key={widgetKey} value={widgetKey} className="flex-1 overflow-y-auto h-full p-3 mt-0">
+                                                <TabsContent key={widgetKey} value={widgetKey} className="flex-1 overflow-y-auto h-full p-0 mt-0">
                                                     {WIDGET_COMPONENTS[widgetKey].component}
                                                 </TabsContent>
                                             ))}
