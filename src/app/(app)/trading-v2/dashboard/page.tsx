@@ -100,7 +100,7 @@ function TradingDashboardPageContentV2() {
     handleClearOrderCard();
   }, [handleClearOrderCard]);
 
-  const handleTradeSubmit = (tradeDetails: TradeRequest) => {
+  const handleTradeSubmit = useCallback((tradeDetails: TradeRequest) => {
     console.log("Trade Submitted via Order Card:", tradeDetails);
     toast({
       title: "Trade Processing",
@@ -134,7 +134,7 @@ function TradingDashboardPageContentV2() {
             side: tradeDetails.action === 'Buy' ? 'Long' : 'Short',
         });
     }
-  };
+  }, [addOpenPosition, addTradeToHistory, selectedAccountId, stockForSyncedComps, toast]);
 
   const WIDGET_COMPONENTS: Record<WidgetKey, Widget> = useMemo(() => ({
       chart: { id: 'chart', label: 'Chart', component: <InteractiveChartCardV2 stock={stockForSyncedComps} onManualTickerSubmit={handleSyncedTickerChange} /> },
@@ -152,16 +152,16 @@ function TradingDashboardPageContentV2() {
     setIsMounted(true);
   }, []);
 
-  const handleLayoutChange = (newLayout: ReactGridLayout.Layout[]) => {
+  const handleLayoutChange = useCallback((newLayout: ReactGridLayout.Layout[]) => {
       // Prevent empty layout, which can happen on widget deletion race conditions
       if (newLayout.length === 0 && layouts.length > 0) return;
       setLayouts(newLayout);
-  };
+  }, [layouts.length]);
   
-  const handleLayoutConfigChange = (config: { layouts: ReactGridLayout.Layout[], widgetGroups: Record<string, WidgetKey[]> }) => {
+  const handleLayoutConfigChange = useCallback((config: { layouts: ReactGridLayout.Layout[], widgetGroups: Record<string, WidgetKey[]> }) => {
       setLayouts(config.layouts);
       setWidgetGroups(config.widgetGroups);
-  };
+  }, []);
 
 
   useEffect(() => {
@@ -240,7 +240,7 @@ function TradingDashboardPageContentV2() {
     }
   }, [syncedTickerSymbol, toast]);
   
-  const addWidgetToGroup = (groupId: string, widgetKey: WidgetKey) => {
+  const addWidgetToGroup = useCallback((groupId: string, widgetKey: WidgetKey) => {
     setWidgetGroups(prev => {
         const allWidgets = Object.values(prev).flat();
         if (allWidgets.includes(widgetKey)) {
@@ -258,9 +258,9 @@ function TradingDashboardPageContentV2() {
         setActiveTabs(tabs => ({ ...tabs, [groupId]: widgetKey }));
         return newGroups;
     });
-  };
+  }, [WIDGET_COMPONENTS, toast]);
 
-  const addWidgetAsNewCard = (widgetKey: WidgetKey) => {
+  const addWidgetAsNewCard = useCallback((widgetKey: WidgetKey) => {
       const allWidgets = Object.values(widgetGroups).flat();
       if (allWidgets.includes(widgetKey)) {
           toast({ title: `Widget "${WIDGET_COMPONENTS[widgetKey].label}" is already on the dashboard.` });
@@ -271,7 +271,7 @@ function TradingDashboardPageContentV2() {
       setLayouts(prev => [...prev, newLayoutItem]);
       setWidgetGroups(prev => ({ ...prev, [newCardId]: [widgetKey] }));
       toast({ title: "Widget added as a new card." });
-  };
+  }, [widgetGroups, WIDGET_COMPONENTS, toast]);
 
 
   const handleDeleteWidget = useCallback((groupId: string) => {
@@ -352,7 +352,7 @@ function TradingDashboardPageContentV2() {
                     cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
                     rowHeight={32}
                     draggableHandle=".drag-handle"
-                    onLayoutChange={(layout) => handleLayoutChange(layout)}
+                    onLayoutChange={handleLayoutChange}
                     isResizable
                     resizeHandles={['se']}
                     margin={[16, 16]}
@@ -412,8 +412,11 @@ function TradingDashboardPageContentV2() {
                                                       </Popover>
                                                    )}
                                                    <CardMenu
+                                                        showAddWidget={!isOrder}
                                                         onCustomize={() => toast({ title: `Customize ${widgetsInGroup[0]}`})}
                                                         onDelete={() => handleDeleteWidget(groupId)}
+                                                        onAddWidget={(widgetKey) => addWidgetToGroup(groupId, widgetKey)}
+                                                        addedWidgets={allAddedWidgets}
                                                     />
                                                 </div>
                                             </CardHeader>
@@ -468,8 +471,11 @@ function TradingDashboardPageContentV2() {
                                                       </PopoverContent>
                                                    </Popover>
                                                     <CardMenu
+                                                        showAddWidget={!isOrder}
                                                         onCustomize={() => toast({ title: `Customize widgets...` })}
                                                         onDelete={() => handleDeleteWidget(groupId)}
+                                                        onAddWidget={(widgetKey) => addWidgetToGroup(groupId, widgetKey)}
+                                                        addedWidgets={allAddedWidgets}
                                                     />
                                                 </div>
                                             </CardHeader>
