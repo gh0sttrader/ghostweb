@@ -260,20 +260,28 @@ function TradingDashboardPageContentV2() {
     });
   };
 
-  const addWidgetAsNewCard = (widgetKey: WidgetKey) => {
-      const allWidgets = Object.values(widgetGroups).flat();
-      if (allWidgets.includes(widgetKey)) {
-          toast({ title: `Widget "${WIDGET_COMPONENTS[widgetKey].label}" is already on the dashboard.` });
-          return;
-      }
-      
-      const newCardId = uuidv4();
-      const newLayoutItem: ReactGridLayout.Layout = { i: newCardId, x: 0, y: Infinity, w: 4, h: 8, minW: 3, minH: 6 };
+  const [widgetToAdd, setWidgetToAdd] = useState<WidgetKey | null>(null);
 
-      setLayouts(prev => [...prev, newLayoutItem]);
-      setWidgetGroups(prev => ({...prev, [newCardId]: [widgetKey]}));
-      toast({ title: "Widget added as a new card." });
-  }
+  const addWidgetAsNewCard = (widgetKey: WidgetKey) => {
+    setWidgetToAdd(widgetKey);
+  };
+  
+  useEffect(() => {
+    if (widgetToAdd) {
+      const allWidgets = Object.values(widgetGroups).flat();
+      if (allWidgets.includes(widgetToAdd)) {
+        toast({ title: `Widget "${WIDGET_COMPONENTS[widgetToAdd].label}" is already on the dashboard.` });
+      } else {
+        const newCardId = uuidv4();
+        const newLayoutItem: ReactGridLayout.Layout = { i: newCardId, x: 0, y: Infinity, w: 4, h: 8, minW: 3, minH: 6 };
+        setLayouts(prev => [...prev, newLayoutItem]);
+        setWidgetGroups(prev => ({ ...prev, [newCardId]: [widgetToAdd] }));
+        toast({ title: "Widget added as a new card." });
+      }
+      setWidgetToAdd(null); // Reset after handling
+    }
+  }, [widgetToAdd, widgetGroups, toast, WIDGET_COMPONENTS]);
+
 
   const handleDeleteWidget = useCallback((groupId: string) => {
     setLayouts(prev => prev.filter(l => l.i !== groupId));
@@ -283,7 +291,7 @@ function TradingDashboardPageContentV2() {
       return newGroups;
     });
     toast({ title: `Card removed from layout.` });
-  }, []);
+  }, [toast]);
 
   const handleSeparateWidget = useCallback((groupId: string, widgetKey: WidgetKey) => {
     setWidgetGroups(prev => {
@@ -301,7 +309,7 @@ function TradingDashboardPageContentV2() {
         toast({ title: `Widget "${WIDGET_COMPONENTS[widgetKey].label}" removed.` });
         return newGroups;
     });
-  }, [WIDGET_COMPONENTS]);
+  }, [WIDGET_COMPONENTS, toast]);
 
   // Ensure active tab is valid
   useEffect(() => {
@@ -377,7 +385,7 @@ function TradingDashboardPageContentV2() {
                                     ) : widgetsInGroup.length === 1 ? (
                                         <>
                                             <CardHeader className="py-1 px-3 border-b border-white/10 drag-handle cursor-move h-8 flex-row items-center">
-                                                <CardTitle className="text-xs font-semibold text-muted-foreground">
+                                                <CardTitle className="text-sm font-semibold text-muted-foreground">
                                                     {WIDGET_COMPONENTS[widgetsInGroup[0]].label}
                                                 </CardTitle>
                                                 <div className="ml-auto no-drag">
@@ -419,14 +427,14 @@ function TradingDashboardPageContentV2() {
                                             <CardHeader className="p-0 border-b border-white/10 drag-handle cursor-move h-8 flex-row items-center">
                                                 <TabsList className="h-8 p-0 bg-transparent border-none gap-1 px-2">
                                                     {widgetsInGroup.map(widgetKey => (
-                                                        <TabsTrigger key={widgetKey} value={widgetKey} className="h-6 text-xs px-2 py-1 rounded-md relative group/tab">
+                                                        <TabsTrigger key={widgetKey} value={widgetKey} className="h-6 text-sm px-2 py-1 rounded-md relative group/tab">
                                                             {WIDGET_COMPONENTS[widgetKey].label}
                                                         </TabsTrigger>
                                                     ))}
                                                 </TabsList>
                                                 <div className="ml-auto flex items-center gap-2 no-drag pr-2">
                                                     {widgetsInGroup.length > 1 && (
-                                                        <Button variant="ghost" size="sm" className="h-6 text-xs text-destructive hover:text-destructive hover:bg-destructive/10" onClick={handleSeparateClick}>
+                                                        <Button variant="ghost" size="sm" className="h-6 text-sm text-destructive hover:text-destructive hover:bg-destructive/10" onClick={handleSeparateClick}>
                                                             <LogOut size={14} className="mr-1"/> Separate
                                                         </Button>
                                                     )}
@@ -484,5 +492,3 @@ export default function TradingDashboardPage() {
     </Suspense>
   );
 }
-
-    
