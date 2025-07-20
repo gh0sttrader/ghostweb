@@ -17,7 +17,6 @@ import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from '@/comp
 import { TradingFeaturesBadges } from '../TradingFeaturesBadges';
 import { CardMenu } from './CardMenu';
 import { useToast } from '@/hooks/use-toast';
-import { FundamentalsCardV2 } from './FundamentalsCardV2';
 
 interface OrderCardProps {
     selectedStock: Stock | null;
@@ -228,7 +227,21 @@ export const OrderCardV2: React.FC<OrderCardProps> = ({
         <Card className={cn("h-full flex flex-col bg-transparent border-none", className)}>
             <CardContent className="flex-1 flex flex-col p-3 space-y-3 overflow-y-auto">
                 
-                <FundamentalsCardV2 stock={selectedStock} className="!border-0 !p-0 !bg-transparent !shadow-none" />
+                {selectedStock && (
+                    <div className="flex justify-between items-start py-2 mb-2">
+                        <div>
+                            <div className="text-xl font-bold">{selectedStock.symbol}</div>
+                            <div className="text-sm text-muted-foreground">{selectedStock.name}</div>
+                        </div>
+                        <div className="text-right">
+                            <div className="text-xl font-bold">${selectedStock.price.toFixed(2)}</div>
+                            <div className={cn("text-sm font-semibold", selectedStock.changePercent >= 0 ? "text-[hsl(var(--confirm-green))]" : "text-destructive")}>
+                                {selectedStock.changePercent >= 0 ? '+' : ''}
+                                {selectedStock.changePercent.toFixed(2)}%
+                            </div>
+                        </div>
+                    </div>
+                )}
                 
                 <div className="grid grid-cols-3 gap-2 no-drag">
                     {(['Buy', 'Sell', 'Short'] as OrderActionType[]).map((act) => {

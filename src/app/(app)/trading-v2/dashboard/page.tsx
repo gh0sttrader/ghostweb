@@ -26,7 +26,6 @@ import { ScreenerWatchlistV2 } from '@/components/v2/ScreenerWatchlistV2';
 import { GhostTradingTopBar } from '@/components/v2/GhostTradingTopBar';
 import { CardMenu } from '@/components/v2/CardMenu';
 import { SplashScreen } from '@/components/v2/SplashScreen';
-import { FundamentalsCardV2 } from '@/components/v2/FundamentalsCardV2';
 
 type WidgetKey = 'chart' | 'order' | 'positions' | 'orders' | 'history' | 'watchlist' | 'screeners' | 'news';
 
@@ -460,9 +459,9 @@ function TradingDashboardPageContentV2() {
                                         </>
                                     ) : (
                                         <>
-                                            <CardHeader className={cn("p-3 flex-row items-center justify-between", {'drag-handle cursor-move': !isProtected, 'no-drag': isProtected}, !isChart && 'border-b border-white/10')}>
+                                            <CardHeader className={cn("p-3 flex-row items-center justify-between", {'drag-handle cursor-move': !isProtected, 'no-drag': isProtected, 'border-b border-white/10': !isChart})}>
                                                 
-                                                {isChart ? null : (
+                                                {!isChart && (
                                                     <CardTitle className="text-sm font-semibold text-muted-foreground">{activeWidget.label}</CardTitle>
                                                 )}
                                                 
