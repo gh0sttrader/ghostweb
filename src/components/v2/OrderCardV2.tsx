@@ -225,11 +225,13 @@ export const OrderCardV2: React.FC<OrderCardProps> = ({
 
     return (
         <Card className={cn("h-full flex flex-col bg-transparent border-none", className)}>
+            <CardHeader className="p-3 border-b border-white/10 drag-handle cursor-move">
+                <span className="text-base font-bold tracking-wide text-white">Trading</span>
+            </CardHeader>
             <CardContent className="flex-1 flex flex-col p-3 space-y-3 overflow-y-auto">
                  {selectedStock && (
-                    <div className="flex items-start justify-between w-full mb-2 drag-handle cursor-move">
+                    <div className="flex items-start justify-between w-full mb-2">
                       <div>
-                        <div className="text-sm font-medium text-neutral-400 mb-1">Trading</div>
                         <div className="text-2xl font-bold tracking-tight">{selectedStock.symbol}</div>
                         <div className="text-base text-neutral-400">{selectedStock.name}</div>
                       </div>
