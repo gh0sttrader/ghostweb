@@ -15,7 +15,6 @@ import { sub, formatISO, format } from 'date-fns';
 import { ChartDatePickerModal } from '@/components/charts/ChartDatePickerModal';
 import type { DateRange } from 'react-day-picker';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { CardMenu } from '../CardMenu';
 import { useToast } from '@/hooks/use-toast';
 
 
@@ -59,6 +58,32 @@ const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>)
   }
   return null;
 };
+
+const dummyData = [
+  { date: '1', price: 50 },
+  { date: '2', price: 60 },
+  { date: '3', price: 40 },
+  { date: '4', price: 80 },
+  { date: '5', price: 65 },
+  { date: '6', price: 70 }
+];
+
+const PlaceholderChart = () => (
+    <ResponsiveContainer width="100%" height="100%">
+        <RechartsAreaChart data={dummyData}>
+            <defs>
+                <linearGradient id="placeholder-gradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="hsl(var(--muted-foreground))" stopOpacity={0.1}/>
+                    <stop offset="100%" stopColor="hsl(var(--muted-foreground))" stopOpacity={0.05}/>
+                </linearGradient>
+            </defs>
+            <XAxis dataKey="date" hide />
+            <YAxis hide domain={['auto', 'auto']} />
+            <Area type="monotone" dataKey="price" stroke="hsl(var(--muted-foreground))" strokeWidth={2} fillOpacity={1} fill="url(#placeholder-gradient)" dot={false} />
+        </RechartsAreaChart>
+    </ResponsiveContainer>
+);
+
 
 // Map UI timeframes to Alpaca API parameters
 const getTimeframeParams = (timeframe: '1D' | '5D' | '1M' | '3M' | '6M' | 'YTD' | '1Y' | '5Y' | 'All') => {
@@ -185,22 +210,16 @@ export function InteractiveChartCardV2({ stock, onManualTickerSubmit, className,
       );
     }
 
-    if (error) {
+    if (error || !chartData.length) {
        return (
-        <div className="flex flex-col items-center justify-center h-full text-destructive p-4">
-          <Activity className="h-10 w-10 mb-3 opacity-50" />
-          <p className="text-xs text-center">{error}</p>
-        </div>
-      );
-    }
-
-    if (!chartData.length) {
-       return (
-        <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
-          <Activity className="h-10 w-10 mb-3 opacity-30" />
-          <p className="text-xs text-center">
-            {stock?.symbol ? `No chart data for ${stock.symbol} in this timeframe.` : "Enter ticker or select from Watchlist."}
-          </p>
+        <div className="flex flex-col items-center justify-center h-full text-muted-foreground/50 relative">
+          <PlaceholderChart />
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-card/20">
+            <Activity className="h-10 w-10 mb-3 opacity-30" />
+            <p className="text-xs text-center font-semibold">
+              {error ? error : `No chart data for ${stock?.symbol || "this symbol"}.`}
+            </p>
+          </div>
         </div>
       );
     }
@@ -275,8 +294,8 @@ export function InteractiveChartCardV2({ stock, onManualTickerSubmit, className,
 
 
   return (
-    <Card className={cn("shadow-none flex flex-col border-none bg-transparent relative", className)}>
-      <div className="flex items-center justify-between p-3 no-drag">
+    <Card className={cn("shadow-none flex flex-col h-full border-none bg-transparent relative", className)}>
+      <div className="flex items-center justify-between px-3 pt-2">
         <div className="flex items-baseline gap-x-2.5 gap-y-1 flex-wrap flex-1 min-w-0">
             {variant === 'trading' && stock && stock.price > 0 ? (
                 <>
@@ -293,7 +312,7 @@ export function InteractiveChartCardV2({ stock, onManualTickerSubmit, className,
                 </>
             ) : null}
         </div>
-        <div className="flex items-center gap-1 w-full sm:w-auto ml-auto">
+        <div className="flex items-center gap-1 w-full sm:w-auto ml-auto no-drag">
             <Input
             ref={inputRef}
             type="text"
@@ -309,7 +328,7 @@ export function InteractiveChartCardV2({ stock, onManualTickerSubmit, className,
         </div>
       </div>
       
-      <CardContent className="relative flex-1 p-1 pr-2 min-h-[250px]">
+      <CardContent className="relative flex-1 p-1 pr-2 min-h-0">
         {renderChartContent()}
         <div className="absolute bottom-2 right-2 no-drag">
            <Popover>
