@@ -218,7 +218,7 @@ function TradingDashboardPageContentV2() {
           title: "Smart Action Suggested",
           description: `Based on news sentiment, '${orderCardActionType}' has been pre-selected for ${ticker}.`
         });
-    } else if (action && orderCardActionType) {
+    } else if (action && orderCardActionType && orderCardInitialQuantity && orderCardInitialLimitPrice) {
         toast({
             title: "Trade Plan Loaded",
             description: `${orderCardActionType} ${orderCardInitialQuantity} shares of ${ticker} at ~$${orderCardInitialLimitPrice} loaded into trade panel.`
@@ -302,7 +302,7 @@ function TradingDashboardPageContentV2() {
         toast({ title: `Widget "${WIDGET_COMPONENTS[widgetKey].label}" removed.` });
         return newGroups;
     });
-  }, [WIDGET_COMPONENTS, toast, activeTabs]);
+  }, [WIDGET_COMPONENTS, activeTabs, toast]);
 
   useEffect(() => {
     const newActiveTabs: Record<string, WidgetKey> = {};
