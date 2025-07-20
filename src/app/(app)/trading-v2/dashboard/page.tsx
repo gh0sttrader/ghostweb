@@ -3,7 +3,7 @@
 
 import React, { useState, useMemo, Suspense, useCallback, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
-import type { Stock, TradeRequest, OrderActionType, TradeMode, OrderSystemType, NewsArticle } from "@/types";
+import type { Stock, TradeRequest, OrderActionType, TradeMode, OrderSystemType, NewsArticle, WidgetKey } from "@/types";
 import { useToast } from "@/hooks/use-toast";
 import { useTradeHistoryContext } from '@/contexts/TradeHistoryContext';
 import { useOpenPositionsContext } from '@/contexts/OpenPositionsContext';
@@ -29,8 +29,7 @@ import { GhostTradingTopBar } from '@/components/v2/GhostTradingTopBar';
 import { CardMenu } from '@/components/v2/CardMenu';
 import { SplashScreen } from '@/components/v2/SplashScreen';
 import { FundamentalsCardV2 } from '@/components/v2/FundamentalsCardV2';
-
-type WidgetKey = 'chart' | 'order' | 'positions' | 'orders' | 'history' | 'watchlist' | 'screeners' | 'news';
+import { X } from 'lucide-react';
 
 interface Widget {
     id: WidgetKey;
@@ -45,7 +44,7 @@ const DraggableCard = ({ children, className }: { children: React.ReactNode, cla
     </div>
 );
 
-const initialLayouts = [
+const initialLayouts: ReactGridLayout.Layout[] = [
     { i: 'chart', x: 0, y: 0, w: 9, h: 10, minW: 6, minH: 8, isResizable: true },
     { i: 'order', x: 9, y: 0, w: 3, h: 10, minW: 3, minH: 10, isResizable: true },
     { i: 'positions', x: 0, y: 10, w: 4, h: 8, minW: 3, minH: 6, isResizable: true },
@@ -87,7 +86,7 @@ function TradingDashboardPageContentV2() {
   const [isMounted, setIsMounted] = useState(false);
   const [showSplash, setShowSplash] = useState(true);
 
-  const [layouts, setLayouts] = useState(initialLayouts);
+  const [layouts, setLayouts] = useState<ReactGridLayout.Layout[]>(initialLayouts);
   const [widgetGroups, setWidgetGroups] = useState<Record<string, WidgetKey[]>>(initialWidgetGroups);
   
   const handleClearOrderCard = useCallback(() => {
@@ -159,6 +158,8 @@ function TradingDashboardPageContentV2() {
   }, []);
 
   const handleLayoutChange = (newLayout: ReactGridLayout.Layout[]) => {
+      // Prevent empty layout, which can happen on widget deletion race conditions
+      if (newLayout.length === 0 && layouts.length > 0) return;
       setLayouts(newLayout);
   };
   
@@ -246,6 +247,12 @@ function TradingDashboardPageContentV2() {
   
   const addWidgetToGroup = (groupId: string, widgetKey: WidgetKey) => {
     setWidgetGroups(prev => {
+        const allWidgets = Object.values(prev).flat();
+        if (allWidgets.includes(widgetKey)) {
+          toast({ title: `Widget "${WIDGET_COMPONENTS[widgetKey].label}" is already on the dashboard.` });
+          return prev;
+        }
+        
         const currentGroup = prev[groupId] || [];
         if (currentGroup.includes(widgetKey)) {
             toast({ title: "Widget already in this group." });
@@ -258,19 +265,29 @@ function TradingDashboardPageContentV2() {
   const addWidgetAsNewCard = (widgetKey: WidgetKey) => {
       const allWidgets = Object.values(widgetGroups).flat();
       if (allWidgets.includes(widgetKey)) {
-          toast({ title: `Widget "${WIDGET_COMPONENTS[widgetKey].label}" already on dashboard.` });
+          toast({ title: `Widget "${WIDGET_COMPONENTS[widgetKey].label}" is already on the dashboard.` });
           return;
       }
       
       const newCardId = uuidv4();
-      const newLayoutItem = { i: newCardId, x: 0, y: Infinity, w: 4, h: 8, minW: 3, minH: 6 };
+      const newLayoutItem: ReactGridLayout.Layout = { i: newCardId, x: 0, y: Infinity, w: 4, h: 8, minW: 3, minH: 6 };
 
       setLayouts(prev => [...prev, newLayoutItem]);
       setWidgetGroups(prev => ({...prev, [newCardId]: [widgetKey]}));
       toast({ title: "Widget added as a new card." });
   }
 
-  const handleDeleteWidgetFromGroup = useCallback((groupId: string, widgetKey: WidgetKey) => {
+  const handleDeleteWidget = useCallback((groupId: string) => {
+    setWidgetGroups(prev => {
+      const newGroups = {...prev};
+      delete newGroups[groupId];
+      return newGroups;
+    });
+    setLayouts(prev => prev.filter(l => l.i !== groupId));
+    toast({ title: `Card removed from layout.` });
+  }, []);
+
+  const handleSeparateWidget = useCallback((groupId: string, widgetKey: WidgetKey) => {
     setWidgetGroups(prev => {
         const newGroups = { ...prev };
         const group = newGroups[groupId] || [];
@@ -280,24 +297,13 @@ function TradingDashboardPageContentV2() {
             // If the group is empty, remove the card layout as well
             delete newGroups[groupId];
             setLayouts(layouts => layouts.filter(l => l.i !== groupId));
-            toast({ title: `Card removed from layout.` });
         } else {
             newGroups[groupId] = newGroup;
-            toast({ title: `Widget removed from group.` });
         }
+        toast({ title: `Widget "${WIDGET_COMPONENTS[widgetKey].label}" removed.` });
         return newGroups;
     });
-  }, []);
-
-  const handleDeleteGroup = useCallback((groupId: string) => {
-    setWidgetGroups(prev => {
-      const newGroups = {...prev};
-      delete newGroups[groupId];
-      return newGroups;
-    });
-    setLayouts(prev => prev.filter(l => l.i !== groupId));
-    toast({ title: `Card removed from layout.` });
-  }, []);
+  }, [WIDGET_COMPONENTS]);
 
   if (!isMounted) {
     return <SplashScreen onFinish={() => setShowSplash(false)} />;
@@ -356,13 +362,15 @@ function TradingDashboardPageContentV2() {
                                                    <CardMenu
                                                         showAddWidget={!isOrder}
                                                         onAddWidget={() => {
-                                                            const newWidget = prompt("Enter widget key to add (e.g., news, history):") as WidgetKey;
-                                                            if (newWidget && WIDGET_COMPONENTS[newWidget]) {
-                                                                addWidgetToGroup(groupId, newWidget);
+                                                            const newWidgetKey = prompt("Enter widget key to add (e.g., news, history):") as WidgetKey | null;
+                                                            if (newWidgetKey && WIDGET_COMPONENTS[newWidgetKey]) {
+                                                                addWidgetToGroup(groupId, newWidgetKey);
+                                                            } else if (newWidgetKey) {
+                                                                toast({title: "Invalid widget key", variant: "destructive"})
                                                             }
                                                         }}
                                                         onCustomize={() => toast({ title: `Customize ${widgetsInGroup[0]}`})}
-                                                        onDelete={() => handleDeleteGroup(groupId)}
+                                                        onDelete={() => handleDeleteWidget(groupId)}
                                                     />
                                                 </div>
                                             </CardHeader>
@@ -375,21 +383,34 @@ function TradingDashboardPageContentV2() {
                                             <CardHeader className="p-0 border-b border-white/10 drag-handle cursor-move h-8 flex-row items-center">
                                                 <TabsList className="h-8 p-0 bg-transparent border-none gap-1 px-2">
                                                     {widgetsInGroup.map(widgetKey => (
-                                                        <TabsTrigger key={widgetKey} value={widgetKey} className="h-6 text-xs px-2 py-1 rounded-md">
+                                                        <TabsTrigger key={widgetKey} value={widgetKey} className="h-6 text-xs px-2 py-1 rounded-md relative group/tab">
                                                             {WIDGET_COMPONENTS[widgetKey].label}
+                                                            <button 
+                                                              onClick={(e) => {
+                                                                  e.stopPropagation();
+                                                                  handleSeparateWidget(groupId, widgetKey);
+                                                              }}
+                                                              className="absolute -top-1 -right-1 p-0.5 bg-destructive rounded-full text-destructive-foreground opacity-0 group-hover/tab:opacity-100 transition-opacity"
+                                                              aria-label={`Separate ${WIDGET_COMPONENTS[widgetKey].label}`}
+                                                            >
+                                                              <X size={10} />
+                                                            </button>
                                                         </TabsTrigger>
                                                     ))}
                                                 </TabsList>
                                                 <div className="ml-auto no-drag pr-2">
                                                     <CardMenu
+                                                        showAddWidget={!isOrder}
                                                         onAddWidget={() => {
-                                                            const newWidget = prompt("Enter widget key to add (e.g., news, history):") as WidgetKey;
-                                                            if (newWidget && WIDGET_COMPONENTS[newWidget]) {
-                                                                addWidgetToGroup(groupId, newWidget);
+                                                            const newWidgetKey = prompt("Enter widget key to add (e.g., news, history):") as WidgetKey | null;
+                                                            if (newWidgetKey && WIDGET_COMPONENTS[newWidgetKey]) {
+                                                                addWidgetToGroup(groupId, newWidgetKey);
+                                                            } else if (newWidgetKey) {
+                                                                toast({title: "Invalid widget key", variant: "destructive"})
                                                             }
                                                         }}
                                                         onCustomize={() => toast({ title: `Customize widgets...` })}
-                                                        onDelete={() => handleDeleteGroup(groupId)}
+                                                        onDelete={() => handleDeleteWidget(groupId)}
                                                     />
                                                 </div>
                                             </CardHeader>

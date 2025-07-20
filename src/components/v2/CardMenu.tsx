@@ -2,18 +2,20 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import { MoreHorizontal, Trash2, Settings2, Plus } from 'lucide-react';
+import { MoreHorizontal, Trash2, Settings2, Plus, LogOut } from 'lucide-react';
 import { cn } from "@/lib/utils";
 
 interface CardMenuProps {
   showCustomize?: boolean;
   showAddWidget?: boolean;
+  showSeparate?: boolean;
   onCustomize: () => void;
   onDelete: () => void;
   onAddWidget: () => void;
+  onSeparate?: () => void;
 }
 
-export function CardMenu({ onCustomize, onDelete, onAddWidget, showCustomize = true, showAddWidget = true }: CardMenuProps) {
+export function CardMenu({ onCustomize, onDelete, onAddWidget, onSeparate, showCustomize = true, showAddWidget = true, showSeparate = false }: CardMenuProps) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -68,13 +70,22 @@ export function CardMenu({ onCustomize, onDelete, onAddWidget, showCustomize = t
                 <span>Add Widget</span>
             </button>
           )}
+          {showSeparate && onSeparate && (
+             <button
+                className="w-full flex items-center gap-2 px-3 py-2 text-sm text-left hover:bg-white/5 text-destructive font-medium transition-colors"
+                onClick={() => { setOpen(false); onSeparate(); }}
+              >
+                <LogOut size={16} />
+                <span>Separate Widget</span>
+            </button>
+          )}
           {showCustomize && (
               <button
                 className="w-full flex items-center gap-2 px-3 py-2 text-sm text-left hover:bg-white/5 text-white transition-colors"
                 onClick={() => { setOpen(false); onCustomize(); }}
               >
                 <Settings2 size={16} className="text-muted-foreground" />
-                <span>Customize Columns</span>
+                <span>Customize</span>
               </button>
           )}
           <button
@@ -82,7 +93,7 @@ export function CardMenu({ onCustomize, onDelete, onAddWidget, showCustomize = t
             onClick={() => { setOpen(false); onDelete(); }}
           >
             <Trash2 size={16} />
-            <span>Delete widget</span>
+            <span>Delete Card</span>
           </button>
         </div>
       )}
