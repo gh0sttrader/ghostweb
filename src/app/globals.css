@@ -271,6 +271,29 @@
   .gt2-alerts-close:hover {
     opacity: 1;
   }
+
+  /* For Chrome, Edge, Safari */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+    background: #18181b;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #404040;
+    border-radius: 8px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #525252;
+  }
+
+  /* For Firefox */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #404040 #18181b;
+  }
+
 }
 
 @keyframes ticker {
