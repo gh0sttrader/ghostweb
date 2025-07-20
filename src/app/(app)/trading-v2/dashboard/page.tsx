@@ -26,7 +26,6 @@ import { ScreenerWatchlistV2 } from '@/components/v2/ScreenerWatchlistV2';
 import { GhostTradingTopBar } from '@/components/v2/GhostTradingTopBar';
 import { CardMenu } from '@/components/v2/CardMenu';
 import { SplashScreen } from '@/components/v2/SplashScreen';
-import { FundamentalsCardV2 } from '@/components/v2/FundamentalsCardV2';
 
 type WidgetKey = 'chart' | 'order' | 'positions' | 'orders' | 'history' | 'watchlist' | 'screeners' | 'news';
 
@@ -34,7 +33,6 @@ interface Widget {
     id: WidgetKey;
     label: string;
     component: React.ReactNode;
-    layout: ReactGridLayout.Layout;
 }
 
 const DraggableCard = ({ children, className, isOver, isActive }: { children: React.ReactNode, className?: string, isOver?: boolean, isActive?: boolean }) => (
@@ -47,6 +45,8 @@ const DraggableCard = ({ children, className, isOver, isActive }: { children: Re
         {children}
     </div>
 );
+
+const LAYOUTS_STORAGE_KEY = 'ghost-trading-layouts';
 
 function TradingDashboardPageContentV2() {
   const { toast } = useToast();
@@ -67,40 +67,63 @@ function TradingDashboardPageContentV2() {
   const [isMounted, setIsMounted] = useState(false);
   const [showSplash, setShowSplash] = useState(true);
 
+  const WIDGET_COMPONENTS: Record<WidgetKey, Widget> = {
+    chart: { id: 'chart', label: 'Chart', component: <InteractiveChartCardV2 stock={stockForSyncedComps} onManualTickerSubmit={handleSyncedTickerChange} /> },
+    order: { id: 'order', label: 'Trade', component: <OrderCardV2 selectedStock={stockForSyncedComps} initialActionType={orderCardActionType} initialTradeMode={orderCardInitialTradeMode} miloActionContextText={orderCardMiloActionContext} onSubmit={handleTradeSubmit} onClear={handleClearOrderCard} initialQuantity={orderCardInitialQuantity} initialOrderType={orderCardInitialOrderType} initialLimitPrice={orderCardInitialLimitPrice} className="h-full" /> },
+    positions: { id: 'positions', label: 'Positions', component: <OpenPositionsCardV2 className="h-full border-0 shadow-none rounded-none bg-transparent" /> },
+    orders: { id: 'orders', label: 'Open Orders', component: <OrdersTableV2 className="h-full border-0 shadow-none rounded-none bg-transparent" /> },
+    history: { id: 'history', label: 'History', component: <TradeHistoryTableV2 className="h-full border-0 shadow-none rounded-none bg-transparent" syncedTickerSymbol={syncedTickerSymbol} /> },
+    watchlist: { id: 'watchlist', label: 'Watchlist', component: <WatchlistCardV2 className="h-full border-0 shadow-none rounded-none bg-transparent" onSymbolSelect={handleSyncedTickerChange} selectedSymbol={syncedTickerSymbol} /> },
+    screeners: { id: 'screeners', label: 'Screeners', component: <ScreenerWatchlistV2 className="h-full border-0 shadow-none rounded-none bg-transparent" onSymbolSelect={handleSyncedTickerChange} selectedSymbol={syncedTickerSymbol} /> },
+    news: { id: 'news', label: 'News', component: <NewsCardV2 className="h-full border-0 shadow-none rounded-none bg-transparent" onSymbolSelect={handleSyncedTickerChange} selectedSymbol={syncedTickerSymbol} /> },
+  };
+
+  const initialLayouts: ReactGridLayout.Layout[] = [
+    { i: 'chart', x: 0, y: 0, w: 9, h: 10, minW: 6, minH: 8 },
+    { i: 'order', x: 9, y: 0, w: 3, h: 10, minW: 2, minH: 10 },
+    { i: 'positions', x: 0, y: 10, w: 4, h: 8, minW: 3, minH: 6 },
+    { i: 'orders', x: 4, y: 10, w: 4, h: 8, minW: 3, minH: 6 },
+    { i: 'history', x: 8, y: 10, w: 4, h: 8, minW: 3, minH: 6 },
+    { i: 'watchlist', x: 0, y: 18, w: 4, h: 8, minW: 2, minH: 6 },
+    { i: 'screeners', x: 4, y: 18, w: 4, h: 8, minW: 2, minH: 6 },
+    { i: 'news', x: 8, y: 18, w: 4, h: 8, minW: 2, minH: 6 },
+  ];
+  const initialWidgetGroups: Record<string, WidgetKey[]> = {
+    chart: ['chart'], order: ['order'], positions: ['positions'], orders: ['orders'], history: ['history'], watchlist: ['watchlist'], screeners: ['screeners'], news: ['news'],
+  };
+  
+  const [layouts, setLayouts] = useState<ReactGridLayout.Layout[]>(initialLayouts);
+  const [widgetGroups, setWidgetGroups] = useState<Record<string, WidgetKey[]>>(initialWidgetGroups);
+  
   useEffect(() => {
     setIsMounted(true);
+    const savedLayoutsRaw = localStorage.getItem(LAYOUTS_STORAGE_KEY);
+    if (savedLayoutsRaw) {
+      try {
+        const savedLayouts = JSON.parse(savedLayoutsRaw);
+        const activeLayoutName = savedLayouts.activeLayout || 'Default';
+        const activeLayout = savedLayouts.layouts[activeLayoutName];
+        if (activeLayout) {
+          setLayouts(activeLayout.layouts);
+          setWidgetGroups(activeLayout.widgetGroups);
+        }
+      } catch (e) {
+        console.error("Failed to parse layouts from localStorage", e);
+      }
+    }
   }, []);
 
-  const [widgetGroups, setWidgetGroups] = useState<Record<string, WidgetKey[]>>({
-    chart: ['chart'],
-    order: ['order'],
-    positions: ['positions'],
-    orders: ['orders'],
-    history: ['history'],
-    watchlist: ['watchlist'],
-    screeners: ['screeners'],
-    news: ['news'],
-  });
+  const handleLayoutConfigChange = (config: { layouts: ReactGridLayout.Layout[], widgetGroups: Record<string, WidgetKey[]> }) => {
+    setLayouts(config.layouts);
+    setWidgetGroups(config.widgetGroups);
+  };
+  
 
   const [activeTabs, setActiveTabs] = useState<Record<string, WidgetKey>>({});
   const [draggedItem, setDraggedItem] = useState<ReactGridLayout.Layout | null>(null);
   const [dropTarget, setDropTarget] = useState<string | null>(null);
   const [popoverState, setPopoverState] = useState<{ open: boolean; groupKey: string | null }>({ open: false, groupKey: null });
   const [draggedWidgetKey, setDraggedWidgetKey] = useState<string | null>(null);
-
-
-  const initialLayouts: Record<WidgetKey, ReactGridLayout.Layout> = {
-    chart: { i: 'chart', x: 0, y: 0, w: 9, h: 10, minW: 6, minH: 8 },
-    order: { i: 'order', x: 9, y: 0, w: 3, h: 10, minW: 2, minH: 10 },
-    positions: { i: 'positions', x: 0, y: 10, w: 4, h: 8, minW: 3, minH: 6 },
-    orders: { i: 'orders', x: 4, y: 10, w: 4, h: 8, minW: 3, minH: 6 },
-    history: { i: 'history', x: 8, y: 10, w: 4, h: 8, minW: 3, minH: 6 },
-    watchlist: { i: 'watchlist', x: 0, y: 18, w: 4, h: 8, minW: 2, minH: 6 },
-    screeners: { i: 'screeners', x: 4, y: 18, w: 4, h: 8, minW: 2, minH: 6 },
-    news: { i: 'news', x: 8, y: 18, w: 4, h: 8, minW: 2, minH: 6 },
-  };
-  
-  const [layouts, setLayouts] = useState<ReactGridLayout.Layout[]>(Object.values(initialLayouts));
 
   const handleLayoutChange = (newLayout: ReactGridLayout.Layout[]) => {
       setLayouts(newLayout);
@@ -136,7 +159,10 @@ function TradingDashboardPageContentV2() {
           });
           return;
       }
-
+      
+      const newLayoutItem = initialLayouts.find(l => l.i === widgetKey) || { i: widgetKey, x: 0, y: Infinity, w: 4, h: 8 };
+      
+      setLayouts(prev => [...prev, newLayoutItem]);
       setWidgetGroups(prev => ({
           ...prev,
           [widgetKey]: [widgetKey]
@@ -354,17 +380,6 @@ function TradingDashboardPageContentV2() {
           return newGroups;
       });
   };
-
-  const WIDGET_COMPONENTS: Record<WidgetKey, Widget> = {
-    chart: { id: 'chart', label: 'Chart', component: <InteractiveChartCardV2 stock={stockForSyncedComps} onManualTickerSubmit={handleSyncedTickerChange} />, layout: initialLayouts.chart },
-    order: { id: 'order', label: 'Trade', component: <OrderCardV2 selectedStock={stockForSyncedComps} initialActionType={orderCardActionType} initialTradeMode={orderCardInitialTradeMode} miloActionContextText={orderCardMiloActionContext} onSubmit={handleTradeSubmit} onClear={handleClearOrderCard} initialQuantity={orderCardInitialQuantity} initialOrderType={orderCardInitialOrderType} initialLimitPrice={orderCardInitialLimitPrice} className="h-full" />, layout: initialLayouts.order },
-    positions: { id: 'positions', label: 'Positions', component: <OpenPositionsCardV2 className="h-full border-0 shadow-none rounded-none bg-transparent" />, layout: initialLayouts.positions },
-    orders: { id: 'orders', label: 'Open Orders', component: <OrdersTableV2 className="h-full border-0 shadow-none rounded-none bg-transparent" />, layout: initialLayouts.orders },
-    history: { id: 'history', label: 'History', component: <TradeHistoryTableV2 className="h-full border-0 shadow-none rounded-none bg-transparent" syncedTickerSymbol={syncedTickerSymbol} />, layout: initialLayouts.history },
-    watchlist: { id: 'watchlist', label: 'Watchlist', component: <WatchlistCardV2 className="h-full border-0 shadow-none rounded-none bg-transparent" onSymbolSelect={handleSyncedTickerChange} selectedSymbol={syncedTickerSymbol} />, layout: initialLayouts.watchlist },
-    screeners: { id: 'screeners', label: 'Screeners', component: <ScreenerWatchlistV2 className="h-full border-0 shadow-none rounded-none bg-transparent" onSymbolSelect={handleSyncedTickerChange} selectedSymbol={syncedTickerSymbol} />, layout: initialLayouts.screeners },
-    news: { id: 'news', label: 'News', component: <NewsCardV2 className="h-full border-0 shadow-none rounded-none bg-transparent" onSymbolSelect={handleSyncedTickerChange} selectedSymbol={syncedTickerSymbol} />, layout: initialLayouts.news },
-  };
   
   const allPossibleWidgets = Object.values(WIDGET_COMPONENTS);
   const availableWidgetsForPopover = useMemo(() => {
@@ -379,10 +394,11 @@ function TradingDashboardPageContentV2() {
   }, [popoverState.groupKey, widgetGroups]);
 
   const currentLayout = useMemo(() => {
-      return Object.keys(widgetGroups).map(groupKey => {
-          const correspondingLayout = layouts.find(l => l.i === groupKey);
-          return correspondingLayout || WIDGET_COMPONENTS[widgetGroups[groupKey][0]].layout;
-      });
+    return Object.keys(widgetGroups).map(groupKey => {
+        const correspondingLayout = layouts.find(l => l.i === groupKey);
+        // Fallback to initial layout if not found, this handles newly added widgets.
+        return correspondingLayout || initialLayouts.find(l => l.i === groupKey) || { i: groupKey, x: 0, y: Infinity, w: 4, h: 8 };
+    });
   }, [widgetGroups, layouts]);
 
   if (!isMounted) {
@@ -395,7 +411,13 @@ function TradingDashboardPageContentV2() {
 
   return (
     <main className="w-full h-full flex flex-col bg-background relative bg-dot-grid" onDragOver={onDragOver}>
-        <GhostTradingTopBar onAddWidget={(key) => addWidget(key as WidgetKey)} />
+        <GhostTradingTopBar
+            onAddWidget={(key) => addWidget(key as WidgetKey)}
+            currentLayouts={layouts}
+            onLayoutChange={handleLayoutConfigChange}
+            widgetGroups={widgetGroups}
+            onWidgetGroupsChange={setWidgetGroups}
+        />
         <div className="w-full h-full pt-[50px] overflow-hidden">
              <div className="h-full w-full overflow-hidden">
                 <ResponsiveGridLayout
@@ -422,14 +444,16 @@ function TradingDashboardPageContentV2() {
                        const activeWidget = WIDGET_COMPONENTS[activeWidgetId];
                        
                        const isChart = groupKey === 'chart';
-                       const isOrder = groupKey === 'order';
                        const isProtectedForMerging = isChart;
-                       const isProtectedForAdding = isChart;
 
                        return (
                            <div key={groupKey} id={groupKey} className="overflow-hidden">
                                 <DraggableCard isOver={dropTarget === groupKey && !isProtectedForMerging} isActive={draggedWidgetKey === groupKey}>
-                                    {widgetIds.length > 1 ? (
+                                    {isChart ? (
+                                        <div className="flex-1 overflow-hidden h-full">
+                                            {activeWidget.component}
+                                        </div>
+                                    ) : widgetIds.length > 1 ? (
                                         <>
                                             <div className="flex items-center border-b border-white/10 h-8 px-1.5 drag-handle cursor-move">
                                                 {widgetIds.map(widgetId => (
@@ -447,7 +471,7 @@ function TradingDashboardPageContentV2() {
                                                 <Button variant="link" className="ml-auto text-destructive text-xs h-auto py-0 px-2" onClick={() => uncombineGroup(groupKey)}>Separate</Button>
                                                 <div className="no-drag ml-2">
                                                     <CardMenu
-                                                        showAddWidget={!isProtectedForAdding}
+                                                        showAddWidget={true}
                                                         onAddWidget={() => setPopoverState({ open: true, groupKey })}
                                                         onCustomize={() => toast({ title: `Customize ${activeWidget.label}`})}
                                                         onDelete={() => handleDeleteWidget(groupKey, activeWidgetId)}
@@ -460,30 +484,22 @@ function TradingDashboardPageContentV2() {
                                         </>
                                     ) : (
                                         <>
-                                            {isChart ? (
-                                                <div className="flex-1 overflow-hidden h-full">
-                                                  {activeWidget.component}
+                                            <CardHeader className="py-1 px-3 border-b border-white/10 drag-handle cursor-move h-8 flex-row items-center">
+                                                <CardTitle className="text-sm font-semibold text-muted-foreground">
+                                                    {activeWidget.label}
+                                                </CardTitle>
+                                                <div className="ml-auto no-drag">
+                                                    <CardMenu
+                                                        showAddWidget={true}
+                                                        onAddWidget={() => setPopoverState({ open: true, groupKey })}
+                                                        onCustomize={() => toast({ title: `Customize ${activeWidget.label}`})}
+                                                        onDelete={() => handleDeleteWidget(groupKey, activeWidgetId)}
+                                                    />
                                                 </div>
-                                            ) : (
-                                              <>
-                                                <CardHeader className="py-1 px-3 border-b border-white/10 drag-handle cursor-move h-8 flex-row items-center">
-                                                    <CardTitle className="text-sm font-semibold text-muted-foreground">
-                                                        {activeWidget.label}
-                                                    </CardTitle>
-                                                    <div className="ml-auto no-drag">
-                                                        <CardMenu
-                                                            showAddWidget={!isProtectedForAdding || isOrder}
-                                                            onAddWidget={() => setPopoverState({ open: true, groupKey })}
-                                                            onCustomize={() => toast({ title: `Customize ${activeWidget.label}`})}
-                                                            onDelete={() => handleDeleteWidget(groupKey, activeWidgetId)}
-                                                        />
-                                                    </div>
-                                                </CardHeader>
-                                                <div className="flex-1 overflow-auto h-full">
-                                                    {activeWidget.component}
-                                                </div>
-                                              </>
-                                            )}
+                                            </CardHeader>
+                                            <div className="flex-1 overflow-auto h-full">
+                                                {activeWidget.component}
+                                            </div>
                                         </>
                                     )}
                                </DraggableCard>

@@ -10,6 +10,7 @@ import { useOpenPositionsContext } from '@/contexts/OpenPositionsContext';
 import { cn } from '@/lib/utils';
 import { AlertsOverlay } from './AlertsOverlay';
 import { AddWidgetDropdown } from './AddWidgetDropdown';
+import { LayoutDropdown } from './LayoutDropdown';
 
 const GhostIcon = (props: React.SVGProps<SVGSVGElement>) => {
   const [mounted, setMounted] = useState(false);
@@ -31,10 +32,14 @@ const GhostIcon = (props: React.SVGProps<SVGSVGElement>) => {
 
 interface GhostTradingTopBarProps {
     onAddWidget: (widgetKey: string) => void;
+    currentLayouts: ReactGridLayout.Layout[];
+    onLayoutChange: (config: { layouts: ReactGridLayout.Layout[], widgetGroups: Record<string, any> }) => void;
+    widgetGroups: Record<string, any[]>;
+    onWidgetGroupsChange: (groups: Record<string, any[]>) => void;
 }
 
 
-export function GhostTradingTopBar({ onAddWidget }: GhostTradingTopBarProps) {
+export function GhostTradingTopBar({ onAddWidget, currentLayouts, onLayoutChange, widgetGroups, onWidgetGroupsChange }: GhostTradingTopBarProps) {
   const { accounts, selectedAccountId, setSelectedAccountId } = useOpenPositionsContext();
   const [isAccountDropdownOpen, setIsAccountDropdownOpen] = useState(false);
   const [isAlertsOpen, setIsAlertsOpen] = useState(false);
@@ -106,6 +111,12 @@ export function GhostTradingTopBar({ onAddWidget }: GhostTradingTopBarProps) {
             <Link href="/accounts" className="flex items-center space-x-2 transition-opacity hover:opacity-80">
                 <GhostIcon className="h-8 w-8" />
             </Link>
+            <LayoutDropdown 
+              currentLayouts={currentLayouts}
+              onLayoutChange={onLayoutChange}
+              widgetGroups={widgetGroups}
+              onWidgetGroupsChange={onWidgetGroupsChange}
+            />
         </div>
         
         <div className="flex items-center gap-4">
