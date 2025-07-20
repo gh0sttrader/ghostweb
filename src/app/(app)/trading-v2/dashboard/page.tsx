@@ -45,9 +45,9 @@ const DraggableCard = ({ children, className }: { children: React.ReactNode, cla
 );
 
 const initialLayouts: ReactGridLayout.Layout[] = [
-    { i: 'chart', x: 0, y: 0, w: 9, h: 10, minW: 6, minH: 8, isResizable: true },
-    { i: 'order', x: 9, y: 0, w: 3, h: 10, minW: 3, minH: 10, isResizable: true },
-    { i: 'positions', x: 0, y: 10, w: 12, h: 8, minW: 3, minH: 6, isResizable: true },
+    { i: 'chart', x: 0, y: 0, w: 9, h: 10, minW: 2, minH: 8, isResizable: true },
+    { i: 'order', x: 9, y: 0, w: 3, h: 10, minW: 2, minH: 10, isResizable: true },
+    { i: 'positions', x: 0, y: 10, w: 12, h: 8, minW: 2, minH: 6, isResizable: true },
     { i: 'watchlist', x: 0, y: 18, w: 6, h: 8, minW: 2, minH: 6, isResizable: true },
     { i: 'news', x: 6, y: 18, w: 6, h: 8, minW: 2, minH: 6, isResizable: true },
 ];
@@ -135,7 +135,7 @@ function TradingDashboardPageContentV2() {
         });
     }
   };
-  
+
   const WIDGET_COMPONENTS: Record<WidgetKey, Widget> = useMemo(() => ({
       chart: { id: 'chart', label: 'Chart', component: <InteractiveChartCardV2 stock={stockForSyncedComps} onManualTickerSubmit={handleSyncedTickerChange} /> },
       order: { id: 'order', label: 'Trade', component: <OrderCardV2 selectedStock={stockForSyncedComps} initialActionType={orderCardActionType} initialTradeMode={orderCardInitialTradeMode} miloActionContextText={orderCardMiloActionContext} onSubmit={handleTradeSubmit} onClear={handleClearOrderCard} initialQuantity={orderCardInitialQuantity} initialOrderType={orderCardInitialOrderType} initialLimitPrice={orderCardInitialLimitPrice} className="h-full" /> },
@@ -273,7 +273,7 @@ function TradingDashboardPageContentV2() {
         toast({ title: `Widget "${WIDGET_COMPONENTS[widgetToAdd].label}" is already on the dashboard.` });
       } else {
         const newCardId = uuidv4();
-        const newLayoutItem: ReactGridLayout.Layout = { i: newCardId, x: 0, y: Infinity, w: 4, h: 8, minW: 3, minH: 6 };
+        const newLayoutItem: ReactGridLayout.Layout = { i: newCardId, x: 0, y: Infinity, w: 4, h: 8, minW: 2, minH: 6 };
         setLayouts(prev => [...prev, newLayoutItem]);
         setWidgetGroups(prev => ({ ...prev, [newCardId]: [widgetToAdd] }));
         toast({ title: "Widget added as a new card." });
