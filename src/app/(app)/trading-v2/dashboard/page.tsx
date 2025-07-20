@@ -110,6 +110,53 @@ function TradingDashboardPageContentV2() {
     handleClearOrderCard();
   }, [handleClearOrderCard]);
 
+  const handleTradeSubmit = (tradeDetails: TradeRequest) => {
+    console.log("Trade Submitted via Order Card:", tradeDetails);
+    toast({
+      title: "Trade Processing",
+      description: `${tradeDetails.action} ${tradeDetails.quantity} ${tradeDetails.symbol} (${tradeDetails.orderType}) submitted. Origin: ${tradeDetails.tradeModeOrigin || 'manual'} for account ${tradeDetails.accountId}`,
+    });
+    const stockInfo = stockForSyncedComps?.symbol === tradeDetails.symbol ? stockForSyncedComps : initialMockStocks.find(s => s.symbol === tradeDetails.symbol);
+    addTradeToHistory({
+      id: String(Date.now()),
+      symbol: tradeDetails.symbol,
+      side: tradeDetails.action,
+      totalQty: tradeDetails.quantity,
+      orderType: tradeDetails.orderType,
+      limitPrice: tradeDetails.limitPrice,
+      stopPrice: tradeDetails.stopPrice,
+      TIF: tradeDetails.TIF || "Day",
+      tradingHours: tradeDetails.allowExtendedHours ? "Include Extended Hours" : "Regular Market Hours Only",
+      placedTime: new Date().toISOString(),
+      filledTime: new Date(Date.now() + Math.random() * 2000 + 500).toISOString(),
+      orderStatus: "Filled",
+      averagePrice: (tradeDetails.orderType === "Limit" && tradeDetails.limitPrice) ? tradeDetails.limitPrice : (stockInfo?.price || 0),
+      tradeModeOrigin: tradeDetails.tradeModeOrigin || 'manual',
+      accountId: tradeDetails.accountId || selectedAccountId,
+    });
+    if (tradeDetails.action === 'Buy' || tradeDetails.action === 'Short') {
+        addOpenPosition({
+            symbol: tradeDetails.symbol,
+            entryPrice: stockInfo?.price || 0,
+            shares: tradeDetails.quantity,
+            origin: tradeDetails.tradeModeOrigin || 'manual',
+            accountId: tradeDetails.accountId || selectedAccountId,
+            side: tradeDetails.action === 'Buy' ? 'Long' : 'Short',
+        });
+    }
+  };
+
+  const WIDGET_COMPONENTS: Record<WidgetKey, Widget> = {
+    chart: { id: 'chart', label: 'Chart', component: <InteractiveChartCardV2 stock={stockForSyncedComps} onManualTickerSubmit={handleSyncedTickerChange} /> },
+    order: { id: 'order', label: 'Trade', component: <OrderCardV2 selectedStock={stockForSyncedComps} initialActionType={orderCardActionType} initialTradeMode={orderCardInitialTradeMode} miloActionContextText={orderCardMiloActionContext} onSubmit={handleTradeSubmit} onClear={handleClearOrderCard} initialQuantity={orderCardInitialQuantity} initialOrderType={orderCardInitialOrderType} initialLimitPrice={orderCardInitialLimitPrice} className="h-full" /> },
+    positions: { id: 'positions', label: 'Positions', component: <OpenPositionsCardV2 className="h-full border-0 shadow-none rounded-none bg-transparent" /> },
+    orders: { id: 'orders', label: 'Open Orders', component: <OrdersTableV2 className="h-full border-0 shadow-none rounded-none bg-transparent" /> },
+    history: { id: 'history', label: 'History', component: <TradeHistoryTableV2 className="h-full border-0 shadow-none rounded-none bg-transparent" syncedTickerSymbol={syncedTickerSymbol} /> },
+    watchlist: { id: 'watchlist', label: 'Watchlist', component: <WatchlistCardV2 className="h-full border-0 shadow-none rounded-none bg-transparent" onSymbolSelect={handleSyncedTickerChange} selectedSymbol={syncedTickerSymbol} /> },
+    screeners: { id: 'screeners', label: 'Screeners', component: <ScreenerWatchlistV2 className="h-full border-0 shadow-none rounded-none bg-transparent" onSymbolSelect={handleSyncedTickerChange} selectedSymbol={syncedTickerSymbol} /> },
+    news: { id: 'news', label: 'News', component: <NewsCardV2 className="h-full border-0 shadow-none rounded-none bg-transparent" onSymbolSelect={handleSyncedTickerChange} selectedSymbol={syncedTickerSymbol} /> },
+  };
+
   useEffect(() => {
     const ticker = searchParams.get('ticker');
     const sentiment = searchParams.get('sentiment') as NewsArticle['sentiment'] | null;
@@ -186,52 +233,6 @@ function TradingDashboardPageContentV2() {
     }
   }, [syncedTickerSymbol, toast]);
   
-  const handleTradeSubmit = (tradeDetails: TradeRequest) => {
-    console.log("Trade Submitted via Order Card:", tradeDetails);
-    toast({
-      title: "Trade Processing",
-      description: `${tradeDetails.action} ${tradeDetails.quantity} ${tradeDetails.symbol} (${tradeDetails.orderType}) submitted. Origin: ${tradeDetails.tradeModeOrigin || 'manual'} for account ${tradeDetails.accountId}`,
-    });
-    const stockInfo = stockForSyncedComps?.symbol === tradeDetails.symbol ? stockForSyncedComps : initialMockStocks.find(s => s.symbol === tradeDetails.symbol);
-    addTradeToHistory({
-      id: String(Date.now()),
-      symbol: tradeDetails.symbol,
-      side: tradeDetails.action,
-      totalQty: tradeDetails.quantity,
-      orderType: tradeDetails.orderType,
-      limitPrice: tradeDetails.limitPrice,
-      stopPrice: tradeDetails.stopPrice,
-      TIF: tradeDetails.TIF || "Day",
-      tradingHours: tradeDetails.allowExtendedHours ? "Include Extended Hours" : "Regular Market Hours Only",
-      placedTime: new Date().toISOString(),
-      filledTime: new Date(Date.now() + Math.random() * 2000 + 500).toISOString(),
-      orderStatus: "Filled",
-      averagePrice: (tradeDetails.orderType === "Limit" && tradeDetails.limitPrice) ? tradeDetails.limitPrice : (stockInfo?.price || 0),
-      tradeModeOrigin: tradeDetails.tradeModeOrigin || 'manual',
-      accountId: tradeDetails.accountId || selectedAccountId,
-    });
-    if (tradeDetails.action === 'Buy' || tradeDetails.action === 'Short') {
-        addOpenPosition({
-            symbol: tradeDetails.symbol,
-            entryPrice: stockInfo?.price || 0,
-            shares: tradeDetails.quantity,
-            origin: tradeDetails.tradeModeOrigin || 'manual',
-            accountId: tradeDetails.accountId || selectedAccountId,
-            side: tradeDetails.action === 'Buy' ? 'Long' : 'Short',
-        });
-    }
-  };
-
-  const WIDGET_COMPONENTS: Record<WidgetKey, Widget> = {
-    chart: { id: 'chart', label: 'Chart', component: <InteractiveChartCardV2 stock={stockForSyncedComps} onManualTickerSubmit={handleSyncedTickerChange} /> },
-    order: { id: 'order', label: 'Trade', component: <OrderCardV2 selectedStock={stockForSyncedComps} initialActionType={orderCardActionType} initialTradeMode={orderCardInitialTradeMode} miloActionContextText={orderCardMiloActionContext} onSubmit={handleTradeSubmit} onClear={handleClearOrderCard} initialQuantity={orderCardInitialQuantity} initialOrderType={orderCardInitialOrderType} initialLimitPrice={orderCardInitialLimitPrice} className="h-full" /> },
-    positions: { id: 'positions', label: 'Positions', component: <OpenPositionsCardV2 className="h-full border-0 shadow-none rounded-none bg-transparent" /> },
-    orders: { id: 'orders', label: 'Open Orders', component: <OrdersTableV2 className="h-full border-0 shadow-none rounded-none bg-transparent" /> },
-    history: { id: 'history', label: 'History', component: <TradeHistoryTableV2 className="h-full border-0 shadow-none rounded-none bg-transparent" syncedTickerSymbol={syncedTickerSymbol} /> },
-    watchlist: { id: 'watchlist', label: 'Watchlist', component: <WatchlistCardV2 className="h-full border-0 shadow-none rounded-none bg-transparent" onSymbolSelect={handleSyncedTickerChange} selectedSymbol={syncedTickerSymbol} /> },
-    screeners: { id: 'screeners', label: 'Screeners', component: <ScreenerWatchlistV2 className="h-full border-0 shadow-none rounded-none bg-transparent" onSymbolSelect={handleSyncedTickerChange} selectedSymbol={syncedTickerSymbol} /> },
-    news: { id: 'news', label: 'News', component: <NewsCardV2 className="h-full border-0 shadow-none rounded-none bg-transparent" onSymbolSelect={handleSyncedTickerChange} selectedSymbol={syncedTickerSymbol} /> },
-  };
 
   const addWidget = (widgetKey: WidgetKey) => {
     // This function will be needed if we add widgets dynamically
@@ -295,18 +296,16 @@ function TradingDashboardPageContentV2() {
                            <div key={widgetKey} className="overflow-hidden">
                                 <DraggableCard>
                                     {isChart ? (
-                                        <div className="flex-1 overflow-hidden h-full">
-                                            {widget.component}
-                                        </div>
+                                        widget.component
                                     ) : (
                                         <>
                                             <CardHeader className="py-1 px-3 border-b border-white/10 drag-handle cursor-move h-8 flex-row items-center">
-                                                <CardTitle className="text-xs font-semibold text-muted-foreground">
+                                                <CardTitle className="text-sm font-semibold text-muted-foreground">
                                                     {widget.label}
                                                 </CardTitle>
                                                 <div className="ml-auto no-drag">
                                                    <CardMenu
-                                                        showAddWidget={isOrder}
+                                                        showAddWidget={!isOrder}
                                                         onAddWidget={() => toast({ title: `Add to ${widget.label}`})}
                                                         onCustomize={() => toast({ title: `Customize ${widget.label}`})}
                                                         onDelete={() => handleDeleteWidget(widgetKey)}
