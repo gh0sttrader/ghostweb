@@ -15,6 +15,8 @@ import { sub, formatISO, format } from 'date-fns';
 import { ChartDatePickerModal } from '@/components/charts/ChartDatePickerModal';
 import type { DateRange } from 'react-day-picker';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { CardMenu } from '../CardMenu';
+import { useToast } from '@/hooks/use-toast';
 
 
 interface InteractiveChartCardProps {
@@ -87,6 +89,7 @@ const getTimeframeParams = (timeframe: '1D' | '5D' | '1M' | '3M' | '6M' | 'YTD' 
 
 
 export function InteractiveChartCardV2({ stock, onManualTickerSubmit, className, variant = 'trading' }: InteractiveChartCardProps) {
+  const { toast } = useToast();
   const [chartType, setChartType] = useState<'line' | 'area' | 'candle'>('area');
   const [timeframe, setTimeframe] = useState<'1D' | '5D' | '1M' | '3M' | '6M' | 'YTD' | '1Y' | '5Y' | 'All'>('1M');
   const [manualTickerInput, setManualTickerInput] = useState('');
@@ -273,73 +276,84 @@ export function InteractiveChartCardV2({ stock, onManualTickerSubmit, className,
 
   return (
     <Card className={cn("shadow-none flex flex-col border-none bg-transparent relative", className)}>
-      <CardHeader className="pb-2 pt-3 px-3">
-        <div className="flex justify-between items-center gap-2 drag-handle cursor-move w-full">
-            <div className="flex items-baseline gap-x-2.5 gap-y-1 flex-wrap flex-1 min-w-0">
-                {variant === 'trading' && stock && stock.price > 0 ? (
-                    <>
-                        <h3 className="text-base font-bold text-neutral-50 truncate" title={stock.name}>
-                            {stock.symbol}
-                        </h3>
-                        <p className="text-base font-bold text-foreground">
-                            ${stock.price.toFixed(2)}
-                        </p>
-                        <p className={cn("text-xs font-bold", stock.changePercent >= 0 ? 'text-[hsl(var(--confirm-green))]' : 'text-destructive')}>
-                            {stock.changePercent >= 0 ? '+' : ''}{(stock.price * (stock.changePercent / 100)).toFixed(2)}
-                            <span className="ml-1">({stock.changePercent >= 0 ? '+' : ''}{stock.changePercent.toFixed(2)}%)</span>
-                        </p>
-                    </>
-                ) : (
-                    <CardTitle className="text-lg font-headline text-foreground">
-                        Trading Chart
-                    </CardTitle>
-                )}
-            </div>
-
-            {variant === 'trading' && (
-                <div className="flex items-center gap-1 w-auto no-drag">
-                    <Input
-                        ref={inputRef}
-                        type="text"
-                        placeholder="Symbol"
-                        value={manualTickerInput}
-                        onChange={(e) => setManualTickerInput(e.target.value.toUpperCase())}
-                        onKeyDown={(e) => e.key === 'Enter' && handleManualSubmit()}
-                        className="h-7 text-xs w-28 bg-transparent"
-                    />
-                    <Button variant="ghost" size="icon" onClick={handleManualSubmit} className="h-7 w-7 text-foreground hover:bg-white/10">
-                        <Search className="h-3.5 w-3.5" />
-                    </Button>
-                     <Popover>
-                        <PopoverTrigger asChild>
-                            <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground/50 hover:text-foreground hover:bg-white/10 opacity-50 hover:opacity-100 transition-opacity">
-                                <Palette className="h-4 w-4" />
-                            </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-auto p-2" side="top" align="end">
-                            <div className="flex gap-2">
-                                {colorOptions.map(({ color, label }) => (
-                                   <button
-                                        key={color}
-                                        aria-label={`Change chart color to ${label}`}
-                                        className={cn(
-                                            "w-6 h-6 rounded-full border-2 transition-all",
-                                            chartColor === color ? 'border-white shadow-md' : 'border-gray-600/50 hover:border-gray-400'
-                                        )}
-                                        style={{ backgroundColor: color }}
-                                        onClick={() => setChartColor(color)}
-                                    />
-                                ))}
-                            </div>
-                        </PopoverContent>
-                    </Popover>
-                </div>
+      <CardHeader className="p-3 flex-row items-center justify-between no-drag">
+        <div className="flex items-baseline gap-x-2.5 gap-y-1 flex-wrap flex-1 min-w-0">
+            {variant === 'trading' && stock && stock.price > 0 ? (
+                <>
+                    <h3 className="text-base font-bold text-neutral-50 truncate" title={stock.name}>
+                        {stock.symbol}
+                    </h3>
+                    <p className="text-base font-bold text-foreground">
+                        ${stock.price.toFixed(2)}
+                    </p>
+                    <p className={cn("text-xs font-bold", stock.changePercent >= 0 ? 'text-[hsl(var(--confirm-green))]' : 'text-destructive')}>
+                        {stock.changePercent >= 0 ? '+' : ''}{(stock.price * (stock.changePercent / 100)).toFixed(2)}
+                        <span className="ml-1">({stock.changePercent >= 0 ? '+' : ''}{stock.changePercent.toFixed(2)}%)</span>
+                    </p>
+                </>
+            ) : (
+                <CardTitle className="text-sm font-semibold text-muted-foreground">
+                    Chart
+                </CardTitle>
             )}
         </div>
+        <div className="ml-auto no-drag">
+          <CardMenu 
+              showAddWidget={false}
+              showCustomize={false}
+              onCustomize={() => toast({ title: `Customize Chart`})}
+              onDelete={() => toast({ title: `Delete Chart`})}
+              onAddWidget={() => {}}
+          />
+        </div>
       </CardHeader>
+      
+      <div className="px-3 pb-1 no-drag">
+         <div className="flex items-center gap-1 w-full sm:w-auto">
+              <Input
+                ref={inputRef}
+                type="text"
+                placeholder="Symbol"
+                value={manualTickerInput}
+                onChange={(e) => setManualTickerInput(e.target.value.toUpperCase())}
+                onKeyDown={(e) => e.key === 'Enter' && handleManualSubmit()}
+                className="h-7 text-xs flex-1 sm:flex-initial sm:w-28 bg-transparent"
+              />
+              <Button variant="ghost" size="icon" onClick={handleManualSubmit} className="h-7 w-7 text-foreground hover:bg-white/10">
+                <Search className="h-3.5 w-3.5" />
+              </Button>
+            </div>
+      </div>
+      
       <CardContent className="relative flex-1 p-1 pr-2 min-h-[250px]">
         {renderChartContent()}
+        <div className="absolute bottom-2 right-2 no-drag">
+           <Popover>
+              <PopoverTrigger asChild>
+                  <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground/50 hover:text-foreground hover:bg-white/10 opacity-50 hover:opacity-100 transition-opacity">
+                      <Palette className="h-4 w-4" />
+                  </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-2" side="top" align="end">
+                  <div className="flex gap-2">
+                      {colorOptions.map(({ color, label }) => (
+                         <button
+                              key={color}
+                              aria-label={`Change chart color to ${label}`}
+                              className={cn(
+                                  "w-6 h-6 rounded-full border-2 transition-all",
+                                  chartColor === color ? 'border-white shadow-md' : 'border-gray-600/50 hover:border-gray-400'
+                              )}
+                              style={{ backgroundColor: color }}
+                              onClick={() => setChartColor(color)}
+                          />
+                      ))}
+                  </div>
+              </PopoverContent>
+          </Popover>
+        </div>
       </CardContent>
+     
       <CardFooter className="flex flex-wrap justify-start items-center gap-x-1 gap-y-2 pt-2 pb-2 px-3">
         {['1D', '5D', '1M', '3M', '6M', 'YTD', '1Y', '5Y', 'All'].map((tf) => (
           <Button
