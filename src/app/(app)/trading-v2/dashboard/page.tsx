@@ -322,7 +322,7 @@ function TradingDashboardPageContentV2() {
       }
     }
     setActiveTabs(newActiveTabs);
-  }, [widgetGroups, activeTabs]);
+  }, [widgetGroups]);
 
   if (!isMounted) {
     return <SplashScreen onFinish={() => setShowSplash(false)} />;
@@ -496,5 +496,3 @@ export default function TradingDashboardPage() {
     </Suspense>
   );
 }
-
-    
