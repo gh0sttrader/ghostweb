@@ -330,8 +330,8 @@ function TradingDashboardPageContentV2() {
       const targetElement = (e.target as HTMLElement).closest('.react-grid-item');
       if (targetElement) {
           const targetId = targetElement.id;
-          const isTargetProtected = targetId === 'chart' || targetId === 'order';
-          const isSourceProtected = draggedItem?.i === 'chart' || draggedItem?.i === 'order';
+          const isTargetProtected = targetId === 'chart';
+          const isSourceProtected = draggedItem?.i === 'chart';
 
           if (draggedItem && targetId !== draggedItem.i && !isTargetProtected && !isSourceProtected) {
               setDropTarget(targetId);
@@ -422,9 +422,8 @@ function TradingDashboardPageContentV2() {
                        const activeWidget = WIDGET_COMPONENTS[activeWidgetId];
                        
                        const isChart = groupKey === 'chart';
-                       const isOrder = groupKey === 'order';
-                       const isProtectedForMerging = isChart || isOrder; // Can't merge with chart or order card
-                       const isProtectedForAdding = isChart; // Can't add widgets to chart card
+                       const isProtectedForMerging = isChart;
+                       const isProtectedForAdding = isChart;
 
                        return (
                            <div key={groupKey} id={groupKey} className="overflow-hidden">
@@ -436,7 +435,7 @@ function TradingDashboardPageContentV2() {
                                                     <button 
                                                         key={widgetId} 
                                                         className={cn(
-                                                            "px-3 py-2 text-sm font-medium border-b-2",
+                                                            "px-3 py-1 text-xs font-medium border-b-2",
                                                             activeWidgetId === widgetId ? "text-foreground border-white" : "text-muted-foreground border-transparent hover:text-foreground"
                                                         )}
                                                         onClick={() => setActiveTabs(prev => ({...prev, [groupKey]: widgetId}))}
@@ -466,8 +465,8 @@ function TradingDashboardPageContentV2() {
                                                 </div>
                                             ) : (
                                               <>
-                                                <CardHeader className="p-3 border-b border-white/10 drag-handle cursor-move">
-                                                    <CardTitle className="text-sm font-semibold text-muted-foreground">
+                                                <CardHeader className="py-1 px-3 border-b border-white/10 drag-handle cursor-move">
+                                                    <CardTitle className="text-xs font-semibold text-muted-foreground">
                                                         {activeWidget.label}
                                                     </CardTitle>
                                                     <div className="ml-auto no-drag">
