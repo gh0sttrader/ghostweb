@@ -6,16 +6,19 @@ import { Button } from "../ui/button";
 import { ChevronDown, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
+import type { WidgetKey } from "@/types";
 
-const LAYOUTS_STORAGE_KEY = "ghost-trading-layouts";
+const LAYOUTS_STORAGE_KEY = "ghost-trading-layouts-v2";
+
+interface SavedLayoutConfig {
+    layouts: ReactGridLayout.Layout[];
+    widgetGroups: Record<string, WidgetKey[]>;
+}
 
 interface SavedLayouts {
     activeLayout: string;
     layouts: {
-        [key: string]: {
-            layouts: ReactGridLayout.Layout[];
-            widgetGroups: Record<string, string[]>;
-        }
+        [key: string]: SavedLayoutConfig;
     };
 }
 
@@ -29,9 +32,9 @@ const getSavedLayouts = (): SavedLayouts => {
 
 interface LayoutDropdownProps {
     currentLayouts: ReactGridLayout.Layout[];
-    onLayoutChange: (config: { layouts: ReactGridLayout.Layout[], widgetGroups: Record<string, string[]> }) => void;
-    widgetGroups: Record<string, string[]>;
-    onWidgetGroupsChange: (groups: Record<string, string[]>) => void;
+    onLayoutChange: (config: SavedLayoutConfig) => void;
+    widgetGroups: Record<string, WidgetKey[]>;
+    onWidgetGroupsChange: (groups: Record<string, WidgetKey[]>) => void;
 }
 
 export function LayoutDropdown({ currentLayouts, onLayoutChange, widgetGroups, onWidgetGroupsChange }: LayoutDropdownProps) {
@@ -42,12 +45,19 @@ export function LayoutDropdown({ currentLayouts, onLayoutChange, widgetGroups, o
 
     useEffect(() => {
         const layouts = getSavedLayouts();
-        // Ensure default layout exists if storage is empty
         if (!layouts.layouts.Default) {
             layouts.layouts.Default = { layouts: currentLayouts, widgetGroups: widgetGroups };
             localStorage.setItem(LAYOUTS_STORAGE_KEY, JSON.stringify(layouts));
         }
         setSavedData(layouts);
+
+        // On initial load, apply the active layout
+        const activeLayoutName = layouts.activeLayout || 'Default';
+        const activeLayoutConfig = layouts.layouts[activeLayoutName];
+        if (activeLayoutConfig) {
+            onLayoutChange(activeLayoutConfig);
+        }
+
     }, []);
 
     useEffect(() => {

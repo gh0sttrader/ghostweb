@@ -239,3 +239,5 @@ export type SavedScreener = {
     name: string;
     filters: ActiveScreenerFilters;
 }
+
+export type WidgetKey = 'chart' | 'order' | 'positions' | 'orders' | 'history' | 'watchlist' | 'screeners' | 'news';
