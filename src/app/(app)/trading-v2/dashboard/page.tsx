@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState, useMemo, Suspense, useCallback, useEffect, useRef } from 'react';
@@ -28,7 +29,7 @@ import { GhostTradingTopBar } from '@/components/v2/GhostTradingTopBar';
 import { CardMenu } from '@/components/v2/CardMenu';
 import { SplashScreen } from '@/components/v2/SplashScreen';
 import { FundamentalsCardV2 } from '@/components/v2/FundamentalsCardV2';
-import { X, LogOut } from 'lucide-react';
+import { X, LogOut, Plus } from 'lucide-react';
 
 interface Widget {
     id: WidgetKey;
@@ -81,6 +82,7 @@ function TradingDashboardPageContentV2() {
 
   const [layouts, setLayouts] = useState<ReactGridLayout.Layout[]>(initialLayouts);
   const [widgetGroups, setWidgetGroups] = useState<Record<string, WidgetKey[]>>(initialWidgetGroups);
+  const [activeTabs, setActiveTabs] = useState<Record<string, WidgetKey>>({});
   
   const handleClearOrderCard = useCallback(() => {
     setOrderCardActionType(null);
@@ -97,44 +99,8 @@ function TradingDashboardPageContentV2() {
     }
     handleClearOrderCard();
   }, [handleClearOrderCard]);
-
-  const handleTradeSubmit = (tradeDetails: TradeRequest) => {
-    console.log("Trade Submitted via Order Card:", tradeDetails);
-    toast({
-      title: "Trade Processing",
-      description: `${tradeDetails.action} ${tradeDetails.quantity} ${tradeDetails.symbol} (${tradeDetails.orderType}) submitted. Origin: ${tradeDetails.tradeModeOrigin || 'manual'} for account ${tradeDetails.accountId}`,
-    });
-    const stockInfo = stockForSyncedComps?.symbol === tradeDetails.symbol ? stockForSyncedComps : initialMockStocks.find(s => s.symbol === tradeDetails.symbol);
-    addTradeToHistory({
-      id: String(Date.now()),
-      symbol: tradeDetails.symbol,
-      side: tradeDetails.action,
-      totalQty: tradeDetails.quantity,
-      orderType: tradeDetails.orderType,
-      limitPrice: tradeDetails.limitPrice,
-      stopPrice: tradeDetails.stopPrice,
-      TIF: tradeDetails.TIF || "Day",
-      tradingHours: tradeDetails.allowExtendedHours ? "Include Extended Hours" : "Regular Market Hours Only",
-      placedTime: new Date().toISOString(),
-      filledTime: new Date(Date.now() + Math.random() * 2000 + 500).toISOString(),
-      orderStatus: "Filled",
-      averagePrice: (tradeDetails.orderType === "Limit" && tradeDetails.limitPrice) ? tradeDetails.limitPrice : (stockInfo?.price || 0),
-      tradeModeOrigin: tradeDetails.tradeModeOrigin || 'manual',
-      accountId: tradeDetails.accountId || selectedAccountId,
-    });
-    if (tradeDetails.action === 'Buy' || tradeDetails.action === 'Short') {
-        addOpenPosition({
-            symbol: tradeDetails.symbol,
-            entryPrice: stockInfo?.price || 0,
-            shares: tradeDetails.quantity,
-            origin: tradeDetails.tradeModeOrigin || 'manual',
-            accountId: tradeDetails.accountId || selectedAccountId,
-            side: tradeDetails.action === 'Buy' ? 'Long' : 'Short',
-        });
-    }
-  };
   
-    const WIDGET_COMPONENTS: Record<WidgetKey, Widget> = useMemo(() => ({
+  const WIDGET_COMPONENTS: Record<WidgetKey, Widget> = useMemo(() => ({
       chart: { id: 'chart', label: 'Chart', component: <InteractiveChartCardV2 stock={stockForSyncedComps} onManualTickerSubmit={handleSyncedTickerChange} /> },
       order: { id: 'order', label: 'Trade', component: <OrderCardV2 selectedStock={stockForSyncedComps} initialActionType={orderCardActionType} initialTradeMode={orderCardInitialTradeMode} miloActionContextText={orderCardMiloActionContext} onSubmit={handleTradeSubmit} onClear={handleClearOrderCard} initialQuantity={orderCardInitialQuantity} initialOrderType={orderCardInitialOrderType} initialLimitPrice={orderCardInitialLimitPrice} className="h-full" /> },
       positions: { id: 'positions', label: 'Positions', component: <OpenPositionsCardV2 className="h-full border-0 shadow-none rounded-none bg-transparent" /> },
@@ -143,7 +109,7 @@ function TradingDashboardPageContentV2() {
       watchlist: { id: 'watchlist', label: 'Watchlist', component: <WatchlistCardV2 className="h-full border-0 shadow-none rounded-none bg-transparent" onSymbolSelect={handleSyncedTickerChange} selectedSymbol={syncedTickerSymbol} /> },
       screeners: { id: 'screeners', label: 'Screeners', component: <ScreenerWatchlistV2 className="h-full border-0 shadow-none rounded-none bg-transparent" onSymbolSelect={handleSyncedTickerChange} selectedSymbol={syncedTickerSymbol} /> },
       news: { id: 'news', label: 'News', component: <NewsCardV2 className="h-full border-0 shadow-none rounded-none bg-transparent" onSymbolSelect={handleSyncedTickerChange} selectedSymbol={syncedTickerSymbol} /> },
-    }), [stockForSyncedComps, handleSyncedTickerChange, orderCardActionType, orderCardInitialTradeMode, orderCardMiloActionContext, handleTradeSubmit, handleClearOrderCard, orderCardInitialQuantity, orderCardInitialOrderType, orderCardInitialLimitPrice, syncedTickerSymbol]);
+  }), [stockForSyncedComps, handleSyncedTickerChange, orderCardActionType, orderCardInitialTradeMode, orderCardMiloActionContext, handleTradeSubmit, handleClearOrderCard, orderCardInitialQuantity, orderCardInitialOrderType, orderCardInitialLimitPrice, syncedTickerSymbol]);
 
 
   useEffect(() => {
@@ -251,7 +217,10 @@ function TradingDashboardPageContentV2() {
             toast({ title: "Widget already in this group." });
             return prev;
         }
-        return { ...prev, [groupId]: [...currentGroup, widgetKey] };
+        const newGroups = { ...prev, [groupId]: [...currentGroup, widgetKey] };
+        // Set the new widget as the active tab
+        setActiveTabs(tabs => ({ ...tabs, [groupId]: widgetKey }));
+        return newGroups;
     });
   };
 
@@ -280,7 +249,7 @@ function TradingDashboardPageContentV2() {
     toast({ title: `Card removed from layout.` });
   }, []);
 
-  const handleSeparateWidget = useCallback((groupId: string, widgetKey: WidgetKey, newTabToFocus?: string) => {
+  const handleSeparateWidget = useCallback((groupId: string, widgetKey: WidgetKey) => {
     setWidgetGroups(prev => {
         const newGroups = { ...prev };
         const group = newGroups[groupId] || [];
@@ -297,6 +266,23 @@ function TradingDashboardPageContentV2() {
         return newGroups;
     });
   }, [WIDGET_COMPONENTS]);
+
+  // Ensure active tab is valid
+  useEffect(() => {
+    const newActiveTabs: Record<string, WidgetKey> = {};
+    for (const groupId in widgetGroups) {
+      const group = widgetGroups[groupId];
+      if (group && group.length > 0) {
+        const currentActive = activeTabs[groupId];
+        if (!currentActive || !group.includes(currentActive)) {
+          newActiveTabs[groupId] = group[0];
+        } else {
+          newActiveTabs[groupId] = currentActive;
+        }
+      }
+    }
+    setActiveTabs(newActiveTabs);
+  }, [widgetGroups]);
 
   if (!isMounted) {
     return <SplashScreen onFinish={() => setShowSplash(false)} />;
@@ -339,17 +325,13 @@ function TradingDashboardPageContentV2() {
                        
                        const isChart = groupId === 'chart';
                        const isOrder = groupId === 'order';
-
-                       const [activeTab, setActiveTab] = useState(widgetsInGroup[0]);
+                       const activeTab = activeTabs[groupId] || widgetsInGroup[0];
 
                         const handleSeparateClick = () => {
                             if (widgetsInGroup.length > 1) {
-                                const newActiveTab = widgetsInGroup.find(w => w !== activeTab);
-                                handleSeparateWidget(groupId, activeTab, newActiveTab);
-                                if(newActiveTab) setActiveTab(newActiveTab);
+                                handleSeparateWidget(groupId, activeTab);
                             }
                         };
-
 
                        return (
                            <div key={groupId} className="overflow-hidden">
@@ -363,19 +345,32 @@ function TradingDashboardPageContentV2() {
                                                     {WIDGET_COMPONENTS[widgetsInGroup[0]].label}
                                                 </CardTitle>
                                                 <div className="ml-auto no-drag">
+                                                   <Popover>
+                                                      <PopoverTrigger asChild>
+                                                          <Button variant="ghost" className="h-6 w-6 p-0 text-muted-foreground hover:text-foreground">
+                                                              <Plus size={16} />
+                                                          </Button>
+                                                      </PopoverTrigger>
+                                                      <PopoverContent className="w-48 p-1">
+                                                        <div className="flex flex-col">
+                                                            {Object.values(WIDGET_COMPONENTS).map(w => (
+                                                                <Button 
+                                                                    key={w.id}
+                                                                    variant="ghost" 
+                                                                    className="w-full justify-start text-xs h-8"
+                                                                    onClick={() => addWidgetToGroup(groupId, w.id)}
+                                                                >
+                                                                    {w.label}
+                                                                </Button>
+                                                            ))}
+                                                        </div>
+                                                      </PopoverContent>
+                                                   </Popover>
                                                    <CardMenu
-                                                        showAddWidget={true}
-                                                        onAddWidget={() => {
-                                                            // For now, we'll use a simple prompt. This could be a popover.
-                                                            const newWidgetKey = prompt(`Enter widget key to add to this group: (e.g., ${Object.keys(WIDGET_COMPONENTS).join(', ')})`) as WidgetKey | null;
-                                                            if (newWidgetKey && WIDGET_COMPONENTS[newWidgetKey]) {
-                                                                addWidgetToGroup(groupId, newWidgetKey);
-                                                            } else if (newWidgetKey) {
-                                                                toast({title: "Invalid widget key", variant: "destructive"})
-                                                            }
-                                                        }}
+                                                        showAddWidget={false}
                                                         onCustomize={() => toast({ title: `Customize ${widgetsInGroup[0]}`})}
                                                         onDelete={() => handleDeleteWidget(groupId)}
+                                                        onAddWidget={() => {}}
                                                     />
                                                 </div>
                                             </CardHeader>
@@ -384,7 +379,7 @@ function TradingDashboardPageContentV2() {
                                             </CardContent>
                                         </>
                                     ) : (
-                                       <Tabs value={activeTab} onValueChange={setActiveTab} className="flex flex-col h-full">
+                                       <Tabs value={activeTab} onValueChange={(tab) => setActiveTabs(tabs => ({...tabs, [groupId]: tab as WidgetKey}))} className="flex flex-col h-full">
                                             <CardHeader className="p-0 border-b border-white/10 drag-handle cursor-move h-8 flex-row items-center">
                                                 <TabsList className="h-8 p-0 bg-transparent border-none gap-1 px-2">
                                                     {widgetsInGroup.map(widgetKey => (
@@ -394,21 +389,37 @@ function TradingDashboardPageContentV2() {
                                                     ))}
                                                 </TabsList>
                                                 <div className="ml-auto flex items-center gap-2 no-drag pr-2">
-                                                     <Button variant="ghost" size="sm" className="h-6 text-xs text-destructive hover:text-destructive hover:bg-destructive/10" onClick={handleSeparateClick}>
-                                                        <LogOut size={14} className="mr-1"/> Separate
-                                                    </Button>
+                                                    {widgetsInGroup.length > 1 && (
+                                                        <Button variant="ghost" size="sm" className="h-6 text-xs text-destructive hover:text-destructive hover:bg-destructive/10" onClick={handleSeparateClick}>
+                                                            <LogOut size={14} className="mr-1"/> Separate
+                                                        </Button>
+                                                    )}
+                                                     <Popover>
+                                                      <PopoverTrigger asChild>
+                                                          <Button variant="ghost" className="h-6 w-6 p-0 text-muted-foreground hover:text-foreground">
+                                                              <Plus size={16} />
+                                                          </Button>
+                                                      </PopoverTrigger>
+                                                      <PopoverContent className="w-48 p-1">
+                                                        <div className="flex flex-col">
+                                                            {Object.values(WIDGET_COMPONENTS).map(w => (
+                                                                <Button 
+                                                                    key={w.id}
+                                                                    variant="ghost" 
+                                                                    className="w-full justify-start text-xs h-8"
+                                                                    onClick={() => addWidgetToGroup(groupId, w.id)}
+                                                                >
+                                                                    {w.label}
+                                                                </Button>
+                                                            ))}
+                                                        </div>
+                                                      </PopoverContent>
+                                                   </Popover>
                                                     <CardMenu
-                                                        showAddWidget={true}
-                                                        onAddWidget={() => {
-                                                           const newWidgetKey = prompt(`Enter widget key to add to this group: (e.g., ${Object.keys(WIDGET_COMPONENTS).join(', ')})`) as WidgetKey | null;
-                                                            if (newWidgetKey && WIDGET_COMPONENTS[newWidgetKey]) {
-                                                                addWidgetToGroup(groupId, newWidgetKey);
-                                                            } else if (newWidgetKey) {
-                                                                toast({title: "Invalid widget key", variant: "destructive"})
-                                                            }
-                                                        }}
+                                                        showAddWidget={false}
                                                         onCustomize={() => toast({ title: `Customize widgets...` })}
                                                         onDelete={() => handleDeleteWidget(groupId)}
+                                                        onAddWidget={() => {}}
                                                     />
                                                 </div>
                                             </CardHeader>
