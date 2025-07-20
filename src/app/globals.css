@@ -275,23 +275,25 @@
   /* For Chrome, Edge, Safari */
   ::-webkit-scrollbar {
     width: 8px;
-    height: 8px;
-    background: #18181b;
+    background: #101014; /* Darkest for track */
   }
 
   ::-webkit-scrollbar-thumb {
-    background: #404040;
+    background: #24262a; /* Thumb: dark gray */
     border-radius: 8px;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: #525252;
+    background: #45474c; /* Slightly lighter on hover */
+  }
+  ::-webkit-scrollbar-corner {
+    background: #101014;
   }
 
   /* For Firefox */
   * {
+    scrollbar-color: #24262a #101014; /* thumb track */
     scrollbar-width: thin;
-    scrollbar-color: #404040 #18181b;
   }
 
 }
