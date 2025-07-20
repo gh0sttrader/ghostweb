@@ -39,6 +39,7 @@ const iconAndTextVariants = {
 const whiteOutVariants = {
     initial: { opacity: 0 },
     animate: { opacity: 1, transition: { duration: 1.3, ease: "easeInOut" } },
+    exit: { opacity: 0, transition: { duration: 0.5, ease: "linear" } },
 };
 
 
@@ -57,6 +58,7 @@ export function SplashScreen({ onFinish }: { onFinish: () => void }) {
         return () => {
             clearTimeout(whiteOutTimer);
             clearTimeout(finishTimer);
+            setFadeToWhite(false);
         };
     }, [onFinish]);
     
@@ -83,12 +85,17 @@ export function SplashScreen({ onFinish }: { onFinish: () => void }) {
                     </span>
                 </motion.div>
                 
-                <motion.div
-                    initial="initial"
-                    animate={fadeToWhite ? "animate" : "initial"}
-                    variants={whiteOutVariants}
-                    className="absolute inset-0 bg-white"
-                />
+                <AnimatePresence>
+                    {fadeToWhite && (
+                        <motion.div
+                            initial="initial"
+                            animate="animate"
+                            exit="exit"
+                            variants={whiteOutVariants}
+                            className="absolute inset-0 bg-white"
+                        />
+                    )}
+                </AnimatePresence>
             </motion.div>
         </AnimatePresence>
     );
