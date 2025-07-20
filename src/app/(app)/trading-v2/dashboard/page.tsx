@@ -151,7 +151,7 @@ function TradingDashboardPageContentV2() {
   }, []);
 
   const handleLayoutChange = useCallback((newLayout: ReactGridLayout.Layout[]) => {
-      if (isMounted && newLayout.length > 0) {
+      if (isMounted) {
         setLayouts(newLayout);
       }
   }, [isMounted]);
@@ -307,18 +307,18 @@ function TradingDashboardPageContentV2() {
   useEffect(() => {
     const newActiveTabs: Record<string, WidgetKey> = {};
     for (const groupId in widgetGroups) {
-      const group = widgetGroups[groupId];
-      if (group && group.length > 0) {
-        const currentActive = activeTabs[groupId];
-        if (!currentActive || !group.includes(currentActive)) {
-          newActiveTabs[groupId] = group[0];
-        } else {
-          newActiveTabs[groupId] = currentActive;
+        const group = widgetGroups[groupId];
+        if (group && group.length > 0) {
+            const currentActive = activeTabs[groupId];
+            if (!currentActive || !group.includes(currentActive)) {
+                newActiveTabs[groupId] = group[0];
+            } else {
+                newActiveTabs[groupId] = currentActive;
+            }
         }
-      }
     }
     setActiveTabs(newActiveTabs);
-  }, [widgetGroups, activeTabs]);
+  }, [widgetGroups]);
   
   return (
     <main className="w-full h-full flex flex-col bg-background relative bg-dot-grid">
