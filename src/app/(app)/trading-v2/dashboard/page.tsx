@@ -27,7 +27,6 @@ import { cn } from '@/lib/utils';
 import { ScreenerWatchlistV2 } from '@/components/v2/ScreenerWatchlistV2';
 import { GhostTradingTopBar } from '@/components/v2/GhostTradingTopBar';
 import { CardMenu } from '@/components/v2/CardMenu';
-import { SplashScreen } from '@/components/v2/SplashScreen';
 import { FundamentalsCardV2 } from '@/components/v2/FundamentalsCardV2';
 import { X, LogOut, Plus } from 'lucide-react';
 
@@ -78,7 +77,6 @@ function TradingDashboardPageContentV2() {
   const [orderCardInitialLimitPrice, setOrderCardInitialLimitPrice] = useState<string | undefined>(undefined);
   
   const [isMounted, setIsMounted] = useState(false);
-  const [showSplash, setShowSplash] = useState(true);
 
   const [layouts, setLayouts] = useState<ReactGridLayout.Layout[]>(initialLayouts);
   const [widgetGroups, setWidgetGroups] = useState<Record<string, WidgetKey[]>>(initialWidgetGroups);
@@ -157,7 +155,7 @@ function TradingDashboardPageContentV2() {
       setLayouts(newLayout);
   }, []);
   
-  const handleLayoutConfigChange = useCallback((config: { layouts: ReactGridLayout.Layout[], widgetGroups: Record<string, WidgetKey[]> }) => {
+  const onLayoutChange = useCallback((config: { layouts: ReactGridLayout.Layout[], widgetGroups: Record<string, WidgetKey[]> }) => {
       setLayouts(config.layouts);
       setWidgetGroups(config.widgetGroups);
   }, []);
@@ -319,18 +317,12 @@ function TradingDashboardPageContentV2() {
     setActiveTabs(newActiveTabs);
   }, [widgetGroups, activeTabs]);
   
-  if (showSplash) {
-      return <SplashScreen onFinish={() => setShowSplash(false)} />;
-  }
-
-  const allAddedWidgets = Object.values(widgetGroups).flat();
-
   return (
     <main className="w-full h-full flex flex-col bg-background relative bg-dot-grid">
         <GhostTradingTopBar
             onAddWidget={addWidgetAsNewCard}
             currentLayouts={layouts}
-            onLayoutChange={handleLayoutConfigChange}
+            onLayoutChange={onLayoutChange}
             widgetGroups={widgetGroups}
             onWidgetGroupsChange={setWidgetGroups}
         />
@@ -392,9 +384,9 @@ function TradingDashboardPageContentV2() {
                                                                       variant="ghost" 
                                                                       className="w-full justify-start text-xs h-8"
                                                                       onClick={() => addWidgetToGroup(groupId, w.id)}
-                                                                      disabled={allAddedWidgets.includes(w.id)}
+                                                                      disabled={Object.values(widgetGroups).flat().includes(w.id)}
                                                                   >
-                                                                      {w.label} {allAddedWidgets.includes(w.id) && "(Added)"}
+                                                                      {w.label} {Object.values(widgetGroups).flat().includes(w.id) && "(Added)"}
                                                                   </Button>
                                                               ))}
                                                           </div>
@@ -448,9 +440,9 @@ function TradingDashboardPageContentV2() {
                                                                     variant="ghost" 
                                                                     className="w-full justify-start text-xs h-8"
                                                                     onClick={() => addWidgetToGroup(groupId, w.id)}
-                                                                    disabled={allAddedWidgets.includes(w.id)}
+                                                                    disabled={Object.values(widgetGroups).flat().includes(w.id)}
                                                                 >
-                                                                    {w.label} {allAddedWidgets.includes(w.id) && "(Added)"}
+                                                                    {w.label} {Object.values(widgetGroups).flat().includes(w.id) && "(Added)"}
                                                                 </Button>
                                                             ))}
                                                         </div>
