@@ -43,7 +43,6 @@ const whiteOutVariants = {
 
 
 export function SplashScreen({ onFinish }: { onFinish: () => void }) {
-    const [isVisible, setIsVisible] = useState(true);
     const [fadeToWhite, setFadeToWhite] = useState(false);
 
     useEffect(() => {
@@ -52,7 +51,6 @@ export function SplashScreen({ onFinish }: { onFinish: () => void }) {
         }, 2000); // Start white-out after 2s
 
         const finishTimer = setTimeout(() => {
-            setIsVisible(false);
             onFinish();
         }, 3300); // Total splash time (2s hold + 1.3s fade)
 
@@ -64,36 +62,34 @@ export function SplashScreen({ onFinish }: { onFinish: () => void }) {
     
     return (
         <AnimatePresence>
-            {isVisible && (
+            <motion.div
+                variants={containerVariants}
+                initial="initial"
+                animate="animate"
+                exit="exit"
+                className="fixed inset-0 bg-black flex flex-col items-center justify-center z-[9999]"
+                style={{ pointerEvents: "none" }}
+            >
                 <motion.div
-                    variants={containerVariants}
-                    initial="initial"
-                    animate="animate"
-                    exit="exit"
-                    className="fixed inset-0 bg-black flex flex-col items-center justify-center z-[9999]"
-                    style={{ pointerEvents: "none" }}
+                    variants={iconAndTextVariants}
+                    className="flex flex-col items-center"
                 >
-                    <motion.div
-                        variants={iconAndTextVariants}
-                        className="flex flex-col items-center"
+                     <GhostIcon className="w-40 h-40 mb-2" />
+                    <span
+                        className="text-4xl md:text-5xl font-bold text-white tracking-wide"
+                        style={{ textShadow: '0 0 32px #fff, 0 0 8px #fff' }}
                     >
-                         <GhostIcon className="w-40 h-40 mb-2" />
-                        <span
-                            className="text-4xl md:text-5xl font-bold text-white tracking-wide"
-                            style={{ textShadow: '0 0 32px #fff, 0 0 8px #fff' }}
-                        >
-                            Ghost Trading 2.0
-                        </span>
-                    </motion.div>
-                    
-                    <motion.div
-                        initial="initial"
-                        animate={fadeToWhite ? "animate" : "initial"}
-                        variants={whiteOutVariants}
-                        className="absolute inset-0 bg-white"
-                    />
+                        Ghost Trading 2.0
+                    </span>
                 </motion.div>
-            )}
+                
+                <motion.div
+                    initial="initial"
+                    animate={fadeToWhite ? "animate" : "initial"}
+                    variants={whiteOutVariants}
+                    className="absolute inset-0 bg-white"
+                />
+            </motion.div>
         </AnimatePresence>
     );
 }
