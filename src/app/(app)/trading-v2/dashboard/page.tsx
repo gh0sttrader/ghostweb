@@ -26,6 +26,7 @@ import { ScreenerWatchlistV2 } from '@/components/v2/ScreenerWatchlistV2';
 import { GhostTradingTopBar } from '@/components/v2/GhostTradingTopBar';
 import { CardMenu } from '@/components/v2/CardMenu';
 import { SplashScreen } from '@/components/v2/SplashScreen';
+import { FundamentalsCardV2 } from '@/components/v2/FundamentalsCardV2';
 
 type WidgetKey = 'chart' | 'order' | 'positions' | 'orders' | 'history' | 'watchlist' | 'screeners' | 'news';
 
@@ -66,17 +67,6 @@ function TradingDashboardPageContentV2() {
   
   const [isMounted, setIsMounted] = useState(false);
   const [showSplash, setShowSplash] = useState(true);
-
-  const WIDGET_COMPONENTS: Record<WidgetKey, Widget> = {
-    chart: { id: 'chart', label: 'Chart', component: <InteractiveChartCardV2 stock={stockForSyncedComps} onManualTickerSubmit={handleSyncedTickerChange} /> },
-    order: { id: 'order', label: 'Trade', component: <OrderCardV2 selectedStock={stockForSyncedComps} initialActionType={orderCardActionType} initialTradeMode={orderCardInitialTradeMode} miloActionContextText={orderCardMiloActionContext} onSubmit={handleTradeSubmit} onClear={handleClearOrderCard} initialQuantity={orderCardInitialQuantity} initialOrderType={orderCardInitialOrderType} initialLimitPrice={orderCardInitialLimitPrice} className="h-full" /> },
-    positions: { id: 'positions', label: 'Positions', component: <OpenPositionsCardV2 className="h-full border-0 shadow-none rounded-none bg-transparent" /> },
-    orders: { id: 'orders', label: 'Open Orders', component: <OrdersTableV2 className="h-full border-0 shadow-none rounded-none bg-transparent" /> },
-    history: { id: 'history', label: 'History', component: <TradeHistoryTableV2 className="h-full border-0 shadow-none rounded-none bg-transparent" syncedTickerSymbol={syncedTickerSymbol} /> },
-    watchlist: { id: 'watchlist', label: 'Watchlist', component: <WatchlistCardV2 className="h-full border-0 shadow-none rounded-none bg-transparent" onSymbolSelect={handleSyncedTickerChange} selectedSymbol={syncedTickerSymbol} /> },
-    screeners: { id: 'screeners', label: 'Screeners', component: <ScreenerWatchlistV2 className="h-full border-0 shadow-none rounded-none bg-transparent" onSymbolSelect={handleSyncedTickerChange} selectedSymbol={syncedTickerSymbol} /> },
-    news: { id: 'news', label: 'News', component: <NewsCardV2 className="h-full border-0 shadow-none rounded-none bg-transparent" onSymbolSelect={handleSyncedTickerChange} selectedSymbol={syncedTickerSymbol} /> },
-  };
 
   const initialLayouts: ReactGridLayout.Layout[] = [
     { i: 'chart', x: 0, y: 0, w: 9, h: 10, minW: 6, minH: 8 },
@@ -381,6 +371,17 @@ function TradingDashboardPageContentV2() {
       });
   };
   
+  const WIDGET_COMPONENTS: Record<WidgetKey, Widget> = {
+    chart: { id: 'chart', label: 'Chart', component: <InteractiveChartCardV2 stock={stockForSyncedComps} onManualTickerSubmit={handleSyncedTickerChange} /> },
+    order: { id: 'order', label: 'Trade', component: <OrderCardV2 selectedStock={stockForSyncedComps} initialActionType={orderCardActionType} initialTradeMode={orderCardInitialTradeMode} miloActionContextText={orderCardMiloActionContext} onSubmit={handleTradeSubmit} onClear={handleClearOrderCard} initialQuantity={orderCardInitialQuantity} initialOrderType={orderCardInitialOrderType} initialLimitPrice={orderCardInitialLimitPrice} className="h-full" /> },
+    positions: { id: 'positions', label: 'Positions', component: <OpenPositionsCardV2 className="h-full border-0 shadow-none rounded-none bg-transparent" /> },
+    orders: { id: 'orders', label: 'Open Orders', component: <OrdersTableV2 className="h-full border-0 shadow-none rounded-none bg-transparent" /> },
+    history: { id: 'history', label: 'History', component: <TradeHistoryTableV2 className="h-full border-0 shadow-none rounded-none bg-transparent" syncedTickerSymbol={syncedTickerSymbol} /> },
+    watchlist: { id: 'watchlist', label: 'Watchlist', component: <WatchlistCardV2 className="h-full border-0 shadow-none rounded-none bg-transparent" onSymbolSelect={handleSyncedTickerChange} selectedSymbol={syncedTickerSymbol} /> },
+    screeners: { id: 'screeners', label: 'Screeners', component: <ScreenerWatchlistV2 className="h-full border-0 shadow-none rounded-none bg-transparent" onSymbolSelect={handleSyncedTickerChange} selectedSymbol={syncedTickerSymbol} /> },
+    news: { id: 'news', label: 'News', component: <NewsCardV2 className="h-full border-0 shadow-none rounded-none bg-transparent" onSymbolSelect={handleSyncedTickerChange} selectedSymbol={syncedTickerSymbol} /> },
+  };
+
   const allPossibleWidgets = Object.values(WIDGET_COMPONENTS);
   const availableWidgetsForPopover = useMemo(() => {
     if (!popoverState.groupKey) return [];
@@ -391,7 +392,7 @@ function TradingDashboardPageContentV2() {
       !currentGroupWidgets.includes(widget.id) &&
       widget.id !== 'chart'
     );
-  }, [popoverState.groupKey, widgetGroups]);
+  }, [popoverState.groupKey, widgetGroups, WIDGET_COMPONENTS]);
 
   const currentLayout = useMemo(() => {
     return Object.keys(widgetGroups).map(groupKey => {
@@ -444,11 +445,11 @@ function TradingDashboardPageContentV2() {
                        const activeWidget = WIDGET_COMPONENTS[activeWidgetId];
                        
                        const isChart = groupKey === 'chart';
-                       const isProtectedForMerging = isChart;
+                       const isOrderCard = groupKey === 'order';
 
                        return (
                            <div key={groupKey} id={groupKey} className="overflow-hidden">
-                                <DraggableCard isOver={dropTarget === groupKey && !isProtectedForMerging} isActive={draggedWidgetKey === groupKey}>
+                                <DraggableCard isOver={dropTarget === groupKey && !isChart} isActive={draggedWidgetKey === groupKey}>
                                     {isChart ? (
                                         <div className="flex-1 overflow-hidden h-full">
                                             {activeWidget.component}
@@ -490,16 +491,17 @@ function TradingDashboardPageContentV2() {
                                                 </CardTitle>
                                                 <div className="ml-auto no-drag">
                                                     <CardMenu
-                                                        showAddWidget={true}
+                                                        showAddWidget={!isOrderCard}
                                                         onAddWidget={() => setPopoverState({ open: true, groupKey })}
                                                         onCustomize={() => toast({ title: `Customize ${activeWidget.label}`})}
                                                         onDelete={() => handleDeleteWidget(groupKey, activeWidgetId)}
                                                     />
                                                 </div>
                                             </CardHeader>
-                                            <div className="flex-1 overflow-auto h-full">
-                                                {activeWidget.component}
-                                            </div>
+                                            <CardContent className={cn("flex-1 overflow-auto h-full", isOrderCard && "p-3")}>
+                                              {isOrderCard && stockForSyncedComps && <FundamentalsCardV2 stock={stockForSyncedComps} />}
+                                              {activeWidget.component}
+                                            </CardContent>
                                         </>
                                     )}
                                </DraggableCard>
