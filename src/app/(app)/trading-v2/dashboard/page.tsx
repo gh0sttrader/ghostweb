@@ -153,7 +153,6 @@ function TradingDashboardPageContentV2() {
   }, []);
 
   const handleLayoutChange = useCallback((newLayout: ReactGridLayout.Layout[]) => {
-      // Prevent empty layout, which can happen on widget deletion race conditions
       if (newLayout.length === 0) return;
       setLayouts(newLayout);
   }, []);
@@ -254,7 +253,6 @@ function TradingDashboardPageContentV2() {
             return prev;
         }
         const newGroups = { ...prev, [groupId]: [...currentGroup, widgetKey] };
-        // Set the new widget as the active tab
         setActiveTabs(tabs => ({ ...tabs, [groupId]: widgetKey }));
         return newGroups;
     });
@@ -295,8 +293,6 @@ function TradingDashboardPageContentV2() {
             delete newGroups[groupId];
         } else {
             newGroups[groupId] = newGroup;
-            // After separating, if the current active tab was the one removed,
-            // set the active tab to the new first one in the group.
             if (activeTabs[groupId] === widgetKey) {
                 setActiveTabs(tabs => ({ ...tabs, [groupId]: newGroup[0] }));
             }
@@ -307,7 +303,6 @@ function TradingDashboardPageContentV2() {
     });
   }, [WIDGET_COMPONENTS, toast, activeTabs]);
 
-  // Ensure active tab is valid
   useEffect(() => {
     const newActiveTabs: Record<string, WidgetKey> = {};
     for (const groupId in widgetGroups) {
@@ -322,14 +317,19 @@ function TradingDashboardPageContentV2() {
       }
     }
     setActiveTabs(newActiveTabs);
-  }, [widgetGroups]);
+  }, [widgetGroups, activeTabs]);
 
-  if (!isMounted) {
-    return <SplashScreen onFinish={() => setShowSplash(false)} />;
-  }
+  useEffect(() => {
+    if (isMounted) return;
+    const timer = setTimeout(() => {
+        setShowSplash(false);
+    }, 2500);
+    setIsMounted(true);
+    return () => clearTimeout(timer);
+  }, [isMounted]);
   
   if (showSplash) {
-      return <SplashScreen onFinish={() => setShowSplash(false)} />;
+      return <SplashScreen />;
   }
 
   const allAddedWidgets = Object.values(widgetGroups).flat();
@@ -382,11 +382,11 @@ function TradingDashboardPageContentV2() {
                                         WIDGET_COMPONENTS['chart'].component
                                     ) : widgetsInGroup.length === 1 ? (
                                         <>
-                                            <CardHeader className="py-1 px-3 border-b border-white/10 drag-handle cursor-move h-8 flex-row items-center">
+                                            <CardHeader className="py-1 px-3 border-b border-white/10 h-8 flex-row items-center drag-handle cursor-move">
                                                 <CardTitle className="text-sm font-semibold text-muted-foreground">
                                                     {WIDGET_COMPONENTS[widgetsInGroup[0]].label}
                                                 </CardTitle>
-                                                <div className="ml-auto no-drag flex items-center gap-1">
+                                                <div className="ml-auto flex items-center gap-1 no-drag">
                                                    <Popover>
                                                         <PopoverTrigger asChild>
                                                             <Button variant="ghost" className="h-6 w-6 p-0 text-muted-foreground hover:text-foreground">
@@ -412,6 +412,7 @@ function TradingDashboardPageContentV2() {
                                                    <CardMenu
                                                         onCustomize={() => toast({ title: `Customize ${widgetsInGroup[0]}`})}
                                                         onDelete={() => handleDeleteWidget(groupId)}
+                                                        showAddWidget={!isOrder}
                                                     />
                                                 </div>
                                             </CardHeader>
@@ -421,7 +422,7 @@ function TradingDashboardPageContentV2() {
                                         </>
                                     ) : (
                                        <Tabs value={activeTab} onValueChange={(tab) => setActiveTabs(tabs => ({...tabs, [groupId]: tab as WidgetKey}))} className="flex flex-col h-full">
-                                            <CardHeader className="p-0 border-b border-white/10 drag-handle cursor-move h-8 flex-row items-center">
+                                            <CardHeader className="p-0 border-b border-white/10 h-8 flex-row items-center drag-handle cursor-move">
                                                 <TabsList className="h-8 p-0 bg-transparent border-none gap-1 px-2">
                                                     {widgetsInGroup.map(widgetKey => (
                                                         <TabsTrigger key={widgetKey} value={widgetKey} className="h-6 text-sm px-2 py-1 rounded-md relative group/tab">
@@ -468,6 +469,7 @@ function TradingDashboardPageContentV2() {
                                                     <CardMenu
                                                         onCustomize={() => toast({ title: `Customize widgets...` })}
                                                         onDelete={() => handleDeleteWidget(groupId)}
+                                                        showAddWidget={!isOrder}
                                                     />
                                                 </div>
                                             </CardHeader>
@@ -496,3 +498,5 @@ export default function TradingDashboardPage() {
     </Suspense>
   );
 }
+
+    
