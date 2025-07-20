@@ -154,9 +154,9 @@ function TradingDashboardPageContentV2() {
 
   const handleLayoutChange = useCallback((newLayout: ReactGridLayout.Layout[]) => {
       // Prevent empty layout, which can happen on widget deletion race conditions
-      if (newLayout.length === 0 && layouts.length > 0) return;
+      if (newLayout.length === 0) return;
       setLayouts(newLayout);
-  }, [layouts.length]);
+  }, []);
   
   const handleLayoutConfigChange = useCallback((config: { layouts: ReactGridLayout.Layout[], widgetGroups: Record<string, WidgetKey[]> }) => {
       setLayouts(config.layouts);
@@ -387,8 +387,7 @@ function TradingDashboardPageContentV2() {
                                                     {WIDGET_COMPONENTS[widgetsInGroup[0]].label}
                                                 </CardTitle>
                                                 <div className="ml-auto no-drag flex items-center gap-1">
-                                                   {!isOrder && (
-                                                      <Popover>
+                                                   <Popover>
                                                         <PopoverTrigger asChild>
                                                             <Button variant="ghost" className="h-6 w-6 p-0 text-muted-foreground hover:text-foreground">
                                                                 <Plus size={16} />
@@ -410,13 +409,9 @@ function TradingDashboardPageContentV2() {
                                                           </div>
                                                         </PopoverContent>
                                                       </Popover>
-                                                   )}
                                                    <CardMenu
-                                                        showAddWidget={!isOrder}
                                                         onCustomize={() => toast({ title: `Customize ${widgetsInGroup[0]}`})}
                                                         onDelete={() => handleDeleteWidget(groupId)}
-                                                        onAddWidget={(widgetKey) => addWidgetToGroup(groupId, widgetKey)}
-                                                        addedWidgets={allAddedWidgets}
                                                     />
                                                 </div>
                                             </CardHeader>
@@ -471,11 +466,8 @@ function TradingDashboardPageContentV2() {
                                                       </PopoverContent>
                                                    </Popover>
                                                     <CardMenu
-                                                        showAddWidget={!isOrder}
                                                         onCustomize={() => toast({ title: `Customize widgets...` })}
                                                         onDelete={() => handleDeleteWidget(groupId)}
-                                                        onAddWidget={(widgetKey) => addWidgetToGroup(groupId, widgetKey)}
-                                                        addedWidgets={allAddedWidgets}
                                                     />
                                                 </div>
                                             </CardHeader>
