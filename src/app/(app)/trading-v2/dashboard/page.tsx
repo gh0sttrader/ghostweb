@@ -318,18 +318,9 @@ function TradingDashboardPageContentV2() {
     }
     setActiveTabs(newActiveTabs);
   }, [widgetGroups, activeTabs]);
-
-  useEffect(() => {
-    if (isMounted) return;
-    const timer = setTimeout(() => {
-        setShowSplash(false);
-    }, 2500);
-    setIsMounted(true);
-    return () => clearTimeout(timer);
-  }, [isMounted]);
   
   if (showSplash) {
-      return <SplashScreen />;
+      return <SplashScreen onFinish={() => setShowSplash(false)} />;
   }
 
   const allAddedWidgets = Object.values(widgetGroups).flat();
@@ -412,7 +403,6 @@ function TradingDashboardPageContentV2() {
                                                    <CardMenu
                                                         onCustomize={() => toast({ title: `Customize ${widgetsInGroup[0]}`})}
                                                         onDelete={() => handleDeleteWidget(groupId)}
-                                                        showAddWidget={!isOrder}
                                                     />
                                                 </div>
                                             </CardHeader>
@@ -469,7 +459,6 @@ function TradingDashboardPageContentV2() {
                                                     <CardMenu
                                                         onCustomize={() => toast({ title: `Customize widgets...` })}
                                                         onDelete={() => handleDeleteWidget(groupId)}
-                                                        showAddWidget={!isOrder}
                                                     />
                                                 </div>
                                             </CardHeader>
@@ -498,5 +487,3 @@ export default function TradingDashboardPage() {
     </Suspense>
   );
 }
-
-    
