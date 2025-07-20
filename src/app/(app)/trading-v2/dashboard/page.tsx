@@ -1,7 +1,7 @@
 
 "use client";
 
-import React, { useState, useMemo, Suspense, useCallback, useEffect } from 'react';
+import React, in { useState, useMemo, Suspense, useCallback, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import type { Stock, TradeRequest, OrderActionType, TradeMode, OrderSystemType, NewsArticle } from "@/types";
 import { useToast } from "@/hooks/use-toast";
@@ -26,6 +26,7 @@ import { ScreenerWatchlistV2 } from '@/components/v2/ScreenerWatchlistV2';
 import { GhostTradingTopBar } from '@/components/v2/GhostTradingTopBar';
 import { CardMenu } from '@/components/v2/CardMenu';
 import { SplashScreen } from '@/components/v2/SplashScreen';
+import { FundamentalsCardV2 } from '@/components/v2/FundamentalsCardV2';
 
 type WidgetKey = 'chart' | 'order' | 'positions' | 'orders' | 'history' | 'watchlist' | 'screeners' | 'news';
 
@@ -356,7 +357,7 @@ function TradingDashboardPageContentV2() {
 
   const WIDGET_COMPONENTS: Record<WidgetKey, Widget> = {
     chart: { id: 'chart', label: 'Chart', component: <InteractiveChartCardV2 stock={stockForSyncedComps} onManualTickerSubmit={handleSyncedTickerChange} />, layout: initialLayouts.chart },
-    order: { id: 'order', label: 'Trading Card', component: <OrderCardV2 selectedStock={stockForSyncedComps} initialActionType={orderCardActionType} initialTradeMode={orderCardInitialTradeMode} miloActionContextText={orderCardMiloActionContext} onSubmit={handleTradeSubmit} onClear={handleClearOrderCard} initialQuantity={orderCardInitialQuantity} initialOrderType={orderCardInitialOrderType} initialLimitPrice={orderCardInitialLimitPrice} className="h-full" />, layout: initialLayouts.order },
+    order: { id: 'order', label: 'Trading', component: <OrderCardV2 selectedStock={stockForSyncedComps} initialActionType={orderCardActionType} initialTradeMode={orderCardInitialTradeMode} miloActionContextText={orderCardMiloActionContext} onSubmit={handleTradeSubmit} onClear={handleClearOrderCard} initialQuantity={orderCardInitialQuantity} initialOrderType={orderCardInitialOrderType} initialLimitPrice={orderCardInitialLimitPrice} className="h-full" />, layout: initialLayouts.order },
     positions: { id: 'positions', label: 'Positive', component: <OpenPositionsCardV2 className="h-full border-0 shadow-none rounded-none bg-transparent" />, layout: initialLayouts.positions },
     orders: { id: 'orders', label: 'Open Orders', component: <OrdersTableV2 className="h-full border-0 shadow-none rounded-none bg-transparent" />, layout: initialLayouts.orders },
     history: { id: 'history', label: 'History', component: <TradeHistoryTableV2 className="h-full border-0 shadow-none rounded-none bg-transparent" syncedTickerSymbol={syncedTickerSymbol} />, layout: initialLayouts.history },
@@ -461,9 +462,11 @@ function TradingDashboardPageContentV2() {
                                         <>
                                             <CardHeader className={cn("p-3 flex-row items-center justify-between", {'drag-handle cursor-move': !isProtected, 'no-drag': isProtected})}>
                                                 
-                                                {activeWidget.id !== 'order' && activeWidget.id !== 'chart' && (
+                                                {activeWidget.id !== 'order' && activeWidget.id !== 'chart' ? (
                                                     <CardTitle className="text-sm font-semibold text-muted-foreground">{activeWidget.label}</CardTitle>
-                                                )}
+                                                ) : activeWidget.id === 'order' ? (
+                                                    <FundamentalsCardV2 stock={stockForSyncedComps} className="border-0 shadow-none bg-transparent w-full" />
+                                                ) : <div />}
                                                 
                                                 <div className="ml-auto no-drag">
                                                     <CardMenu

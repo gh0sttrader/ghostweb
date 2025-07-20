@@ -225,27 +225,7 @@ export const OrderCardV2: React.FC<OrderCardProps> = ({
 
     return (
         <Card className={cn("h-full flex flex-col bg-transparent border-none", className)}>
-            <CardHeader className="p-3 border-b border-white/10 drag-handle cursor-move">
-                <span className="text-base font-bold tracking-wide text-white">Trading</span>
-            </CardHeader>
             <CardContent className="flex-1 flex flex-col p-3 space-y-3 overflow-y-auto">
-                 {selectedStock && (
-                    <div className="flex items-start justify-between w-full mb-2">
-                      <div>
-                        <div className="text-2xl font-bold tracking-tight">{selectedStock.symbol}</div>
-                        <div className="text-base text-neutral-400">{selectedStock.name}</div>
-                      </div>
-                      <div className="flex flex-col items-end">
-                        <div className="text-2xl font-bold">${selectedStock.price.toFixed(2)}</div>
-                        <div className={cn(
-                            "text-sm font-semibold",
-                             selectedStock.changePercent >= 0 ? "text-[hsl(var(--confirm-green))]" : "text-destructive"
-                        )}>
-                          {selectedStock.changePercent >= 0 ? "+" : ""}{selectedStock.changePercent.toFixed(2)}%
-                        </div>
-                      </div>
-                    </div>
-                )}
                 <div className="grid grid-cols-3 gap-2 no-drag">
                     {(['Buy', 'Sell', 'Short'] as OrderActionType[]).map((act) => {
                         const config = actionConfig[act];
