@@ -99,6 +99,42 @@ function TradingDashboardPageContentV2() {
     }
     handleClearOrderCard();
   }, [handleClearOrderCard]);
+
+  const handleTradeSubmit = (tradeDetails: TradeRequest) => {
+    console.log("Trade Submitted via Order Card:", tradeDetails);
+    toast({
+      title: "Trade Processing",
+      description: `${tradeDetails.action} ${tradeDetails.quantity} ${tradeDetails.symbol} (${tradeDetails.orderType}) submitted. Origin: ${tradeDetails.tradeModeOrigin || 'manual'} for account ${tradeDetails.accountId}`,
+    });
+    const stockInfo = stockForSyncedComps?.symbol === tradeDetails.symbol ? stockForSyncedComps : initialMockStocks.find(s => s.symbol === tradeDetails.symbol);
+    addTradeToHistory({
+      id: String(Date.now()),
+      symbol: tradeDetails.symbol,
+      side: tradeDetails.action,
+      totalQty: tradeDetails.quantity,
+      orderType: tradeDetails.orderType,
+      limitPrice: tradeDetails.limitPrice,
+      stopPrice: tradeDetails.stopPrice,
+      TIF: tradeDetails.TIF || "Day",
+      tradingHours: tradeDetails.allowExtendedHours ? "Include Extended Hours" : "Regular Market Hours Only",
+      placedTime: new Date().toISOString(),
+      filledTime: new Date(Date.now() + Math.random() * 2000 + 500).toISOString(),
+      orderStatus: "Filled",
+      averagePrice: (tradeDetails.orderType === "Limit" && tradeDetails.limitPrice) ? tradeDetails.limitPrice : (stockInfo?.price || 0),
+      tradeModeOrigin: tradeDetails.tradeModeOrigin || 'manual',
+      accountId: tradeDetails.accountId || selectedAccountId,
+    });
+    if (tradeDetails.action === 'Buy' || tradeDetails.action === 'Short') {
+        addOpenPosition({
+            symbol: tradeDetails.symbol,
+            entryPrice: stockInfo?.price || 0,
+            shares: tradeDetails.quantity,
+            origin: tradeDetails.tradeModeOrigin || 'manual',
+            accountId: tradeDetails.accountId || selectedAccountId,
+            side: tradeDetails.action === 'Buy' ? 'Long' : 'Short',
+        });
+    }
+  };
   
   const WIDGET_COMPONENTS: Record<WidgetKey, Widget> = useMemo(() => ({
       chart: { id: 'chart', label: 'Chart', component: <InteractiveChartCardV2 stock={stockForSyncedComps} onManualTickerSubmit={handleSyncedTickerChange} /> },
@@ -367,7 +403,7 @@ function TradingDashboardPageContentV2() {
                                                       </PopoverContent>
                                                    </Popover>
                                                    <CardMenu
-                                                        showAddWidget={false}
+                                                        showAddWidget={!isOrder}
                                                         onCustomize={() => toast({ title: `Customize ${widgetsInGroup[0]}`})}
                                                         onDelete={() => handleDeleteWidget(groupId)}
                                                         onAddWidget={() => {}}
@@ -416,7 +452,7 @@ function TradingDashboardPageContentV2() {
                                                       </PopoverContent>
                                                    </Popover>
                                                     <CardMenu
-                                                        showAddWidget={false}
+                                                        showAddWidget={!isOrder}
                                                         onCustomize={() => toast({ title: `Customize widgets...` })}
                                                         onDelete={() => handleDeleteWidget(groupId)}
                                                         onAddWidget={() => {}}
@@ -448,3 +484,5 @@ export default function TradingDashboardPage() {
     </Suspense>
   );
 }
+
+    
