@@ -374,8 +374,7 @@ function TradingDashboardPageContentV2() {
     return allPossibleWidgets.filter(widget => 
       !allVisibleWidgets.includes(widget.id) &&
       !currentGroupWidgets.includes(widget.id) &&
-      widget.id !== 'chart' &&
-      widget.id !== 'order'
+      widget.id !== 'chart'
     );
   }, [popoverState.groupKey, widgetGroups]);
 
@@ -424,11 +423,12 @@ function TradingDashboardPageContentV2() {
                        
                        const isChart = groupKey === 'chart';
                        const isOrder = groupKey === 'order';
-                       const isProtected = isChart || isOrder;
+                       const isProtectedForMerging = isChart || isOrder; // Can't merge with chart or order card
+                       const isProtectedForAdding = isChart; // Can't add widgets to chart card
 
                        return (
                            <div key={groupKey} id={groupKey} className="overflow-hidden">
-                                <DraggableCard isOver={dropTarget === groupKey && !isChart} isActive={draggedWidgetKey === groupKey}>
+                                <DraggableCard isOver={dropTarget === groupKey && !isProtectedForMerging} isActive={draggedWidgetKey === groupKey}>
                                     {widgetIds.length > 1 ? (
                                         <>
                                             <div className="flex items-center border-b border-white/10 px-2 drag-handle cursor-move">
@@ -447,39 +447,43 @@ function TradingDashboardPageContentV2() {
                                                 <Button variant="link" className="ml-auto text-destructive text-xs h-auto py-0 px-2" onClick={() => uncombineGroup(groupKey)}>Separate</Button>
                                                 <div className="no-drag ml-2">
                                                     <CardMenu
-                                                        showAddWidget={!isProtected}
+                                                        showAddWidget={!isProtectedForAdding}
                                                         onAddWidget={() => setPopoverState({ open: true, groupKey })}
                                                         onCustomize={() => toast({ title: `Customize ${activeWidget.label}`})}
                                                         onDelete={() => handleDeleteWidget(groupKey, activeWidgetId)}
                                                     />
                                                 </div>
                                             </div>
-                                            <div className="flex-1 overflow-hidden">
+                                            <div className="flex-1 overflow-auto">
                                                 {activeWidget.component}
                                             </div>
                                         </>
                                     ) : (
                                         <>
-                                            {!isChart && (
-                                                <CardHeader className={cn("p-3 flex-row items-center justify-between border-b border-white/10", {'drag-handle cursor-move': !isProtected, 'no-drag': isProtected})}>
+                                            {isChart ? (
+                                                <div className="flex-1 overflow-hidden h-full">
+                                                  {activeWidget.component}
+                                                </div>
+                                            ) : (
+                                              <>
+                                                <CardHeader className="p-3 border-b border-white/10 drag-handle cursor-move">
                                                     <CardTitle className="text-sm font-semibold text-muted-foreground">
                                                         {activeWidget.label}
                                                     </CardTitle>
                                                     <div className="ml-auto no-drag">
                                                         <CardMenu
-                                                            showAddWidget={!isProtected}
-                                                            showCustomize={!isProtected}
+                                                            showAddWidget={!isProtectedForAdding}
                                                             onAddWidget={() => setPopoverState({ open: true, groupKey })}
                                                             onCustomize={() => toast({ title: `Customize ${activeWidget.label}`})}
                                                             onDelete={() => handleDeleteWidget(groupKey, activeWidgetId)}
                                                         />
                                                     </div>
                                                 </CardHeader>
+                                                <div className="flex-1 overflow-auto h-full">
+                                                    {activeWidget.component}
+                                                </div>
+                                              </>
                                             )}
-                                           
-                                            <div className="flex-1 overflow-hidden h-full">
-                                                {activeWidget.component}
-                                            </div>
                                         </>
                                     )}
                                </DraggableCard>
