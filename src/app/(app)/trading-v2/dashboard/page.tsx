@@ -1,7 +1,6 @@
-
 "use client";
 
-import React, { useState, useMemo, Suspense, useCallback, useEffect } from 'react';
+import React, { useState, useMemo, Suspense, useCallback, useEffect, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
 import type { Stock, TradeRequest, OrderActionType, TradeMode, OrderSystemType, NewsArticle, WidgetKey } from "@/types";
 import { useToast } from "@/hooks/use-toast";
@@ -29,7 +28,7 @@ import { GhostTradingTopBar } from '@/components/v2/GhostTradingTopBar';
 import { CardMenu } from '@/components/v2/CardMenu';
 import { SplashScreen } from '@/components/v2/SplashScreen';
 import { FundamentalsCardV2 } from '@/components/v2/FundamentalsCardV2';
-import { X } from 'lucide-react';
+import { X, LogOut } from 'lucide-react';
 
 interface Widget {
     id: WidgetKey;
@@ -47,22 +46,16 @@ const DraggableCard = ({ children, className }: { children: React.ReactNode, cla
 const initialLayouts: ReactGridLayout.Layout[] = [
     { i: 'chart', x: 0, y: 0, w: 9, h: 10, minW: 6, minH: 8, isResizable: true },
     { i: 'order', x: 9, y: 0, w: 3, h: 10, minW: 3, minH: 10, isResizable: true },
-    { i: 'positions', x: 0, y: 10, w: 4, h: 8, minW: 3, minH: 6, isResizable: true },
-    { i: 'orders', x: 4, y: 10, w: 4, h: 8, minW: 3, minH: 6, isResizable: true },
-    { i: 'history', x: 8, y: 10, w: 4, h: 8, minW: 3, minH: 6, isResizable: true },
-    { i: 'watchlist', x: 0, y: 18, w: 4, h: 8, minW: 2, minH: 6, isResizable: true },
-    { i: 'screeners', x: 4, y: 18, w: 4, h: 8, minW: 2, minH: 6, isResizable: true },
-    { i: 'news', x: 8, y: 18, w: 4, h: 8, minW: 2, minH: 6, isResizable: true },
+    { i: 'positions', x: 0, y: 10, w: 12, h: 8, minW: 3, minH: 6, isResizable: true },
+    { i: 'watchlist', x: 0, y: 18, w: 6, h: 8, minW: 2, minH: 6, isResizable: true },
+    { i: 'news', x: 6, y: 18, w: 6, h: 8, minW: 2, minH: 6, isResizable: true },
 ];
 
 const initialWidgetGroups: Record<string, WidgetKey[]> = {
     'chart': ['chart'],
     'order': ['order'],
-    'positions': ['positions'],
-    'orders': ['orders'],
-    'history': ['history'],
-    'watchlist': ['watchlist'],
-    'screeners': ['screeners'],
+    'positions': ['positions', 'orders', 'history'],
+    'watchlist': ['watchlist', 'screeners'],
     'news': ['news'],
 };
 
@@ -278,28 +271,28 @@ function TradingDashboardPageContentV2() {
   }
 
   const handleDeleteWidget = useCallback((groupId: string) => {
+    setLayouts(prev => prev.filter(l => l.i !== groupId));
     setWidgetGroups(prev => {
       const newGroups = {...prev};
       delete newGroups[groupId];
       return newGroups;
     });
-    setLayouts(prev => prev.filter(l => l.i !== groupId));
     toast({ title: `Card removed from layout.` });
   }, []);
 
-  const handleSeparateWidget = useCallback((groupId: string, widgetKey: WidgetKey) => {
+  const handleSeparateWidget = useCallback((groupId: string, widgetKey: WidgetKey, newTabToFocus?: string) => {
     setWidgetGroups(prev => {
         const newGroups = { ...prev };
         const group = newGroups[groupId] || [];
         const newGroup = group.filter(wk => wk !== widgetKey);
         
         if (newGroup.length === 0) {
-            // If the group is empty, remove the card layout as well
-            delete newGroups[groupId];
             setLayouts(layouts => layouts.filter(l => l.i !== groupId));
+            delete newGroups[groupId];
         } else {
             newGroups[groupId] = newGroup;
         }
+
         toast({ title: `Widget "${WIDGET_COMPONENTS[widgetKey].label}" removed.` });
         return newGroups;
     });
@@ -347,6 +340,17 @@ function TradingDashboardPageContentV2() {
                        const isChart = groupId === 'chart';
                        const isOrder = groupId === 'order';
 
+                       const [activeTab, setActiveTab] = useState(widgetsInGroup[0]);
+
+                        const handleSeparateClick = () => {
+                            if (widgetsInGroup.length > 1) {
+                                const newActiveTab = widgetsInGroup.find(w => w !== activeTab);
+                                handleSeparateWidget(groupId, activeTab, newActiveTab);
+                                if(newActiveTab) setActiveTab(newActiveTab);
+                            }
+                        };
+
+
                        return (
                            <div key={groupId} className="overflow-hidden">
                                 <DraggableCard>
@@ -355,14 +359,15 @@ function TradingDashboardPageContentV2() {
                                     ) : widgetsInGroup.length === 1 ? (
                                         <>
                                             <CardHeader className="py-1 px-3 border-b border-white/10 drag-handle cursor-move h-8 flex-row items-center">
-                                                <CardTitle className="text-sm font-semibold text-muted-foreground">
+                                                <CardTitle className="text-xs font-semibold text-muted-foreground">
                                                     {WIDGET_COMPONENTS[widgetsInGroup[0]].label}
                                                 </CardTitle>
                                                 <div className="ml-auto no-drag">
                                                    <CardMenu
-                                                        showAddWidget={!isOrder}
+                                                        showAddWidget={true}
                                                         onAddWidget={() => {
-                                                            const newWidgetKey = prompt("Enter widget key to add (e.g., news, history):") as WidgetKey | null;
+                                                            // For now, we'll use a simple prompt. This could be a popover.
+                                                            const newWidgetKey = prompt(`Enter widget key to add to this group: (e.g., ${Object.keys(WIDGET_COMPONENTS).join(', ')})`) as WidgetKey | null;
                                                             if (newWidgetKey && WIDGET_COMPONENTS[newWidgetKey]) {
                                                                 addWidgetToGroup(groupId, newWidgetKey);
                                                             } else if (newWidgetKey) {
@@ -379,30 +384,23 @@ function TradingDashboardPageContentV2() {
                                             </CardContent>
                                         </>
                                     ) : (
-                                       <Tabs defaultValue={widgetsInGroup[0]} className="flex flex-col h-full">
+                                       <Tabs value={activeTab} onValueChange={setActiveTab} className="flex flex-col h-full">
                                             <CardHeader className="p-0 border-b border-white/10 drag-handle cursor-move h-8 flex-row items-center">
                                                 <TabsList className="h-8 p-0 bg-transparent border-none gap-1 px-2">
                                                     {widgetsInGroup.map(widgetKey => (
                                                         <TabsTrigger key={widgetKey} value={widgetKey} className="h-6 text-xs px-2 py-1 rounded-md relative group/tab">
                                                             {WIDGET_COMPONENTS[widgetKey].label}
-                                                            <button 
-                                                              onClick={(e) => {
-                                                                  e.stopPropagation();
-                                                                  handleSeparateWidget(groupId, widgetKey);
-                                                              }}
-                                                              className="absolute -top-1 -right-1 p-0.5 bg-destructive rounded-full text-destructive-foreground opacity-0 group-hover/tab:opacity-100 transition-opacity"
-                                                              aria-label={`Separate ${WIDGET_COMPONENTS[widgetKey].label}`}
-                                                            >
-                                                              <X size={10} />
-                                                            </button>
                                                         </TabsTrigger>
                                                     ))}
                                                 </TabsList>
-                                                <div className="ml-auto no-drag pr-2">
+                                                <div className="ml-auto flex items-center gap-2 no-drag pr-2">
+                                                     <Button variant="ghost" size="sm" className="h-6 text-xs text-destructive hover:text-destructive hover:bg-destructive/10" onClick={handleSeparateClick}>
+                                                        <LogOut size={14} className="mr-1"/> Separate
+                                                    </Button>
                                                     <CardMenu
-                                                        showAddWidget={!isOrder}
+                                                        showAddWidget={true}
                                                         onAddWidget={() => {
-                                                            const newWidgetKey = prompt("Enter widget key to add (e.g., news, history):") as WidgetKey | null;
+                                                           const newWidgetKey = prompt(`Enter widget key to add to this group: (e.g., ${Object.keys(WIDGET_COMPONENTS).join(', ')})`) as WidgetKey | null;
                                                             if (newWidgetKey && WIDGET_COMPONENTS[newWidgetKey]) {
                                                                 addWidgetToGroup(groupId, newWidgetKey);
                                                             } else if (newWidgetKey) {
@@ -421,7 +419,7 @@ function TradingDashboardPageContentV2() {
                                             ))}
                                        </Tabs>
                                     )}
-                               </DraggableCard>
+                                </DraggableCard>
                            </div>
                        )
                   })}
