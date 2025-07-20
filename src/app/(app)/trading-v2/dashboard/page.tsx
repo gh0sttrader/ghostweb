@@ -151,14 +151,17 @@ function TradingDashboardPageContentV2() {
   }, []);
 
   const handleLayoutChange = useCallback((newLayout: ReactGridLayout.Layout[]) => {
-      if (newLayout.length === 0) return;
-      setLayouts(newLayout);
-  }, []);
+      if (isMounted && newLayout.length > 0) {
+        setLayouts(newLayout);
+      }
+  }, [isMounted]);
   
   const onLayoutChange = useCallback((config: { layouts: ReactGridLayout.Layout[], widgetGroups: Record<string, WidgetKey[]> }) => {
-      setLayouts(config.layouts);
-      setWidgetGroups(config.widgetGroups);
-  }, []);
+      if (isMounted) {
+        setLayouts(config.layouts);
+        setWidgetGroups(config.widgetGroups);
+      }
+  }, [isMounted]);
 
 
   useEffect(() => {
@@ -410,12 +413,12 @@ function TradingDashboardPageContentV2() {
                                                         <TabsTrigger key={widgetKey} value={widgetKey} className="h-6 text-sm px-2 py-1 rounded-md relative group/tab">
                                                             {WIDGET_COMPONENTS[widgetKey].label}
                                                              {widgetsInGroup.length > 1 && (
-                                                                <button
+                                                                <div
                                                                     onClick={(e) => { e.stopPropagation(); handleSeparateClick(widgetKey); }}
-                                                                    className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-destructive text-destructive-foreground opacity-0 group-hover/tab:opacity-100 flex items-center justify-center transition-opacity"
+                                                                    className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-destructive text-destructive-foreground opacity-0 group-hover/tab:opacity-100 flex items-center justify-center transition-opacity cursor-pointer"
                                                                 >
                                                                     <X size={10} />
-                                                                </button>
+                                                                </div>
                                                             )}
                                                         </TabsTrigger>
                                                     ))}
