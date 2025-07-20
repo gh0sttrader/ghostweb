@@ -224,7 +224,7 @@ function TradingDashboardPageContentV2() {
 
   const WIDGET_COMPONENTS: Record<WidgetKey, Widget> = {
     chart: { id: 'chart', label: 'Chart', component: <InteractiveChartCardV2 stock={stockForSyncedComps} onManualTickerSubmit={handleSyncedTickerChange} /> },
-    order: { id: 'order', label: 'Trade', component: <OrderCardV2 selectedStock={stockForSyncedComps} initialActionType={orderCardActionType} initialTradeMode={orderCardInitialTradeMode} miloActionContextText={orderCardMiloActionContext} onSubmit={handleTradeSubmit} onClear={handleClearOrderCard} initialQuantity={orderCardInitialQuantity} initialOrderType={orderCardInitialOrderType} initialLimitPrice={orderCardInitialLimitPrice} className="h-full" />, isProtected: true },
+    order: { id: 'order', label: 'Trade', component: <OrderCardV2 selectedStock={stockForSyncedComps} initialActionType={orderCardActionType} initialTradeMode={orderCardInitialTradeMode} miloActionContextText={orderCardMiloActionContext} onSubmit={handleTradeSubmit} onClear={handleClearOrderCard} initialQuantity={orderCardInitialQuantity} initialOrderType={orderCardInitialOrderType} initialLimitPrice={orderCardInitialLimitPrice} className="h-full" /> },
     positions: { id: 'positions', label: 'Positions', component: <OpenPositionsCardV2 className="h-full border-0 shadow-none rounded-none bg-transparent" /> },
     orders: { id: 'orders', label: 'Open Orders', component: <OrdersTableV2 className="h-full border-0 shadow-none rounded-none bg-transparent" /> },
     history: { id: 'history', label: 'History', component: <TradeHistoryTableV2 className="h-full border-0 shadow-none rounded-none bg-transparent" syncedTickerSymbol={syncedTickerSymbol} /> },
@@ -238,8 +238,9 @@ function TradingDashboardPageContentV2() {
     toast({ title: `Adding ${widgetKey} is not implemented yet.` });
   }
 
-  const handleDeleteWidget = useCallback((widgetId: WidgetKey) => {
-    const widgetLabel = WIDGET_COMPONENTS[widgetId]?.label || 'Widget';
+  const handleDeleteWidget = useCallback((widgetId: string) => {
+    const widgetKey = widgetId as WidgetKey;
+    const widgetLabel = WIDGET_COMPONENTS[widgetKey]?.label || 'Widget';
     setLayouts(prev => prev.filter(l => l.i !== widgetId));
     toast({
         title: `${widgetLabel} Removed`,
@@ -288,8 +289,7 @@ function TradingDashboardPageContentV2() {
                        if (!widget) return null;
                        
                        const isChart = widget.id === 'chart';
-                       const isProtected = widget.id === 'order' || widget.id === 'chart';
-
+                       const isOrder = widget.id === 'order';
 
                        return (
                            <div key={widgetKey} className="overflow-hidden">
@@ -306,14 +306,14 @@ function TradingDashboardPageContentV2() {
                                                 </CardTitle>
                                                 <div className="ml-auto no-drag">
                                                    <CardMenu
-                                                        showAddWidget={!isProtected}
-                                                        onAddWidget={() => { /* Add logic */ }}
+                                                        showAddWidget={isOrder}
+                                                        onAddWidget={() => toast({ title: `Add to ${widget.label}`})}
                                                         onCustomize={() => toast({ title: `Customize ${widget.label}`})}
                                                         onDelete={() => handleDeleteWidget(widgetKey)}
                                                     />
                                                 </div>
                                             </CardHeader>
-                                            <CardContent className={cn("flex-1 overflow-auto h-full", widget.id === 'order' && "p-0")}>
+                                            <CardContent className={cn("flex-1 overflow-auto h-full p-3")}>
                                               {widget.component}
                                             </CardContent>
                                         </>
