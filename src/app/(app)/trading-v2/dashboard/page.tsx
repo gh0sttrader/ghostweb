@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useMemo, Suspense, useCallback, useEffect } from 'react';
+import React, { useState, useMemo, Suspense, useCallback, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import type { Stock, TradeRequest, OrderActionType, TradeMode, OrderSystemType, NewsArticle } from "@/types";
 import { useToast } from "@/hooks/use-toast";
@@ -358,7 +358,7 @@ function TradingDashboardPageContentV2() {
   const WIDGET_COMPONENTS: Record<WidgetKey, Widget> = {
     chart: { id: 'chart', label: 'Chart', component: <InteractiveChartCardV2 stock={stockForSyncedComps} onManualTickerSubmit={handleSyncedTickerChange} />, layout: initialLayouts.chart },
     order: { id: 'order', label: 'Trade', component: <OrderCardV2 selectedStock={stockForSyncedComps} initialActionType={orderCardActionType} initialTradeMode={orderCardInitialTradeMode} miloActionContextText={orderCardMiloActionContext} onSubmit={handleTradeSubmit} onClear={handleClearOrderCard} initialQuantity={orderCardInitialQuantity} initialOrderType={orderCardInitialOrderType} initialLimitPrice={orderCardInitialLimitPrice} className="h-full" />, layout: initialLayouts.order },
-    positions: { id: 'positions', label: 'Positive', component: <OpenPositionsCardV2 className="h-full border-0 shadow-none rounded-none bg-transparent" />, layout: initialLayouts.positions },
+    positions: { id: 'positions', label: 'Positions', component: <OpenPositionsCardV2 className="h-full border-0 shadow-none rounded-none bg-transparent" />, layout: initialLayouts.positions },
     orders: { id: 'orders', label: 'Open Orders', component: <OrdersTableV2 className="h-full border-0 shadow-none rounded-none bg-transparent" />, layout: initialLayouts.orders },
     history: { id: 'history', label: 'History', component: <TradeHistoryTableV2 className="h-full border-0 shadow-none rounded-none bg-transparent" syncedTickerSymbol={syncedTickerSymbol} />, layout: initialLayouts.history },
     watchlist: { id: 'watchlist', label: 'Watchlist', component: <WatchlistCardV2 className="h-full border-0 shadow-none rounded-none bg-transparent" onSymbolSelect={handleSyncedTickerChange} selectedSymbol={syncedTickerSymbol} />, layout: initialLayouts.watchlist },
@@ -460,13 +460,13 @@ function TradingDashboardPageContentV2() {
                                         </>
                                     ) : (
                                         <>
-                                            <CardHeader className={cn("p-3 flex-row items-center justify-between", {'drag-handle cursor-move': !isProtected, 'no-drag': isProtected})}>
+                                            <CardHeader className={cn("p-3 flex-row items-center justify-between", {'drag-handle cursor-move': !isProtected, 'no-drag': isProtected}, !isChart && 'border-b border-white/10')}>
                                                 
-                                                {activeWidget.id !== 'chart' ? (
+                                                {isChart ? null : (
                                                     <CardTitle className="text-sm font-semibold text-muted-foreground">{activeWidget.label}</CardTitle>
-                                                ) : <div />}
+                                                )}
                                                 
-                                                <div className="ml-auto no-drag">
+                                                <div className={cn("ml-auto no-drag", isChart && "w-full flex justify-end")}>
                                                     <CardMenu
                                                         showAddWidget={!isProtected}
                                                         showCustomize={!isProtected}

@@ -17,6 +17,7 @@ import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from '@/comp
 import { TradingFeaturesBadges } from '../TradingFeaturesBadges';
 import { CardMenu } from './CardMenu';
 import { useToast } from '@/hooks/use-toast';
+import { FundamentalsCardV2 } from './FundamentalsCardV2';
 
 interface OrderCardProps {
     selectedStock: Stock | null;
@@ -226,6 +227,9 @@ export const OrderCardV2: React.FC<OrderCardProps> = ({
     return (
         <Card className={cn("h-full flex flex-col bg-transparent border-none", className)}>
             <CardContent className="flex-1 flex flex-col p-3 space-y-3 overflow-y-auto">
+                
+                <FundamentalsCardV2 stock={selectedStock} className="!border-0 !p-0 !bg-transparent !shadow-none" />
+                
                 <div className="grid grid-cols-3 gap-2 no-drag">
                     {(['Buy', 'Sell', 'Short'] as OrderActionType[]).map((act) => {
                         const config = actionConfig[act];
@@ -234,7 +238,7 @@ export const OrderCardV2: React.FC<OrderCardProps> = ({
                                 key={act}
                                 variant="outline"
                                 className={cn(
-                                    "rounded-md h-9 transition-all duration-200 border-2 font-bold uppercase",
+                                    "rounded-md h-9 transition-all duration-200 border-2 font-bold",
                                     action === act 
                                         ? config.selectedClassName 
                                         : "bg-transparent border-white/50 text-white/80 hover:bg-white/5 hover:border-white/70 hover:text-white"
