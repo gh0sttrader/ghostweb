@@ -263,24 +263,24 @@ function TradingDashboardPageContentV2() {
   const [widgetToAdd, setWidgetToAdd] = useState<WidgetKey | null>(null);
 
   const addWidgetAsNewCard = (widgetKey: WidgetKey) => {
+    const allWidgets = Object.values(widgetGroups).flat();
+    if (allWidgets.includes(widgetKey)) {
+        toast({ title: `Widget "${WIDGET_COMPONENTS[widgetKey].label}" is already on the dashboard.` });
+        return;
+    }
     setWidgetToAdd(widgetKey);
   };
   
   useEffect(() => {
     if (widgetToAdd) {
-      const allWidgets = Object.values(widgetGroups).flat();
-      if (allWidgets.includes(widgetToAdd)) {
-        toast({ title: `Widget "${WIDGET_COMPONENTS[widgetToAdd].label}" is already on the dashboard.` });
-      } else {
         const newCardId = uuidv4();
         const newLayoutItem: ReactGridLayout.Layout = { i: newCardId, x: 0, y: Infinity, w: 4, h: 8, minW: 2, minH: 6 };
         setLayouts(prev => [...prev, newLayoutItem]);
         setWidgetGroups(prev => ({ ...prev, [newCardId]: [widgetToAdd] }));
         toast({ title: "Widget added as a new card." });
-      }
-      setWidgetToAdd(null); // Reset after handling
+        setWidgetToAdd(null); // Reset after handling
     }
-  }, [widgetToAdd, widgetGroups, toast, WIDGET_COMPONENTS]);
+  }, [widgetToAdd]);
 
 
   const handleDeleteWidget = useCallback((groupId: string) => {
@@ -418,7 +418,7 @@ function TradingDashboardPageContentV2() {
                                                     />
                                                 </div>
                                             </CardHeader>
-                                            <CardContent className={cn("flex-1 overflow-auto h-full p-3")}>
+                                            <CardContent className={cn("flex-1 overflow-y-auto h-full p-3")}>
                                               {WIDGET_COMPONENTS[widgetsInGroup[0]].component}
                                             </CardContent>
                                         </>
@@ -468,7 +468,7 @@ function TradingDashboardPageContentV2() {
                                                 </div>
                                             </CardHeader>
                                             {widgetsInGroup.map(widgetKey => (
-                                                <TabsContent key={widgetKey} value={widgetKey} className="flex-1 overflow-auto h-full p-3 mt-0">
+                                                <TabsContent key={widgetKey} value={widgetKey} className="flex-1 overflow-y-auto h-full p-3 mt-0">
                                                     {WIDGET_COMPONENTS[widgetKey].component}
                                                 </TabsContent>
                                             ))}
