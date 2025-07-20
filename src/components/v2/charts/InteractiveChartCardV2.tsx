@@ -276,7 +276,7 @@ export function InteractiveChartCardV2({ stock, onManualTickerSubmit, className,
 
   return (
     <Card className={cn("shadow-none flex flex-col border-none bg-transparent relative", className)}>
-      <CardHeader className="p-3 flex-row items-center justify-between no-drag">
+      <div className="flex items-center justify-between p-3 no-drag">
         <div className="flex items-baseline gap-x-2.5 gap-y-1 flex-wrap flex-1 min-w-0">
             {variant === 'trading' && stock && stock.price > 0 ? (
                 <>
@@ -291,38 +291,22 @@ export function InteractiveChartCardV2({ stock, onManualTickerSubmit, className,
                         <span className="ml-1">({stock.changePercent >= 0 ? '+' : ''}{stock.changePercent.toFixed(2)}%)</span>
                     </p>
                 </>
-            ) : (
-                <CardTitle className="text-sm font-semibold text-muted-foreground">
-                    Chart
-                </CardTitle>
-            )}
+            ) : null}
         </div>
-        <div className="ml-auto no-drag">
-          <CardMenu 
-              showAddWidget={false}
-              showCustomize={false}
-              onCustomize={() => toast({ title: `Customize Chart`})}
-              onDelete={() => toast({ title: `Delete Chart`})}
-              onAddWidget={() => {}}
-          />
+        <div className="flex items-center gap-1 w-full sm:w-auto ml-auto">
+            <Input
+            ref={inputRef}
+            type="text"
+            placeholder="Symbol"
+            value={manualTickerInput}
+            onChange={(e) => setManualTickerInput(e.target.value.toUpperCase())}
+            onKeyDown={(e) => e.key === 'Enter' && handleManualSubmit()}
+            className="h-7 text-xs flex-1 sm:flex-initial sm:w-28 bg-transparent"
+            />
+            <Button variant="ghost" size="icon" onClick={handleManualSubmit} className="h-7 w-7 text-foreground hover:bg-white/10">
+            <Search className="h-3.5 w-3.5" />
+            </Button>
         </div>
-      </CardHeader>
-      
-      <div className="px-3 pb-1 no-drag">
-         <div className="flex items-center gap-1 w-full sm:w-auto">
-              <Input
-                ref={inputRef}
-                type="text"
-                placeholder="Symbol"
-                value={manualTickerInput}
-                onChange={(e) => setManualTickerInput(e.target.value.toUpperCase())}
-                onKeyDown={(e) => e.key === 'Enter' && handleManualSubmit()}
-                className="h-7 text-xs flex-1 sm:flex-initial sm:w-28 bg-transparent"
-              />
-              <Button variant="ghost" size="icon" onClick={handleManualSubmit} className="h-7 w-7 text-foreground hover:bg-white/10">
-                <Search className="h-3.5 w-3.5" />
-              </Button>
-            </div>
       </div>
       
       <CardContent className="relative flex-1 p-1 pr-2 min-h-[250px]">

@@ -428,7 +428,7 @@ function TradingDashboardPageContentV2() {
 
                        return (
                            <div key={groupKey} id={groupKey} className="overflow-hidden">
-                                <DraggableCard isOver={dropTarget === groupKey} isActive={draggedWidgetKey === groupKey}>
+                                <DraggableCard isOver={dropTarget === groupKey && !isChart} isActive={draggedWidgetKey === groupKey}>
                                     {widgetIds.length > 1 ? (
                                         <>
                                             <div className="flex items-center border-b border-white/10 px-2 drag-handle cursor-move">
@@ -460,34 +460,22 @@ function TradingDashboardPageContentV2() {
                                         </>
                                     ) : (
                                         <>
-                                            <CardHeader className={cn("p-3 flex-row items-center justify-between", {'drag-handle cursor-move': !isProtected, 'no-drag': isProtected, 'border-b border-white/10': !isChart})}>
-                                                
-                                                {!isChart && !isOrder && (
+                                            {!isChart && (
+                                                <CardHeader className={cn("p-3 flex-row items-center justify-between border-b border-white/10", {'drag-handle cursor-move': !isProtected, 'no-drag': isProtected})}>
                                                     <CardTitle className="text-sm font-semibold text-muted-foreground">
                                                         {activeWidget.label}
                                                     </CardTitle>
-                                                )}
-                                                
-                                                {isOrder && (
-                                                    <CardTitle className="text-sm font-semibold text-muted-foreground">
-                                                        Trade
-                                                    </CardTitle>
-                                                )}
-
-                                                {isChart && (
-                                                    <div className="flex-1" />
-                                                )}
-                                                
-                                                <div className={cn("ml-auto no-drag", isChart && "w-full flex justify-end")}>
-                                                    <CardMenu
-                                                        showAddWidget={!isProtected}
-                                                        showCustomize={!isProtected}
-                                                        onAddWidget={() => setPopoverState({ open: true, groupKey })}
-                                                        onCustomize={() => toast({ title: `Customize ${activeWidget.label}`})}
-                                                        onDelete={() => handleDeleteWidget(groupKey, activeWidgetId)}
-                                                    />
-                                                </div>
-                                            </CardHeader>
+                                                    <div className="ml-auto no-drag">
+                                                        <CardMenu
+                                                            showAddWidget={!isProtected}
+                                                            showCustomize={!isProtected}
+                                                            onAddWidget={() => setPopoverState({ open: true, groupKey })}
+                                                            onCustomize={() => toast({ title: `Customize ${activeWidget.label}`})}
+                                                            onDelete={() => handleDeleteWidget(groupKey, activeWidgetId)}
+                                                        />
+                                                    </div>
+                                                </CardHeader>
+                                            )}
                                            
                                             <div className="flex-1 overflow-hidden h-full">
                                                 {activeWidget.component}
