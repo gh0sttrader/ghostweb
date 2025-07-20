@@ -13,7 +13,7 @@ const ResponsiveGridLayout = WidthProvider(Responsive);
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 import { OrderCardV2 } from '@/components/v2/OrderCardV2';
-import { CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { InteractiveChartCardV2 } from '@/components/v2/charts/InteractiveChartCardV2';
 import { WatchlistCardV2 } from '@/components/v2/WatchlistCardV2';
 import { OpenPositionsCardV2 } from '@/components/v2/OpenPositionsCardV2';
@@ -26,6 +26,7 @@ import { ScreenerWatchlistV2 } from '@/components/v2/ScreenerWatchlistV2';
 import { GhostTradingTopBar } from '@/components/v2/GhostTradingTopBar';
 import { CardMenu } from '@/components/v2/CardMenu';
 import { SplashScreen } from '@/components/v2/SplashScreen';
+import { FundamentalsCardV2 } from '@/components/v2/FundamentalsCardV2';
 
 type WidgetKey = 'chart' | 'order' | 'positions' | 'orders' | 'history' | 'watchlist' | 'screeners' | 'news';
 
@@ -461,8 +462,20 @@ function TradingDashboardPageContentV2() {
                                         <>
                                             <CardHeader className={cn("p-3 flex-row items-center justify-between", {'drag-handle cursor-move': !isProtected, 'no-drag': isProtected, 'border-b border-white/10': !isChart})}>
                                                 
-                                                {!isChart && (
-                                                    <CardTitle className="text-sm font-semibold text-muted-foreground">{activeWidget.label}</CardTitle>
+                                                {!isChart && !isOrder && (
+                                                    <CardTitle className="text-sm font-semibold text-muted-foreground">
+                                                        {activeWidget.label}
+                                                    </CardTitle>
+                                                )}
+                                                
+                                                {isOrder && (
+                                                    <CardTitle className="text-sm font-semibold text-muted-foreground">
+                                                        Trade
+                                                    </CardTitle>
+                                                )}
+
+                                                {isChart && (
+                                                    <div className="flex-1" />
                                                 )}
                                                 
                                                 <div className={cn("ml-auto no-drag", isChart && "w-full flex justify-end")}>
