@@ -315,8 +315,8 @@ function TradingDashboardPageContentV2() {
       const sourceWidgets = widgetGroups[sourceGroupKey];
       const targetWidgets = widgetGroups[targetGroupKey];
       
-      const isTargetProtected = targetGroupKey === 'chart' || targetGroupKey === 'order';
-      const isSourceProtected = sourceGroupKey === 'chart' || sourceGroupKey === 'order';
+      const isTargetProtected = targetGroupKey === 'chart';
+      const isSourceProtected = sourceGroupKey === 'chart';
 
       if (sourceWidgets && targetWidgets && !isTargetProtected && !isSourceProtected) {
           const newWidgetGroups = { ...widgetGroups };
@@ -422,6 +422,7 @@ function TradingDashboardPageContentV2() {
                        const activeWidget = WIDGET_COMPONENTS[activeWidgetId];
                        
                        const isChart = groupKey === 'chart';
+                       const isOrder = groupKey === 'order';
                        const isProtectedForMerging = isChart;
                        const isProtectedForAdding = isChart;
 
@@ -430,13 +431,13 @@ function TradingDashboardPageContentV2() {
                                 <DraggableCard isOver={dropTarget === groupKey && !isProtectedForMerging} isActive={draggedWidgetKey === groupKey}>
                                     {widgetIds.length > 1 ? (
                                         <>
-                                            <div className="flex items-center border-b border-white/10 px-2 drag-handle cursor-move">
+                                            <div className="flex items-center border-b border-white/10 h-8 px-1.5 drag-handle cursor-move">
                                                 {widgetIds.map(widgetId => (
                                                     <button 
                                                         key={widgetId} 
                                                         className={cn(
-                                                            "px-3 py-1 text-xs font-medium border-b-2",
-                                                            activeWidgetId === widgetId ? "text-foreground border-white" : "text-muted-foreground border-transparent hover:text-foreground"
+                                                            "px-2 py-1 text-xs font-medium rounded-md",
+                                                            activeWidgetId === widgetId ? "text-foreground bg-white/10" : "text-muted-foreground hover:text-foreground"
                                                         )}
                                                         onClick={() => setActiveTabs(prev => ({...prev, [groupKey]: widgetId}))}
                                                     >
@@ -465,13 +466,13 @@ function TradingDashboardPageContentV2() {
                                                 </div>
                                             ) : (
                                               <>
-                                                <CardHeader className="py-1 px-3 border-b border-white/10 drag-handle cursor-move">
-                                                    <CardTitle className="text-xs font-semibold text-muted-foreground">
+                                                <CardHeader className="py-1 px-3 border-b border-white/10 drag-handle cursor-move h-8 flex-row items-center">
+                                                    <CardTitle className="text-sm font-semibold text-muted-foreground">
                                                         {activeWidget.label}
                                                     </CardTitle>
                                                     <div className="ml-auto no-drag">
                                                         <CardMenu
-                                                            showAddWidget={!isProtectedForAdding}
+                                                            showAddWidget={!isProtectedForAdding || isOrder}
                                                             onAddWidget={() => setPopoverState({ open: true, groupKey })}
                                                             onCustomize={() => toast({ title: `Customize ${activeWidget.label}`})}
                                                             onDelete={() => handleDeleteWidget(groupKey, activeWidgetId)}
