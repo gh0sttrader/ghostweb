@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import type { Stock } from '@/types';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, AreaChart as RechartsAreaChart, Area, BarChart, Bar, Cell, Legend } from 'recharts';
 import type { TooltipProps } from 'recharts';
-import { AreaChart as AreaIcon, CandlestickChart, Activity, Search, Loader2, Calendar, LineChart as LineChartIcon, Palette, Plus, X as XIcon } from 'lucide-react';
+import { AreaChart as AreaIcon, CandlestickChart, Activity, Search, Loader2, Calendar, LineChart as LineChartIcon, Palette, Plus, X as XIcon, Info } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { getChartData } from '@/ai/flows/get-chart-data-flow';
 import { sub, formatISO, format } from 'date-fns';
@@ -77,6 +77,8 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
   const [error, setError] = useState<string | null>(null);
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
   const [chartColor, setChartColor] = useState<string>('#e6e6e6');
+  const [benchmarkInput, setBenchmarkInput] = useState('');
+
 
   const colorOptions = [
       { color: '#5721aa', label: 'Purple' },
@@ -261,8 +263,33 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
 
   return (
     <Card className={cn("shadow-none flex flex-col border-none bg-transparent relative", className)}>
+       <div className="absolute top-3 right-4 z-20 flex items-center gap-2">
+            <Input
+                type="text"
+                value={benchmarkInput}
+                onChange={(e) => setBenchmarkInput(e.target.value.toUpperCase())}
+                className="bg-[#18181B] border border-neutral-700 rounded-md px-3 py-1 h-7 text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-primary w-48"
+                placeholder="Add benchmark (e.g. VOO)"
+            />
+            <Popover>
+                <PopoverTrigger asChild>
+                    <button
+                        className="w-5 h-5 flex items-center justify-center rounded-full bg-neutral-800 border border-neutral-700 text-white text-xs font-bold hover:bg-primary/50 transition-colors"
+                        aria-label="What is a benchmark?"
+                    >?</button>
+                </PopoverTrigger>
+                <PopoverContent className="w-64" side="bottom" align="end">
+                    <div className="space-y-2">
+                        <h4 className="font-bold text-sm">What’s a Benchmark?</h4>
+                        <p className="text-xs text-muted-foreground">
+                            A benchmark lets you compare your account’s performance to an index or security (e.g. S&P 500, VOO, etc). Add one to see how you stack up.
+                        </p>
+                    </div>
+                </PopoverContent>
+            </Popover>
+        </div>
        <CardHeader className="pb-2 pt-3 px-3">
-        <div className="flex flex-col sm:flex-row justify-between items-center gap-2">
+        <div className="flex flex-col sm:flex-row justify-between items-start gap-2">
           {variant === 'trading' && stock && stock.price > 0 ? (
             <div className="flex items-baseline gap-x-2.5 gap-y-1 flex-wrap flex-1 min-w-0">
               <h3 className="text-base font-bold text-neutral-50 truncate" title={stock.name}>
@@ -348,4 +375,3 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
     </Card>
   );
 }
-
