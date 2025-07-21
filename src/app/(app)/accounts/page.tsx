@@ -69,6 +69,17 @@ const mockAccounts: Account[] = [
     },
 ];
 
+const WATCHLIST = [
+  { symbol: "TSLA", name: "Tesla Inc.", price: "920.30", change: "+1.54%", volume: "24.2M" },
+  { symbol: "AAPL", name: "Apple Inc.", price: "170.34", change: "-0.85%", volume: "90.5M" },
+  { symbol: "AMZN", name: "Amazon.com", price: "183.63", change: "+0.50%", volume: "45.7M" },
+  { symbol: "GOOGL", name: "Alphabet Inc.", price: "140.22", change: "+1.10%", volume: "40.8M" },
+  { symbol: "MSFT", name: "Microsoft Corp.", price: "420.72", change: "-0.15%", volume: "60.2M" },
+  { symbol: "META", name: "Meta Platforms", price: "470.91", change: "+2.01%", volume: "22.1M" },
+  { symbol: "NVDA", name: "NVIDIA Corp.", price: "900.50", change: "+0.60%", volume: "75.3M" },
+];
+
+
 const accountToStock = (account: Account): Stock => ({
     id: account.id,
     symbol: account.name.toUpperCase().replace(' ', '_'),
@@ -314,6 +325,35 @@ const AccountSelector = ({ accounts, selected, onSelect }: { accounts: Account[]
     );
 };
 
+const WatchlistTable = () => (
+    <div className="overflow-x-auto rounded-2xl bg-card">
+        <Table>
+            <TableHeader>
+                <TableRow className="border-b border-white/10">
+                    <TableHead className="py-3 px-6 text-left font-bold">Symbol</TableHead>
+                    <TableHead className="py-3 px-6 text-left font-bold">Name</TableHead>
+                    <TableHead className="py-3 px-6 text-left font-bold">Price</TableHead>
+                    <TableHead className="py-3 px-6 text-left font-bold">% Change</TableHead>
+                    <TableHead className="py-3 px-6 text-right font-bold">Volume</TableHead>
+                </TableRow>
+            </TableHeader>
+            <TableBody>
+                {WATCHLIST.map((stock) => (
+                    <TableRow key={stock.symbol} className="transition-colors border-none hover:bg-white/5">
+                        <TableCell className="py-2 px-6 font-semibold">{stock.symbol}</TableCell>
+                        <TableCell className="py-2 px-6">{stock.name}</TableCell>
+                        <TableCell className="py-2 px-6">${stock.price}</TableCell>
+                        <TableCell className={cn("py-2 px-6", stock.change.startsWith('+') ? 'text-[hsl(var(--confirm-green))]' : 'text-destructive')}>
+                            {stock.change}
+                        </TableCell>
+                        <TableCell className="py-2 px-6 text-right">{stock.volume}</TableCell>
+                    </TableRow>
+                ))}
+            </TableBody>
+        </Table>
+    </div>
+);
+
 export default function AccountsPage() {
     const [selectedAccount, setSelectedAccount] = useState<Account>(mockAccounts[0]);
     const [headerValue, setHeaderValue] = useState<number>(mockAccounts[0].balance);
@@ -369,8 +409,8 @@ export default function AccountsPage() {
                     <HoldingsTable holdings={selectedAccount.holdings || []} />
                 </section>
                 <section className="w-full mt-10">
-                    <h2 className="text-white text-xl font-semibold mb-4">PERFORMANCE</h2>
-                    {/* Performance components will go here */}
+                    <h2 className="text-white text-xl font-semibold mb-4">Watchlist</h2>
+                    <WatchlistTable />
                 </section>
                 
                 <div className="h-12 flex-shrink-0" />
