@@ -273,7 +273,7 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
             <Popover>
                 <PopoverTrigger asChild>
                     <button
-                        className="w-5 h-5 flex items-center justify-center rounded-full bg-neutral-800 border border-neutral-700 text-white text-xs font-bold hover:bg-primary/50 transition-colors"
+                        className="w-5 h-5 flex items-center justify-center rounded-full bg-neutral-800 border border-neutral-700 text-white text-xs font-bold transition-colors"
                         aria-label="What is a benchmark?"
                     >?</button>
                 </PopoverTrigger>
@@ -374,4 +374,3 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
     </Card>
   );
 }
-
