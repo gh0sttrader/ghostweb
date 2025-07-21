@@ -273,7 +273,6 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
               cursor={{ stroke: 'hsl(var(--foreground))', strokeWidth: 1, strokeDasharray: '3 3' }}
               content={<CustomTooltip />}
             />
-             {benchmarkSymbol && <Legend verticalAlign="top" height={36} iconType="plainline" />}
             <Line type="monotone" dataKey="price" name={stock?.symbol || "Portfolio"} stroke={chartColor} strokeWidth={2} dot={false} />
             {benchmarkSymbol && <Line type="monotone" dataKey="benchmark" name={benchmarkSymbol} stroke="#FF3333" strokeWidth={2} dot={false} />}
           </LineChart>
@@ -303,7 +302,6 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
                     cursor={{ stroke: 'hsl(var(--foreground))', strokeWidth: 1, strokeDasharray: '3 3' }}
                     content={<CustomTooltip />}
                 />
-                 {benchmarkSymbol && <Legend verticalAlign="top" height={36} iconType="plainline"/>}
                 <Area type="monotone" dataKey="price" name={stock?.symbol || "Portfolio"} stroke={chartColor} strokeWidth={2} fillOpacity={1} fill={`url(#${uniqueId})`} dot={false} />
                 {benchmarkSymbol && <Area type="monotone" dataKey="benchmark" name={benchmarkSymbol} stroke="#FF3333" strokeWidth={2} fillOpacity={1} fill={`url(#${benchmarkUniqueId})`} dot={false} />}
             </RechartsAreaChart>
@@ -353,7 +351,7 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
                     value={benchmarkInput}
                     onChange={(e) => setBenchmarkInput(e.target.value.toUpperCase())}
                     onKeyDown={handleBenchmarkSubmit}
-                    className="bg-[#18181B] border border-neutral-700 rounded-md px-2 py-1 h-7 text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-primary w-20"
+                    className="bg-[#18181B] border border-neutral-700 rounded-md px-2 py-1 h-7 text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-primary w-20 text-center"
                 />
            )}
             <Popover>
