@@ -274,7 +274,7 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
               content={<CustomTooltip />}
             />
             <Line type="monotone" dataKey="price" name={stock?.symbol || "Portfolio"} stroke={chartColor} strokeWidth={2} dot={false} />
-            {benchmarkSymbol && <Line type="monotone" dataKey="benchmark" name={benchmarkSymbol} stroke="#FF3333" strokeWidth={2} dot={false} />}
+            {benchmarkSymbol && <Line type="monotone" dataKey="benchmark" name={benchmarkSymbol} stroke="#EF4444" strokeWidth={2} dot={false} />}
           </LineChart>
         </ResponsiveContainer>
       );
@@ -291,8 +291,8 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
                     </linearGradient>
                      {benchmarkSymbol && (
                       <linearGradient id={benchmarkUniqueId} x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="0%" stopColor="#FF3333" stopOpacity={0.2}/>
-                          <stop offset="100%" stopColor="#FF3333" stopOpacity={0.0}/>
+                          <stop offset="0%" stopColor="#EF4444" stopOpacity={0.2}/>
+                          <stop offset="100%" stopColor="#EF4444" stopOpacity={0.0}/>
                       </linearGradient>
                      )}
                 </defs>
@@ -303,7 +303,7 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
                     content={<CustomTooltip />}
                 />
                 <Area type="monotone" dataKey="price" name={stock?.symbol || "Portfolio"} stroke={chartColor} strokeWidth={2} fillOpacity={1} fill={`url(#${uniqueId})`} dot={false} />
-                {benchmarkSymbol && <Area type="monotone" dataKey="benchmark" name={benchmarkSymbol} stroke="#FF3333" strokeWidth={2} fillOpacity={1} fill={`url(#${benchmarkUniqueId})`} dot={false} />}
+                {benchmarkSymbol && <Area type="monotone" dataKey="benchmark" name={benchmarkSymbol} stroke="#EF4444" strokeWidth={2} fillOpacity={1} fill={`url(#${benchmarkUniqueId})`} dot={false} />}
             </RechartsAreaChart>
         </ResponsiveContainer>
       );
@@ -450,6 +450,51 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
         </div>
       </CardContent>
      
+      <CardFooter className="flex flex-wrap justify-start items-center gap-x-1 gap-y-2 pt-2 pb-2 px-3">
+        {['1D', '5D', '1M', '3M', '6M', 'YTD', '1Y', '5Y', 'All'].map((tf) => (
+          <Button
+            key={tf}
+            variant="ghost"
+            size="sm"
+            onClick={() => setTimeframe(tf as any)}
+            className={cn(
+              "h-8 text-base px-3 font-medium",
+              timeframe === tf
+                ? "text-foreground font-bold"
+                : "text-muted-foreground hover:text-foreground hover:bg-transparent"
+            )}
+          >
+            {tf}
+          </Button>
+        ))}
+        <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-transparent" onClick={() => setIsDatePickerOpen(true)}>
+          <Calendar className="h-5 w-5" />
+        </Button>
+        
+        <div className="w-px bg-border/20 h-6 self-center mx-1"></div>
+
+        {[
+          { type: 'line', label: 'Line', Icon: LineChartIcon },
+          { type: 'area', label: 'Area', Icon: AreaIcon },
+          { type: 'candle', label: 'Candle', Icon: CandlestickChart },
+        ].map(({ type, label, Icon }) => (
+          <Button
+            key={type}
+            variant="ghost"
+            size="sm"
+            onClick={() => setChartType(type as any)}
+            className={cn(
+              "h-8 text-base px-3 font-medium",
+              chartType === type
+                ? "text-foreground font-bold"
+                : "text-muted-foreground hover:text-foreground hover:bg-transparent"
+            )}
+          >
+            <Icon className="h-5 w-5 mr-1.5" />
+            {label}
+          </Button>
+        ))}
+      </CardFooter>
       <ChartDatePickerModal 
         isOpen={isDatePickerOpen}
         onClose={() => setIsDatePickerOpen(false)}
@@ -458,8 +503,3 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
     </Card>
   );
 }
-
-
-    
-
-    
