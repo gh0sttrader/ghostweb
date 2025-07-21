@@ -134,7 +134,7 @@ function TradingDashboardPageContentV2() {
     }
   }, [addOpenPosition, addTradeToHistory, selectedAccountId, stockForSyncedComps, toast]);
 
-  const WIDGET_COMPONENTS: Record<WidgetKey, Widget> = useMemo(() => ({
+    const WIDGET_COMPONENTS: Record<WidgetKey, Widget> = useMemo(() => ({
       chart: { id: 'chart', label: 'Chart', component: <InteractiveChartCardV2 stock={stockForSyncedComps} onManualTickerSubmit={handleSyncedTickerChange} /> },
       order: { id: 'order', label: 'Trade', component: <OrderCardV2 selectedStock={stockForSyncedComps} initialActionType={orderCardActionType} initialTradeMode={orderCardInitialTradeMode} miloActionContextText={orderCardMiloActionContext} onSubmit={handleTradeSubmit} onClear={handleClearOrderCard} initialQuantity={orderCardInitialQuantity} initialOrderType={orderCardInitialOrderType} initialLimitPrice={orderCardInitialLimitPrice} className="h-full" /> },
       positions: { id: 'positions', label: 'Positions', component: <OpenPositionsCardV2 className="h-full border-0 shadow-none rounded-none bg-transparent" /> },
@@ -283,7 +283,7 @@ function TradingDashboardPageContentV2() {
     toast({ title: `Card removed from layout.` });
   }, [toast]);
 
-  const handleSeparateWidget = useCallback((groupId: string, widgetKey: WidgetKey) => {
+  const handleRemoveWidgetFromGroup = useCallback((groupId: string, widgetKey: WidgetKey) => {
     setWidgetGroups(prev => {
         const newGroups = { ...prev };
         const group = newGroups[groupId] || [];
@@ -355,13 +355,7 @@ function TradingDashboardPageContentV2() {
                        const isOrder = groupId === 'order';
                        const activeTab = activeTabs[groupId] || widgetsInGroup[0];
 
-                        const handleSeparateClick = (widgetKey: WidgetKey) => {
-                            if (widgetsInGroup.length > 1) {
-                                handleSeparateWidget(groupId, widgetKey);
-                            }
-                        };
-
-                       return (
+                        return (
                            <div key={groupId} className="overflow-hidden">
                                 <DraggableCard>
                                     {isChart ? (
@@ -414,7 +408,7 @@ function TradingDashboardPageContentV2() {
                                                             {WIDGET_COMPONENTS[widgetKey].label}
                                                              {widgetsInGroup.length > 1 && (
                                                                 <div
-                                                                    onClick={(e) => { e.stopPropagation(); handleSeparateClick(widgetKey); }}
+                                                                    onClick={(e) => { e.stopPropagation(); handleRemoveWidgetFromGroup(groupId, widgetKey); }}
                                                                     className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-destructive text-destructive-foreground opacity-0 group-hover/tab:opacity-100 flex items-center justify-center transition-opacity cursor-pointer"
                                                                 >
                                                                     <X size={10} />
@@ -424,11 +418,6 @@ function TradingDashboardPageContentV2() {
                                                     ))}
                                                 </TabsList>
                                                 <div className="ml-auto flex items-center gap-1 no-drag pr-2">
-                                                    {widgetsInGroup.length > 1 && (
-                                                        <Button variant="ghost" size="sm" className="h-6 text-sm text-destructive hover:text-destructive hover:bg-destructive/10" onClick={() => handleSeparateClick(activeTab)}>
-                                                            <LogOut size={14} className="mr-1"/> Separate
-                                                        </Button>
-                                                    )}
                                                      <Popover>
                                                       <PopoverTrigger asChild>
                                                           <Button variant="ghost" className="h-6 w-6 p-0 text-muted-foreground hover:text-foreground">
