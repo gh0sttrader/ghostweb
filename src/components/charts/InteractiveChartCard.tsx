@@ -77,7 +77,7 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
   const [error, setError] = useState<string | null>(null);
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
   const [chartColor, setChartColor] = useState<string>('#e6e6e6');
-  const [benchmarkInput, setBenchmarkInput] = useState('');
+  const [benchmarkInput, setBenchmarkInput] = useState('VOO');
 
 
   const colorOptions = [
@@ -268,8 +268,7 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
                 type="text"
                 value={benchmarkInput}
                 onChange={(e) => setBenchmarkInput(e.target.value.toUpperCase())}
-                className="bg-[#18181B] border border-neutral-700 rounded-md px-3 py-1 h-7 text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-primary w-48"
-                placeholder="Add benchmark (e.g. VOO)"
+                className="bg-[#18181B] border border-neutral-700 rounded-md px-2 py-1 h-7 text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-primary w-20"
             />
             <Popover>
                 <PopoverTrigger asChild>
@@ -375,3 +374,4 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
     </Card>
   );
 }
+
