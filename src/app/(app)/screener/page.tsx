@@ -64,6 +64,7 @@ function ScreenerPageContent() {
   const [activeFilters, setActiveFilters] = useState<Partial<ActiveScreenerFilters>>({});
   const [isNewsModalOpen, setIsNewsModalOpen] = useState(false);
   const [newsModalContent, setNewsModalContent] = useState<{ articles: any[]; title: string } | null>(null);
+  const [showResetToast, setShowResetToast] = useState(false);
 
   const [visibleColumns, setVisibleColumns] = useState<Record<string, boolean>>(() => {
     const initialVisibility: Record<string, boolean> = {};
@@ -72,6 +73,13 @@ function ScreenerPageContent() {
     });
     return initialVisibility;
   });
+
+  useEffect(() => {
+    if (showResetToast) {
+      toast({ title: "Columns reset to default." });
+      setShowResetToast(false); // Reset the trigger
+    }
+  }, [showResetToast, toast]);
 
   const columnsToDisplay = useMemo(() => {
     return allColumnsConfig.filter(col => visibleColumns[col.key]);
@@ -90,7 +98,7 @@ function ScreenerPageContent() {
       defaultVisibility[col.key] = col.defaultVisible || false;
     });
     setVisibleColumns(defaultVisibility);
-    toast({ title: "Columns reset to default." });
+    setShowResetToast(true);
   };
 
 
