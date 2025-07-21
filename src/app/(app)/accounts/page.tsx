@@ -341,7 +341,7 @@ export default function AccountsPage() {
 
 
     return (
-        <main className="flex flex-col p-4 md:p-6 lg:p-8">
+        <main className="flex flex-col w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 md:py-6 lg:py-8">
             <div className="flex-shrink-0 h-[60vh] min-h-[500px] flex flex-col">
                 <AccountSummaryHeader
                     account={{ ...selectedAccount, balance: headerValue }}
