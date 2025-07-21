@@ -269,14 +269,14 @@ const HoldingsTable = ({ holdings }: { holdings: Holding[] }) => {
             <Table>
                 <TableHeader>
                     <TableRow className="border-b border-white/10">
-                        <TableHead className="py-3 px-6 text-left font-bold">Ticker</TableHead>
-                        <TableHead className="py-3 px-6 text-center font-bold">Day’s P&L %</TableHead>
-                        <TableHead className="py-3 px-6 text-center font-bold">Open P&L %</TableHead>
-                        <TableHead className="py-3 px-6 text-center font-bold">Unrealized Gain/Loss</TableHead>
-                        <TableHead className="py-3 px-6 text-center font-bold">Market Value</TableHead>
-                        <TableHead className="py-3 px-6 text-center font-bold">Average Price</TableHead>
-                        <TableHead className="py-3 px-6 text-center font-bold">Current Price</TableHead>
-                        <TableHead className="py-3 px-6 text-right font-bold">Shares</TableHead>
+                        <TableHead className="py-3 px-6 text-left font-bold text-sm whitespace-nowrap">Ticker</TableHead>
+                        <TableHead className="py-3 px-6 text-center font-bold text-sm whitespace-nowrap">Day’s P&L %</TableHead>
+                        <TableHead className="py-3 px-6 text-center font-bold text-sm whitespace-nowrap">Open P&L %</TableHead>
+                        <TableHead className="py-3 px-6 text-center font-bold text-sm whitespace-nowrap">Unrealized Gain/Loss</TableHead>
+                        <TableHead className="py-3 px-6 text-center font-bold text-sm whitespace-nowrap">Market Value</TableHead>
+                        <TableHead className="py-3 px-6 text-center font-bold text-sm whitespace-nowrap">Average Price</TableHead>
+                        <TableHead className="py-3 px-6 text-center font-bold text-sm whitespace-nowrap">Current Price</TableHead>
+                        <TableHead className="py-3 px-6 text-right font-bold text-sm whitespace-nowrap">Shares</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
