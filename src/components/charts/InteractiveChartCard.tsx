@@ -8,13 +8,14 @@ import { Input } from "@/components/ui/input";
 import type { Stock } from '@/types';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, AreaChart as RechartsAreaChart, Area, BarChart, Bar, Cell, Legend } from 'recharts';
 import type { TooltipProps } from 'recharts';
-import { AreaChart as AreaIcon, CandlestickChart, Activity, Search, Loader2, Calendar, LineChart as LineChartIcon, Palette, Plus, X as XIcon, Info } from 'lucide-react';
+import { AreaChart as AreaIcon, CandlestickChart, Activity, Search, Loader2, Calendar, LineChart as LineChartIcon, Palette, Plus, X as XIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { getChartData } from '@/ai/flows/get-chart-data-flow';
 import { sub, formatISO, format } from 'date-fns';
 import { ChartDatePickerModal } from './ChartDatePickerModal';
 import type { DateRange } from 'react-day-picker';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { useToast } from '@/hooks/use-toast';
 
 
 interface InteractiveChartCardProps {
@@ -27,11 +28,36 @@ interface InteractiveChartCardProps {
 }
 
 const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>) => {
-  if (active && label) {
+  if (active && payload && payload.length) {
+    const data = payload[0].payload;
+    const color = payload[0].color || 'hsl(var(--primary))';
+    // Candlestick data
+    if (data.open !== undefined) { 
+      const isUp = data.close >= data.open;
+      const valueColor = isUp ? 'text-[hsl(var(--confirm-green))]' : 'text-destructive';
+      return (
+        <div className="p-2.5 text-xs bg-background/90 backdrop-blur-sm rounded-md border border-border/20 shadow-lg shadow-primary/10">
+          <p className="label text-muted-foreground font-semibold mb-1">{`${label}`}</p>
+          <div className="intro space-y-1">
+            <div className="flex justify-between items-baseline"><span className="text-foreground">Open:</span> <span className={cn("font-bold ml-2", valueColor)}>${data.open.toFixed(2)}</span></div>
+            <div className="flex justify-between items-baseline"><span className="text-foreground">High:</span> <span className={cn("font-bold ml-2", valueColor)}>${data.high.toFixed(2)}</span></div>
+            <div className="flex justify-between items-baseline"><span className="text-foreground">Low:</span> <span className={cn("font-bold ml-2", valueColor)}>${data.low.toFixed(2)}</span></div>
+            <div className="flex justify-between items-baseline"><span className="text-foreground">Close:</span> <span className={cn("font-bold ml-2", valueColor)}>${data.close.toFixed(2)}</span></div>
+          </div>
+        </div>
+      );
+    }
+    
     return (
-      <div className="p-2 text-xs bg-background/90 backdrop-blur-sm rounded-md border border-border/20 shadow-lg">
-        <p className="font-semibold text-foreground">{`${label}`}</p>
-      </div>
+        <div className="p-2.5 text-xs bg-background/90 backdrop-blur-sm rounded-md border border-border/20 shadow-lg shadow-primary/10">
+            <p className="label text-muted-foreground font-semibold mb-1">{`${label}`}</p>
+            {payload.map((p, i) => (
+                 <div key={i} className="flex justify-between items-baseline">
+                    <span className="text-foreground">{p.name}:</span>
+                    <span className="font-bold ml-2" style={{ color: p.color }}>${(p.value as number).toFixed(2)}</span>
+                </div>
+            ))}
+        </div>
     );
   }
   return null;
@@ -67,6 +93,7 @@ const getTimeframeParams = (timeframe: '1D' | '5D' | '1M' | '3M' | '6M' | 'YTD' 
 
 
 export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover, onChartLeave, className, variant = 'trading' }: InteractiveChartCardProps) {
+  const { toast } = useToast();
   const [chartType, setChartType] = useState<'line' | 'area' | 'candle'>('area');
   const [timeframe, setTimeframe] = useState<'1D' | '5D' | '1M' | '3M' | '6M' | 'YTD' | '1Y' | '5Y' | 'All'>('1M');
   const [manualTickerInput, setManualTickerInput] = useState('');
@@ -77,13 +104,17 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
   const [error, setError] = useState<string | null>(null);
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
   const [chartColor, setChartColor] = useState<string>('#e6e6e6');
+  
+  const [benchmarkSymbol, setBenchmarkSymbol] = useState<string | null>(null);
   const [benchmarkInput, setBenchmarkInput] = useState('VOO');
+  const [showBenchmarkInput, setShowBenchmarkInput] = useState(false);
+  const benchmarkInputRef = useRef<HTMLInputElement>(null);
 
 
   const colorOptions = [
       { color: '#5721aa', label: 'Purple' },
       { color: '#00ec95', label: 'Green' },
-      { color: '#ff395b', label: 'Red' },
+      { color: '#F41415', label: 'Red' },
       { color: '#e6e6e6', label: 'Silver' },
       { color: '#1450fa', label: 'Navy Blue' },
   ];
@@ -131,6 +162,19 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
           close: bar.c
         }));
         
+        // If benchmark is active, fetch its data and merge it
+        if (benchmarkSymbol) {
+            // In a real app, you would fetch real data for the benchmark
+            const benchmarkData = data.map(bar => ({
+                benchmark: bar.c * (1 + (Math.random() - 0.5) * 0.1) // Simulate benchmark data
+            }));
+            
+            formattedData = formattedData.map((item, index) => ({
+                ...item,
+                benchmark: benchmarkData[index].benchmark
+            }));
+        }
+
         setChartData(formattedData);
       } catch (err: any) {
         console.error("Error fetching chart data:", err);
@@ -142,7 +186,7 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
     };
     
     fetchAndSetChartData();
-  }, [stock, timeframe, variant]);
+  }, [stock, timeframe, variant, benchmarkSymbol]);
 
   const handleDateGo = (date: Date | DateRange) => {
     console.log("Selected date/range:", date);
@@ -163,6 +207,28 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
         }
     }
   };
+
+  const handleBenchmarkSubmit = (e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === 'Enter' && benchmarkInput.trim()) {
+          setBenchmarkSymbol(benchmarkInput.trim().toUpperCase());
+          setShowBenchmarkInput(false);
+          toast({
+            title: `Benchmark Added: ${benchmarkInput.trim().toUpperCase()}`
+          });
+      }
+  };
+
+  const removeBenchmark = () => {
+      setBenchmarkSymbol(null);
+      setChartData(prevData => prevData.map(({benchmark, ...rest}) => rest));
+  };
+  
+  useEffect(() => {
+    if (showBenchmarkInput && benchmarkInputRef.current) {
+        benchmarkInputRef.current.focus();
+    }
+  }, [showBenchmarkInput]);
+
 
   const renderChartContent = () => {
     if (isLoading) {
@@ -195,6 +261,7 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
     }
 
     const uniqueId = `chart-gradient-${stock?.id || 'default'}`;
+    const benchmarkUniqueId = `benchmark-gradient-${benchmarkSymbol || 'default'}`;
     
     if (chartType === 'line') {
       return (
@@ -206,7 +273,9 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
               cursor={{ stroke: 'hsl(var(--foreground))', strokeWidth: 1, strokeDasharray: '3 3' }}
               content={<CustomTooltip />}
             />
+             {benchmarkSymbol && <Legend verticalAlign="top" height={36} iconType="plainline" />}
             <Line type="monotone" dataKey="price" name={stock?.symbol || "Portfolio"} stroke={chartColor} strokeWidth={2} dot={false} />
+            {benchmarkSymbol && <Line type="monotone" dataKey="benchmark" name={benchmarkSymbol} stroke="#FF3333" strokeWidth={2} dot={false} />}
           </LineChart>
         </ResponsiveContainer>
       );
@@ -221,6 +290,12 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
                       <stop offset="0%" stopColor={chartColor} stopOpacity={0.2}/>
                       <stop offset="100%" stopColor={chartColor} stopOpacity={0.05}/>
                     </linearGradient>
+                     {benchmarkSymbol && (
+                      <linearGradient id={benchmarkUniqueId} x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor="#FF3333" stopOpacity={0.2}/>
+                          <stop offset="100%" stopColor="#FF3333" stopOpacity={0.0}/>
+                      </linearGradient>
+                     )}
                 </defs>
                 <XAxis dataKey="date" hide />
                 <YAxis hide domain={['auto', 'auto']} />
@@ -228,7 +303,9 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
                     cursor={{ stroke: 'hsl(var(--foreground))', strokeWidth: 1, strokeDasharray: '3 3' }}
                     content={<CustomTooltip />}
                 />
+                 {benchmarkSymbol && <Legend verticalAlign="top" height={36} iconType="plainline"/>}
                 <Area type="monotone" dataKey="price" name={stock?.symbol || "Portfolio"} stroke={chartColor} strokeWidth={2} fillOpacity={1} fill={`url(#${uniqueId})`} dot={false} />
+                {benchmarkSymbol && <Area type="monotone" dataKey="benchmark" name={benchmarkSymbol} stroke="#FF3333" strokeWidth={2} fillOpacity={1} fill={`url(#${benchmarkUniqueId})`} dot={false} />}
             </RechartsAreaChart>
         </ResponsiveContainer>
       );
@@ -264,12 +341,21 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
   return (
     <Card className={cn("shadow-none flex flex-col border-none bg-transparent relative", className)}>
        <div className="absolute top-3 right-4 z-20 flex items-center gap-2">
-            <Input
-                type="text"
-                value={benchmarkInput}
-                onChange={(e) => setBenchmarkInput(e.target.value.toUpperCase())}
-                className="bg-[#18181B] border border-neutral-700 rounded-md px-2 py-1 h-7 text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-primary w-20"
-            />
+           {benchmarkSymbol ? (
+               <div className="bg-[#191919] text-[#ff6666] text-xs rounded-full py-1 px-3 font-medium flex items-center gap-1.5">
+                   <span>{benchmarkSymbol}</span>
+                   <button onClick={removeBenchmark} className="text-gray-400 hover:text-white"><XIcon size={14} /></button>
+               </div>
+           ) : (
+                <Input
+                    ref={benchmarkInputRef}
+                    type="text"
+                    value={benchmarkInput}
+                    onChange={(e) => setBenchmarkInput(e.target.value.toUpperCase())}
+                    onKeyDown={handleBenchmarkSubmit}
+                    className="bg-[#18181B] border border-neutral-700 rounded-md px-2 py-1 h-7 text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-primary w-20"
+                />
+           )}
             <Popover>
                 <PopoverTrigger asChild>
                     <button
