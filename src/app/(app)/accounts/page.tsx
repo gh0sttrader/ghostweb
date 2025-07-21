@@ -341,8 +341,8 @@ export default function AccountsPage() {
 
 
     return (
-        <main className="flex flex-col w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 md:py-6 lg:py-8">
-            <div className="flex-shrink-0 h-[60vh] min-h-[500px] flex flex-col">
+        <main className="flex flex-col w-full max-w-6xl mx-auto px-8 py-4 md:py-6 lg:py-8 2xl:max-w-7xl 2xl:px-16">
+            <div className="flex-shrink-0 h-[45vh] min-h-[375px] flex flex-col">
                 <AccountSummaryHeader
                     account={{ ...selectedAccount, balance: headerValue }}
                     onChartHover={handleChartHover}
