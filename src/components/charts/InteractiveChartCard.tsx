@@ -340,9 +340,9 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
     <Card className={cn("shadow-none flex flex-col border-none bg-transparent relative", className)}>
        <div className="absolute top-3 right-4 z-20 flex items-center gap-2">
            {benchmarkSymbol ? (
-               <div className="bg-[#191919] text-[#ff6666] text-xs rounded-full py-1 px-3 font-medium flex items-center gap-1.5">
+               <div className="bg-[#191919] text-white text-xs rounded-full py-1 px-3 font-medium flex items-center gap-1.5">
                    <span>{benchmarkSymbol}</span>
-                   <button onClick={removeBenchmark} className="text-gray-400 hover:text-white"><XIcon size={14} /></button>
+                   <button onClick={removeBenchmark} className="text-white hover:text-white/80"><XIcon size={14} /></button>
                </div>
            ) : (
                 <Input
@@ -459,5 +459,7 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
   );
 }
 
+
+    
 
     
