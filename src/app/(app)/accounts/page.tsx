@@ -41,7 +41,7 @@ const mockAccounts: Account[] = [
         settledCash: 45000,
         pnl: { daily: 1250.75, weekly: 3400.20, percent: 1.2 },
         holdingsCount: 8,
-        cash: 5000,
+        cash: 12450,
         ytdReturn: 4.56,
         netContributions: 150000,
         totalGains: 20000,
@@ -57,7 +57,7 @@ const mockAccounts: Account[] = [
         settledCash: 120000,
         pnl: { daily: -500.50, weekly: 1200.00, percent: -0.4 },
         holdingsCount: 2,
-        cash: 120000,
+        cash: 73337.25,
         ytdReturn: -1.23,
         netContributions: 125000,
         totalGains: -5000,
@@ -381,6 +381,10 @@ export default function AccountsPage() {
         setHeaderValue(selectedAccount.balance);
     }, [selectedAccount]);
 
+    const securitiesValue = useMemo(() => {
+        return selectedAccount.holdings?.reduce((acc, holding) => acc + holding.totalValue, 0) || 0;
+    }, [selectedAccount.holdings]);
+
 
     return (
         <main className="flex flex-col w-full max-w-6xl mx-auto px-8 py-4 md:py-6 lg:py-8 2xl:max-w-7xl 2xl:px-16">
@@ -407,7 +411,22 @@ export default function AccountsPage() {
                 
                 <section className="w-full">
                     <Separator className="bg-border/20 mb-6" />
-                    <h2 className="text-white text-xl font-semibold mb-4">Holdings</h2>
+                    <div className="flex justify-between items-center mb-4">
+                      <h2 className="text-white text-xl font-semibold">Holdings</h2>
+                      <div className="flex items-center gap-x-6 text-sm text-muted-foreground">
+                          <span>
+                              Account Value: <span className="font-semibold text-foreground">{formatCurrency(selectedAccount.balance)}</span>
+                          </span>
+                          <span className="h-4 w-px bg-border/20" />
+                          <span>
+                              Securities: <span className="font-semibold text-foreground">{formatCurrency(securitiesValue)}</span>
+                          </span>
+                          <span className="h-4 w-px bg-border/20" />
+                          <span>
+                              Cash: <span className="font-semibold text-foreground">{formatCurrency(selectedAccount.cash)}</span>
+                          </span>
+                      </div>
+                    </div>
                     <HoldingsTable holdings={selectedAccount.holdings || []} />
                 </section>
                 <section className="w-full mt-10">
@@ -420,3 +439,5 @@ export default function AccountsPage() {
         </main>
     );
 }
+
+    
