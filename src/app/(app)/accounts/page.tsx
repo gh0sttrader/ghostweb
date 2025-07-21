@@ -5,12 +5,10 @@ import React, { useState, useMemo, useCallback } from 'react';
 import type { Stock, Account, Holding } from '@/types';
 import { InteractiveChartCard } from '@/components/charts/InteractiveChartCard';
 import { cn } from '@/lib/utils';
-import { TrendingUp, TrendingDown, PackageSearch, Calendar as CalendarIcon } from 'lucide-react';
+import { PackageSearch, Calendar as CalendarIcon } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
 import { DateRange } from 'react-day-picker';
@@ -19,14 +17,14 @@ import { AnimatedCounter } from '@/components/AnimatedCounter';
 
 
 const mockHoldings: Holding[] = [
-    { symbol: 'AAPL', name: 'Apple Inc.', shares: 50, marketPrice: 170.34, unrealizedGain: 1250.75, totalValue: 8517, logo: 'https://placehold.co/40x40.png', dayPnl: 105.50, dayPnlPercent: 1.25, openPnlPercent: 17.2, averagePrice: 145.32 },
-    { symbol: 'NVDA', name: 'NVIDIA Corp.', shares: 20, marketPrice: 900.50, unrealizedGain: 500.20, totalValue: 18010, logo: 'https://placehold.co/40x40.png', dayPnl: -63.10, dayPnlPercent: -0.35, openPnlPercent: 2.8, averagePrice: 875.49 },
-    { symbol: 'GOOGL', name: 'Alphabet Inc.', shares: 30, marketPrice: 140.22, unrealizedGain: -150.10, totalValue: 4206.60, logo: 'https://placehold.co/40x40.png', dayPnl: 42.30, dayPnlPercent: 1.01, openPnlPercent: -3.4, averagePrice: 145.22 },
-    { symbol: 'TSLA', name: 'Tesla, Inc.', shares: 10, marketPrice: 180.01, unrealizedGain: 85.50, totalValue: 1800.10, logo: 'https://placehold.co/40x40.png', dayPnl: 95.60, dayPnlPercent: 5.61, openPnlPercent: 5.0, averagePrice: 171.46 },
-    { symbol: 'MSFT', name: 'Microsoft Corp.', shares: 10, marketPrice: 420.72, unrealizedGain: -50.50, totalValue: 4207.20, logo: 'https://placehold.co/40x40.png', dayPnl: -21.00, dayPnlPercent: -0.50, openPnlPercent: -1.2, averagePrice: 425.72 },
-    { symbol: 'AMZN', name: 'Amazon.com, Inc.', shares: 5, marketPrice: 183.63, unrealizedGain: 240.00, totalValue: 918.15, logo: 'https://placehold.co/40x40.png', dayPnl: 10.15, dayPnlPercent: 1.12, openPnlPercent: 35.4, averagePrice: 135.63 },
-    { symbol: 'META', name: 'Meta Platforms, Inc.', shares: 15, marketPrice: 470.91, unrealizedGain: 600.00, totalValue: 7063.65, logo: 'https://placehold.co/40x40.png', dayPnl: 150.00, dayPnlPercent: 2.17, openPnlPercent: 9.3, averagePrice: 430.91 },
-    { symbol: 'JPM', name: 'JPMorgan Chase & Co.', shares: 25, marketPrice: 195.40, unrealizedGain: -100.00, totalValue: 4885, logo: 'https://placehold.co/40x40.png', dayPnl: -12.50, dayPnlPercent: -0.25, openPnlPercent: -2.0, averagePrice: 199.40 },
+    { symbol: 'AAPL', name: 'Apple Inc.', shares: 50, marketPrice: 170.34, unrealizedGain: 7340.00, totalValue: 8517, logo: 'https://placehold.co/40x40.png', dayPnl: 105.50, dayPnlPercent: 1.25, openPnlPercent: 17.2, averagePrice: 145.32 },
+    { symbol: 'NVDA', name: 'NVIDIA Corp.', shares: 20, marketPrice: 900.50, unrealizedGain: 520.00, totalValue: 18010, logo: 'https://placehold.co/40x40.png', dayPnl: -63.10, dayPnlPercent: -0.35, openPnlPercent: 2.8, averagePrice: 875.49 },
+    { symbol: 'GOOGL', name: 'Alphabet Inc.', shares: 30, marketPrice: 140.22, unrealizedGain: -146.10, totalValue: 4206.60, logo: 'https://placehold.co/40x40.png', dayPnl: 42.30, dayPnlPercent: 1.01, openPnlPercent: -3.4, averagePrice: 145.22 },
+    { symbol: 'TSLA', name: 'Tesla, Inc.', shares: 10, marketPrice: 180.01, unrealizedGain: 410.15, totalValue: 1800.10, logo: 'https://placehold.co/40x40.png', dayPnl: 95.60, dayPnlPercent: 5.61, openPnlPercent: 5.0, averagePrice: 171.46 },
+    { symbol: 'MSFT', name: 'Microsoft Corp.', shares: 10, marketPrice: 420.72, unrealizedGain: -82.00, totalValue: 4207.20, logo: 'https://placehold.co/40x40.png', dayPnl: -21.00, dayPnlPercent: -0.50, openPnlPercent: -1.2, averagePrice: 425.72 },
+    { symbol: 'AMZN', name: 'Amazon.com, Inc.', shares: 5, marketPrice: 183.63, unrealizedGain: 300.30, totalValue: 918.15, logo: 'https://placehold.co/40x40.png', dayPnl: 10.15, dayPnlPercent: 1.12, openPnlPercent: 35.4, averagePrice: 135.63 },
+    { symbol: 'META', name: 'Meta Platforms, Inc.', shares: 15, marketPrice: 470.91, unrealizedGain: 1850.00, totalValue: 7063.65, logo: 'https://placehold.co/40x40.png', dayPnl: 150.00, dayPnlPercent: 2.17, openPnlPercent: 9.3, averagePrice: 430.91 },
+    { symbol: 'JPM', name: 'JPMorgan Chase & Co.', shares: 25, marketPrice: 195.40, unrealizedGain: -50.00, totalValue: 4885, logo: 'https://placehold.co/40x40.png', dayPnl: -12.50, dayPnlPercent: -0.25, openPnlPercent: -2.0, averagePrice: 199.40 },
 ];
 
 const mockIraHoldings: Holding[] = [
@@ -274,6 +272,7 @@ const HoldingsTable = ({ holdings }: { holdings: Holding[] }) => {
                         <TableHead className="py-3 px-6 text-left font-bold">Ticker</TableHead>
                         <TableHead className="py-3 px-6 text-center font-bold">Day’s P&L %</TableHead>
                         <TableHead className="py-3 px-6 text-center font-bold">Open P&L %</TableHead>
+                        <TableHead className="py-3 px-6 text-center font-bold">Unrealized Gain/Loss</TableHead>
                         <TableHead className="py-3 px-6 text-center font-bold">Market Value</TableHead>
                         <TableHead className="py-3 px-6 text-center font-bold">Average Price</TableHead>
                         <TableHead className="py-3 px-6 text-center font-bold">Current Price</TableHead>
@@ -291,6 +290,9 @@ const HoldingsTable = ({ holdings }: { holdings: Holding[] }) => {
                             </TableCell>
                             <TableCell className={cn("text-center py-3 px-6", (holding.openPnlPercent || 0) >= 0 ? 'text-[hsl(var(--confirm-green))]' : 'text-destructive')}>
                                 {formatPercent(holding.openPnlPercent)}
+                            </TableCell>
+                            <TableCell className={cn("text-center py-3 px-6 font-semibold", (holding.unrealizedGain || 0) >= 0 ? 'text-[hsl(var(--confirm-green))]' : 'text-destructive')}>
+                                {formatCurrency(holding.unrealizedGain, true)}
                             </TableCell>
                             <TableCell className="text-center py-3 px-6 font-semibold">{formatCurrency(holding.totalValue)}</TableCell>
                             <TableCell className="text-center py-3 px-6">{formatCurrency(holding.averagePrice)}</TableCell>
@@ -342,7 +344,7 @@ const WatchlistTable = () => (
                     <TableRow key={stock.symbol} className="transition-colors border-none hover:bg-white/5">
                         <TableCell className="py-2 px-6 font-semibold">{stock.symbol}</TableCell>
                         <TableCell className="py-2 px-6">{stock.name}</TableCell>
-                        <TableCell className="py-2 px-6">${stock.price}</TableCell>
+                        <TableCell className="py-2 px-6">{stock.price}</TableCell>
                         <TableCell className={cn("py-2 px-6", stock.change.startsWith('+') ? 'text-[hsl(var(--confirm-green))]' : 'text-destructive')}>
                             {stock.change}
                         </TableCell>
