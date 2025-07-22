@@ -457,10 +457,6 @@ export default function AccountsPage() {
                           
                           <span className="h-4 w-px bg-border/20" />
                           <span>
-                              Securities: <span className="font-semibold text-foreground">{formatCurrency(securitiesValue)}</span>
-                          </span>
-                          <span className="h-4 w-px bg-border/20" />
-                          <span>
                               Cash: <span className="font-semibold text-foreground">{formatCurrency(selectedAccount.cash)}</span>
                           </span>
                       </div>
@@ -477,7 +473,5 @@ export default function AccountsPage() {
         </main>
     );
 }
-
-    
 
     
