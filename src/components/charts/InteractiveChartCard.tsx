@@ -222,7 +222,9 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
 
     const uniqueId = `chart-gradient-${stock?.id || 'default'}`;
     
-    if (chartType === 'line') {
+    const chartComponentType = variant === 'account' ? 'line' : chartType;
+
+    if (chartComponentType === 'line') {
       return (
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={chartData} onMouseMove={handleChartMouseMove} onMouseLeave={onChartLeave}>
@@ -238,7 +240,7 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
       );
     }
 
-    if (chartType === 'area') {
+    if (chartComponentType === 'area') {
       return (
         <ResponsiveContainer width="100%" height="100%">
              <RechartsAreaChart data={chartData} onMouseMove={handleChartMouseMove} onMouseLeave={onChartLeave}>
@@ -260,7 +262,7 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
       );
     }
     
-    if (chartType === 'candle') {
+    if (chartComponentType === 'candle') {
       return (
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={chartData} onMouseMove={handleChartMouseMove} onMouseLeave={onChartLeave}>
@@ -424,3 +426,4 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
     </Card>
   );
 }
+
