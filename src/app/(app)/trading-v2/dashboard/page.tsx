@@ -337,10 +337,10 @@ function TradingDashboardPageContentV2() {
                     breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
                     cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
                     rowHeight={32}
-                    draggableHandle=".drag-handle"
                     onLayoutChange={handleLayoutChange}
+                    isDraggable={false}
                     isResizable
-                    resizeHandles={['se']}
+                    resizeHandles={['se', 'sw', 'ne', 'nw']}
                     margin={[16, 16]}
                     containerPadding={[0, 0]}
                     preventCollision={true}
@@ -362,7 +362,7 @@ function TradingDashboardPageContentV2() {
                                         WIDGET_COMPONENTS['chart'].component
                                     ) : widgetsInGroup.length === 1 ? (
                                         <>
-                                            <CardHeader className="py-1 px-3 border-b border-white/10 h-8 flex-row items-center drag-handle cursor-move">
+                                            <CardHeader className="py-1 px-3 border-b border-white/10 h-8 flex-row items-center">
                                                 <CardTitle className="text-sm font-semibold text-muted-foreground">
                                                     {WIDGET_COMPONENTS[widgetsInGroup[0]].label}
                                                 </CardTitle>
@@ -401,7 +401,7 @@ function TradingDashboardPageContentV2() {
                                         </>
                                     ) : (
                                        <Tabs value={activeTab} onValueChange={(tab) => setActiveTabs(tabs => ({...tabs, [groupId]: tab as WidgetKey}))} className="flex flex-col h-full">
-                                            <CardHeader className="p-0 border-b border-white/10 h-8 flex-row items-center drag-handle cursor-move">
+                                            <CardHeader className="p-0 border-b border-white/10 h-8 flex-row items-center">
                                                 <TabsList className="h-8 p-0 bg-transparent border-none gap-1 px-2">
                                                     {widgetsInGroup.map(widgetKey => (
                                                         <TabsTrigger key={widgetKey} value={widgetKey} className="h-6 text-sm px-2 py-1 rounded-md relative group/tab">
