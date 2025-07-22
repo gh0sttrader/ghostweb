@@ -265,7 +265,7 @@ export function InteractiveChartCardV2({ stock, onManualTickerSubmit, className,
         axisLine={false}
         tickLine={false}
         tick={{ fill: '#d1d5db', fontSize: 12 }}
-        tickFormatter={(value) => `$${value.toFixed(2)}`}
+        tickFormatter={(value) => `$${Number(value).toFixed(2)}`}
         domain={['auto', 'auto']}
         width={70}
       />
@@ -290,7 +290,6 @@ export function InteractiveChartCardV2({ stock, onManualTickerSubmit, className,
                 zIndex: 1000
               }}
             />
-            {benchmarkSymbol && <Legend verticalAlign="top" height={36} />}
             <Line type="monotone" dataKey="price" name={stock?.symbol || "Portfolio"} stroke={chartColor} strokeWidth={2} dot={false} />
             {benchmarkSymbol && <Line type="monotone" dataKey="benchmark" name={benchmarkSymbol} stroke="#8884d8" strokeWidth={2} dot={false} strokeDasharray="3 3" />}
           </LineChart>
@@ -329,7 +328,6 @@ export function InteractiveChartCardV2({ stock, onManualTickerSubmit, className,
                         zIndex: 1000
                     }}
                 />
-                 {benchmarkSymbol && <Legend verticalAlign="top" height={36} />}
                 <Area type="monotone" dataKey="price" name={stock?.symbol || "Portfolio"} stroke={chartColor} strokeWidth={2} fillOpacity={1} fill={`url(#${uniqueId})`} dot={false} />
                 {benchmarkSymbol && <Area type="monotone" dataKey="benchmark" name={benchmarkSymbol} stroke="#8884d8" strokeWidth={2} fillOpacity={1} fill={`url(#${benchmarkUniqueId})`} dot={false} strokeDasharray="3 3" />}
             </RechartsAreaChart>
@@ -525,4 +523,5 @@ export function InteractiveChartCardV2({ stock, onManualTickerSubmit, className,
     </Card>
   );
 }
+
 
