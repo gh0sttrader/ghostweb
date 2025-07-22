@@ -454,9 +454,7 @@ export default function AccountsPage() {
                     <div className="flex justify-between items-center mb-4">
                       <h2 className="text-white text-xl font-semibold">Holdings</h2>
                       <div className="flex items-center gap-x-6 text-sm text-muted-foreground">
-                          <span>
-                              Account Value: <span className="font-semibold text-foreground">{formatCurrency(selectedAccount.balance)}</span>
-                          </span>
+                          
                           <span className="h-4 w-px bg-border/20" />
                           <span>
                               Securities: <span className="font-semibold text-foreground">{formatCurrency(securitiesValue)}</span>
