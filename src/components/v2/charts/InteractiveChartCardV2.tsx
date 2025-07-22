@@ -28,7 +28,6 @@ interface InteractiveChartCardProps {
 const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>) => {
   if (active && payload && payload.length) {
     const data = payload[0].payload;
-    const color = payload[0].color || 'hsl(var(--primary))';
     // Candlestick data
     if (data.open !== undefined) { 
       const isUp = data.close >= data.open;
@@ -46,15 +45,10 @@ const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>)
       );
     }
     
-    return (
-        <div className="p-2.5 text-xs bg-background/90 backdrop-blur-sm rounded-md border border-border/20 shadow-lg shadow-primary/10">
-            <p className="label text-muted-foreground font-semibold mb-1">{`${label}`}</p>
-            <div className="flex justify-between items-baseline">
-                <span className="text-foreground">Price:</span>
-                <span className="font-bold ml-2" style={{ color }}>${payload[0].value?.toFixed(2)}</span>
-            </div>
-        </div>
-    );
+    // For line/area charts, we don't need the default tooltip content,
+    // as the price is displayed on the Y-axis crosshair.
+    // We return a minimal, invisible element to still enable hover effects.
+    return <div className="hidden" />;
   }
   return null;
 };
@@ -265,15 +259,36 @@ export function InteractiveChartCardV2({ stock, onManualTickerSubmit, className,
     const uniqueId = `chart-gradient-${stock?.id || 'default'}`;
     const benchmarkUniqueId = `benchmark-gradient-${benchmarkSymbol || 'default'}`;
     
+    const YAxisComponent = () => (
+      <YAxis
+        orientation="right"
+        axisLine={false}
+        tickLine={false}
+        tick={{ fill: '#d1d5db', fontSize: 12 }}
+        tickFormatter={(value) => `$${value.toFixed(2)}`}
+        domain={['auto', 'auto']}
+        width={70}
+      />
+    );
+    
     if (chartType === 'line') {
       return (
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={chartData}>
+          <LineChart data={chartData} margin={{ left: 0, right: 10, top: 10, bottom: 10 }}>
             <XAxis dataKey="date" hide />
-            <YAxis hide domain={['auto', 'auto']} />
+            <YAxisComponent />
             <Tooltip
-              cursor={{ stroke: 'hsl(var(--foreground))', strokeWidth: 1, strokeDasharray: '3 3' }}
+              cursor={{ stroke: '#fff', strokeWidth: 1, strokeDasharray: '3 3' }}
               content={<CustomTooltip />}
+              position={{ y: 0 }}
+              wrapperStyle={{
+                background: '#18181b',
+                border: '1px solid #3f3f46',
+                borderRadius: 6,
+                color: '#fff',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.4)',
+                zIndex: 1000
+              }}
             />
             {benchmarkSymbol && <Legend verticalAlign="top" height={36} />}
             <Line type="monotone" dataKey="price" name={stock?.symbol || "Portfolio"} stroke={chartColor} strokeWidth={2} dot={false} />
@@ -286,7 +301,7 @@ export function InteractiveChartCardV2({ stock, onManualTickerSubmit, className,
     if (chartType === 'area') {
       return (
         <ResponsiveContainer width="100%" height="100%">
-             <RechartsAreaChart data={chartData}>
+             <RechartsAreaChart data={chartData} margin={{ left: 0, right: 10, top: 10, bottom: 10 }}>
                 <defs>
                     <linearGradient id={uniqueId} x1="0" y1="0" x2="0" y2="1">
                       <stop offset="0%" stopColor={chartColor} stopOpacity={0.2}/>
@@ -300,10 +315,19 @@ export function InteractiveChartCardV2({ stock, onManualTickerSubmit, className,
                      )}
                 </defs>
                 <XAxis dataKey="date" hide />
-                <YAxis hide domain={['auto', 'auto']} />
+                <YAxisComponent />
                 <Tooltip
-                    cursor={{ stroke: 'hsl(var(--foreground))', strokeWidth: 1, strokeDasharray: '3 3' }}
+                    cursor={{ stroke: '#fff', strokeWidth: 1, strokeDasharray: '3 3' }}
                     content={<CustomTooltip />}
+                    position={{ y: 0 }}
+                    wrapperStyle={{
+                        background: '#18181b',
+                        border: '1px solid #3f3f46',
+                        borderRadius: 6,
+                        color: '#fff',
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.4)',
+                        zIndex: 1000
+                    }}
                 />
                  {benchmarkSymbol && <Legend verticalAlign="top" height={36} />}
                 <Area type="monotone" dataKey="price" name={stock?.symbol || "Portfolio"} stroke={chartColor} strokeWidth={2} fillOpacity={1} fill={`url(#${uniqueId})`} dot={false} />
@@ -316,10 +340,10 @@ export function InteractiveChartCardV2({ stock, onManualTickerSubmit, className,
     if (chartType === 'candle') {
       return (
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={chartData}>
+          <BarChart data={chartData} margin={{ left: 0, right: 10, top: 10, bottom: 10 }}>
             
             <XAxis dataKey="date" hide />
-            <YAxis hide domain={['dataMin - 1', 'dataMax + 1']} />
+            <YAxisComponent />
             <Tooltip
               cursor={{ fill: 'hsla(var(--primary), 0.05)' }}
               content={<CustomTooltip />}
@@ -344,7 +368,7 @@ export function InteractiveChartCardV2({ stock, onManualTickerSubmit, className,
     <Card className={cn("shadow-none flex flex-col h-full border-none bg-transparent relative", className)}>
        <div className="absolute top-3 right-3 z-10 flex items-center gap-2 no-drag">
            {benchmarkSymbol ? (
-               <div className="bg-[#191919] text-[#87c7ff] text-xs rounded-full py-1 px-3 font-medium flex items-center gap-1.5">
+               <div className="bg-[#191919] text-white text-xs rounded-full py-1 px-3 font-medium flex items-center gap-1.5">
                    <span>{benchmarkSymbol}</span>
                    <button onClick={removeBenchmark} className="text-gray-400 hover:text-white"><XIcon size={14} /></button>
                </div>
@@ -444,7 +468,7 @@ export function InteractiveChartCardV2({ stock, onManualTickerSubmit, className,
           )}
         </div>
       </CardHeader>
-      <CardContent className="relative flex-1 p-1 pr-2 min-h-[250px]">
+      <CardContent className="relative flex-1 p-0 min-h-[250px]">
         {renderChartContent()}
       </CardContent>
      
@@ -501,3 +525,4 @@ export function InteractiveChartCardV2({ stock, onManualTickerSubmit, className,
     </Card>
   );
 }
+
