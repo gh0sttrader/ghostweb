@@ -270,6 +270,13 @@ export function InteractiveChartCardV2({ stock, onManualTickerSubmit, className,
         width={70}
       />
     );
+
+    const crosshairStyle = {
+        stroke: '#a6a6a6',
+        strokeWidth: 1,
+        strokeDasharray: '3 3',
+        opacity: 0.5,
+    };
     
     if (chartType === 'line') {
       return (
@@ -278,7 +285,12 @@ export function InteractiveChartCardV2({ stock, onManualTickerSubmit, className,
             <XAxis dataKey="date" hide />
             <YAxisComponent />
             <Tooltip
-              cursor={{ stroke: '#fff', strokeWidth: 1, strokeDasharray: '3 3' }}
+              cursor={<RechartsPrimitive.Cross
+                  stroke={crosshairStyle.stroke}
+                  strokeWidth={crosshairStyle.strokeWidth}
+                  strokeDasharray={crosshairStyle.strokeDasharray}
+                  style={{ opacity: crosshairStyle.opacity }}
+              />}
               content={<CustomTooltip />}
               position={{ y: 0 }}
               wrapperStyle={{
@@ -316,7 +328,12 @@ export function InteractiveChartCardV2({ stock, onManualTickerSubmit, className,
                 <XAxis dataKey="date" hide />
                 <YAxisComponent />
                 <Tooltip
-                    cursor={{ stroke: '#fff', strokeWidth: 1, strokeDasharray: '3 3' }}
+                    cursor={<RechartsPrimitive.Cross
+                        stroke={crosshairStyle.stroke}
+                        strokeWidth={crosshairStyle.strokeWidth}
+                        strokeDasharray={crosshairStyle.strokeDasharray}
+                        style={{ opacity: crosshairStyle.opacity }}
+                    />}
                     content={<CustomTooltip />}
                     position={{ y: 0 }}
                     wrapperStyle={{
@@ -523,5 +540,6 @@ export function InteractiveChartCardV2({ stock, onManualTickerSubmit, className,
     </Card>
   );
 }
+
 
 
