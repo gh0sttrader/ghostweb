@@ -5,7 +5,7 @@ import React, { useState, useMemo, useCallback } from 'react';
 import type { Stock, Account, Holding } from '@/types';
 import { InteractiveChartCard } from '@/components/charts/InteractiveChartCard';
 import { cn } from '@/lib/utils';
-import { PackageSearch, Calendar as CalendarIcon } from 'lucide-react';
+import { PackageSearch, Calendar as CalendarIcon, ChevronDown } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
@@ -246,6 +246,45 @@ const AccountSummaryHeader = ({ account, onChartHover, onChartLeave }: { account
     );
 };
 
+const CashDetails = ({ account }: { account: Account }) => {
+    const [isExpanded, setIsExpanded] = useState(false);
+    const unsettledCash = (account.cash || 0) - (account.settledCash || 0);
+
+    return (
+        <div className="bg-card border border-border/10 rounded-xl mb-6 text-sm">
+            <div
+                className="flex items-center justify-between cursor-pointer select-none p-4"
+                onClick={() => setIsExpanded(!isExpanded)}
+            >
+                <div className="flex items-center gap-3">
+                    <span role="img" aria-label="Cash" className="text-lg">💵</span>
+                    <span className="font-semibold">Cash Balance:</span>
+                    <span className="font-bold text-lg">{formatCurrency(account.cash)}</span>
+                </div>
+                <ChevronDown className={cn("text-muted-foreground transition-transform", isExpanded && "rotate-180")} />
+            </div>
+            {isExpanded && (
+                <div className="px-4 pb-4 mt-2 border-t border-border/10 pt-4">
+                    <div className="flex flex-col gap-2 text-foreground/80">
+                        <div className="flex justify-between">
+                            <span>✅ Settled Cash:</span>
+                            <span className="font-semibold">{formatCurrency(account.settledCash)}</span>
+                        </div>
+                        <div className="flex justify-between">
+                            <span>⏳ Unsettled Cash:</span>
+                            <span className="font-semibold">{formatCurrency(unsettledCash)}</span>
+                        </div>
+                        <div className="flex justify-between">
+                            <span>⚡ Buying Power:</span>
+                            <span className="font-semibold">{formatCurrency(account.buyingPower)}</span>
+                        </div>
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+};
+
 
 const HoldingsTable = ({ holdings }: { holdings: Holding[] }) => {
     if (!holdings || holdings.length === 0) {
@@ -409,8 +448,10 @@ export default function AccountsPage() {
                     <AccountSelector accounts={mockAccounts} selected={selectedAccount} onSelect={setSelectedAccount} />
                 </div>
                 
+                <Separator className="bg-border/20 mb-6" />
+                <CashDetails account={selectedAccount} />
+                
                 <section className="w-full">
-                    <Separator className="bg-border/20 mb-6" />
                     <div className="flex justify-between items-center mb-4">
                       <h2 className="text-white text-xl font-semibold">Holdings</h2>
                       <div className="flex items-center gap-x-6 text-sm text-muted-foreground">
