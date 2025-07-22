@@ -3,7 +3,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Button } from "@/components/ui/button";
-import { Bell, ChevronDown, Maximize2, Minimize2, Plus, ChartBar, Newspaper, ScanSearch, Table2, ShoppingCart, ListOrdered, History } from "lucide-react";
+import { Bell, ChevronDown, Maximize2, Minimize2, Plus, ChartBar, Newspaper, ScanSearch, Table2, ShoppingCart, ListOrdered, History, Info } from "lucide-react";
 import Link from 'next/link';
 import { useOpenPositionsContext } from '@/contexts/OpenPositionsContext';
 import { cn } from '@/lib/utils';
@@ -21,6 +21,7 @@ const WIDGETS = [
   { key: "watchlist" as WidgetKey, label: "Watchlist", icon: Table2 },
   { key: "screeners" as WidgetKey, label: "Screeners", icon: ScanSearch },
   { key: "news" as WidgetKey, label: "News", icon: Newspaper },
+  { key: "details" as WidgetKey, label: "Details", icon: Info },
 ];
 
 const GhostIcon = (props: React.SVGProps<SVGSVGElement>) => {

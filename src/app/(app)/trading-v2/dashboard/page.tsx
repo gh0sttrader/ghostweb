@@ -67,7 +67,7 @@ function TradingDashboardPageContentV2() {
   const { toast } = useToast();
   const searchParams = useSearchParams();
   const { addTradeToHistory } = useTradeHistoryContext();
-  const { openPositions, addOpenPosition, selectedAccountId } = useOpenPositionsContext();
+  const { accounts, openPositions, addOpenPosition, selectedAccountId } = useOpenPositionsContext();
 
   const [syncedTickerSymbol, setSyncedTickerSymbol] = useState<string>('AAPL');
   const [stockForSyncedComps, setStockForSyncedComps] = useState<Stock | null>(null);
@@ -85,6 +85,8 @@ function TradingDashboardPageContentV2() {
   const [widgetGroups, setWidgetGroups] = useState<Record<string, WidgetKey[]>>(initialWidgetGroups);
   const [activeTabs, setActiveTabs] = useState<Record<string, WidgetKey>>({});
   
+  const selectedAccount = useMemo(() => accounts.find(acc => acc.id === selectedAccountId), [accounts, selectedAccountId]);
+
   const handleClearOrderCard = useCallback(() => {
     setOrderCardActionType(null);
     setOrderCardInitialTradeMode(undefined);
@@ -140,14 +142,14 @@ function TradingDashboardPageContentV2() {
     const WIDGET_COMPONENTS: Record<WidgetKey, Widget> = useMemo(() => ({
       chart: { id: 'chart', label: 'Chart', component: <InteractiveChartCardV2 stock={stockForSyncedComps} onManualTickerSubmit={handleSyncedTickerChange} /> },
       order: { id: 'order', label: 'Trade', component: <OrderCardV2 selectedStock={stockForSyncedComps} initialActionType={orderCardActionType} initialTradeMode={orderCardInitialTradeMode} miloActionContextText={orderCardMiloActionContext} onSubmit={handleTradeSubmit} onClear={handleClearOrderCard} initialQuantity={orderCardInitialQuantity} initialOrderType={orderCardInitialOrderType} initialLimitPrice={orderCardInitialLimitPrice} className="h-full" /> },
-      details: { id: 'details', label: 'Details', component: <DetailsCardV2 />},
+      details: { id: 'details', label: 'Details', component: <DetailsCardV2 account={selectedAccount} />},
       positions: { id: 'positions', label: 'Positions', component: <OpenPositionsCardV2 className="h-full border-0 shadow-none rounded-none bg-transparent" /> },
       orders: { id: 'orders', label: 'Open Orders', component: <OrdersTableV2 className="h-full border-0 shadow-none rounded-none bg-transparent" /> },
       history: { id: 'history', label: 'History', component: <TradeHistoryTableV2 className="h-full border-0 shadow-none rounded-none bg-transparent" syncedTickerSymbol={syncedTickerSymbol} /> },
       watchlist: { id: 'watchlist', label: 'Watchlist', component: <WatchlistCardV2 className="h-full border-0 shadow-none rounded-none bg-transparent" onSymbolSelect={handleSyncedTickerChange} selectedSymbol={syncedTickerSymbol} /> },
       screeners: { id: 'screeners', label: 'Screeners', component: <ScreenerWatchlistV2 className="h-full border-0 shadow-none rounded-none bg-transparent" onSymbolSelect={handleSyncedTickerChange} selectedSymbol={syncedTickerSymbol} /> },
       news: { id: 'news', label: 'News', component: <NewsCardV2 className="h-full border-0 shadow-none rounded-none bg-transparent" onSymbolSelect={handleSyncedTickerChange} selectedSymbol={syncedTickerSymbol} /> },
-  }), [stockForSyncedComps, handleSyncedTickerChange, orderCardActionType, orderCardInitialTradeMode, orderCardMiloActionContext, handleTradeSubmit, handleClearOrderCard, orderCardInitialQuantity, orderCardInitialOrderType, orderCardInitialLimitPrice, syncedTickerSymbol]);
+  }), [stockForSyncedComps, handleSyncedTickerChange, orderCardActionType, orderCardInitialTradeMode, orderCardMiloActionContext, handleTradeSubmit, handleClearOrderCard, orderCardInitialQuantity, orderCardInitialOrderType, orderCardInitialLimitPrice, syncedTickerSymbol, selectedAccount]);
 
 
   useEffect(() => {
