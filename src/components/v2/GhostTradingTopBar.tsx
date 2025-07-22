@@ -3,21 +3,25 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Button } from "@/components/ui/button";
-import { Bell, ChevronDown, Maximize2, Minimize2, Plus } from "lucide-react";
+import { Bell, ChevronDown, Maximize2, Minimize2, Plus, ChartBar, Newspaper, ScanSearch, Table2, ShoppingCart, ListOrdered, History } from "lucide-react";
 import Link from 'next/link';
 import { useOpenPositionsContext } from '@/contexts/OpenPositionsContext';
 import { cn } from '@/lib/utils';
 import { AlertsOverlay } from './AlertsOverlay';
-import { AddWidgetDropdown } from './AddWidgetDropdown';
 import { LayoutDropdown } from './LayoutDropdown';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogOverlay,
-  DialogPortal,
-} from "@/components/ui/dialog";
+import type { WidgetKey } from '@/types';
+
+
+const WIDGETS = [
+  { key: "chart" as WidgetKey, label: "Chart", icon: ChartBar },
+  { key: "order" as WidgetKey, label: "Trading Card", icon: ShoppingCart },
+  { key: "positions" as WidgetKey, label: "Positions", icon: Table2 },
+  { key: "orders" as WidgetKey, label: "Open Orders", icon: ListOrdered },
+  { key: "history" as WidgetKey, label: "History", icon: History },
+  { key: "watchlist" as WidgetKey, label: "Watchlist", icon: Table2 },
+  { key: "screeners" as WidgetKey, label: "Screeners", icon: ScanSearch },
+  { key: "news" as WidgetKey, label: "News", icon: Newspaper },
+];
 
 const GhostIcon = (props: React.SVGProps<SVGSVGElement>) => {
   const [mounted, setMounted] = useState(false);
@@ -38,7 +42,7 @@ const GhostIcon = (props: React.SVGProps<SVGSVGElement>) => {
 };
 
 interface GhostTradingTopBarProps {
-    onAddWidget: (widgetKey: string) => void;
+    onAddWidget: (widgetKey: WidgetKey) => void;
     currentLayouts: ReactGridLayout.Layout[];
     onLayoutChange: (config: { layouts: ReactGridLayout.Layout[], widgetGroups: Record<string, any> }) => void;
     widgetGroups: Record<string, any[]>;
@@ -48,11 +52,28 @@ interface GhostTradingTopBarProps {
 
 export function GhostTradingTopBar({ onAddWidget, currentLayouts, onLayoutChange, widgetGroups, onWidgetGroupsChange }: GhostTradingTopBarProps) {
   const { accounts, selectedAccountId, setSelectedAccountId } = useOpenPositionsContext();
-  const [isAccountModalOpen, setIsAccountModalOpen] = useState(false);
+  const [isAccountDropdownOpen, setIsAccountDropdownOpen] = useState(false);
+  const [isWidgetDropdownOpen, setIsWidgetDropdownOpen] = useState(false);
   const [isAlertsOpen, setIsAlertsOpen] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
 
+  const accountDropdownRef = useRef<HTMLDivElement>(null);
+  const widgetDropdownRef = useRef<HTMLDivElement>(null);
+
   const selectedAccount = accounts.find(acc => acc.id === selectedAccountId);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+        if (accountDropdownRef.current && !accountDropdownRef.current.contains(event.target as Node)) {
+            setIsAccountDropdownOpen(false);
+        }
+        if (widgetDropdownRef.current && !widgetDropdownRef.current.contains(event.target as Node)) {
+            setIsWidgetDropdownOpen(false);
+        }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   useEffect(() => {
     const handleFullscreenChange = () => {
@@ -67,7 +88,7 @@ export function GhostTradingTopBar({ onAddWidget, currentLayouts, onLayoutChange
 
   const handleAccountSelect = (accountId: string) => {
     setSelectedAccountId(accountId);
-    setIsAccountModalOpen(false);
+    setIsAccountDropdownOpen(false);
   };
 
   const toggleFullscreen = () => {
@@ -118,11 +139,57 @@ export function GhostTradingTopBar({ onAddWidget, currentLayouts, onLayoutChange
         </div>
         
         <div className="flex items-center gap-4">
-          <AddWidgetDropdown onAddWidget={onAddWidget} />
-          <Button variant="ghost" onClick={() => setIsAccountModalOpen(true)} className="flex items-center justify-between gap-2 text-white font-medium h-8 px-3 text-sm hover:bg-white/10">
-              <span className="truncate">{selectedAccount?.name || 'Select Account'}</span>
-              <ChevronDown size={16} className={cn("text-muted-foreground transition-transform shrink-0", isAccountModalOpen && "rotate-180")} />
-          </Button>
+          <div className="relative" ref={widgetDropdownRef}>
+            <Button 
+                variant="ghost"
+                className="flex items-center justify-center gap-2 text-white font-medium h-8 px-3 text-sm hover:bg-white/10"
+                onClick={() => setIsWidgetDropdownOpen(prev => !prev)}
+            >
+                <span>Add Widget</span>
+                <ChevronDown size={16} className={cn("text-muted-foreground transition-transform shrink-0", isWidgetDropdownOpen && "rotate-180")} />
+            </Button>
+            {isWidgetDropdownOpen && (
+                 <div className="absolute left-0 mt-2 min-w-[220px] z-50 rounded-xl shadow-2xl backdrop-blur-lg bg-transparent py-2 border border-white/10"
+                      style={{ background: 'rgba(24, 24, 27, 0.5)' }}>
+                    {WIDGETS.map((widget) => (
+                        <button
+                            key={widget.key}
+                            className="w-full flex items-center gap-3 px-4 py-2 text-white text-left hover:bg-white/10 text-sm"
+                            onClick={() => {
+                                onAddWidget(widget.key);
+                                setIsWidgetDropdownOpen(false);
+                            }}
+                        >
+                            <widget.icon className="h-4 w-4 text-muted-foreground" />
+                            {widget.label}
+                        </button>
+                    ))}
+                </div>
+            )}
+          </div>
+          <div className="relative" ref={accountDropdownRef}>
+            <Button variant="ghost" onClick={() => setIsAccountDropdownOpen(prev => !prev)} className="flex items-center justify-between gap-2 text-white font-medium h-8 px-3 text-sm hover:bg-white/10">
+                <span className="truncate">{selectedAccount?.name || 'Select Account'}</span>
+                <ChevronDown size={16} className={cn("text-muted-foreground transition-transform shrink-0", isAccountDropdownOpen && "rotate-180")} />
+            </Button>
+             {isAccountDropdownOpen && (
+                 <div className="absolute right-0 mt-2 min-w-[220px] z-50 rounded-xl shadow-2xl backdrop-blur-lg bg-transparent py-2 border border-white/10"
+                      style={{ background: 'rgba(24, 24, 27, 0.5)' }}>
+                    {accounts.map(acc => (
+                         <button
+                            key={acc.id}
+                            className={cn(
+                                "w-full text-sm text-left px-4 py-2 hover:bg-white/10",
+                                selectedAccountId === acc.id ? "text-white font-semibold" : "text-white/80"
+                            )}
+                            onClick={() => handleAccountSelect(acc.id)}
+                        >
+                            {acc.name}
+                        </button>
+                    ))}
+                </div>
+            )}
+          </div>
 
           <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-white/10" onClick={() => setIsAlertsOpen(true)}>
               <Bell size={18} fill="hsl(var(--destructive))" className="text-destructive" />
@@ -134,30 +201,6 @@ export function GhostTradingTopBar({ onAddWidget, currentLayouts, onLayoutChange
         </div>
       </header>
       <AlertsOverlay isOpen={isAlertsOpen} onClose={() => setIsAlertsOpen(false)} />
-      <Dialog open={isAccountModalOpen} onOpenChange={setIsAccountModalOpen}>
-        <DialogPortal>
-          <DialogOverlay className="bg-transparent backdrop-blur-lg" />
-           <DialogContent className="bg-black/70 border-white/10 rounded-2xl shadow-2xl p-8 sm:p-12 max-w-xl w-full flex flex-col items-center">
-              <DialogHeader>
-                <DialogTitle className="text-4xl font-bold text-center mb-8">Select Account</DialogTitle>
-              </DialogHeader>
-              <div className="flex flex-col gap-4 w-full max-w-sm">
-                {accounts.map(acc => (
-                  <button
-                    key={acc.id}
-                    className={cn(
-                      "text-white/90 p-4 text-center text-base rounded-xl cursor-pointer font-medium transition-colors hover:bg-white/10 border border-white/10",
-                      selectedAccountId === acc.id && "bg-white/20"
-                    )}
-                    onClick={() => handleAccountSelect(acc.id)}
-                  >
-                    {acc.name}
-                  </button>
-                ))}
-              </div>
-            </DialogContent>
-        </DialogPortal>
-      </Dialog>
     </>
   );
 }
