@@ -94,7 +94,7 @@ const getTimeframeParams = (timeframe: '1D' | '5D' | '1M' | '3M' | '6M' | 'YTD' 
 
 export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover, onChartLeave, className, variant = 'trading' }: InteractiveChartCardProps) {
   const { toast } = useToast();
-  const [chartType, setChartType] = useState<'line' | 'area' | 'candle'>('area');
+  const [chartType, setChartType] = useState<'line' | 'area' | 'candle'>(variant === 'account' ? 'line' : 'area');
   const [timeframe, setTimeframe] = useState<'1D' | '5D' | '1M' | '3M' | '6M' | 'YTD' | '1Y' | '5Y' | 'All'>('1M');
   const [manualTickerInput, setManualTickerInput] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
@@ -389,29 +389,32 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
           <Calendar className="h-5 w-5" />
         </Button>
         
-        <div className="w-px bg-border/20 h-6 self-center mx-1"></div>
-
-        {[
-          { type: 'line', label: 'Line', Icon: LineChartIcon },
-          { type: 'area', label: 'Area', Icon: AreaIcon },
-          { type: 'candle', label: 'Candle', Icon: CandlestickChart },
-        ].map(({ type, label, Icon }) => (
-          <Button
-            key={type}
-            variant="ghost"
-            size="sm"
-            onClick={() => setChartType(type as any)}
-            className={cn(
-              "h-8 text-base px-3 font-medium",
-              chartType === type
-                ? "text-foreground font-bold"
-                : "text-muted-foreground hover:text-foreground hover:bg-transparent"
-            )}
-          >
-            <Icon className="h-5 w-5 mr-1.5" />
-            {label}
-          </Button>
-        ))}
+        {variant === 'trading' && (
+          <>
+            <div className="w-px bg-border/20 h-6 self-center mx-1"></div>
+            {[
+              { type: 'line', label: 'Line', Icon: LineChartIcon },
+              { type: 'area', label: 'Area', Icon: AreaIcon },
+              { type: 'candle', label: 'Candle', Icon: CandlestickChart },
+            ].map(({ type, label, Icon }) => (
+              <Button
+                key={type}
+                variant="ghost"
+                size="sm"
+                onClick={() => setChartType(type as any)}
+                className={cn(
+                  "h-8 text-base px-3 font-medium",
+                  chartType === type
+                    ? "text-foreground font-bold"
+                    : "text-muted-foreground hover:text-foreground hover:bg-transparent"
+                )}
+              >
+                <Icon className="h-5 w-5 mr-1.5" />
+                {label}
+              </Button>
+            ))}
+          </>
+        )}
       </CardFooter>
       <ChartDatePickerModal 
         isOpen={isDatePickerOpen}
