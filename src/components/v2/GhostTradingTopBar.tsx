@@ -148,11 +148,6 @@ export function GhostTradingTopBar({ onAddWidget, currentLayouts, onLayoutChange
               <Bell size={18} fill="hsl(var(--destructive))" className="text-destructive" />
           </Button>
           
-          <Avatar className="h-8 w-8 border-2 border-neutral-700">
-              <AvatarImage src="https://placehold.co/40x40.png" alt="User Avatar" data-ai-hint="person" />
-              <AvatarFallback>U</AvatarFallback>
-          </Avatar>
-
           <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-white/10 text-muted-foreground" onClick={toggleFullscreen}>
               {isFullscreen ? <Minimize2 size={18} /> : <Maximize2 size={18} />}
           </Button>
