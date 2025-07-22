@@ -10,6 +10,14 @@ import { cn } from '@/lib/utils';
 import { AlertsOverlay } from './AlertsOverlay';
 import { AddWidgetDropdown } from './AddWidgetDropdown';
 import { LayoutDropdown } from './LayoutDropdown';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogOverlay,
+  DialogPortal,
+} from "@/components/ui/dialog";
 
 const GhostIcon = (props: React.SVGProps<SVGSVGElement>) => {
   const [mounted, setMounted] = useState(false);
@@ -40,35 +48,26 @@ interface GhostTradingTopBarProps {
 
 export function GhostTradingTopBar({ onAddWidget, currentLayouts, onLayoutChange, widgetGroups, onWidgetGroupsChange }: GhostTradingTopBarProps) {
   const { accounts, selectedAccountId, setSelectedAccountId } = useOpenPositionsContext();
-  const [isAccountDropdownOpen, setIsAccountDropdownOpen] = useState(false);
+  const [isAccountModalOpen, setIsAccountModalOpen] = useState(false);
   const [isAlertsOpen, setIsAlertsOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
 
   const selectedAccount = accounts.find(acc => acc.id === selectedAccountId);
 
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsAccountDropdownOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-
     const handleFullscreenChange = () => {
         setIsFullscreen(!!document.fullscreenElement);
     };
     document.addEventListener('fullscreenchange', handleFullscreenChange);
 
     return () => {
-        document.removeEventListener("mousedown", handleClickOutside);
         document.removeEventListener('fullscreenchange', handleFullscreenChange);
     };
-  }, [dropdownRef]);
+  }, []);
 
   const handleAccountSelect = (accountId: string) => {
     setSelectedAccountId(accountId);
-    setIsAccountDropdownOpen(false);
+    setIsAccountModalOpen(false);
   };
 
   const toggleFullscreen = () => {
@@ -120,28 +119,10 @@ export function GhostTradingTopBar({ onAddWidget, currentLayouts, onLayoutChange
         
         <div className="flex items-center gap-4">
           <AddWidgetDropdown onAddWidget={onAddWidget} />
-          <div className="relative" ref={dropdownRef}>
-            <Button variant="ghost" onClick={() => setIsAccountDropdownOpen(o => !o)} className="flex items-center justify-between gap-2 text-white font-medium h-8 px-3 text-sm hover:bg-white/10">
-                <span className="truncate">{selectedAccount?.name || 'Select Account'}</span>
-                <ChevronDown size={16} className={cn("text-muted-foreground transition-transform shrink-0", isAccountDropdownOpen && "rotate-180")} />
-            </Button>
-            {isAccountDropdownOpen && (
-              <div className="absolute top-full mt-2 right-0 min-w-[180px] bg-[#181818e6] rounded-lg shadow-2xl p-1 z-[101] border border-white/10">
-                {accounts.map(acc => (
-                  <div
-                    key={acc.id}
-                    className={cn(
-                      "text-white/90 p-2 text-sm rounded-md cursor-pointer font-medium transition-colors hover:bg-white/10",
-                      selectedAccountId === acc.id && "bg-white/20"
-                    )}
-                    onClick={() => handleAccountSelect(acc.id)}
-                  >
-                    {acc.name}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+          <Button variant="ghost" onClick={() => setIsAccountModalOpen(true)} className="flex items-center justify-between gap-2 text-white font-medium h-8 px-3 text-sm hover:bg-white/10">
+              <span className="truncate">{selectedAccount?.name || 'Select Account'}</span>
+              <ChevronDown size={16} className={cn("text-muted-foreground transition-transform shrink-0", isAccountModalOpen && "rotate-180")} />
+          </Button>
 
           <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-white/10" onClick={() => setIsAlertsOpen(true)}>
               <Bell size={18} fill="hsl(var(--destructive))" className="text-destructive" />
@@ -153,6 +134,30 @@ export function GhostTradingTopBar({ onAddWidget, currentLayouts, onLayoutChange
         </div>
       </header>
       <AlertsOverlay isOpen={isAlertsOpen} onClose={() => setIsAlertsOpen(false)} />
+      <Dialog open={isAccountModalOpen} onOpenChange={setIsAccountModalOpen}>
+        <DialogPortal>
+          <DialogOverlay className="bg-transparent backdrop-blur-lg" />
+           <DialogContent className="bg-black/70 border-white/10 rounded-2xl shadow-2xl p-8 sm:p-12 max-w-xl w-full flex flex-col items-center">
+              <DialogHeader>
+                <DialogTitle className="text-4xl font-bold text-center mb-8">Select Account</DialogTitle>
+              </DialogHeader>
+              <div className="flex flex-col gap-4 w-full max-w-sm">
+                {accounts.map(acc => (
+                  <button
+                    key={acc.id}
+                    className={cn(
+                      "text-white/90 p-4 text-center text-base rounded-xl cursor-pointer font-medium transition-colors hover:bg-white/10 border border-white/10",
+                      selectedAccountId === acc.id && "bg-white/20"
+                    )}
+                    onClick={() => handleAccountSelect(acc.id)}
+                  >
+                    {acc.name}
+                  </button>
+                ))}
+              </div>
+            </DialogContent>
+        </DialogPortal>
+      </Dialog>
     </>
   );
 }
