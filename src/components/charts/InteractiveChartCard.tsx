@@ -105,11 +105,6 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
   const [chartColor, setChartColor] = useState<string>('#e6e6e6');
   
-  const [benchmarkSymbol, setBenchmarkSymbol] = useState<string | null>(null);
-  const [benchmarkInput, setBenchmarkInput] = useState('VOO');
-  const [showBenchmarkInput, setShowBenchmarkInput] = useState(false);
-  const benchmarkInputRef = useRef<HTMLInputElement>(null);
-
 
   const colorOptions = [
       { color: '#5721aa', label: 'Purple' },
@@ -162,19 +157,6 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
           close: bar.c
         }));
         
-        // If benchmark is active, fetch its data and merge it
-        if (benchmarkSymbol) {
-            // In a real app, you would fetch real data for the benchmark
-            const benchmarkData = data.map(bar => ({
-                benchmark: bar.c * (1 + (Math.random() - 0.5) * 0.1) // Simulate benchmark data
-            }));
-            
-            formattedData = formattedData.map((item, index) => ({
-                ...item,
-                benchmark: benchmarkData[index].benchmark
-            }));
-        }
-
         setChartData(formattedData);
       } catch (err: any) {
         console.error("Error fetching chart data:", err);
@@ -186,7 +168,7 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
     };
     
     fetchAndSetChartData();
-  }, [stock, timeframe, variant, benchmarkSymbol]);
+  }, [stock, timeframe, variant]);
 
   const handleDateGo = (date: Date | DateRange) => {
     console.log("Selected date/range:", date);
@@ -207,28 +189,6 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
         }
     }
   };
-
-  const handleBenchmarkSubmit = (e: React.KeyboardEvent<HTMLInputElement>) => {
-      if (e.key === 'Enter' && benchmarkInput.trim()) {
-          setBenchmarkSymbol(benchmarkInput.trim().toUpperCase());
-          setShowBenchmarkInput(false);
-          toast({
-            title: `Benchmark Added: ${benchmarkInput.trim().toUpperCase()}`
-          });
-      }
-  };
-
-  const removeBenchmark = () => {
-      setBenchmarkSymbol(null);
-      setChartData(prevData => prevData.map(({benchmark, ...rest}) => rest));
-  };
-  
-  useEffect(() => {
-    if (showBenchmarkInput && benchmarkInputRef.current) {
-        benchmarkInputRef.current.focus();
-    }
-  }, [showBenchmarkInput]);
-
 
   const renderChartContent = () => {
     if (isLoading) {
@@ -261,7 +221,6 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
     }
 
     const uniqueId = `chart-gradient-${stock?.id || 'default'}`;
-    const benchmarkUniqueId = `benchmark-gradient-${benchmarkSymbol || 'default'}`;
     
     if (chartType === 'line') {
       return (
@@ -274,7 +233,6 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
               content={<CustomTooltip />}
             />
             <Line type="monotone" dataKey="price" name={stock?.symbol || "Portfolio"} stroke={chartColor} strokeWidth={2} dot={false} />
-            {benchmarkSymbol && <Line type="monotone" dataKey="benchmark" name={benchmarkSymbol} stroke="#EF4444" strokeWidth={2} dot={false} />}
           </LineChart>
         </ResponsiveContainer>
       );
@@ -289,12 +247,6 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
                       <stop offset="0%" stopColor={chartColor} stopOpacity={0.2}/>
                       <stop offset="100%" stopColor={chartColor} stopOpacity={0.05}/>
                     </linearGradient>
-                     {benchmarkSymbol && (
-                      <linearGradient id={benchmarkUniqueId} x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="0%" stopColor="#EF4444" stopOpacity={0.2}/>
-                          <stop offset="100%" stopColor="#EF4444" stopOpacity={0.0}/>
-                      </linearGradient>
-                     )}
                 </defs>
                 <XAxis dataKey="date" hide />
                 <YAxis hide domain={['auto', 'auto']} />
@@ -303,7 +255,6 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
                     content={<CustomTooltip />}
                 />
                 <Area type="monotone" dataKey="price" name={stock?.symbol || "Portfolio"} stroke={chartColor} strokeWidth={2} fillOpacity={1} fill={`url(#${uniqueId})`} dot={false} />
-                {benchmarkSymbol && <Area type="monotone" dataKey="benchmark" name={benchmarkSymbol} stroke="#EF4444" strokeWidth={2} fillOpacity={1} fill={`url(#${benchmarkUniqueId})`} dot={false} />}
             </RechartsAreaChart>
         </ResponsiveContainer>
       );
@@ -338,39 +289,6 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
 
   return (
     <Card className={cn("shadow-none flex flex-col border-none bg-transparent relative", className)}>
-       <div className="absolute top-3 right-4 z-20 flex items-center gap-2">
-           {benchmarkSymbol ? (
-               <div className="bg-[#191919] text-white text-xs rounded-full py-1 px-3 font-medium flex items-center gap-1.5">
-                   <span>{benchmarkSymbol}</span>
-                   <button onClick={removeBenchmark} className="text-white hover:text-white/80"><XIcon size={14} /></button>
-               </div>
-           ) : (
-                <Input
-                    ref={benchmarkInputRef}
-                    type="text"
-                    value={benchmarkInput}
-                    onChange={(e) => setBenchmarkInput(e.target.value.toUpperCase())}
-                    onKeyDown={handleBenchmarkSubmit}
-                    className="bg-[#18181B] border border-neutral-700 rounded-md px-2 py-1 h-7 text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-primary w-20 text-center"
-                />
-           )}
-            <Popover>
-                <PopoverTrigger asChild>
-                    <button
-                        className="w-5 h-5 flex items-center justify-center rounded-full bg-neutral-800 border border-neutral-700 text-white text-xs font-bold transition-colors"
-                        aria-label="What is a benchmark?"
-                    >?</button>
-                </PopoverTrigger>
-                <PopoverContent className="w-64" side="bottom" align="end">
-                    <div className="space-y-2">
-                        <h4 className="font-bold text-sm">What’s a Benchmark?</h4>
-                        <p className="text-xs text-muted-foreground">
-                            A benchmark lets you compare your account’s performance to an index or security (e.g. S&P 500, VOO, etc). Add one to see how you stack up.
-                        </p>
-                    </div>
-                </PopoverContent>
-            </Popover>
-        </div>
        <CardHeader className="pb-2 pt-3 px-3">
         <div className="flex flex-col sm:flex-row justify-between items-start gap-2">
           {variant === 'trading' && stock && stock.price > 0 ? (
