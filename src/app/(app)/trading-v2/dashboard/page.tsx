@@ -29,6 +29,7 @@ import { GhostTradingTopBar } from '@/components/v2/GhostTradingTopBar';
 import { CardMenu } from '@/components/v2/CardMenu';
 import { FundamentalsCardV2 } from '@/components/v2/FundamentalsCardV2';
 import { X, LogOut, Plus } from 'lucide-react';
+import { DetailsCardV2 } from '@/components/v2/DetailsCardV2';
 
 interface Widget {
     id: WidgetKey;
@@ -46,7 +47,8 @@ const DraggableCard = ({ children, className }: { children: React.ReactNode, cla
 const initialLayouts: ReactGridLayout.Layout[] = [
     { i: 'chart', x: 0, y: 0, w: 9, h: 10, minW: 2, minH: 8, isResizable: true },
     { i: 'order', x: 9, y: 0, w: 3, h: 10, minW: 2, minH: 10, isResizable: true },
-    { i: 'positions', x: 0, y: 10, w: 12, h: 8, minW: 2, minH: 6, isResizable: true },
+    { i: 'details', x: 9, y: 10, w: 3, h: 8, minW: 2, minH: 6, isResizable: true },
+    { i: 'positions', x: 0, y: 10, w: 9, h: 8, minW: 2, minH: 6, isResizable: true },
     { i: 'watchlist', x: 0, y: 18, w: 6, h: 8, minW: 2, minH: 6, isResizable: true },
     { i: 'news', x: 6, y: 18, w: 6, h: 8, minW: 2, minH: 6, isResizable: true },
 ];
@@ -54,6 +56,7 @@ const initialLayouts: ReactGridLayout.Layout[] = [
 const initialWidgetGroups: Record<string, WidgetKey[]> = {
     'chart': ['chart'],
     'order': ['order'],
+    'details': ['details'],
     'positions': ['positions', 'orders', 'history'],
     'watchlist': ['watchlist', 'screeners'],
     'news': ['news'],
@@ -137,6 +140,7 @@ function TradingDashboardPageContentV2() {
     const WIDGET_COMPONENTS: Record<WidgetKey, Widget> = useMemo(() => ({
       chart: { id: 'chart', label: 'Chart', component: <InteractiveChartCardV2 stock={stockForSyncedComps} onManualTickerSubmit={handleSyncedTickerChange} /> },
       order: { id: 'order', label: 'Trade', component: <OrderCardV2 selectedStock={stockForSyncedComps} initialActionType={orderCardActionType} initialTradeMode={orderCardInitialTradeMode} miloActionContextText={orderCardMiloActionContext} onSubmit={handleTradeSubmit} onClear={handleClearOrderCard} initialQuantity={orderCardInitialQuantity} initialOrderType={orderCardInitialOrderType} initialLimitPrice={orderCardInitialLimitPrice} className="h-full" /> },
+      details: { id: 'details', label: 'Details', component: <DetailsCardV2 />},
       positions: { id: 'positions', label: 'Positions', component: <OpenPositionsCardV2 className="h-full border-0 shadow-none rounded-none bg-transparent" /> },
       orders: { id: 'orders', label: 'Open Orders', component: <OrdersTableV2 className="h-full border-0 shadow-none rounded-none bg-transparent" /> },
       history: { id: 'history', label: 'History', component: <TradeHistoryTableV2 className="h-full border-0 shadow-none rounded-none bg-transparent" syncedTickerSymbol={syncedTickerSymbol} /> },
@@ -362,42 +366,7 @@ function TradingDashboardPageContentV2() {
                                         WIDGET_COMPONENTS['chart'].component
                                     ) : widgetsInGroup.length === 1 ? (
                                         <>
-                                            <CardHeader className="py-1 px-3 border-b border-white/10 h-8 flex-row items-center">
-                                                <CardTitle className="text-sm font-semibold text-muted-foreground">
-                                                    {WIDGET_COMPONENTS[widgetsInGroup[0]].label}
-                                                </CardTitle>
-                                                <div className="ml-auto flex items-center gap-1 no-drag">
-                                                   <Popover>
-                                                        <PopoverTrigger asChild>
-                                                            <Button variant="ghost" className="h-6 w-6 p-0 text-muted-foreground hover:text-foreground">
-                                                                <Plus size={16} />
-                                                            </Button>
-                                                        </PopoverTrigger>
-                                                        <PopoverContent className="w-48 p-1">
-                                                          <div className="flex flex-col">
-                                                              {Object.values(WIDGET_COMPONENTS).map(w => (
-                                                                  <Button 
-                                                                      key={w.id}
-                                                                      variant="ghost" 
-                                                                      className="w-full justify-start text-xs h-8"
-                                                                      onClick={() => addWidgetToGroup(groupId, w.id)}
-                                                                      disabled={Object.values(widgetGroups).flat().includes(w.id)}
-                                                                  >
-                                                                      {w.label} {Object.values(widgetGroups).flat().includes(w.id) && "(Added)"}
-                                                                  </Button>
-                                                              ))}
-                                                          </div>
-                                                        </PopoverContent>
-                                                      </Popover>
-                                                   <CardMenu
-                                                        onCustomize={() => toast({ title: `Customize ${widgetsInGroup[0]}`})}
-                                                        onDelete={() => handleDeleteWidget(groupId)}
-                                                    />
-                                                </div>
-                                            </CardHeader>
-                                            <CardContent className={cn("flex-1 overflow-y-auto h-full p-0")}>
-                                              {WIDGET_COMPONENTS[widgetsInGroup[0]].component}
-                                            </CardContent>
+                                            {WIDGET_COMPONENTS[widgetsInGroup[0]] ? WIDGET_COMPONENTS[widgetsInGroup[0]].component : null}
                                         </>
                                     ) : (
                                        <Tabs value={activeTab} onValueChange={(tab) => setActiveTabs(tabs => ({...tabs, [groupId]: tab as WidgetKey}))} className="flex flex-col h-full">
@@ -405,7 +374,7 @@ function TradingDashboardPageContentV2() {
                                                 <TabsList className="h-8 p-0 bg-transparent border-none gap-1 px-2">
                                                     {widgetsInGroup.map(widgetKey => (
                                                         <TabsTrigger key={widgetKey} value={widgetKey} className="h-6 text-sm px-2 py-1 rounded-md relative group/tab">
-                                                            {WIDGET_COMPONENTS[widgetKey].label}
+                                                            {WIDGET_COMPONENTS[widgetKey]?.label || widgetKey}
                                                              {widgetsInGroup.length > 1 && (
                                                                 <div
                                                                     onClick={(e) => { e.stopPropagation(); handleRemoveWidgetFromGroup(groupId, widgetKey); }}
@@ -448,7 +417,7 @@ function TradingDashboardPageContentV2() {
                                             </CardHeader>
                                             {widgetsInGroup.map(widgetKey => (
                                                 <TabsContent key={widgetKey} value={widgetKey} className="flex-1 overflow-y-auto h-full p-0 mt-0">
-                                                    {WIDGET_COMPONENTS[widgetKey].component}
+                                                    {WIDGET_COMPONENTS[widgetKey] ? WIDGET_COMPONENTS[widgetKey].component : null}
                                                 </TabsContent>
                                             ))}
                                        </Tabs>
