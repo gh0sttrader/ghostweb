@@ -455,10 +455,8 @@ export default function AccountsPage() {
                       <h2 className="text-white text-xl font-semibold">Holdings</h2>
                       <div className="flex items-center gap-x-6 text-sm text-muted-foreground">
                           
-                          <span className="h-4 w-px bg-border/20" />
-                          <span>
-                              Cash: <span className="font-semibold text-foreground">{formatCurrency(selectedAccount.cash)}</span>
-                          </span>
+                          
+                          
                       </div>
                     </div>
                     <HoldingsTable holdings={selectedAccount.holdings || []} />
@@ -473,5 +471,7 @@ export default function AccountsPage() {
         </main>
     );
 }
+
+    
 
     
