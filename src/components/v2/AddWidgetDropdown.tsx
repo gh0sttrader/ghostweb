@@ -42,7 +42,6 @@ export function AddWidgetDropdown({ onAddWidget }: AddWidgetDropdownProps) {
         className="flex items-center justify-center gap-2 text-white font-medium h-8 px-3 text-sm hover:bg-white/10"
         onClick={() => setOpen(!open)}
       >
-        <Plus size={16} />
         <span>Add Widget</span>
         <ChevronDown size={16} className={cn("text-muted-foreground transition-transform shrink-0", open && "rotate-180")} />
       </Button>
