@@ -3,7 +3,8 @@
 
 import * as React from 'react';
 import { Button } from '@/components/ui/button';
-import { ChartBar, Newspaper, ScanSearch, Table2, ShoppingCart, ListOrdered, History, Plus } from 'lucide-react';
+import { ChartBar, Newspaper, ScanSearch, Table2, ShoppingCart, ListOrdered, History, Plus, ChevronDown } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 const WIDGETS = [
   { key: "chart", label: "Chart", icon: ChartBar },
@@ -38,11 +39,12 @@ export function AddWidgetDropdown({ onAddWidget }: AddWidgetDropdownProps) {
     <div className="relative inline-block" ref={ref}>
       <Button 
         variant="ghost"
-        className="flex items-center justify-center gap-1.5 text-white font-medium h-8 px-3 text-sm hover:bg-white/10"
+        className="flex items-center justify-center gap-2 text-white font-medium h-8 px-3 text-sm hover:bg-white/10"
         onClick={() => setOpen(!open)}
       >
         <Plus size={16} />
-        Add Widget
+        <span>Add Widget</span>
+        <ChevronDown size={16} className={cn("text-muted-foreground transition-transform shrink-0", open && "rotate-180")} />
       </Button>
       {open && (
         <div

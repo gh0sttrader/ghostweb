@@ -3,7 +3,6 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Bell, ChevronDown, Maximize2, Minimize2 } from "lucide-react";
 import Link from 'next/link';
 import { useOpenPositionsContext } from '@/contexts/OpenPositionsContext';
@@ -122,7 +121,7 @@ export function GhostTradingTopBar({ onAddWidget, currentLayouts, onLayoutChange
         <div className="flex items-center gap-4">
           <AddWidgetDropdown onAddWidget={onAddWidget} />
           <div className="relative" ref={dropdownRef}>
-            <Button variant="ghost" onClick={() => setIsAccountDropdownOpen(o => !o)} className="flex items-center justify-between gap-1.5 text-white font-medium h-8 px-3 text-sm hover:bg-white/10 w-40">
+            <Button variant="ghost" onClick={() => setIsAccountDropdownOpen(o => !o)} className="flex items-center justify-between gap-2 text-white font-medium h-8 px-3 text-sm hover:bg-white/10 min-w-[150px]">
                 <span className="truncate">{selectedAccount?.name || 'Select Account'}</span>
                 <ChevronDown size={16} className={cn("text-muted-foreground transition-transform shrink-0", isAccountDropdownOpen && "rotate-180")} />
             </Button>
