@@ -256,8 +256,7 @@ const CashDetails = ({ account }: { account: Account }) => {
                 className="flex items-center justify-between cursor-pointer select-none p-4"
                 onClick={() => setIsExpanded(!isExpanded)}
             >
-                <div className="flex items-center gap-3">
-                    <span role="img" aria-label="Cash" className="text-lg">💵</span>
+                <div className="flex items-center gap-2">
                     <span className="font-semibold">Cash Balance:</span>
                     <span className="font-bold text-lg">{formatCurrency(account.cash)}</span>
                 </div>
@@ -266,16 +265,16 @@ const CashDetails = ({ account }: { account: Account }) => {
             {isExpanded && (
                 <div className="px-4 pb-4 mt-2 border-t border-border/10 pt-4">
                     <div className="flex flex-col gap-2 text-foreground/80">
-                        <div className="flex justify-between">
-                            <span>✅ Settled Cash:</span>
+                        <div className="flex items-center gap-2">
+                            <span>Settled Cash:</span>
                             <span className="font-semibold">{formatCurrency(account.settledCash)}</span>
                         </div>
-                        <div className="flex justify-between">
-                            <span>⏳ Unsettled Cash:</span>
+                        <div className="flex items-center gap-2">
+                            <span>Unsettled Cash:</span>
                             <span className="font-semibold">{formatCurrency(unsettledCash)}</span>
                         </div>
-                        <div className="flex justify-between">
-                            <span>⚡ Buying Power:</span>
+                        <div className="flex items-center gap-2">
+                            <span>Buying Power:</span>
                             <span className="font-semibold">{formatCurrency(account.buyingPower)}</span>
                         </div>
                     </div>
@@ -480,5 +479,7 @@ export default function AccountsPage() {
         </main>
     );
 }
+
+    
 
     
