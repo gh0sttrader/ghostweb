@@ -271,17 +271,16 @@ const Snapshot = ({ account }: { account: Account }) => {
 
     return (
         <div className="w-full bg-card rounded-2xl mb-6 py-4 px-2">
-            <h2 className="text-white text-xl font-semibold mb-4 px-4">Snapshot</h2>
-            <div className="flex justify-between items-start">
+            <div className="flex justify-center items-start gap-x-12">
                 {metrics.map((metric, index) => (
-                    <div key={metric.label} className={cn("flex flex-col items-start flex-1 px-4", index !== metrics.length - 1 && "border-r border-border/10")}>
+                    <div key={metric.label} className="flex flex-col items-center text-center">
                         <span className={cn(
-                            "text-lg font-medium text-white",
+                            "text-xl font-semibold text-white",
                             (metric.label.includes("Gains") || metric.label.includes("Dividends")) && (metric.value ?? 0) < 0 ? "text-destructive" : "text-white"
                         )}>
                             {formatCurrency(metric.value)}
                         </span>
-                        <span className="text-xs text-muted-foreground mt-1">{metric.label}</span>
+                        <span className="text-sm text-neutral-400 mt-1">{metric.label}</span>
                     </div>
                 ))}
             </div>
@@ -586,3 +585,4 @@ export default function AccountsPage() {
 }
 
     
+
