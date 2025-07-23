@@ -11,6 +11,9 @@ import { Badge } from '@/components/ui/badge';
 import { formatDistanceToNowStrict } from 'date-fns';
 import { MoreHorizontal, Newspaper } from 'lucide-react';
 import { Button } from '../ui/button';
+import { CardMenu } from './CardMenu';
+import { useToast } from '@/hooks/use-toast';
+
 
 const RelativeTime = ({ isoString }: { isoString: string }) => {
     const [relativeTime, setRelativeTime] = useState('');
@@ -38,9 +41,11 @@ interface NewsCardProps {
     className?: string;
     onSymbolSelect: (symbol: string) => void;
     selectedSymbol: string | null;
+    onDelete: () => void;
 }
 
-export const NewsCardV2: React.FC<NewsCardProps> = ({ className, onSymbolSelect, selectedSymbol }) => {
+export const NewsCardV2: React.FC<NewsCardProps> = ({ className, onSymbolSelect, selectedSymbol, onDelete }) => {
+    const { toast } = useToast();
     return (
         <div className={cn("h-full flex flex-col", className)}>
             <CardHeader className="py-1 px-3 border-b border-white/10 h-8 flex-row items-center drag-handle cursor-move">
@@ -48,9 +53,7 @@ export const NewsCardV2: React.FC<NewsCardProps> = ({ className, onSymbolSelect,
                     News
                 </CardTitle>
                 <div className="ml-auto no-drag">
-                     <Button variant="ghost" className="h-6 w-6 p-0 text-muted-foreground hover:text-foreground">
-                        <MoreHorizontal size={16} />
-                    </Button>
+                    <CardMenu onCustomize={() => toast({title: "Customize News..."})} onDelete={onDelete} />
                 </div>
             </CardHeader>
             <div className="flex-1 overflow-y-auto px-3 pb-3">

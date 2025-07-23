@@ -29,6 +29,7 @@ interface OrderCardProps {
     onSubmit: (tradeDetails: TradeRequest) => void;
     onClear: () => void;
     className?: string;
+    onDelete: () => void;
 }
 
 const DetailItem: React.FC<{ label: string; value?: string | number | null; unit?: string; valueClass?: string; description?: string }> = ({ label, value, unit, valueClass, description }) => (
@@ -66,6 +67,7 @@ export const OrderCardV2: React.FC<OrderCardProps> = ({
     onSubmit,
     onClear,
     className,
+    onDelete,
 }) => {
     const { accounts, selectedAccountId, setSelectedAccountId } = useOpenPositionsContext();
     const { toast } = useToast();
@@ -230,9 +232,7 @@ export const OrderCardV2: React.FC<OrderCardProps> = ({
                     Trade
                 </CardTitle>
                 <div className="ml-auto no-drag">
-                     <Button variant="ghost" className="h-6 w-6 p-0 text-muted-foreground hover:text-foreground">
-                        <MoreHorizontal size={16} />
-                    </Button>
+                    <CardMenu onCustomize={() => toast({title: "Customize Trade Card..."})} onDelete={onDelete} />
                 </div>
             </CardHeader>
             <CardContent className="flex-1 flex flex-col p-3 space-y-3 overflow-y-auto">

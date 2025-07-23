@@ -7,6 +7,9 @@ import { cn } from "@/lib/utils";
 import { MoreHorizontal } from 'lucide-react';
 import { Button } from '../ui/button';
 import type { Account } from '@/types';
+import { CardMenu } from './CardMenu';
+import { useToast } from '@/hooks/use-toast';
+
 
 const DetailItem = ({ label, value, valueColor }: { label: string; value: string; valueColor?: string }) => (
     <div className="flex flex-col">
@@ -17,9 +20,11 @@ const DetailItem = ({ label, value, valueColor }: { label: string; value: string
 
 interface DetailsCardV2Props {
     account: Account | undefined;
+    onDelete: () => void;
 }
 
-export function DetailsCardV2({ account }: DetailsCardV2Props) {
+export function DetailsCardV2({ account, onDelete }: DetailsCardV2Props) {
+    const { toast } = useToast();
     const formatCurrency = (value: number) => {
         const sign = value > 0 ? '+' : '';
         return `${sign}$${Math.abs(value).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
@@ -40,15 +45,13 @@ export function DetailsCardV2({ account }: DetailsCardV2Props) {
                     Details
                 </CardTitle>
                 <div className="ml-auto no-drag">
-                     <Button variant="ghost" className="h-6 w-6 p-0 text-muted-foreground hover:text-foreground">
-                        <MoreHorizontal size={16} />
-                    </Button>
+                    <CardMenu onCustomize={() => toast({title: "Customize Details..."})} onDelete={onDelete} />
                 </div>
             </CardHeader>
             <CardContent className="flex-1 p-4 flex flex-col">
                 <div>
                     <div className="text-xs text-neutral-400">Net Account Value (USD)</div>
-                    <div className="text-2xl font-semibold mt-1 text-white">{formatCurrencyNoSign(netValue)}</div>
+                    <div className="text-lg font-semibold mt-1 text-white">{formatCurrencyNoSign(netValue)}</div>
                 </div>
                 <div className="grid grid-cols-3 gap-4 mt-4">
                     <DetailItem label="Market Value" value={formatCurrency(marketValue)} valueColor={marketValue < 0 ? "text-destructive" : "text-[hsl(var(--confirm-green))]"} />
