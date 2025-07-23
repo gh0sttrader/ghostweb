@@ -4,7 +4,7 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { MoreHorizontal, Plus } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { Button } from '../ui/button';
 import type { Account, WidgetKey } from '@/types';
 import { CardMenu } from './CardMenu';
@@ -23,10 +23,10 @@ const WIDGETS = [
   { key: "details" as WidgetKey, label: "Details" },
 ];
 
-const DetailItem = ({ label, value, valueColor }: { label: string; value: string; valueColor?: string }) => (
-    <div className="flex flex-col text-center">
-        <span className="text-sm font-semibold mt-1">{value}</span>
-        <span className="text-xs text-neutral-400 font-normal">{label}</span>
+const StatItem = ({ label, value, valueColor }: { label: string; value: string; valueColor?: string }) => (
+    <div className="flex flex-col">
+        <span className={cn("text-sm font-semibold", valueColor)}>{value}</span>
+        <span className="text-xs text-neutral-400 font-normal mt-0.5">{label}</span>
     </div>
 );
 
@@ -39,7 +39,7 @@ interface DetailsCardV2Props {
 export function DetailsCardV2({ account, onDelete, onAddWidget }: DetailsCardV2Props) {
     const { toast } = useToast();
     const formatCurrency = (value: number) => {
-        const sign = value > 0 ? '+' : '';
+        const sign = value >= 0 ? '+' : '-';
         return `${sign}$${Math.abs(value).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
     }
     const formatCurrencyNoSign = (value: number) => {
@@ -47,9 +47,9 @@ export function DetailsCardV2({ account, onDelete, onAddWidget }: DetailsCardV2P
     }
 
     const netValue = account?.balance ?? 0;
-    const marketValue = account?.marketGains ?? -7372178.80; // Example fallback
+    const marketValue = account?.marketGains ?? 0;
     const buyingPower = account?.buyingPower ?? 0;
-    const dailyPnl = account?.pnl?.daily ?? 614758.64; // Example fallback
+    const dailyPnl = account?.pnl?.daily ?? 0;
 
     return (
         <Card className="bg-transparent border-none flex flex-col h-full">
@@ -72,8 +72,9 @@ export function DetailsCardV2({ account, onDelete, onAddWidget }: DetailsCardV2P
                                         variant="ghost" 
                                         className="w-full justify-start text-xs h-8"
                                         onClick={() => onAddWidget(w.key)}
+                                        disabled={Object.values(w).flat().includes(w.key)}
                                     >
-                                        {w.label}
+                                        {w.label} {Object.values(w).flat().includes(w.key) && "(Added)"}
                                     </Button>
                                 ))}
                             </div>
@@ -82,15 +83,28 @@ export function DetailsCardV2({ account, onDelete, onAddWidget }: DetailsCardV2P
                     <CardMenu onCustomize={() => toast({title: "Customize Details..."})} onDelete={onDelete} />
                 </div>
             </CardHeader>
-            <CardContent className="flex-1 p-4 flex flex-col items-center justify-center">
-                <div className="text-center">
+            <CardContent className="flex-1 p-4 flex flex-col items-start justify-start">
+                <div className="flex flex-col items-start w-full">
                     <div className="text-xs text-neutral-400">Net Account Value (USD)</div>
                     <div className="text-2xl font-semibold mt-1 text-white">{formatCurrencyNoSign(netValue)}</div>
-                </div>
-                <div className="grid grid-cols-3 gap-x-8 mt-4">
-                    <DetailItem label="Market Value" value={formatCurrency(marketValue)} />
-                    <DetailItem label="Buying Power" value={formatCurrencyNoSign(buyingPower)} />
-                    <DetailItem label="Day's P&L" value={formatCurrency(dailyPnl)} />
+                    
+                    <div className="flex flex-row gap-8 mt-4">
+                        <StatItem 
+                            label="Market Value" 
+                            value={formatCurrency(marketValue)}
+                            valueColor={marketValue < 0 ? 'text-destructive' : 'text-white'}
+                        />
+                        <StatItem 
+                            label="Buying Power" 
+                            value={formatCurrencyNoSign(buyingPower)}
+                            valueColor="text-white"
+                        />
+                        <StatItem 
+                            label="Day's P&L" 
+                            value={formatCurrency(dailyPnl)}
+                            valueColor={dailyPnl < 0 ? 'text-destructive' : 'text-[hsl(var(--confirm-green))]'}
+                        />
+                    </div>
                 </div>
             </CardContent>
         </Card>
