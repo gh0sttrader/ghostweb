@@ -5,15 +5,17 @@ import React, { useState, useMemo, useCallback } from 'react';
 import type { Stock, Account, Holding } from '@/types';
 import { InteractiveChartCard } from '@/components/charts/InteractiveChartCard';
 import { cn } from '@/lib/utils';
-import { PackageSearch, Calendar as CalendarIcon, ChevronDown } from 'lucide-react';
+import { PackageSearch, Calendar as CalendarIcon, ChevronDown, Search } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
 import { DateRange } from 'react-day-picker';
-import { format, addDays } from 'date-fns';
+import { format, addDays, parse } from 'date-fns';
 import { AnimatedCounter } from '@/components/AnimatedCounter';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 
 const mockHoldings: Holding[] = [
@@ -186,7 +188,7 @@ const AccountSummaryHeader = ({ account, onChartHover, onChartLeave }: { account
                 <AnimatedCounter value={account.balance} />
                 {data && (
                     <div className="flex flex-col items-start pb-1">
-                        <span className={cn("text-lg font-semibold", isPositive ? "text-[hsl(var(--confirm-green))]" : "text-destructive")}>
+                        <span className={cn("text-lg font-semibold", isPositive ? "text-confirm-green" : "text-destructive")}>
                             {isPositive ? "▲" : "▼"}
                             {formatCurrency(data.gain, true)}
                             &nbsp;({isPositive ? '+' : ''}{data.percent.toFixed(2)}%)
@@ -333,13 +335,13 @@ const HoldingsTable = ({ holdings }: { holdings: Holding[] }) => {
                             <TableCell className="py-3 px-6">
                                 <span className="font-semibold">{holding.symbol}</span>
                             </TableCell>
-                            <TableCell className={cn("text-center py-3 px-6", (holding.dayPnlPercent || 0) >= 0 ? 'text-[hsl(var(--confirm-green))]' : 'text-destructive')}>
+                            <TableCell className={cn("text-center py-3 px-6", (holding.dayPnlPercent || 0) >= 0 ? 'text-confirm-green' : 'text-destructive')}>
                                 {formatPercent(holding.dayPnlPercent)}
                             </TableCell>
-                            <TableCell className={cn("text-center py-3 px-6", (holding.openPnlPercent || 0) >= 0 ? 'text-[hsl(var(--confirm-green))]' : 'text-destructive')}>
+                            <TableCell className={cn("text-center py-3 px-6", (holding.openPnlPercent || 0) >= 0 ? 'text-confirm-green' : 'text-destructive')}>
                                 {formatPercent(holding.openPnlPercent)}
                             </TableCell>
-                            <TableCell className={cn("text-center py-3 px-6 font-semibold", (holding.unrealizedGain || 0) >= 0 ? 'text-[hsl(var(--confirm-green))]' : 'text-destructive')}>
+                            <TableCell className={cn("text-center py-3 px-6 font-semibold", (holding.unrealizedGain || 0) >= 0 ? 'text-confirm-green' : 'text-destructive')}>
                                 {formatCurrency(holding.unrealizedGain, true)}
                             </TableCell>
                             <TableCell className="text-center py-3 px-6 font-semibold">{formatCurrency(holding.totalValue)}</TableCell>
@@ -393,7 +395,7 @@ const WatchlistTable = () => (
                         <TableCell className="py-2 px-6 font-semibold">{stock.symbol}</TableCell>
                         <TableCell className="py-2 px-6">{stock.name}</TableCell>
                         <TableCell className="py-2 px-6">{stock.price}</TableCell>
-                        <TableCell className={cn("py-2 px-6", stock.change.startsWith('+') ? 'text-[hsl(var(--confirm-green))]' : 'text-destructive')}>
+                        <TableCell className={cn("py-2 px-6", stock.change.startsWith('+') ? 'text-confirm-green' : 'text-destructive')}>
                             {stock.change}
                         </TableCell>
                         <TableCell className="py-2 px-6 text-right">{stock.volume}</TableCell>
@@ -404,7 +406,7 @@ const WatchlistTable = () => (
     </div>
 );
 
-const TransactionsTable = () => (
+const TransactionsTable = ({ transactions }: { transactions: typeof TRANSACTIONS }) => (
     <div className="overflow-x-auto rounded-2xl bg-card">
         <Table>
             <TableHeader>
@@ -419,7 +421,7 @@ const TransactionsTable = () => (
                 </TableRow>
             </TableHeader>
             <TableBody>
-                {TRANSACTIONS.map((tx, index) => (
+                {transactions.map((tx, index) => (
                     <TableRow key={index} className="transition-colors border-none hover:bg-white/5">
                         <TableCell className="py-2 px-6">{tx.date}</TableCell>
                         <TableCell className="py-2 px-6">{tx.type}</TableCell>
@@ -427,7 +429,7 @@ const TransactionsTable = () => (
                         <TableCell className="py-2 px-6">{tx.name}</TableCell>
                         <TableCell className="py-2 px-6 text-right">{tx.shares}</TableCell>
                         <TableCell className="py-2 px-6 text-right">{tx.price}</TableCell>
-                        <TableCell className={cn("py-2 px-6 text-right", tx.amount.startsWith('-') ? 'text-destructive' : 'text-[hsl(var(--confirm-green))]')}>{tx.amount}</TableCell>
+                        <TableCell className={cn("py-2 px-6 text-right", tx.amount.startsWith('-') ? 'text-destructive' : 'text-confirm-green')}>{tx.amount}</TableCell>
                     </TableRow>
                 ))}
             </TableBody>
@@ -439,6 +441,10 @@ const TransactionsTable = () => (
 export default function AccountsPage() {
     const [selectedAccount, setSelectedAccount] = useState<Account>(mockAccounts[0]);
     const [headerValue, setHeaderValue] = useState<number>(mockAccounts[0].balance);
+
+    const [transactionType, setTransactionType] = useState('all');
+    const [transactionDate, setTransactionDate] = useState<DateRange | undefined>();
+    const [transactionSearch, setTransactionSearch] = useState('');
 
     const chartData = useMemo(() => accountToStock(selectedAccount), [selectedAccount]);
 
@@ -460,10 +466,26 @@ export default function AccountsPage() {
     React.useEffect(() => {
         setHeaderValue(selectedAccount.balance);
     }, [selectedAccount]);
+    
+    const transactionTypes = useMemo(() => ['all', ...Array.from(new Set(TRANSACTIONS.map(tx => tx.type)))], []);
 
-    const securitiesValue = useMemo(() => {
-        return selectedAccount.holdings?.reduce((acc, holding) => acc + holding.totalValue, 0) || 0;
-    }, [selectedAccount.holdings]);
+    const filteredTransactions = useMemo(() => {
+        return TRANSACTIONS.filter(tx => {
+            const typeMatch = transactionType === 'all' || tx.type.toLowerCase() === transactionType.toLowerCase();
+
+            const dateMatch = !transactionDate?.from || (
+                new Date(parse(tx.date, 'MM/dd/yyyy', new Date())) >= transactionDate.from &&
+                (!transactionDate.to || new Date(parse(tx.date, 'MM/dd/yyyy', new Date())) <= transactionDate.to)
+            );
+
+            const searchMatch = !transactionSearch ||
+                Object.values(tx).some(val =>
+                    String(val).toLowerCase().includes(transactionSearch.toLowerCase())
+                );
+
+            return typeMatch && dateMatch && searchMatch;
+        });
+    }, [transactionType, transactionDate, transactionSearch]);
 
 
     return (
@@ -495,11 +517,6 @@ export default function AccountsPage() {
                 <section className="w-full">
                     <div className="flex justify-between items-center mb-4">
                       <h2 className="text-white text-xl font-semibold">Holdings</h2>
-                      <div className="flex items-center gap-x-6 text-sm text-muted-foreground">
-                          
-                          
-                          
-                      </div>
                     </div>
                     <HoldingsTable holdings={selectedAccount.holdings || []} />
                 </section>
@@ -508,8 +525,65 @@ export default function AccountsPage() {
                     <WatchlistTable />
                 </section>
                 <section className="w-full mt-10">
-                    <h2 className="text-white text-xl font-semibold mb-4">Transactions</h2>
-                    <TransactionsTable />
+                    <div className="flex flex-wrap items-center justify-between mb-4 gap-4">
+                        <h2 className="text-white text-xl font-semibold">Transactions</h2>
+                        <div className="flex flex-wrap items-center gap-2">
+                            <Select value={transactionType} onValueChange={setTransactionType}>
+                                <SelectTrigger className="w-auto h-9 text-xs">
+                                    <SelectValue placeholder="Type" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {transactionTypes.map(type => (
+                                        <SelectItem key={type} value={type}>{type === 'all' ? 'All Types' : type}</SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                            <Popover>
+                                <PopoverTrigger asChild>
+                                    <Button
+                                        id="date"
+                                        variant={"outline"}
+                                        size="sm"
+                                        className="w-auto justify-start text-left font-normal h-9 text-xs"
+                                    >
+                                        <CalendarIcon className="mr-2 h-4 w-4" />
+                                        {transactionDate?.from ? (
+                                            transactionDate.to ? (
+                                                <>
+                                                    {format(transactionDate.from, "LLL dd, y")} -{" "}
+                                                    {format(transactionDate.to, "LLL dd, y")}
+                                                </>
+                                            ) : (
+                                                format(transactionDate.from, "LLL dd, y")
+                                            )
+                                        ) : (
+                                            <span>All Dates</span>
+                                        )}
+                                    </Button>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-auto p-0" align="end">
+                                    <Calendar
+                                        initialFocus
+                                        mode="range"
+                                        defaultMonth={transactionDate?.from}
+                                        selected={transactionDate}
+                                        onSelect={setTransactionDate}
+                                        numberOfMonths={2}
+                                    />
+                                </PopoverContent>
+                            </Popover>
+                             <div className="relative w-full sm:max-w-xs">
+                                <Input
+                                    placeholder="Search transactions..."
+                                    value={transactionSearch}
+                                    onChange={(e) => setTransactionSearch(e.target.value)}
+                                    className="h-9 w-full pl-8"
+                                />
+                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                            </div>
+                        </div>
+                    </div>
+                    <TransactionsTable transactions={filteredTransactions} />
                 </section>
                 
                 <div className="h-12 flex-shrink-0" />
@@ -519,8 +593,3 @@ export default function AccountsPage() {
 }
 
     
-
-    
-
-    
-
