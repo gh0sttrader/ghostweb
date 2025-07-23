@@ -188,7 +188,7 @@ const AccountSummaryHeader = ({ account, onChartHover, onChartLeave }: { account
                 <AnimatedCounter value={account.balance} />
                 {data && (
                     <div className="flex flex-col items-start pb-1">
-                        <span className={cn("text-lg font-semibold", isPositive ? "text-confirm-green" : "text-destructive")}>
+                        <span className={cn("text-lg font-semibold", isPositive ? "text-[hsl(var(--confirm-green))]" : "text-destructive")}>
                             {isPositive ? "▲" : "▼"}
                             {formatCurrency(data.gain, true)}
                             &nbsp;({isPositive ? '+' : ''}{data.percent.toFixed(2)}%)
@@ -335,13 +335,13 @@ const HoldingsTable = ({ holdings }: { holdings: Holding[] }) => {
                             <TableCell className="py-3 px-6">
                                 <span className="font-semibold">{holding.symbol}</span>
                             </TableCell>
-                            <TableCell className={cn("text-center py-3 px-6", (holding.dayPnlPercent || 0) >= 0 ? 'text-confirm-green' : 'text-destructive')}>
+                            <TableCell className={cn("text-center py-3 px-6", (holding.dayPnlPercent || 0) >= 0 ? 'text-[hsl(var(--confirm-green))]' : 'text-destructive')}>
                                 {formatPercent(holding.dayPnlPercent)}
                             </TableCell>
-                            <TableCell className={cn("text-center py-3 px-6", (holding.openPnlPercent || 0) >= 0 ? 'text-confirm-green' : 'text-destructive')}>
+                            <TableCell className={cn("text-center py-3 px-6", (holding.openPnlPercent || 0) >= 0 ? 'text-[hsl(var(--confirm-green))]' : 'text-destructive')}>
                                 {formatPercent(holding.openPnlPercent)}
                             </TableCell>
-                            <TableCell className={cn("text-center py-3 px-6 font-semibold", (holding.unrealizedGain || 0) >= 0 ? 'text-confirm-green' : 'text-destructive')}>
+                            <TableCell className={cn("text-center py-3 px-6 font-semibold", (holding.unrealizedGain || 0) >= 0 ? 'text-[hsl(var(--confirm-green))]' : 'text-destructive')}>
                                 {formatCurrency(holding.unrealizedGain, true)}
                             </TableCell>
                             <TableCell className="text-center py-3 px-6 font-semibold">{formatCurrency(holding.totalValue)}</TableCell>
@@ -395,7 +395,7 @@ const WatchlistTable = () => (
                         <TableCell className="py-2 px-6 font-semibold">{stock.symbol}</TableCell>
                         <TableCell className="py-2 px-6">{stock.name}</TableCell>
                         <TableCell className="py-2 px-6">{stock.price}</TableCell>
-                        <TableCell className={cn("py-2 px-6", stock.change.startsWith('+') ? 'text-confirm-green' : 'text-destructive')}>
+                        <TableCell className={cn("py-2 px-6", stock.change.startsWith('+') ? 'text-[hsl(var(--confirm-green))]' : 'text-destructive')}>
                             {stock.change}
                         </TableCell>
                         <TableCell className="py-2 px-6 text-right">{stock.volume}</TableCell>
@@ -429,7 +429,7 @@ const TransactionsTable = ({ transactions }: { transactions: typeof TRANSACTIONS
                         <TableCell className="py-2 px-6">{tx.name}</TableCell>
                         <TableCell className="py-2 px-6 text-right">{tx.shares}</TableCell>
                         <TableCell className="py-2 px-6 text-right">{tx.price}</TableCell>
-                        <TableCell className={cn("py-2 px-6 text-right", tx.amount.startsWith('-') ? 'text-destructive' : 'text-confirm-green')}>{tx.amount}</TableCell>
+                        <TableCell className={cn("py-2 px-6 text-right", !tx.amount.startsWith('-') ? 'text-[hsl(var(--confirm-green))]' : 'text-destructive')}>{tx.amount}</TableCell>
                     </TableRow>
                 ))}
             </TableBody>
