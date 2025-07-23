@@ -114,6 +114,7 @@ export function InteractiveChartCardV2({ stock, onManualTickerSubmit, className,
   const [timeframe, setTimeframe] = useState<'1D' | '5D' | '1M' | '3M' | '6M' | 'YTD' | '1Y' | '5Y' | 'All'>('1M');
   const [manualTickerInput, setManualTickerInput] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
+  const [isEditingTicker, setIsEditingTicker] = useState(false);
 
   const [chartData, setChartData] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -135,12 +136,16 @@ export function InteractiveChartCardV2({ stock, onManualTickerSubmit, className,
   ];
 
   useEffect(() => {
-    if (stock && document.activeElement !== inputRef.current) {
+    if (stock && !isEditingTicker) {
       setManualTickerInput(stock.symbol);
-    } else if (!stock && document.activeElement !== inputRef.current) {
-      setManualTickerInput('');
     }
-  }, [stock]);
+  }, [stock, isEditingTicker]);
+
+  useEffect(() => {
+    if (isEditingTicker && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [isEditingTicker]);
 
   // Effect to fetch data from mocked flow
   useEffect(() => {
@@ -208,9 +213,10 @@ export function InteractiveChartCardV2({ stock, onManualTickerSubmit, className,
     // Future logic to refetch chart data will go here.
   };
 
-  const handleManualSubmit = () => {
-    if (manualTickerInput.trim()) {
+  const handleManualSubmit = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && manualTickerInput.trim()) {
       onManualTickerSubmit(manualTickerInput.trim().toUpperCase());
+      setIsEditingTicker(false);
     }
   };
   
@@ -437,24 +443,39 @@ export function InteractiveChartCardV2({ stock, onManualTickerSubmit, className,
       <CardHeader className="pb-2 pt-3 px-3 drag-handle cursor-move">
         <div className="flex flex-col sm:flex-row justify-between items-center gap-2">
           {variant === 'trading' && stock && stock.price > 0 ? (
-            <div className="flex items-baseline gap-x-2.5 gap-y-1 flex-wrap flex-1 min-w-0">
-              <h3 className="text-base font-bold text-neutral-50 truncate" title={stock.name}>
-                {stock.symbol}
-              </h3>
-              <p className="text-base font-bold text-foreground">
-                ${stock.price.toFixed(2)}
-              </p>
-              <p className={cn("text-xs font-bold", stock.changePercent >= 0 ? 'text-[hsl(var(--confirm-green))]' : 'text-destructive')}>
-                {stock.changePercent >= 0 ? '+' : ''}{(stock.price * (stock.changePercent / 100)).toFixed(2)}
-                <span className="ml-1">({stock.changePercent >= 0 ? '+' : ''}{stock.changePercent.toFixed(2)}%)</span>
-              </p>
-              {stock.afterHoursPrice && stock.afterHoursChange !== undefined && (
-                <p className="text-xs text-neutral-400 font-medium whitespace-nowrap">
-                  After-Hours: ${stock.afterHoursPrice.toFixed(2)}
-                  <span className={cn("ml-1", stock.afterHoursChange >= 0 ? 'text-[hsl(var(--confirm-green))]' : 'text-destructive')}>
-                    ({stock.afterHoursChange >= 0 ? '+' : ''}{stock.afterHoursChange.toFixed(2)})
-                  </span>
-                </p>
+            <div className="flex items-baseline gap-x-2.5 gap-y-1 flex-wrap flex-1 min-w-0 no-drag cursor-pointer" onClick={() => setIsEditingTicker(true)}>
+              {isEditingTicker ? (
+                <Input
+                  ref={inputRef}
+                  type="text"
+                  placeholder="Search Ticker..."
+                  value={manualTickerInput}
+                  onChange={(e) => setManualTickerInput(e.target.value.toUpperCase())}
+                  onKeyDown={handleManualSubmit}
+                  onBlur={() => setIsEditingTicker(false)}
+                  className="h-7 text-sm w-28 bg-transparent"
+                />
+              ) : (
+                <>
+                  <h3 className="text-base font-bold text-neutral-50 truncate" title={stock.name}>
+                    {stock.symbol}
+                  </h3>
+                  <p className="text-base font-bold text-foreground">
+                    ${stock.price.toFixed(2)}
+                  </p>
+                  <p className={cn("text-xs font-bold", stock.changePercent >= 0 ? 'text-[hsl(var(--confirm-green))]' : 'text-destructive')}>
+                    {stock.changePercent >= 0 ? '+' : ''}{(stock.price * (stock.changePercent / 100)).toFixed(2)}
+                    <span className="ml-1">({stock.changePercent >= 0 ? '+' : ''}{stock.changePercent.toFixed(2)}%)</span>
+                  </p>
+                  {stock.afterHoursPrice && stock.afterHoursChange !== undefined && (
+                    <p className="text-xs text-neutral-400 font-medium whitespace-nowrap">
+                      After-Hours: ${stock.afterHoursPrice.toFixed(2)}
+                      <span className={cn("ml-1", stock.afterHoursChange >= 0 ? 'text-[hsl(var(--confirm-green))]' : 'text-destructive')}>
+                        ({stock.afterHoursChange >= 0 ? '+' : ''}{stock.afterHoursChange.toFixed(2)})
+                      </span>
+                    </p>
+                  )}
+                </>
               )}
             </div>
           ) : (
@@ -465,22 +486,6 @@ export function InteractiveChartCardV2({ stock, onManualTickerSubmit, className,
                     </CardTitle>
                   )}
               </div>
-          )}
-          {variant === 'trading' && (
-            <div className="flex items-center gap-1 w-full sm:w-auto no-drag">
-              <Input
-                ref={inputRef}
-                type="text"
-                placeholder="Symbol"
-                value={manualTickerInput}
-                onChange={(e) => setManualTickerInput(e.target.value.toUpperCase())}
-                onKeyDown={(e) => e.key === 'Enter' && handleManualSubmit()}
-                className="h-7 text-xs flex-1 sm:flex-initial sm:w-28 bg-transparent"
-              />
-              <Button variant="ghost" size="icon" onClick={handleManualSubmit} className="h-7 w-7 text-foreground hover:bg-white/10">
-                <Search className="h-3.5 w-3.5" />
-              </Button>
-            </div>
           )}
         </div>
       </CardHeader>
@@ -541,6 +546,7 @@ export function InteractiveChartCardV2({ stock, onManualTickerSubmit, className,
     </Card>
   );
 }
+
 
 
 
