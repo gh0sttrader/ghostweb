@@ -343,9 +343,10 @@ function TradingDashboardPageContentV2() {
                     cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
                     rowHeight={32}
                     onLayoutChange={handleLayoutChange}
-                    isDraggable={false}
+                    isDraggable={true}
                     isResizable
-                    resizeHandles={['se', 'sw', 'ne', 'nw', 's']}
+                    draggableHandle=".drag-handle"
+                    resizeHandles={['se', 'sw', 'ne', 'nw', 's', 'w', 'e', 'n']}
                     margin={[16, 16]}
                     containerPadding={[0, 0]}
                     preventCollision={true}
@@ -370,7 +371,7 @@ function TradingDashboardPageContentV2() {
                                         </>
                                     ) : (
                                        <Tabs value={activeTab} onValueChange={(tab) => setActiveTabs(tabs => ({...tabs, [groupId]: tab as WidgetKey}))} className="flex flex-col h-full">
-                                            <CardHeader className="p-0 border-b border-white/10 h-8 flex-row items-center">
+                                            <CardHeader className="p-0 border-b border-white/10 h-8 flex-row items-center drag-handle cursor-move">
                                                 <TabsList className="h-8 p-0 bg-transparent border-none gap-1 px-2">
                                                     {widgetsInGroup.map(widgetKey => (
                                                         <TabsTrigger key={widgetKey} value={widgetKey} className="h-6 text-sm px-2 py-1 rounded-md relative group/tab">
