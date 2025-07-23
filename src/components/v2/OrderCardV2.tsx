@@ -2,7 +2,7 @@
 "use client"
 
 import React, { useState, useEffect, useMemo } from 'react';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -225,6 +225,16 @@ export const OrderCardV2: React.FC<OrderCardProps> = ({
 
     return (
         <Card className={cn("h-full flex flex-col bg-transparent border-none", className)}>
+            <CardHeader className="py-1 px-3 border-b border-white/10 h-8 flex-row items-center drag-handle cursor-move">
+                <CardTitle className="text-sm font-semibold text-muted-foreground">
+                    Trade
+                </CardTitle>
+                <div className="ml-auto no-drag">
+                     <Button variant="ghost" className="h-6 w-6 p-0 text-muted-foreground hover:text-foreground">
+                        <MoreHorizontal size={16} />
+                    </Button>
+                </div>
+            </CardHeader>
             <CardContent className="flex-1 flex flex-col p-3 space-y-3 overflow-y-auto">
                 
                 {selectedStock && (
