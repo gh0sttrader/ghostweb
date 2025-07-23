@@ -107,9 +107,10 @@ const accountToStock = (account: Account): Stock => ({
 });
 
 const formatCurrency = (value?: number, showSign = false) => {
-    if (value === undefined) return 'N/A';
+    if (value === undefined || value === null) return 'N/A';
     const sign = value < 0 ? '-' : (showSign ? '+' : '');
-    return `${sign}$${Math.abs(value).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    const formattedValue = Math.abs(value).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    return `${sign}$${formattedValue}`;
 }
 
 type Timeframe = "1W" | "1M" | "6M" | "YTD" | "1Y" | "Max" | "Custom";
@@ -259,39 +260,31 @@ const AccountSummaryHeader = ({ account, onChartHover, onChartLeave }: { account
     );
 };
 
-const CashDetails = ({ account }: { account: Account }) => {
-    const [isExpanded, setIsExpanded] = useState(false);
-    const unsettledCash = (account.cash || 0) - (account.settledCash || 0);
+const Snapshot = ({ account }: { account: Account }) => {
+    const metrics = [
+        { label: "Cash Balance", value: account.cash },
+        { label: "Net Contributions", value: account.netContributions },
+        { label: "Total Gains", value: account.totalGains },
+        { label: "Market Gains", value: account.marketGains },
+        { label: "Dividends", value: account.dividends },
+    ];
 
     return (
-        <div className="bg-card border-none rounded-xl mb-6">
-            <div
-                className="flex items-center justify-between cursor-pointer select-none p-0"
-                onClick={() => setIsExpanded(!isExpanded)}
-            >
-                <h2 className="text-white text-xl font-semibold">
-                    Cash Balance: {formatCurrency(account.cash)}
-                </h2>
-                <ChevronDown className={cn("text-muted-foreground transition-transform", isExpanded && "rotate-180")} />
-            </div>
-            {isExpanded && (
-                <div className="px-0 pb-4 mt-4 border-t border-border/10 pt-4">
-                    <div className="flex flex-col gap-2 text-foreground/80">
-                        <div className="flex items-center gap-2">
-                            <span>Settled Cash:</span>
-                            <span className="font-semibold">{formatCurrency(account.settledCash)}</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <span>Unsettled Cash:</span>
-                            <span className="font-semibold">{formatCurrency(unsettledCash)}</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <span>Buying Power:</span>
-                            <span className="font-semibold">{formatCurrency(account.buyingPower)}</span>
-                        </div>
+        <div className="w-full bg-card rounded-2xl mb-6 py-4 px-2">
+            <h2 className="text-white text-xl font-semibold mb-4 px-4">Snapshot</h2>
+            <div className="flex justify-between items-start">
+                {metrics.map((metric, index) => (
+                    <div key={metric.label} className={cn("flex flex-col items-start flex-1 px-4", index !== metrics.length - 1 && "border-r border-border/10")}>
+                        <span className={cn(
+                            "text-lg font-medium text-white",
+                            (metric.label.includes("Gains") || metric.label.includes("Dividends")) && (metric.value ?? 0) < 0 ? "text-destructive" : "text-white"
+                        )}>
+                            {formatCurrency(metric.value)}
+                        </span>
+                        <span className="text-xs text-muted-foreground mt-1">{metric.label}</span>
                     </div>
-                </div>
-            )}
+                ))}
+            </div>
         </div>
     );
 };
@@ -429,7 +422,7 @@ const TransactionsTable = ({ transactions }: { transactions: typeof TRANSACTIONS
                         <TableCell className="py-2 px-6">{tx.name}</TableCell>
                         <TableCell className="py-2 px-6 text-right">{tx.shares}</TableCell>
                         <TableCell className="py-2 px-6 text-right">{tx.price}</TableCell>
-                        <TableCell className={cn("py-2 px-6 text-right", !tx.amount.startsWith('-') ? 'text-[hsl(var(--confirm-green))]' : 'text-destructive')}>{tx.amount}</TableCell>
+                        <TableCell className={cn("py-2 px-6 text-right font-semibold", tx.amount.startsWith('$') && !tx.amount.startsWith('-$') ? 'text-[hsl(var(--confirm-green))]' : 'text-destructive')}>{tx.amount}</TableCell>
                     </TableRow>
                 ))}
             </TableBody>
@@ -512,7 +505,7 @@ export default function AccountsPage() {
                 </div>
                 
                 <Separator className="bg-border/20 mb-6" />
-                <CashDetails account={selectedAccount} />
+                <Snapshot account={selectedAccount} />
                 
                 <section className="w-full">
                     <div className="flex justify-between items-center mb-4">
