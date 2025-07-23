@@ -251,19 +251,18 @@ const CashDetails = ({ account }: { account: Account }) => {
     const unsettledCash = (account.cash || 0) - (account.settledCash || 0);
 
     return (
-        <div className="bg-card border border-border/10 rounded-xl mb-6 text-sm">
+        <div className="bg-card border-none rounded-xl mb-6">
             <div
-                className="flex items-center justify-between cursor-pointer select-none p-4"
+                className="flex items-center justify-between cursor-pointer select-none p-0"
                 onClick={() => setIsExpanded(!isExpanded)}
             >
-                <div className="flex items-center gap-2">
-                    <span className="font-semibold">Cash Balance:</span>
-                    <span className="font-bold text-lg">{formatCurrency(account.cash)}</span>
-                </div>
+                <h2 className="text-white text-xl font-semibold">
+                    Cash Balance: {formatCurrency(account.cash)}
+                </h2>
                 <ChevronDown className={cn("text-muted-foreground transition-transform", isExpanded && "rotate-180")} />
             </div>
             {isExpanded && (
-                <div className="px-4 pb-4 mt-2 border-t border-border/10 pt-4">
+                <div className="px-0 pb-4 mt-4 border-t border-border/10 pt-4">
                     <div className="flex flex-col gap-2 text-foreground/80">
                         <div className="flex items-center gap-2">
                             <span>Settled Cash:</span>
@@ -471,6 +470,8 @@ export default function AccountsPage() {
         </main>
     );
 }
+
+    
 
     
 
