@@ -78,14 +78,14 @@ const WATCHLIST = [
 ];
 
 const TRANSACTIONS = [
-    { date: "07/22/2025", type: "Buy", symbol: "AAPL", name: "Apple Inc.", shares: "10", price: "$170.34", amount: "$1,703.40", status: "Completed" },
-    { date: "07/21/2025", type: "Dividend", symbol: "MSFT", name: "Microsoft Corp.", shares: "—", price: "—", amount: "$25.00", status: "Completed" },
-    { date: "07/20/2025", type: "Sell", symbol: "AMD", name: "AMD Inc.", shares: "15", price: "$162.10", amount: "$2,431.50", status: "Completed" },
-    { date: "07/19/2025", type: "Transfer", symbol: "—", name: "Deposit", shares: "—", price: "—", amount: "$5,000.00", status: "Completed" },
-    { date: "07/18/2025", type: "Buy", symbol: "GOOGL", name: "Alphabet Inc.", shares: "5", price: "$139.80", amount: "$699.00", status: "Completed" },
-    { date: "07/17/2025", type: "Withdrawal", symbol: "—", name: "ACH Transfer", shares: "—", price: "—", amount: "-$1,000.00", status: "Completed" },
-    { date: "07/16/2025", type: "Buy", symbol: "TSLA", name: "Tesla, Inc.", shares: "2", price: "$178.50", amount: "$357.00", status: "Pending" },
-    { date: "07/15/2025", type: "Dividend", symbol: "JPM", name: "JPMorgan Chase & Co.", shares: "—", price: "—", amount: "$15.75", status: "Completed" },
+    { date: "07/22/2025", type: "Buy", symbol: "AAPL", name: "Apple Inc.", shares: "10", price: "$170.34", amount: "$1,703.40" },
+    { date: "07/21/2025", type: "Dividend", symbol: "MSFT", name: "Microsoft Corp.", shares: "—", price: "—", amount: "$25.00" },
+    { date: "07/20/2025", type: "Sell", symbol: "AMD", name: "AMD Inc.", shares: "15", price: "$162.10", amount: "$2,431.50" },
+    { date: "07/19/2025", type: "Transfer", symbol: "—", name: "Deposit", shares: "—", price: "—", amount: "$5,000.00" },
+    { date: "07/18/2025", type: "Buy", symbol: "GOOGL", name: "Alphabet Inc.", shares: "5", price: "$139.80", amount: "$699.00" },
+    { date: "07/17/2025", type: "Withdrawal", symbol: "—", name: "ACH Transfer", shares: "—", price: "—", amount: "-$1,000.00" },
+    { date: "07/16/2025", type: "Buy", symbol: "TSLA", name: "Tesla, Inc.", shares: "2", price: "$178.50", amount: "$357.00" },
+    { date: "07/15/2025", type: "Dividend", symbol: "JPM", name: "JPMorgan Chase & Co.", shares: "—", price: "—", amount: "$15.75" },
 ];
 
 
@@ -416,7 +416,6 @@ const TransactionsTable = () => (
                     <TableHead className="py-3 px-6 text-right font-bold">Shares</TableHead>
                     <TableHead className="py-3 px-6 text-right font-bold">Price</TableHead>
                     <TableHead className="py-3 px-6 text-right font-bold">Amount</TableHead>
-                    <TableHead className="py-3 px-6 text-left font-bold">Status</TableHead>
                 </TableRow>
             </TableHeader>
             <TableBody>
@@ -429,7 +428,6 @@ const TransactionsTable = () => (
                         <TableCell className="py-2 px-6 text-right">{tx.shares}</TableCell>
                         <TableCell className="py-2 px-6 text-right">{tx.price}</TableCell>
                         <TableCell className={cn("py-2 px-6 text-right", tx.amount.startsWith('-') ? 'text-destructive' : 'text-[hsl(var(--confirm-green))]')}>{tx.amount}</TableCell>
-                        <TableCell className="py-2 px-6">{tx.status}</TableCell>
                     </TableRow>
                 ))}
             </TableBody>
@@ -525,3 +523,4 @@ export default function AccountsPage() {
     
 
     
+
