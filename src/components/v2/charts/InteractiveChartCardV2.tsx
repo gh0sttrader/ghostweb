@@ -114,18 +114,12 @@ export function InteractiveChartCardV2({ stock, onManualTickerSubmit, className,
   const [timeframe, setTimeframe] = useState<'1D' | '5D' | '1M' | '3M' | '6M' | 'YTD' | '1Y' | '5Y' | 'All'>('1M');
   const [manualTickerInput, setManualTickerInput] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
-  const [isEditingTicker, setIsEditingTicker] = useState(false);
 
   const [chartData, setChartData] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
   const [chartColor, setChartColor] = useState<string>('#e6e6e6');
-  
-  const [benchmarkSymbol, setBenchmarkSymbol] = useState<string | null>(null);
-  const [benchmarkInput, setBenchmarkInput] = useState('');
-  const [showBenchmarkInput, setShowBenchmarkInput] = useState(false);
-  const benchmarkInputRef = useRef<HTMLInputElement>(null);
 
   const colorOptions = [
       { color: '#5721aa', label: 'Purple' },
@@ -136,16 +130,10 @@ export function InteractiveChartCardV2({ stock, onManualTickerSubmit, className,
   ];
 
   useEffect(() => {
-    if (stock && !isEditingTicker) {
+    if (stock) {
       setManualTickerInput(stock.symbol);
     }
-  }, [stock, isEditingTicker]);
-
-  useEffect(() => {
-    if (isEditingTicker && inputRef.current) {
-      inputRef.current.focus();
-    }
-  }, [isEditingTicker]);
+  }, [stock]);
 
   // Effect to fetch data from mocked flow
   useEffect(() => {
@@ -182,19 +170,6 @@ export function InteractiveChartCardV2({ stock, onManualTickerSubmit, className,
           close: bar.c
         }));
         
-        // If benchmark is active, fetch its data and merge it
-        if (benchmarkSymbol) {
-            // In a real app, you would fetch real data for the benchmark
-            const benchmarkData = data.map(bar => ({
-                benchmark: bar.c * (1 + (Math.random() - 0.5) * 0.1) // Simulate benchmark data
-            }));
-            
-            formattedData = formattedData.map((item, index) => ({
-                ...item,
-                benchmark: benchmarkData[index].benchmark
-            }));
-        }
-
         setChartData(formattedData);
       } catch (err: any) {
         console.error("Error fetching chart data:", err);
@@ -206,7 +181,7 @@ export function InteractiveChartCardV2({ stock, onManualTickerSubmit, className,
     };
     
     fetchAndSetChartData();
-  }, [stock, timeframe, variant, benchmarkSymbol]);
+  }, [stock, timeframe, variant]);
 
   const handleDateGo = (date: Date | DateRange) => {
     console.log("Selected date/range:", date);
@@ -216,28 +191,8 @@ export function InteractiveChartCardV2({ stock, onManualTickerSubmit, className,
   const handleManualSubmit = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && manualTickerInput.trim()) {
       onManualTickerSubmit(manualTickerInput.trim().toUpperCase());
-      setIsEditingTicker(false);
     }
   };
-  
-  const handleBenchmarkSubmit = (e: React.KeyboardEvent<HTMLInputElement>) => {
-      if (e.key === 'Enter' && benchmarkInput.trim()) {
-          setBenchmarkSymbol(benchmarkInput.trim().toUpperCase());
-          setShowBenchmarkInput(false);
-          setBenchmarkInput('');
-      }
-  };
-
-  const removeBenchmark = () => {
-      setBenchmarkSymbol(null);
-      setChartData(prevData => prevData.map(({benchmark, ...rest}) => rest));
-  };
-  
-  useEffect(() => {
-    if (showBenchmarkInput && benchmarkInputRef.current) {
-        benchmarkInputRef.current.focus();
-    }
-  }, [showBenchmarkInput]);
 
   const renderChartContent = () => {
     if (isLoading) {
@@ -264,7 +219,6 @@ export function InteractiveChartCardV2({ stock, onManualTickerSubmit, className,
     }
 
     const uniqueId = `chart-gradient-${stock?.id || 'default'}`;
-    const benchmarkUniqueId = `benchmark-gradient-${benchmarkSymbol || 'default'}`;
     
     const YAxisComponent = () => (
       <YAxis
@@ -310,7 +264,6 @@ export function InteractiveChartCardV2({ stock, onManualTickerSubmit, className,
               }}
             />
             <Line type="monotone" dataKey="price" name={stock?.symbol || "Portfolio"} stroke={chartColor} strokeWidth={2} dot={false} />
-            {benchmarkSymbol && <Line type="monotone" dataKey="benchmark" name={benchmarkSymbol} stroke="#8884d8" strokeWidth={2} dot={false} strokeDasharray="3 3" />}
           </LineChart>
         </ResponsiveContainer>
       );
@@ -325,12 +278,6 @@ export function InteractiveChartCardV2({ stock, onManualTickerSubmit, className,
                       <stop offset="0%" stopColor={chartColor} stopOpacity={0.2}/>
                       <stop offset="100%" stopColor={chartColor} stopOpacity={0.05}/>
                     </linearGradient>
-                     {benchmarkSymbol && (
-                      <linearGradient id={benchmarkUniqueId} x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="0%" stopColor="#8884d8" stopOpacity={0.1}/>
-                          <stop offset="100%" stopColor="#8884d8" stopOpacity={0.0}/>
-                      </linearGradient>
-                     )}
                 </defs>
                 <XAxis dataKey="date" hide />
                 <YAxisComponent />
@@ -353,7 +300,6 @@ export function InteractiveChartCardV2({ stock, onManualTickerSubmit, className,
                     }}
                 />
                 <Area type="monotone" dataKey="price" name={stock?.symbol || "Portfolio"} stroke={chartColor} strokeWidth={2} fillOpacity={1} fill={`url(#${uniqueId})`} dot={false} />
-                {benchmarkSymbol && <Area type="monotone" dataKey="benchmark" name={benchmarkSymbol} stroke="#8884d8" strokeWidth={2} fillOpacity={1} fill={`url(#${benchmarkUniqueId})`} dot={false} strokeDasharray="3 3" />}
             </RechartsAreaChart>
         </ResponsiveContainer>
       );
@@ -389,32 +335,6 @@ export function InteractiveChartCardV2({ stock, onManualTickerSubmit, className,
   return (
     <Card className={cn("shadow-none flex flex-col h-full border-none bg-transparent relative", className)}>
        <div className="absolute top-3 right-3 z-10 flex items-center gap-2 no-drag">
-           {benchmarkSymbol ? (
-               <div className="bg-[#191919] text-white text-xs rounded-full py-1 px-3 font-medium flex items-center gap-1.5">
-                   <span>{benchmarkSymbol}</span>
-                   <button onClick={removeBenchmark} className="text-gray-400 hover:text-white"><XIcon size={14} /></button>
-               </div>
-           ) : showBenchmarkInput ? (
-               <Input
-                   ref={benchmarkInputRef}
-                   type="text"
-                   placeholder="e.g. SPY"
-                   value={benchmarkInput}
-                   onChange={(e) => setBenchmarkInput(e.target.value)}
-                   onKeyDown={handleBenchmarkSubmit}
-                   onBlur={() => setShowBenchmarkInput(false)}
-                   className="h-7 text-xs w-28 bg-transparent border-white/20"
-               />
-           ) : (
-               <Button
-                   variant="ghost"
-                   size="icon"
-                   className="h-7 w-7 text-muted-foreground/50 hover:text-foreground hover:bg-white/10 opacity-50 hover:opacity-100 transition-opacity"
-                   onClick={() => setShowBenchmarkInput(true)}
-               >
-                   <Plus className="h-4 w-4" />
-               </Button>
-           )}
           <Popover>
               <PopoverTrigger asChild>
                   <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground/50 hover:text-foreground hover:bg-white/10 opacity-50 hover:opacity-100 transition-opacity">
@@ -443,39 +363,30 @@ export function InteractiveChartCardV2({ stock, onManualTickerSubmit, className,
       <CardHeader className="pb-2 pt-3 px-3 drag-handle cursor-move">
         <div className="flex flex-col sm:flex-row justify-between items-center gap-2">
           {variant === 'trading' && stock && stock.price > 0 ? (
-            <div className="flex items-baseline gap-x-2.5 gap-y-1 flex-wrap flex-1 min-w-0 no-drag cursor-pointer" onClick={() => setIsEditingTicker(true)}>
-              {isEditingTicker ? (
-                <Input
-                  ref={inputRef}
-                  type="text"
-                  placeholder="Search Ticker..."
-                  value={manualTickerInput}
-                  onChange={(e) => setManualTickerInput(e.target.value.toUpperCase())}
-                  onKeyDown={handleManualSubmit}
-                  onBlur={() => setIsEditingTicker(false)}
-                  className="h-7 text-sm w-28 bg-transparent"
-                />
-              ) : (
-                <>
-                  <h3 className="text-base font-bold text-neutral-50 truncate" title={stock.name}>
-                    {stock.symbol}
-                  </h3>
-                  <p className="text-base font-bold text-foreground">
-                    ${stock.price.toFixed(2)}
-                  </p>
-                  <p className={cn("text-xs font-bold", stock.changePercent >= 0 ? 'text-[hsl(var(--confirm-green))]' : 'text-destructive')}>
-                    {stock.changePercent >= 0 ? '+' : ''}{(stock.price * (stock.changePercent / 100)).toFixed(2)}
-                    <span className="ml-1">({stock.changePercent >= 0 ? '+' : ''}{stock.changePercent.toFixed(2)}%)</span>
-                  </p>
-                  {stock.afterHoursPrice && stock.afterHoursChange !== undefined && (
-                    <p className="text-xs text-neutral-400 font-medium whitespace-nowrap">
-                      After-Hours: ${stock.afterHoursPrice.toFixed(2)}
-                      <span className={cn("ml-1", stock.afterHoursChange >= 0 ? 'text-[hsl(var(--confirm-green))]' : 'text-destructive')}>
-                        ({stock.afterHoursChange >= 0 ? '+' : ''}{stock.afterHoursChange.toFixed(2)})
-                      </span>
-                    </p>
-                  )}
-                </>
+            <div className="flex items-baseline gap-x-2.5 gap-y-1 flex-wrap flex-1 min-w-0 no-drag">
+              <Input
+                ref={inputRef}
+                type="text"
+                placeholder="Enter Ticker..."
+                value={manualTickerInput}
+                onChange={(e) => setManualTickerInput(e.target.value.toUpperCase())}
+                onKeyDown={handleManualSubmit}
+                className="h-7 text-sm w-28 bg-transparent border border-white/20"
+              />
+              <p className="text-base font-bold text-foreground">
+                ${stock.price.toFixed(2)}
+              </p>
+              <p className={cn("text-xs font-bold", stock.changePercent >= 0 ? 'text-[hsl(var(--confirm-green))]' : 'text-destructive')}>
+                {stock.changePercent >= 0 ? '+' : ''}{(stock.price * (stock.changePercent / 100)).toFixed(2)}
+                <span className="ml-1">({stock.changePercent >= 0 ? '+' : ''}{stock.changePercent.toFixed(2)}%)</span>
+              </p>
+              {stock.afterHoursPrice && stock.afterHoursChange !== undefined && (
+                <p className="text-xs text-neutral-400 font-medium whitespace-nowrap">
+                  After-Hours: ${stock.afterHoursPrice.toFixed(2)}
+                  <span className={cn("ml-1", stock.afterHoursChange >= 0 ? 'text-[hsl(var(--confirm-green))]' : 'text-destructive')}>
+                    ({stock.afterHoursChange >= 0 ? '+' : ''}{stock.afterHoursChange.toFixed(2)})
+                  </span>
+                </p>
               )}
             </div>
           ) : (
@@ -546,6 +457,7 @@ export function InteractiveChartCardV2({ stock, onManualTickerSubmit, className,
     </Card>
   );
 }
+
 
 
 
