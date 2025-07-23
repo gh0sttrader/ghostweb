@@ -77,6 +77,17 @@ const WATCHLIST = [
   { symbol: "NVDA", name: "NVIDIA Corp.", price: "900.50", change: "+0.60%", volume: "75.3M" },
 ];
 
+const TRANSACTIONS = [
+    { date: "07/22/2025", type: "Buy", symbol: "AAPL", name: "Apple Inc.", shares: "10", price: "$170.34", amount: "$1,703.40", status: "Completed" },
+    { date: "07/21/2025", type: "Dividend", symbol: "MSFT", name: "Microsoft Corp.", shares: "—", price: "—", amount: "$25.00", status: "Completed" },
+    { date: "07/20/2025", type: "Sell", symbol: "AMD", name: "AMD Inc.", shares: "15", price: "$162.10", amount: "$2,431.50", status: "Completed" },
+    { date: "07/19/2025", type: "Transfer", symbol: "—", name: "Deposit", shares: "—", price: "—", amount: "$5,000.00", status: "Completed" },
+    { date: "07/18/2025", type: "Buy", symbol: "GOOGL", name: "Alphabet Inc.", shares: "5", price: "$139.80", amount: "$699.00", status: "Completed" },
+    { date: "07/17/2025", type: "Withdrawal", symbol: "—", name: "ACH Transfer", shares: "—", price: "—", amount: "-$1,000.00", status: "Completed" },
+    { date: "07/16/2025", type: "Buy", symbol: "TSLA", name: "Tesla, Inc.", shares: "2", price: "$178.50", amount: "$357.00", status: "Pending" },
+    { date: "07/15/2025", type: "Dividend", symbol: "JPM", name: "JPMorgan Chase & Co.", shares: "—", price: "—", amount: "$15.75", status: "Completed" },
+];
+
 
 const accountToStock = (account: Account): Stock => ({
     id: account.id,
@@ -393,6 +404,40 @@ const WatchlistTable = () => (
     </div>
 );
 
+const TransactionsTable = () => (
+    <div className="overflow-x-auto rounded-2xl bg-card">
+        <Table>
+            <TableHeader>
+                <TableRow className="border-b border-white/10">
+                    <TableHead className="py-3 px-6 text-left font-bold">Date</TableHead>
+                    <TableHead className="py-3 px-6 text-left font-bold">Type</TableHead>
+                    <TableHead className="py-3 px-6 text-left font-bold">Symbol</TableHead>
+                    <TableHead className="py-3 px-6 text-left font-bold">Name</TableHead>
+                    <TableHead className="py-3 px-6 text-right font-bold">Shares</TableHead>
+                    <TableHead className="py-3 px-6 text-right font-bold">Price</TableHead>
+                    <TableHead className="py-3 px-6 text-right font-bold">Amount</TableHead>
+                    <TableHead className="py-3 px-6 text-left font-bold">Status</TableHead>
+                </TableRow>
+            </TableHeader>
+            <TableBody>
+                {TRANSACTIONS.map((tx, index) => (
+                    <TableRow key={index} className="transition-colors border-none hover:bg-white/5">
+                        <TableCell className="py-2 px-6">{tx.date}</TableCell>
+                        <TableCell className="py-2 px-6">{tx.type}</TableCell>
+                        <TableCell className="py-2 px-6 font-semibold">{tx.symbol}</TableCell>
+                        <TableCell className="py-2 px-6">{tx.name}</TableCell>
+                        <TableCell className="py-2 px-6 text-right">{tx.shares}</TableCell>
+                        <TableCell className="py-2 px-6 text-right">{tx.price}</TableCell>
+                        <TableCell className={cn("py-2 px-6 text-right", tx.amount.startsWith('-') ? 'text-destructive' : 'text-[hsl(var(--confirm-green))]')}>{tx.amount}</TableCell>
+                        <TableCell className="py-2 px-6">{tx.status}</TableCell>
+                    </TableRow>
+                ))}
+            </TableBody>
+        </Table>
+    </div>
+);
+
+
 export default function AccountsPage() {
     const [selectedAccount, setSelectedAccount] = useState<Account>(mockAccounts[0]);
     const [headerValue, setHeaderValue] = useState<number>(mockAccounts[0].balance);
@@ -463,6 +508,10 @@ export default function AccountsPage() {
                 <section className="w-full mt-10">
                     <h2 className="text-white text-xl font-semibold mb-4">Watchlist</h2>
                     <WatchlistTable />
+                </section>
+                <section className="w-full mt-10">
+                    <h2 className="text-white text-xl font-semibold mb-4">Transactions</h2>
+                    <TransactionsTable />
                 </section>
                 
                 <div className="h-12 flex-shrink-0" />
