@@ -349,7 +349,7 @@ function TradingDashboardPageContentV2() {
                     margin={[16, 16]}
                     containerPadding={[0, 0]}
                     preventCollision={true}
-                    compactType={"vertical"}
+                    compactType={null}
                 >
                   {layouts.map(layoutItem => {
                        const groupId = layoutItem.i;
