@@ -10,13 +10,26 @@ import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { useOpenPositionsContext } from '@/contexts/OpenPositionsContext';
-import type { Stock, OrderActionType, TradeRequest, TradeMode, OrderSystemType, TimeInForce } from '@/types';
+import type { Stock, OrderActionType, TradeRequest, TradeMode, OrderSystemType, TimeInForce, WidgetKey } from '@/types';
 import { cn } from '@/lib/utils';
-import { DollarSign, Percent, Layers, MoreHorizontal } from 'lucide-react';
+import { DollarSign, Percent, Layers, MoreHorizontal, Plus } from 'lucide-react';
 import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
 import { TradingFeaturesBadges } from '../TradingFeaturesBadges';
 import { CardMenu } from './CardMenu';
 import { useToast } from '@/hooks/use-toast';
+import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
+
+const WIDGETS = [
+  { key: "chart" as WidgetKey, label: "Chart" },
+  { key: "order" as WidgetKey, label: "Trading Card" },
+  { key: "positions" as WidgetKey, label: "Positions" },
+  { key: "orders" as WidgetKey, label: "Open Orders" },
+  { key: "history" as WidgetKey, label: "History" },
+  { key: "watchlist" as WidgetKey, label: "Watchlist" },
+  { key: "screeners" as WidgetKey, label: "Screeners" },
+  { key: "news" as WidgetKey, label: "News" },
+  { key: "details" as WidgetKey, label: "Details" },
+];
 
 interface OrderCardProps {
     selectedStock: Stock | null;
@@ -30,6 +43,7 @@ interface OrderCardProps {
     onClear: () => void;
     className?: string;
     onDelete: () => void;
+    onAddWidget: (widgetKey: WidgetKey) => void;
 }
 
 const DetailItem: React.FC<{ label: string; value?: string | number | null; unit?: string; valueClass?: string; description?: string }> = ({ label, value, unit, valueClass, description }) => (
@@ -68,6 +82,7 @@ export const OrderCardV2: React.FC<OrderCardProps> = ({
     onClear,
     className,
     onDelete,
+    onAddWidget,
 }) => {
     const { accounts, selectedAccountId, setSelectedAccountId } = useOpenPositionsContext();
     const { toast } = useToast();
@@ -231,7 +246,28 @@ export const OrderCardV2: React.FC<OrderCardProps> = ({
                 <CardTitle className="text-sm font-semibold text-muted-foreground">
                     Trade
                 </CardTitle>
-                <div className="ml-auto no-drag">
+                <div className="ml-auto flex items-center gap-1 no-drag">
+                     <Popover>
+                        <PopoverTrigger asChild>
+                            <Button variant="ghost" className="h-6 w-6 p-0 text-muted-foreground hover:text-foreground">
+                                <Plus size={16} />
+                            </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-48 p-1">
+                            <div className="flex flex-col">
+                                {WIDGETS.map(w => (
+                                    <Button 
+                                        key={w.key}
+                                        variant="ghost" 
+                                        className="w-full justify-start text-xs h-8"
+                                        onClick={() => onAddWidget(w.key)}
+                                    >
+                                        {w.label}
+                                    </Button>
+                                ))}
+                            </div>
+                        </PopoverContent>
+                     </Popover>
                     <CardMenu onCustomize={() => toast({title: "Customize Trade Card..."})} onDelete={onDelete} />
                 </div>
             </CardHeader>

@@ -47,7 +47,7 @@ const DraggableCard = ({ children, className }: { children: React.ReactNode, cla
 const initialLayouts: ReactGridLayout.Layout[] = [
     { i: 'chart', x: 0, y: 0, w: 9, h: 10, minW: 2, minH: 8, isResizable: true },
     { i: 'order', x: 9, y: 0, w: 3, h: 10, minW: 2, minH: 10, isResizable: true },
-    { i: 'details', x: 9, y: 10, w: 3, h: 5, minW: 3, minH: 5, isResizable: true },
+    { i: 'details', x: 9, y: 10, w: 3, h: 5, minW: 3, minH: 5, isResizable: true, resizeHandles: ['s'] },
     { i: 'positions', x: 0, y: 10, w: 9, h: 8, minW: 2, minH: 6, isResizable: true },
     { i: 'watchlist', x: 0, y: 18, w: 6, h: 8, minW: 2, minH: 6, isResizable: true },
     { i: 'news', x: 6, y: 18, w: 6, h: 8, minW: 2, minH: 6, isResizable: true },
@@ -149,17 +149,30 @@ function TradingDashboardPageContentV2() {
     toast({ title: `Card removed from layout.` });
   }, [toast]);
   
+  const addWidgetAsNewCard = useCallback((widgetKey: WidgetKey) => {
+      const allWidgets = Object.values(widgetGroups).flat();
+      if (allWidgets.includes(widgetKey)) {
+          toast({ title: `Widget "${WIDGET_COMPONENTS[widgetKey].label}" is already on the dashboard.` });
+          return;
+      }
+      const newCardId = uuidv4();
+      const newLayoutItem: ReactGridLayout.Layout = { i: newCardId, x: 0, y: Infinity, w: 4, h: 8, minW: 2, minH: 6 };
+      setLayouts(prev => [...prev, newLayoutItem]);
+      setWidgetGroups(prev => ({ ...prev, [newCardId]: [widgetKey] }));
+      toast({ title: "Widget added as a new card." });
+  }, [widgetGroups, toast]);
+
     const WIDGET_COMPONENTS: Record<WidgetKey, Widget> = useMemo(() => ({
       chart: { id: 'chart', label: 'Chart', component: <InteractiveChartCardV2 stock={stockForSyncedComps} onManualTickerSubmit={handleSyncedTickerChange} /> },
-      order: { id: 'order', label: 'Trade', component: <OrderCardV2 selectedStock={stockForSyncedComps} initialActionType={orderCardActionType} initialTradeMode={orderCardInitialTradeMode} miloActionContextText={orderCardMiloActionContext} onSubmit={handleTradeSubmit} onClear={handleClearOrderCard} initialQuantity={orderCardInitialQuantity} initialOrderType={orderCardInitialOrderType} initialLimitPrice={orderCardInitialLimitPrice} className="h-full" onDelete={() => handleDeleteWidget('order')} /> },
-      details: { id: 'details', label: 'Details', component: <DetailsCardV2 account={selectedAccount} onDelete={() => handleDeleteWidget('details')} />},
+      order: { id: 'order', label: 'Trade', component: <OrderCardV2 selectedStock={stockForSyncedComps} initialActionType={orderCardActionType} initialTradeMode={orderCardInitialTradeMode} miloActionContextText={orderCardMiloActionContext} onSubmit={handleTradeSubmit} onClear={handleClearOrderCard} initialQuantity={orderCardInitialQuantity} initialOrderType={orderCardInitialOrderType} initialLimitPrice={orderCardInitialLimitPrice} className="h-full" onDelete={() => handleDeleteWidget('order')} onAddWidget={addWidgetAsNewCard} /> },
+      details: { id: 'details', label: 'Details', component: <DetailsCardV2 account={selectedAccount} onDelete={() => handleDeleteWidget('details')} onAddWidget={addWidgetAsNewCard} />},
       positions: { id: 'positions', label: 'Positions', component: <OpenPositionsCardV2 className="h-full border-0 shadow-none rounded-none bg-transparent" /> },
       orders: { id: 'orders', label: 'Open Orders', component: <OrdersTableV2 className="h-full border-0 shadow-none rounded-none bg-transparent" /> },
       history: { id: 'history', label: 'History', component: <TradeHistoryTableV2 className="h-full border-0 shadow-none rounded-none bg-transparent" syncedTickerSymbol={syncedTickerSymbol} /> },
       watchlist: { id: 'watchlist', label: 'Watchlist', component: <WatchlistCardV2 className="h-full border-0 shadow-none rounded-none bg-transparent" onSymbolSelect={handleSyncedTickerChange} selectedSymbol={syncedTickerSymbol} /> },
       screeners: { id: 'screeners', label: 'Screeners', component: <ScreenerWatchlistV2 className="h-full border-0 shadow-none rounded-none bg-transparent" onSymbolSelect={handleSyncedTickerChange} selectedSymbol={syncedTickerSymbol} /> },
-      news: { id: 'news', label: 'News', component: <NewsCardV2 className="h-full border-0 shadow-none rounded-none bg-transparent" onSymbolSelect={handleSyncedTickerChange} selectedSymbol={syncedTickerSymbol} onDelete={() => handleDeleteWidget('news')} /> },
-  }), [stockForSyncedComps, handleSyncedTickerChange, orderCardActionType, orderCardInitialTradeMode, orderCardMiloActionContext, handleTradeSubmit, handleClearOrderCard, orderCardInitialQuantity, orderCardInitialOrderType, orderCardInitialLimitPrice, syncedTickerSymbol, selectedAccount, handleDeleteWidget]);
+      news: { id: 'news', label: 'News', component: <NewsCardV2 className="h-full border-0 shadow-none rounded-none bg-transparent" onSymbolSelect={handleSyncedTickerChange} selectedSymbol={syncedTickerSymbol} onDelete={() => handleDeleteWidget('news')} onAddWidget={addWidgetAsNewCard} /> },
+  }), [stockForSyncedComps, handleSyncedTickerChange, orderCardActionType, orderCardInitialTradeMode, orderCardMiloActionContext, handleTradeSubmit, handleClearOrderCard, orderCardInitialQuantity, orderCardInitialOrderType, orderCardInitialLimitPrice, syncedTickerSymbol, selectedAccount, handleDeleteWidget, addWidgetAsNewCard]);
 
 
   useEffect(() => {
@@ -274,21 +287,6 @@ function TradingDashboardPageContentV2() {
         return newGroups;
     });
   }, [WIDGET_COMPONENTS, toast]);
-
-  const addWidgetAsNewCard = useCallback((widgetKey: WidgetKey) => {
-      const allWidgets = Object.values(widgetGroups).flat();
-      if (allWidgets.includes(widgetKey)) {
-          toast({ title: `Widget "${WIDGET_COMPONENTS[widgetKey].label}" is already on the dashboard.` });
-          return;
-      }
-      const newCardId = uuidv4();
-      const newLayoutItem: ReactGridLayout.Layout = { i: newCardId, x: 0, y: Infinity, w: 4, h: 8, minW: 2, minH: 6 };
-      setLayouts(prev => [...prev, newLayoutItem]);
-      setWidgetGroups(prev => ({ ...prev, [newCardId]: [widgetKey] }));
-      toast({ title: "Widget added as a new card." });
-  }, [widgetGroups, WIDGET_COMPONENTS, toast]);
-
-
 
   const handleRemoveWidgetFromGroup = useCallback((groupId: string, widgetKey: WidgetKey) => {
     setWidgetGroups(prev => {

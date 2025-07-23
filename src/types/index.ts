@@ -1,4 +1,5 @@
 
+
 import type { DateRange } from "react-day-picker";
 import type { ActiveScreenerFilters } from "@/components/ScreenerFilterModal";
 
@@ -241,3 +242,32 @@ export type SavedScreener = {
 }
 
 export type WidgetKey = 'chart' | 'order' | 'positions' | 'orders' | 'history' | 'watchlist' | 'screeners' | 'news' | 'details';
+
+export interface DetailsCardV2Props {
+    account: Account | undefined;
+    onDelete: () => void;
+    onAddWidget: (widgetKey: WidgetKey) => void;
+}
+
+export interface NewsCardV2Props {
+    className?: string;
+    onSymbolSelect: (symbol: string) => void;
+    selectedSymbol: string | null;
+    onDelete: () => void;
+    onAddWidget: (widgetKey: WidgetKey) => void;
+}
+
+export interface OrderCardV2Props {
+    selectedStock: Stock | null;
+    initialActionType?: OrderActionType | null;
+    initialTradeMode?: TradeMode;
+    miloActionContextText?: string | null;
+    initialQuantity?: string;
+    initialOrderType?: OrderSystemType;
+    initialLimitPrice?: string;
+    onSubmit: (tradeDetails: TradeRequest) => void;
+    onClear: () => void;
+    className?: string;
+    onDelete: () => void;
+    onAddWidget: (widgetKey: WidgetKey) => void;
+}
