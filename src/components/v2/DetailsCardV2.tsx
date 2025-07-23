@@ -10,8 +10,8 @@ import type { Account } from '@/types';
 
 const DetailItem = ({ label, value, valueColor }: { label: string; value: string; valueColor?: string }) => (
     <div className="flex flex-col">
-        <span className="text-base text-neutral-400 font-normal">{label}</span>
-        <span className={cn("text-lg font-semibold mt-1", valueColor)}>{value}</span>
+        <span className="text-xs text-neutral-400 font-normal">{label}</span>
+        <span className={cn("text-sm font-semibold mt-1", valueColor)}>{value}</span>
     </div>
 );
 
@@ -45,12 +45,12 @@ export function DetailsCardV2({ account }: DetailsCardV2Props) {
                     </Button>
                 </div>
             </CardHeader>
-            <CardContent className="flex-1 p-6 flex flex-col">
+            <CardContent className="flex-1 p-4 flex flex-col">
                 <div>
-                    <div className="text-sm text-neutral-400">Net Account Value (USD)</div>
-                    <div className="text-4xl font-bold mt-1 text-white">{formatCurrencyNoSign(netValue)}</div>
+                    <div className="text-xs text-neutral-400">Net Account Value (USD)</div>
+                    <div className="text-2xl font-semibold mt-1 text-white">{formatCurrencyNoSign(netValue)}</div>
                 </div>
-                <div className="grid grid-cols-3 gap-4 mt-6">
+                <div className="grid grid-cols-3 gap-4 mt-4">
                     <DetailItem label="Market Value" value={formatCurrency(marketValue)} valueColor={marketValue < 0 ? "text-destructive" : "text-[hsl(var(--confirm-green))]"} />
                     <DetailItem label="Buying Power" value={formatCurrencyNoSign(buyingPower)} />
                     <DetailItem label="Day's P&L" value={formatCurrency(dailyPnl)} valueColor={dailyPnl >= 0 ? "text-[hsl(var(--confirm-green))]" : "text-destructive"} />
