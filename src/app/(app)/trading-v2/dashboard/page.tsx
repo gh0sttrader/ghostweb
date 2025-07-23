@@ -28,7 +28,7 @@ import { ScreenerWatchlistV2 } from '@/components/v2/ScreenerWatchlistV2';
 import { GhostTradingTopBar } from '@/components/v2/GhostTradingTopBar';
 import { CardMenu } from '@/components/v2/CardMenu';
 import { FundamentalsCardV2 } from '@/components/v2/FundamentalsCardV2';
-import { X, LogOut, Plus } from 'lucide-react';
+import { X, LogOut, Plus, ChartBar, Newspaper, ScanSearch, Table2, ShoppingCart, ListOrdered, History, Info } from 'lucide-react';
 import { DetailsCardV2 } from '@/components/v2/DetailsCardV2';
 
 interface Widget {
@@ -37,6 +37,19 @@ interface Widget {
     component: React.ReactNode;
     isProtected?: boolean;
 }
+
+const ALL_WIDGETS = [
+  { id: "chart" as WidgetKey, label: "Chart", icon: ChartBar },
+  { id: "order" as WidgetKey, label: "Trading Card", icon: ShoppingCart },
+  { id: "positions" as WidgetKey, label: "Positions", icon: Table2 },
+  { id: "orders" as WidgetKey, label: "Open Orders", icon: ListOrdered },
+  { id: "history" as WidgetKey, label: "History", icon: History },
+  { id: "watchlist" as WidgetKey, label: "Watchlist", icon: Table2 },
+  { id: "screeners" as WidgetKey, label: "Screeners", icon: ScanSearch },
+  { id: "news" as WidgetKey, label: "News", icon: Newspaper },
+  { id: "details" as WidgetKey, label: "Details", icon: Info },
+];
+
 
 const DraggableCard = ({ children, className }: { children: React.ReactNode, className?: string }) => (
     <div className={cn("bg-card border border-white/10 rounded-lg flex flex-col overflow-hidden h-full", className)}>
@@ -47,7 +60,7 @@ const DraggableCard = ({ children, className }: { children: React.ReactNode, cla
 const initialLayouts: ReactGridLayout.Layout[] = [
     { i: 'chart', x: 0, y: 0, w: 9, h: 10, minW: 2, minH: 8, isResizable: true },
     { i: 'order', x: 9, y: 0, w: 3, h: 10, minW: 2, minH: 10, isResizable: true },
-    { i: 'details', x: 9, y: 10, w: 3, h: 5, minW: 3, minH: 5, isResizable: true, resizeHandles: ['s'] },
+    { i: 'details', x: 9, y: 10, w: 3, h: 5, minW: 3, minH: 5, isResizable: true },
     { i: 'positions', x: 0, y: 10, w: 9, h: 8, minW: 2, minH: 6, isResizable: true },
     { i: 'watchlist', x: 0, y: 18, w: 6, h: 8, minW: 2, minH: 6, isResizable: true },
     { i: 'news', x: 6, y: 18, w: 6, h: 8, minW: 2, minH: 6, isResizable: true },
@@ -86,6 +99,7 @@ function TradingDashboardPageContentV2() {
   const [activeTabs, setActiveTabs] = useState<Record<string, WidgetKey>>({});
   
   const selectedAccount = useMemo(() => accounts.find(acc => acc.id === selectedAccountId), [accounts, selectedAccountId]);
+  const existingWidgets = useMemo(() => Object.values(widgetGroups).flat(), [widgetGroups]);
 
   const handleClearOrderCard = useCallback(() => {
     setOrderCardActionType(null);
@@ -150,9 +164,8 @@ function TradingDashboardPageContentV2() {
   }, [toast]);
   
   const addWidgetAsNewCard = useCallback((widgetKey: WidgetKey) => {
-      const allWidgets = Object.values(widgetGroups).flat();
-      if (allWidgets.includes(widgetKey)) {
-          toast({ title: `Widget "${WIDGET_COMPONENTS[widgetKey].label}" is already on the dashboard.` });
+      if (existingWidgets.includes(widgetKey)) {
+          toast({ title: `Widget "${ALL_WIDGETS.find(w => w.id === widgetKey)?.label}" is already on the dashboard.` });
           return;
       }
       const newCardId = uuidv4();
@@ -160,7 +173,7 @@ function TradingDashboardPageContentV2() {
       setLayouts(prev => [...prev, newLayoutItem]);
       setWidgetGroups(prev => ({ ...prev, [newCardId]: [widgetKey] }));
       toast({ title: "Widget added as a new card." });
-  }, [widgetGroups, toast]);
+  }, [existingWidgets, toast]);
 
     const WIDGET_COMPONENTS: Record<WidgetKey, Widget> = useMemo(() => ({
       chart: { id: 'chart', label: 'Chart', component: <InteractiveChartCardV2 stock={stockForSyncedComps} onManualTickerSubmit={handleSyncedTickerChange} /> },
@@ -271,9 +284,8 @@ function TradingDashboardPageContentV2() {
   
   const addWidgetToGroup = useCallback((groupId: string, widgetKey: WidgetKey) => {
     setWidgetGroups(prev => {
-        const allWidgets = Object.values(prev).flat();
-        if (allWidgets.includes(widgetKey)) {
-          toast({ title: `Widget "${WIDGET_COMPONENTS[widgetKey].label}" is already on the dashboard.` });
+        if (existingWidgets.includes(widgetKey)) {
+          toast({ title: `Widget "${ALL_WIDGETS.find(w => w.id === widgetKey)?.label}" is already on the dashboard.` });
           return prev;
         }
         
@@ -286,7 +298,7 @@ function TradingDashboardPageContentV2() {
         setActiveTabs(tabs => ({ ...tabs, [groupId]: widgetKey }));
         return newGroups;
     });
-  }, [WIDGET_COMPONENTS, toast]);
+  }, [existingWidgets, toast]);
 
   const handleRemoveWidgetFromGroup = useCallback((groupId: string, widgetKey: WidgetKey) => {
     setWidgetGroups(prev => {
@@ -304,10 +316,10 @@ function TradingDashboardPageContentV2() {
             }
         }
 
-        toast({ title: `Widget "${WIDGET_COMPONENTS[widgetKey].label}" removed.` });
+        toast({ title: `Widget "${ALL_WIDGETS.find(w => w.id === widgetKey)?.label}" removed.` });
         return newGroups;
     });
-  }, [WIDGET_COMPONENTS, activeTabs, toast]);
+  }, [activeTabs, toast]);
 
   useEffect(() => {
     const newActiveTabs: Record<string, WidgetKey> = {};
@@ -349,7 +361,6 @@ function TradingDashboardPageContentV2() {
                     resizeHandles={['se', 'sw', 'ne', 'nw', 's', 'w', 'e', 'n']}
                     margin={[16, 16]}
                     containerPadding={[0, 0]}
-                    preventCollision={true}
                     compactType={null}
                 >
                   {layouts.map(layoutItem => {
@@ -396,15 +407,15 @@ function TradingDashboardPageContentV2() {
                                                       </PopoverTrigger>
                                                       <PopoverContent className="w-48 p-1">
                                                         <div className="flex flex-col">
-                                                            {Object.values(WIDGET_COMPONENTS).map(w => (
+                                                            {ALL_WIDGETS.map(w => (
                                                                 <Button 
                                                                     key={w.id}
                                                                     variant="ghost" 
                                                                     className="w-full justify-start text-xs h-8"
                                                                     onClick={() => addWidgetToGroup(groupId, w.id)}
-                                                                    disabled={Object.values(widgetGroups).flat().includes(w.id)}
+                                                                    disabled={existingWidgets.includes(w.id)}
                                                                 >
-                                                                    {w.label} {Object.values(widgetGroups).flat().includes(w.id) && "(Added)"}
+                                                                    {w.label} {existingWidgets.includes(w.id) && "(Added)"}
                                                                 </Button>
                                                             ))}
                                                         </div>

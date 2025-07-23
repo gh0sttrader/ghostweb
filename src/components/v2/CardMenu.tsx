@@ -78,5 +78,3 @@ export function CardMenu({ onCustomize, onDelete, showCustomize = true }: CardMe
     </div>
   );
 }
-
-    
