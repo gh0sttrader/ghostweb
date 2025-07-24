@@ -180,29 +180,31 @@ function TradingDashboardPageContent() {
   
   return (
     <main className="w-full h-full flex flex-col bg-background">
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_428px] gap-1.5 flex-1 overflow-hidden p-4 md:p-8">
-            
-            <div className="flex flex-col flex-1 min-h-0">
-                <InteractiveChartCard
-                  stock={stockForSyncedComps}
-                  onManualTickerSubmit={handleSyncedTickerChange}
-                  className="h-full"
-                />
-            </div>
+        <div className="w-full max-w-6xl mx-auto px-8 2xl:max-w-7xl 2xl:px-16 flex-1 flex flex-col py-4 md:py-6 lg:py-8">
+            <div className="grid grid-cols-1 lg:grid-cols-[1fr_428px] gap-1.5 flex-1 h-full">
+                
+                <div className="flex flex-col flex-1 h-full">
+                    <InteractiveChartCard
+                      stock={stockForSyncedComps}
+                      onManualTickerSubmit={handleSyncedTickerChange}
+                      className="h-full"
+                    />
+                </div>
 
-            <div className="flex flex-col min-h-0">
-                <OrderCard
-                    selectedStock={stockForSyncedComps}
-                    initialActionType={orderCardActionType}
-                    initialTradeMode={orderCardInitialTradeMode}
-                    miloActionContextText={orderCardMiloActionContext}
-                    onSubmit={handleTradeSubmit}
-                    onClear={handleClearOrderCard}
-                    initialQuantity={orderCardInitialQuantity}
-                    initialOrderType={orderCardInitialOrderType}
-                    initialLimitPrice={orderCardInitialLimitPrice}
-                    className="h-full"
-                />
+                <div className="flex flex-col h-full">
+                    <OrderCard
+                        selectedStock={stockForSyncedComps}
+                        initialActionType={orderCardActionType}
+                        initialTradeMode={orderCardInitialTradeMode}
+                        miloActionContextText={orderCardMiloActionContext}
+                        onSubmit={handleTradeSubmit}
+                        onClear={handleClearOrderCard}
+                        initialQuantity={orderCardInitialQuantity}
+                        initialOrderType={orderCardInitialOrderType}
+                        initialLimitPrice={orderCardInitialLimitPrice}
+                        className="h-full"
+                    />
+                </div>
             </div>
         </div>
     </main>
