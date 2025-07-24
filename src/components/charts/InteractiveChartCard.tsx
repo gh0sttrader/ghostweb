@@ -294,25 +294,29 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
        <CardHeader className="pb-2 pt-3 px-3">
         <div className="flex flex-col sm:flex-row justify-between items-start gap-2">
           {variant === 'trading' && stock && stock.price > 0 ? (
-            <div className="flex items-baseline gap-x-2.5 gap-y-1 flex-wrap flex-1 min-w-0">
-              <h3 className="text-base font-bold text-neutral-50 truncate" title={stock.name}>
-                {stock.symbol}
+            <div className="flex-1 min-w-0">
+              <h3 className="text-2xl font-bold text-neutral-50 truncate" title={stock.name}>
+                {stock.name}
               </h3>
-              <p className="text-base font-bold text-foreground">
-                ${stock.price.toFixed(2)}
-              </p>
-              <p className={cn("text-xs font-bold", stock.changePercent >= 0 ? 'text-[hsl(var(--confirm-green))]' : 'text-destructive')}>
-                {stock.changePercent >= 0 ? '+' : ''}{(stock.price * (stock.changePercent / 100)).toFixed(2)}
-                <span className="ml-1">({stock.changePercent >= 0 ? '+' : ''}{stock.changePercent.toFixed(2)}%)</span>
-              </p>
-              {stock.afterHoursPrice && stock.afterHoursChange !== undefined && (
-                <p className="text-xs text-neutral-400 font-medium whitespace-nowrap">
-                  After-Hours: ${stock.afterHoursPrice.toFixed(2)}
-                  <span className={cn("ml-1", stock.afterHoursChange >= 0 ? 'text-[hsl(var(--confirm-green))]' : 'text-destructive')}>
-                    ({stock.afterHoursChange >= 0 ? '+' : ''}{stock.afterHoursChange.toFixed(2)})
-                  </span>
-                </p>
-              )}
+              <div className="flex items-end gap-x-4">
+                  <p className="text-xl font-bold text-foreground">
+                    ${stock.price.toFixed(2)}
+                  </p>
+                  <div className="flex flex-col items-start">
+                    <p className={cn("text-sm font-semibold", stock.changePercent >= 0 ? 'text-[hsl(var(--confirm-green))]' : 'text-destructive')}>
+                      {stock.changePercent >= 0 ? '+' : ''}{(stock.price * (stock.changePercent / 100)).toFixed(2)}
+                      <span className="ml-1.5">({stock.changePercent >= 0 ? '+' : ''}{stock.changePercent.toFixed(2)}%) Today</span>
+                    </p>
+                    {stock.afterHoursPrice && stock.afterHoursChange !== undefined && (
+                      <p className="text-sm text-neutral-400 font-semibold">
+                        After-Hours: ${stock.afterHoursPrice.toFixed(2)}
+                        <span className={cn("ml-1.5", stock.afterHoursChange >= 0 ? 'text-[hsl(var(--confirm-green))]' : 'text-destructive')}>
+                          ({stock.afterHoursChange >= 0 ? '+' : ''}{stock.afterHoursChange.toFixed(2)})
+                        </span>
+                      </p>
+                    )}
+                  </div>
+              </div>
             </div>
           ) : (
               <div className="flex-1">
@@ -322,22 +326,6 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
                     </CardTitle>
                   )}
               </div>
-          )}
-          {variant === 'trading' && (
-            <div className="flex items-center gap-1 w-full sm:w-auto">
-              <Input
-                ref={inputRef}
-                type="text"
-                placeholder="Symbol"
-                value={manualTickerInput}
-                onChange={(e) => setManualTickerInput(e.target.value.toUpperCase())}
-                onKeyDown={(e) => e.key === 'Enter' && handleManualSubmit()}
-                className="h-7 text-xs flex-1 sm:flex-initial sm:w-28 bg-transparent"
-              />
-              <Button variant="ghost" size="icon" onClick={handleManualSubmit} className="h-7 w-7 text-foreground hover:bg-white/10">
-                <Search className="h-3.5 w-3.5" />
-              </Button>
-            </div>
           )}
         </div>
       </CardHeader>
@@ -426,4 +414,3 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
     </Card>
   );
 }
-
