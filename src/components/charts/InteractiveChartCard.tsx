@@ -94,6 +94,7 @@ const getTimeframeParams = (timeframe: '1D' | '5D' | '1M' | '3M' | '6M' | 'YTD' 
 
 export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover, onChartLeave, className, variant = 'trading' }: InteractiveChartCardProps) {
   const { toast } = useToast();
+  // chartType state is only used for the 'account' variant now.
   const [chartType, setChartType] = useState<'line' | 'area' | 'candle'>(variant === 'account' ? 'line' : 'area');
   const [timeframe, setTimeframe] = useState<'1D' | '5D' | '1M' | '3M' | '6M' | 'YTD' | '1Y' | '5Y' | 'All'>('1M');
   const [manualTickerInput, setManualTickerInput] = useState('');
@@ -222,7 +223,8 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
 
     const uniqueId = `chart-gradient-${stock?.id || 'default'}`;
     
-    const chartComponentType = variant === 'account' ? 'line' : chartType;
+    // On trading page, it's always 'area'. On account page, it uses the state.
+    const chartComponentType = variant === 'account' ? chartType : 'area';
 
     if (chartComponentType === 'line') {
       return (
@@ -379,7 +381,7 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
           <Calendar className="h-5 w-5" />
         </Button>
         
-        {variant === 'trading' && (
+        {variant === 'account' && (
           <>
             <div className="w-px bg-border/20 h-6 self-center mx-1"></div>
             {[
@@ -414,3 +416,4 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
     </Card>
   );
 }
+
