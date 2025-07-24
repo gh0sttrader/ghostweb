@@ -34,6 +34,7 @@ const AppNavLinks = () => {
     { href: "/trading-v2/dashboard", label: "GHOST TRADING 2.0" },
     { href: "/trading/dashboard", label: "TRADING" },
     { href: "/accounts", label: "ACCOUNTS" },
+    { href: "/research", label: "RESEARCH" },
     { href: "/news", label: "NEWS" },
     { href: "/screener", label: "SCREENER" },
     { href: "/tradehistory", label: "TRADE HISTORY" },
