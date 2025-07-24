@@ -299,10 +299,7 @@ function TradingDashboardPageContent() {
                     />
                 </div>
                 <div className="flex-1 min-h-0">
-                    <FundamentalsCard 
-                        stock={stockForSyncedComps}
-                        className="h-full"
-                    />
+                    
                 </div>
             </div>
         </div>
