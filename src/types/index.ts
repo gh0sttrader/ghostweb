@@ -1,6 +1,5 @@
 
 
-
 import type { DateRange } from "react-day-picker";
 import type { ActiveScreenerFilters } from "@/components/ScreenerFilterModal";
 
@@ -64,6 +63,13 @@ export type Stock = {
     afterHoursChangePercent?: number;
     analystRating?: 'Strong Buy' | 'Buy' | 'Hold' | 'Sell' | 'Strong Sell';
     tradingFeatures?: TradingFeatures;
+
+    // Company Info
+    description?: string;
+    ceo?: string;
+    employees?: number;
+    headquarters?: string;
+    founded?: number;
 
     // Expanded for screener
     country?: string;

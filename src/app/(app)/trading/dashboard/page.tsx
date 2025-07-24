@@ -24,6 +24,7 @@ import { initialMockStocks } from './mock-data';
 import { NewsCard } from '@/components/NewsCard';
 import { cn } from '@/lib/utils';
 import { ScreenerWatchlist } from '@/components/ScreenerWatchlist';
+import { AboutCard } from '@/components/AboutCard';
 
 const dummyWatchlists = ["My Watchlist", "Tech Stocks", "Growth", "Crypto", "High Volume"];
 const dummyScreeners = ["Top Gainers", "High Volume", "Unusual Options"];
@@ -182,12 +183,15 @@ function TradingDashboardPageContent() {
     <main className="w-full h-full flex flex-col bg-background">
       <div className="w-full max-w-6xl mx-auto px-8 2xl:max-w-7xl 2xl:px-16 flex-1 flex flex-col py-4 md:py-6 lg:py-8">
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_428px] gap-1.5 h-[45vh]">
-          <div className="border border-white/10 rounded-lg">
-            <InteractiveChartCard
-              stock={stockForSyncedComps}
-              onManualTickerSubmit={handleSyncedTickerChange}
-              className="h-full"
-            />
+          <div className="flex flex-col gap-1.5">
+            <div className="border border-white/10 rounded-lg flex-1">
+                <InteractiveChartCard
+                  stock={stockForSyncedComps}
+                  onManualTickerSubmit={handleSyncedTickerChange}
+                  className="h-full"
+                />
+            </div>
+            <AboutCard stock={stockForSyncedComps} />
           </div>
 
           <div className="flex flex-col h-full">
