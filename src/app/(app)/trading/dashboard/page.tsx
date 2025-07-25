@@ -198,6 +198,9 @@ function TradingDashboardPageContent() {
              <div className="mt-12">
                 <KeyStatistics stock={stockForSyncedComps} />
             </div>
+            <div className="mt-12">
+              <NewsCard stock={stockForSyncedComps} />
+            </div>
           </div>
 
           <div className="h-[45vh]">
