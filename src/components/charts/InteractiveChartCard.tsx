@@ -65,7 +65,7 @@ const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>)
 
 
 // Map UI timeframes to Alpaca API parameters
-const getTimeframeParams = (timeframe: '1D' | '5D' | '1M' | '3M' | '6M' | 'YTD' | '1Y' | '5Y' | 'All') => {
+const getTimeframeParams = (timeframe: '1D' | '5D' | '1M' | '3M' | '6M' | 'YTD' | '1Y' | '5Y' | 'Max') => {
   const now = new Date();
   switch (timeframe) {
     case '1D':
@@ -84,7 +84,7 @@ const getTimeframeParams = (timeframe: '1D' | '5D' | '1M' | '3M' | '6M' | 'YTD' 
       return { timeframe: '1Day', start: formatISO(sub(now, { years: 1 })) };
     case '5Y':
       return { timeframe: '1Week', start: formatISO(sub(now, { years: 5 })) };
-    case 'All':
+    case 'Max':
       return { timeframe: '1Month', start: '2015-01-01T00:00:00Z' }; // A reasonable 'all time' start
     default:
       return { timeframe: '1Day', start: formatISO(sub(now, { months: 1 })) };
@@ -96,7 +96,7 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
   const { toast } = useToast();
   // chartType state is only used for the 'account' variant now.
   const [chartType, setChartType] = useState<'line' | 'area' | 'candle'>(variant === 'account' ? 'line' : 'area');
-  const [timeframe, setTimeframe] = useState<'1D' | '5D' | '1M' | '3M' | '6M' | 'YTD' | '1Y' | '5Y' | 'All'>('1M');
+  const [timeframe, setTimeframe] = useState<'1D' | '5D' | '1M' | '3M' | '6M' | 'YTD' | '1Y' | '5Y' | 'Max'>('1M');
   const [manualTickerInput, setManualTickerInput] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -290,6 +290,9 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
     return null;
   };
 
+  const timeframeButtons = variant === 'trading'
+    ? ['1D', '5D', '1M', '3M', '6M', 'YTD', '1Y', '5Y', 'Max']
+    : ['1D', '5D', '1M', '3M', '6M', 'YTD', '1Y', '5Y', 'All'];
 
   return (
     <Card className={cn("shadow-none flex flex-col border-none bg-transparent relative", className)}>
@@ -357,7 +360,7 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
       </CardContent>
      
       <CardFooter className="flex flex-wrap justify-start items-center gap-x-1 gap-y-2 pt-2 pb-2 px-3">
-        {['1D', '5D', '1M', '3M', '6M', 'YTD', '1Y', '5Y', 'All'].map((tf) => (
+        {timeframeButtons.map((tf) => (
           <Button
             key={tf}
             variant="ghost"
@@ -373,9 +376,11 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
             {tf}
           </Button>
         ))}
-        <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-transparent" onClick={() => setIsDatePickerOpen(true)}>
-          <Calendar className="h-5 w-5" />
-        </Button>
+        {variant !== 'trading' && (
+          <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-transparent" onClick={() => setIsDatePickerOpen(true)}>
+            <Calendar className="h-5 w-5" />
+          </Button>
+        )}
         
         {variant === 'account' && (
           <>
@@ -411,6 +416,7 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
     </Card>
   );
 }
+
 
 
 
