@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { Search, ChevronDown, Bell, TrendingUp, TrendingDown, Minus, X } from 'lucide-react';
+import { Search, ChevronDown, Bell, TrendingUp, TrendingDown, Minus, X, Plus, Trash2 } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import { dummyNewsData } from './dummy-data';
 import { Badge } from '@/components/ui/badge';
@@ -21,6 +21,7 @@ import type { Alert, Stock } from '@/types';
 import { initialMockStocks } from '@/app/(app)/trading/dashboard/mock-data';
 import { TradingFeaturesBadges } from '@/components/TradingFeaturesBadges';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Separator } from '@/components/ui/separator';
 
 const sentimentConfig = {
     Positive: { 
@@ -40,7 +41,7 @@ const sentimentConfig = {
     },
 };
 
-const suggestedKeywords = [
+const initialSuggestedKeywords = [
     "Earnings", "Upgrade", "Downgrade", "Lawsuit", "AI", "FDA", 
     "Partnership", "Buyout", "Innovation", "Guidance"
 ];
@@ -76,6 +77,8 @@ export default function NewsPage() {
   const [tickerSearchTerm, setTickerSearchTerm] = useState('');
   const [selectedKeywords, setSelectedKeywords] = useState<string[]>([]);
   const [isKeywordPopoverOpen, setIsKeywordPopoverOpen] = useState(false);
+  const [suggestedKeywords, setSuggestedKeywords] = useState(initialSuggestedKeywords);
+  const [newKeyword, setNewKeyword] = useState('');
 
   const handleOpenAlertModal = (symbol: string) => {
     setSelectedSymbolForAlert(symbol);
@@ -101,6 +104,20 @@ export default function NewsPage() {
         checked ? [...prev, keyword] : prev.filter(k => k !== keyword)
     );
   };
+  
+  const handleAddNewKeyword = () => {
+    const trimmedKeyword = newKeyword.trim();
+    if (trimmedKeyword && !suggestedKeywords.find(k => k.toLowerCase() === trimmedKeyword.toLowerCase())) {
+        setSuggestedKeywords(prev => [...prev, trimmedKeyword]);
+        setNewKeyword('');
+    }
+  };
+
+  const handleRemoveKeyword = (keywordToRemove: string) => {
+      setSuggestedKeywords(prev => prev.filter(k => k !== keywordToRemove));
+      setSelectedKeywords(prev => prev.filter(k => k !== keywordToRemove));
+  };
+
 
   const filteredNewsData = useMemo(() => {
     const lowerCaseTicker = tickerSearchTerm.toLowerCase();
@@ -164,16 +181,39 @@ export default function NewsPage() {
                           <div className="space-y-2">
                               <h4 className="font-medium text-sm leading-none">Filter by Keyword</h4>
                           </div>
+                          <div className="flex items-center gap-2 my-3">
+                              <Input 
+                                placeholder="Add keyword..." 
+                                className="h-8 text-xs" 
+                                value={newKeyword}
+                                onChange={(e) => setNewKeyword(e.target.value)}
+                                onKeyDown={(e) => e.key === 'Enter' && handleAddNewKeyword()}
+                              />
+                              <Button size="sm" className="h-8 px-2.5" onClick={handleAddNewKeyword}>
+                                <Plus className="h-4 w-4" />
+                              </Button>
+                          </div>
+                          <Separator className="bg-white/10" />
                           <ScrollArea className="h-48 mt-3">
                               <div className="space-y-2 p-1">
                                   {suggestedKeywords.map(keyword => (
-                                      <div key={keyword} className="flex items-center space-x-2">
-                                          <Checkbox
-                                              id={`kw-${keyword}`}
-                                              checked={selectedKeywords.includes(keyword)}
-                                              onCheckedChange={(checked) => handleKeywordChange(keyword, !!checked)}
-                                          />
-                                          <Label htmlFor={`kw-${keyword}`} className="text-xs font-normal">{keyword}</Label>
+                                      <div key={keyword} className="flex items-center justify-between group">
+                                          <div className="flex items-center space-x-2">
+                                              <Checkbox
+                                                  id={`kw-${keyword}`}
+                                                  checked={selectedKeywords.includes(keyword)}
+                                                  onCheckedChange={(checked) => handleKeywordChange(keyword, !!checked)}
+                                              />
+                                              <Label htmlFor={`kw-${keyword}`} className="text-xs font-normal">{keyword}</Label>
+                                          </div>
+                                           <Button 
+                                              variant="ghost" 
+                                              size="icon" 
+                                              className="h-6 w-6 opacity-0 group-hover:opacity-100"
+                                              onClick={() => handleRemoveKeyword(keyword)}
+                                            >
+                                                <X className="h-3 w-3 text-destructive" />
+                                            </Button>
                                       </div>
                                   ))}
                               </div>
@@ -264,7 +304,3 @@ export default function NewsPage() {
     </>
   );
 }
-
-    
-
-    
