@@ -526,13 +526,13 @@ export default function AccountsPage() {
                 <Separator className="bg-border/20 mb-6" />
                 <Snapshot account={selectedAccount} />
                 
-                <section className="w-full">
+                <section className="w-full mb-12">
                     <div className="flex justify-between items-center mb-4">
                       <h2 className="text-white text-xl font-semibold">Holdings</h2>
                     </div>
                     <HoldingsTable holdings={selectedAccount.holdings || []} />
                 </section>
-                <section className="w-full mt-10">
+                <section className="w-full mt-12">
                     <Popover open={isWatchlistPopoverOpen} onOpenChange={setIsWatchlistPopoverOpen}>
                         <PopoverTrigger asChild>
                             <button className="flex items-center gap-2 mb-4 group">
@@ -569,7 +569,7 @@ export default function AccountsPage() {
                     </Popover>
                     <WatchlistTable list={WATCHLISTS[selectedWatchlist]} />
                 </section>
-                <section className="w-full mt-10">
+                <section className="w-full mt-12">
                     <div className="flex flex-wrap items-center justify-between mb-4 gap-4">
                         <h2 className="text-white text-xl font-semibold">Transactions</h2>
                         <div className="flex flex-wrap items-center gap-2">
@@ -638,6 +638,7 @@ export default function AccountsPage() {
 }
 
     
+
 
 
 
