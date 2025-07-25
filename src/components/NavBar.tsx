@@ -31,7 +31,7 @@ const AppNavLinks = () => {
   const pathname = usePathname();
 
   const links = [
-    { href: "/trading-v2/dashboard", label: "GHOST TRADING 2.0" },
+    { href: "/trading-v2/dashboard", label: "GHOST TRADING" },
     { href: "/trading/dashboard", label: "TRADE" },
     { href: "/accounts", label: "ACCOUNTS" },
     { href: "/research", label: "RESEARCH" },
@@ -54,12 +54,12 @@ const AppNavLinks = () => {
   return (
     <nav className="flex items-center space-x-4 lg:space-x-6 text-sm font-medium">
       {links.map((link) => {
-          if (link.label === 'GHOST TRADING 2.0') {
+          if (link.label === 'GHOST TRADING') {
               return (
                   <Link
                       key={link.href}
                       href={link.href}
-                      className="bg-[#FAFAFA] text-black font-bold px-5 py-2 rounded-full shadow-md tracking-wider hover:bg-[#F0F0F0] transition"
+                      className="bg-[#1C1C1E] text-white border border-[#333] font-bold px-5 py-2 rounded-full shadow-none tracking-wider hover:bg-[#232325] transition"
                   >
                       {link.label}
                   </Link>
