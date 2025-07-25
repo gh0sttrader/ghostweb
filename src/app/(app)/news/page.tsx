@@ -189,7 +189,7 @@ export default function NewsPage() {
                                 onChange={(e) => setNewKeyword(e.target.value)}
                                 onKeyDown={(e) => e.key === 'Enter' && handleAddNewKeyword()}
                               />
-                              <Button size="sm" className="h-8 px-2.5" onClick={handleAddNewKeyword}>
+                              <Button variant="outline" size="sm" className="h-8 px-2.5 bg-foreground text-background hover:bg-foreground/90" onClick={handleAddNewKeyword}>
                                 <Plus className="h-4 w-4" />
                               </Button>
                           </div>
