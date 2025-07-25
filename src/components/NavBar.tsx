@@ -32,7 +32,7 @@ const AppNavLinks = () => {
 
   const links = [
     { href: "/trading-v2/dashboard", label: "GHOST TRADING 2.0" },
-    { href: "/trading/dashboard", label: "TRADING" },
+    { href: "/trading/dashboard", label: "TRADE" },
     { href: "/accounts", label: "ACCOUNTS" },
     { href: "/research", label: "RESEARCH" },
     { href: "/news", label: "NEWS" },
