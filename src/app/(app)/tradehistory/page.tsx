@@ -9,6 +9,7 @@ export default function HistoryPage() {
   
   return (
     <main className="flex flex-col w-full max-w-6xl mx-auto px-8 py-4 md:py-6 lg:py-8 2xl:max-w-7xl 2xl:px-16">
+        <h1 className="text-2xl font-bold mb-8">Trade History</h1>
        <div className="w-full flex justify-center">
             <Calendar
                 mode="single"
