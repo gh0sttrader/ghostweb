@@ -25,6 +25,7 @@ import { NewsCard } from '@/components/NewsCard';
 import { cn } from '@/lib/utils';
 import { ScreenerWatchlist } from '@/components/ScreenerWatchlist';
 import { AboutCard } from '@/components/AboutCard';
+import { KeyStatistics } from '@/components/KeyStatistics';
 
 const dummyWatchlists = ["My Watchlist", "Tech Stocks", "Growth", "Crypto", "High Volume"];
 const dummyScreeners = ["Top Gainers", "High Volume", "Unusual Options"];
@@ -193,6 +194,9 @@ function TradingDashboardPageContent() {
             </div>
             <div className="mt-16">
                 <AboutCard stock={stockForSyncedComps} />
+            </div>
+             <div className="mt-12">
+                <KeyStatistics stock={stockForSyncedComps} />
             </div>
           </div>
 
