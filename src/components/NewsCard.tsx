@@ -35,9 +35,6 @@ export const NewsCard: React.FC<NewsCardProps> = ({ stock, className }) => {
         <div className={cn("bg-transparent", className)}>
             <div className="flex justify-between items-center pb-3">
                 <h2 className="text-xl font-bold">News</h2>
-                <Button variant="link" className="text-primary text-sm p-0 h-auto">
-                    Show more
-                </Button>
             </div>
             {relevantNews.length > 0 ? (
                 <div className="space-y-8">

@@ -205,6 +205,7 @@ function TradingDashboardPageContent() {
                 <div className="mt-12">
                     <AnalystRatings stock={stockForSyncedComps} />
                 </div>
+                <div className="h-16" />
             </div>
 
             <div className="sticky top-8">
@@ -234,5 +235,3 @@ export default function TradingDashboardPage() {
     </Suspense>
   );
 }
-
-    

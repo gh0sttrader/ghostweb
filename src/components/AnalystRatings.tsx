@@ -32,16 +32,14 @@ export function AnalystRatings({ stock, className }: AnalystRatingsProps) {
     return (
         <div className={cn("bg-transparent", className)}>
             <div className="pb-3">
-                <h2 className="text-xl font-bold">Analyst ratings</h2>
+                <h2 className="text-xl font-bold">Analyst Ratings</h2>
                 <Separator className="bg-white/10 mt-2" />
             </div>
             <div className="space-y-4">
                 <RatingBar label="Buy" value={ratings.buy} colorClass="text-[hsl(var(--confirm-green))]" />
                 <RatingBar label="Hold" value={ratings.hold} colorClass="text-neutral-400" />
-                <RatingBar label="panic" value={ratings.sell} colorClass="text-destructive" />
+                <RatingBar label="Panic" value={ratings.sell} colorClass="text-destructive" />
             </div>
         </div>
     );
 }
-
-    
