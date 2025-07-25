@@ -532,7 +532,7 @@ export default function AccountsPage() {
                     </div>
                     <HoldingsTable holdings={selectedAccount.holdings || []} />
                 </section>
-                <section className="w-full mt-12">
+                <section className="w-full mt-12 mb-12">
                     <Popover open={isWatchlistPopoverOpen} onOpenChange={setIsWatchlistPopoverOpen}>
                         <PopoverTrigger asChild>
                             <button className="flex items-center gap-2 mb-4 group">
@@ -570,9 +570,9 @@ export default function AccountsPage() {
                     <WatchlistTable list={WATCHLISTS[selectedWatchlist]} />
                 </section>
                 <section className="w-full mt-12">
-                    <div className="flex flex-wrap items-center justify-between mb-4 gap-4">
+                    <div className="flex w-full items-center justify-between mb-4 gap-4">
                         <h2 className="text-white text-xl font-semibold">Transactions</h2>
-                        <div className="flex flex-wrap items-center gap-2">
+                        <div className="flex items-center gap-2">
                             <Select value={transactionType} onValueChange={setTransactionType}>
                                 <SelectTrigger className="w-auto h-9 text-xs">
                                     <SelectValue placeholder="Type" />
@@ -617,7 +617,7 @@ export default function AccountsPage() {
                                     />
                                 </PopoverContent>
                             </Popover>
-                             <div className="relative w-full sm:max-w-xs">
+                             <div className="relative sm:max-w-xs">
                                 <Input
                                     placeholder="Search transactions..."
                                     value={transactionSearch}
@@ -638,6 +638,7 @@ export default function AccountsPage() {
 }
 
     
+
 
 
 
