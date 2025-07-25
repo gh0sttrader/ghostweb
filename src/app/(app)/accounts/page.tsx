@@ -105,6 +105,10 @@ const TRANSACTIONS = [
     { date: "07/17/2025", type: "Withdrawal", symbol: "—", name: "ACH Transfer", shares: "—", price: "—", amount: "-$1,000.00" },
     { date: "07/16/2025", type: "Buy", symbol: "TSLA", name: "Tesla, Inc.", shares: "2", price: "$178.50", amount: "$357.00" },
     { date: "07/15/2025", type: "Dividend", symbol: "JPM", name: "JPMorgan Chase & Co.", shares: "—", price: "—", amount: "$15.75" },
+    { date: "07/14/2025", type: "Buy", symbol: "NVDA", name: "NVIDIA Corp.", shares: "1", price: "$899.10", amount: "$899.10" },
+    { date: "07/13/2025", type: "Transfer", symbol: "—", name: "Wire Transfer In", shares: "—", price: "—", amount: "$10,000.00" },
+    { date: "07/12/2025", type: "Sell", symbol: "META", name: "Meta Platforms, Inc.", shares: "5", price: "$475.00", amount: "$2,375.00" },
+    { date: "07/11/2025", type: "Buy", symbol: "AMZN", name: "Amazon.com, Inc.", shares: "3", price: "$182.50", amount: "$547.50" },
 ];
 
 
@@ -393,6 +397,7 @@ export default function AccountsPage() {
     const [transactionType, setTransactionType] = useState('all');
     const [transactionDate, setTransactionDate] = useState<DateRange | undefined>();
     const [transactionSearch, setTransactionSearch] = useState('');
+    const [isTransactionsExpanded, setIsTransactionsExpanded] = useState(false);
     
     const [selectedWatchlist, setSelectedWatchlist] = useState<keyof typeof WATCHLISTS>("Main Watchlist");
     const [isWatchlistPopoverOpen, setIsWatchlistPopoverOpen] = useState(false);
@@ -437,6 +442,10 @@ export default function AccountsPage() {
             return typeMatch && dateMatch && searchMatch;
         });
     }, [transactionType, transactionDate, transactionSearch]);
+
+    const displayedTransactions = useMemo(() => {
+        return isTransactionsExpanded ? filteredTransactions : filteredTransactions.slice(0, 7);
+    }, [filteredTransactions, isTransactionsExpanded]);
 
 
     return (
@@ -567,7 +576,17 @@ export default function AccountsPage() {
                             </div>
                         </div>
                     </div>
-                    <TransactionsTable transactions={filteredTransactions} />
+                    <TransactionsTable transactions={displayedTransactions} />
+                    {filteredTransactions.length > 7 && (
+                        <div className="flex justify-center mt-4">
+                            <Button
+                                variant="outline"
+                                onClick={() => setIsTransactionsExpanded(!isTransactionsExpanded)}
+                            >
+                                {isTransactionsExpanded ? 'See Less' : 'See More'}
+                            </Button>
+                        </div>
+                    )}
                 </section>
                 
                 <div className="h-12 flex-shrink-0" />
@@ -583,3 +602,6 @@ export default function AccountsPage() {
 
 
 
+
+
+    
