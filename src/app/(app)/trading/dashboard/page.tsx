@@ -186,16 +186,16 @@ function TradingDashboardPageContent() {
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_428px] gap-1.5 items-start">
           <div className="flex flex-col gap-1.5">
             <div className="border border-white/10 rounded-lg h-[45vh]">
-                <InteractiveChartCard
-                  stock={stockForSyncedComps}
-                  onManualTickerSubmit={handleSyncedTickerChange}
-                  className="h-full"
-                />
+              <InteractiveChartCard
+                stock={stockForSyncedComps}
+                onManualTickerSubmit={handleSyncedTickerChange}
+                className="h-full"
+              />
             </div>
             <div className="mt-16">
                 <AboutCard stock={stockForSyncedComps} />
             </div>
-             <div className="mt-12">
+            <div className="mt-12">
                 <KeyStatistics stock={stockForSyncedComps} />
             </div>
             <div className="mt-12">
@@ -203,7 +203,7 @@ function TradingDashboardPageContent() {
             </div>
           </div>
 
-          <div className="h-[45vh]">
+          <div className="sticky top-8">
             <OrderCard
               selectedStock={stockForSyncedComps}
               initialActionType={orderCardActionType}
