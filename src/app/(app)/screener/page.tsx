@@ -139,22 +139,6 @@ function ScreenerPageContent() {
 
   const activeRules = useMemo(() => rules.filter(rule => rule.isActive), [rules]);
   const activeFilterCount = Object.values(activeFilters).filter(f => f && f.active).length;
-  
-  const handleShowNewsForStock = (stock: Stock) => {
-    const matchingNews = dummyNewsData.filter(news => {
-      const stockName = stock.name?.toLowerCase() || '';
-      const stockSymbol = stock.symbol.toLowerCase();
-      const headline = news.headline.toLowerCase();
-      const preview = news.preview.toLowerCase();
-      return (headline.includes(stockSymbol) || headline.includes(stockName) || preview.includes(stockSymbol) || preview.includes(stockName));
-    });
-
-    setNewsModalContent({
-      articles: matchingNews,
-      title: `News for ${stock.symbol}`
-    });
-    setIsNewsModalOpen(true);
-  };
 
   const filteredStocks = useMemo(() => {
     let processedStocks = [...stocks];
@@ -362,9 +346,6 @@ function ScreenerPageContent() {
                         {col.label}
                     </TableHead>
                 ))}
-                <TableHead className="text-right bg-card hover:bg-card">
-                    News
-                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -373,7 +354,6 @@ function ScreenerPageContent() {
                   <TableRow
                     key={stock.id}
                     className="cursor-pointer border-b border-border/5 hover:bg-white/5"
-                    onClick={() => handleShowNewsForStock(stock)}
                   >
                     {columnsToDisplay.map(col => {
                         const value = stock[col.key as keyof Stock];
@@ -391,14 +371,11 @@ function ScreenerPageContent() {
                             </TableCell>
                         )
                     })}
-                    <TableCell className="text-right">
-                        <Button variant="ghost" size="icon" className="h-7 w-7"><Newspaper className="h-4 w-4"/></Button>
-                    </TableCell>
                   </TableRow>
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={columnsToDisplay.length + 1} className="h-24 text-center text-xs text-muted-foreground">
+                  <TableCell colSpan={columnsToDisplay.length} className="h-24 text-center text-xs text-muted-foreground">
                     No stocks match the selected filters.
                   </TableCell>
                 </TableRow>
@@ -430,3 +407,5 @@ export default function ScreenerPage() {
     </Suspense>
   );
 }
+
+    
