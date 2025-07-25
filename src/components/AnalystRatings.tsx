@@ -38,7 +38,7 @@ export function AnalystRatings({ stock, className }: AnalystRatingsProps) {
             <div className="space-y-4">
                 <RatingBar label="Buy" value={ratings.buy} colorClass="text-[hsl(var(--confirm-green))]" />
                 <RatingBar label="Hold" value={ratings.hold} colorClass="text-neutral-400" />
-                <RatingBar label="Sell" value={ratings.sell} colorClass="text-destructive" />
+                <RatingBar label="panic" value={ratings.sell} colorClass="text-destructive" />
             </div>
         </div>
     );
