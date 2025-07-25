@@ -130,9 +130,9 @@ const formatCurrency = (value?: number, showSign = false) => {
     return `${sign}$${formattedValue}`;
 }
 
-type Timeframe = "1W" | "1M" | "6M" | "YTD" | "1Y" | "Max" | "Custom";
+type Timeframe = "1W" | "1M" | "6M" | "YTD" | "1Y" | "Max";
 
-const summaryData: Record<string, Record<Exclude<Timeframe, "Custom">, { gain: number; percent: number; period: string }>> = {
+const summaryData: Record<string, Record<Timeframe, { gain: number; percent: number; period: string }>> = {
     total: {
         "1W": { gain: -1817.62, percent: -0.63, period: "Past week" },
         "1M": { gain: 2000, percent: 0.70, period: "Past month" },
@@ -161,32 +161,11 @@ const summaryData: Record<string, Record<Exclude<Timeframe, "Custom">, { gain: n
 
 const AccountSummaryHeader = ({ account, onChartHover, onChartLeave }: { account: Account; onChartHover: (value: number | null) => void; onChartLeave: () => void; }) => {
     const [timeframe, setTimeframe] = useState<Timeframe>("6M");
-    const [dateRange, setDateRange] = useState<DateRange | undefined>({
-        from: new Date(2024, 0, 20),
-        to: addDays(new Date(2024, 0, 20), 20),
-    });
 
-    // Simulate fetching data for a custom range
-    const customRangeData = useMemo(() => {
-        if (timeframe === 'Custom' && dateRange?.from && dateRange?.to) {
-            // In a real app, you would fetch this data. For now, we generate it.
-            const diffTime = Math.abs(dateRange.to.getTime() - dateRange.from.getTime());
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-            const randomGain = (Math.random() - 0.5) * 1000 * (diffDays / 30);
-            const randomPercent = (randomGain / account.balance) * 100;
-            return {
-                gain: randomGain,
-                percent: randomPercent,
-                period: 'Custom Range'
-            };
-        }
-        return null;
-    }, [timeframe, dateRange, account.balance]);
-
-    const data = timeframe === 'Custom' ? customRangeData : summaryData[account.id]?.[timeframe] || summaryData.total[timeframe];
+    const data = summaryData[account.id]?.[timeframe] || summaryData.total[timeframe];
     const isPositive = data ? data.gain >= 0 : false;
 
-    const timeframeButtons: { label: Exclude<Timeframe, "Custom">, value: Exclude<Timeframe, "Custom"> }[] = [
+    const timeframeButtons: { label: Timeframe, value: Timeframe }[] = [
         { label: "1W", value: "1W" },
         { label: "1M", value: "1M" },
         { label: "6M", value: "6M" },
@@ -232,46 +211,6 @@ const AccountSummaryHeader = ({ account, onChartHover, onChartLeave }: { account
                         {label}
                     </Button>
                 ))}
-                <Popover>
-                    <PopoverTrigger asChild>
-                        <Button
-                            id="date"
-                            variant={"ghost"}
-                            size="sm"
-                            onClick={() => handleTimeframeChange("Custom")}
-                            className={cn(
-                                "w-auto justify-start text-left font-normal px-3 py-1 h-auto rounded-md text-sm transition-colors",
-                                timeframe === 'Custom'
-                                    ? "bg-neutral-800 font-bold text-white"
-                                    : "text-muted-foreground hover:bg-neutral-800/50 hover:text-white"
-                            )}
-                        >
-                            <CalendarIcon className="h-4 w-4" />
-                            {timeframe === 'Custom' && dateRange?.from && (
-                                <span className="ml-2">
-                                    {dateRange.to ? (
-                                        <>
-                                            {format(dateRange.from, "LLL dd, y")} -{" "}
-                                            {format(dateRange.to, "LLL dd, y")}
-                                        </>
-                                    ) : (
-                                        format(dateRange.from, "LLL dd, y")
-                                    )}
-                                </span>
-                            )}
-                        </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                            initialFocus
-                            mode="range"
-                            defaultMonth={dateRange?.from}
-                            selected={dateRange}
-                            onSelect={setDateRange}
-                            numberOfMonths={2}
-                        />
-                    </PopoverContent>
-                </Popover>
             </div>
         </div>
     );
@@ -374,7 +313,7 @@ const AccountSelector = ({ accounts, selected, onSelect }: { accounts: Account[]
                     className={cn(
                         "relative px-2 pb-2 text-lg tracking-wide transition-colors",
                         selected.id === acct.id
-                            ? "text-white font-semibold after:absolute after:left-0 after:bottom-0 after:w-full after:h-0.5 after:bg-white after:rounded-full after:shadow-[0_0_8px_white]"
+                            ? "text-white font-semibold"
                             : "text-neutral-400 font-normal hover:text-white"
                     )}
                     onClick={() => onSelect(acct)}
@@ -638,6 +577,7 @@ export default function AccountsPage() {
 }
 
     
+
 
 
 
