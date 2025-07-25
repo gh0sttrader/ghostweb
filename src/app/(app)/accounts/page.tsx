@@ -69,15 +69,32 @@ const mockAccounts: Account[] = [
     },
 ];
 
-const WATCHLIST = [
-  { symbol: "TSLA", name: "Tesla Inc.", price: "920.30", change: "+1.54%", volume: "24.2M" },
-  { symbol: "AAPL", name: "Apple Inc.", price: "170.34", change: "-0.85%", volume: "90.5M" },
-  { symbol: "AMZN", name: "Amazon.com", price: "183.63", change: "+0.50%", volume: "45.7M" },
-  { symbol: "GOOGL", name: "Alphabet Inc.", price: "140.22", change: "+1.10%", volume: "40.8M" },
-  { symbol: "MSFT", name: "Microsoft Corp.", price: "420.72", change: "-0.15%", volume: "60.2M" },
-  { symbol: "META", name: "Meta Platforms", price: "470.91", change: "+2.01%", volume: "22.1M" },
-  { symbol: "NVDA", name: "NVIDIA Corp.", price: "900.50", change: "+0.60%", volume: "75.3M" },
-];
+const WATCHLISTS = {
+  "Main Watchlist": [
+    { symbol: "TSLA", name: "Tesla Inc.", price: "920.30", change: "+1.54%", volume: "24.2M" },
+    { symbol: "AAPL", name: "Apple Inc.", price: "170.34", change: "-0.85%", volume: "90.5M" },
+    { symbol: "AMZN", name: "Amazon.com", price: "183.63", change: "+0.50%", volume: "45.7M" },
+    { symbol: "GOOGL", name: "Alphabet Inc.", price: "140.22", change: "+1.10%", volume: "40.8M" },
+    { symbol: "MSFT", name: "Microsoft Corp.", price: "420.72", change: "-0.15%", volume: "60.2M" },
+    { symbol: "META", name: "Meta Platforms", price: "470.91", change: "+2.01%", volume: "22.1M" },
+    { symbol: "NVDA", name: "NVIDIA Corp.", price: "900.50", change: "+0.60%", volume: "75.3M" },
+  ],
+  "Tech Stocks": [
+    { symbol: "AAPL", name: "Apple Inc.", price: "170.34", change: "-0.85%", volume: "90.5M" },
+    { symbol: "MSFT", name: "Microsoft Corp.", price: "420.72", change: "-0.15%", volume: "60.2M" },
+    { symbol: "NVDA", name: "NVIDIA Corp.", price: "900.50", change: "+0.60%", volume: "75.3M" },
+    { symbol: "GOOGL", name: "Alphabet Inc.", price: "140.22", change: "+1.10%", volume: "40.8M" },
+    { symbol: "AMD", name: "AMD", price: "160.25", change: "+1.50%", volume: "55.8M" },
+    { symbol: "CRM", name: "Salesforce", price: "242.00", change: "-2.50%", volume: "7.8M" },
+  ],
+  "Dividend Picks": [
+    { symbol: "JPM", name: "JPMorgan Chase", price: "195.40", change: "-0.25%", volume: "15.3M" },
+    { symbol: "KO", name: "Coca-Cola", price: "62.75", change: "+0.10%", volume: "14.9M" },
+    { symbol: "PFE", name: "Pfizer Inc.", price: "28.50", change: "-0.90%", volume: "35.1M" },
+    { symbol: "XOM", name: "Exxon Mobil", price: "113.20", change: "-2.10%", volume: "20.3M" },
+  ],
+};
+
 
 const TRANSACTIONS = [
     { date: "07/22/2025", type: "Buy", symbol: "AAPL", name: "Apple Inc.", shares: "10", price: "$170.34", amount: "$1,703.40" },
@@ -369,7 +386,7 @@ const AccountSelector = ({ accounts, selected, onSelect }: { accounts: Account[]
     );
 };
 
-const WatchlistTable = () => (
+const WatchlistTable = ({ list }: { list: typeof WATCHLISTS[keyof typeof WATCHLISTS] }) => (
     <div className="overflow-x-auto rounded-2xl bg-card">
         <Table>
             <TableHeader>
@@ -382,7 +399,7 @@ const WatchlistTable = () => (
                 </TableRow>
             </TableHeader>
             <TableBody>
-                {WATCHLIST.map((stock) => (
+                {list.map((stock) => (
                     <TableRow key={stock.symbol} className="transition-colors border-none hover:bg-white/5">
                         <TableCell className="py-2 px-6 font-semibold">{stock.symbol}</TableCell>
                         <TableCell className="py-2 px-6">{stock.name}</TableCell>
@@ -437,6 +454,9 @@ export default function AccountsPage() {
     const [transactionType, setTransactionType] = useState('all');
     const [transactionDate, setTransactionDate] = useState<DateRange | undefined>();
     const [transactionSearch, setTransactionSearch] = useState('');
+    
+    const [selectedWatchlist, setSelectedWatchlist] = useState<keyof typeof WATCHLISTS>("Main Watchlist");
+    const [isWatchlistPopoverOpen, setIsWatchlistPopoverOpen] = useState(false);
 
     const chartData = useMemo(() => accountToStock(selectedAccount), [selectedAccount]);
 
@@ -513,8 +533,41 @@ export default function AccountsPage() {
                     <HoldingsTable holdings={selectedAccount.holdings || []} />
                 </section>
                 <section className="w-full mt-10">
-                    <h2 className="text-white text-xl font-semibold mb-4">Watchlist</h2>
-                    <WatchlistTable />
+                    <Popover open={isWatchlistPopoverOpen} onOpenChange={setIsWatchlistPopoverOpen}>
+                        <PopoverTrigger asChild>
+                            <button className="flex items-center gap-2 mb-4 group">
+                                <h2 className="text-white text-xl font-semibold">{selectedWatchlist}</h2>
+                                <ChevronDown className="h-5 w-5 text-muted-foreground transition-transform group-hover:text-white group-data-[state=open]:rotate-180" />
+                            </button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-56 p-2">
+                           <div className="flex flex-col">
+                                {Object.keys(WATCHLISTS).map(listName => (
+                                    <button
+                                        key={listName}
+                                        onClick={() => {
+                                            setSelectedWatchlist(listName as keyof typeof WATCHLISTS);
+                                            setIsWatchlistPopoverOpen(false);
+                                        }}
+                                        className={cn(
+                                            "text-left px-3 py-1.5 rounded-md text-sm transition-colors hover:bg-white/10",
+                                            selectedWatchlist === listName ? "font-semibold text-white bg-white/5" : "text-neutral-300"
+                                        )}
+                                    >
+                                        {listName}
+                                    </button>
+                                ))}
+                                <Separator className="my-2 bg-white/10" />
+                                <button
+                                     onClick={() => setIsWatchlistPopoverOpen(false)}
+                                     className="text-left px-3 py-1.5 rounded-md text-sm transition-colors text-primary hover:bg-white/10"
+                                >
+                                    + Create New Watchlist
+                                </button>
+                           </div>
+                        </PopoverContent>
+                    </Popover>
+                    <WatchlistTable list={WATCHLISTS[selectedWatchlist]} />
                 </section>
                 <section className="w-full mt-10">
                     <div className="flex flex-wrap items-center justify-between mb-4 gap-4">
@@ -585,5 +638,6 @@ export default function AccountsPage() {
 }
 
     
+
 
 
