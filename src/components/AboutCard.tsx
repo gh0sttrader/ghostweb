@@ -21,47 +21,20 @@ const InfoItem = ({ label, value }: { label: string; value: string | number | un
 );
 
 export function AboutCard({ stock, className }: AboutCardProps) {
-    const [isExpanded, setIsExpanded] = useState(false);
-    const [isLong, setIsLong] = useState(false);
-    const descriptionRef = useRef<HTMLParagraphElement>(null);
-
     const description = stock?.description || "No description available for this stock.";
 
-    useEffect(() => {
-        if (descriptionRef.current) {
-            // Check if the text overflows the initial height (approx 3 lines)
-            setIsLong(descriptionRef.current.scrollHeight > 72);
-        }
-    }, [description]);
-    
-    const toggleExpand = () => setIsExpanded(!isExpanded);
+    // Get the first 1-2 sentences for the summary.
+    const summary = description.split('. ').slice(0, 2).join('. ') + (description.split('. ').length > 2 ? '.' : '');
 
     return (
-        <Card className={cn("bg-transparent border-white/10", className)}>
-            <CardHeader className="pb-3">
-                <CardTitle className="text-xl font-bold">About</CardTitle>
+        <div className={cn("bg-transparent", className)}>
+            <div className="pb-3">
+                <h2 className="text-xl font-bold">About</h2>
                 <Separator className="bg-white/10 mt-2" />
-            </CardHeader>
-            <CardContent>
+            </div>
+            <div>
                 <div className="text-base text-neutral-300">
-                    <p 
-                        ref={descriptionRef}
-                        className={cn(
-                            "transition-all duration-300",
-                            !isExpanded && "line-clamp-3"
-                        )}
-                    >
-                        {description}
-                    </p>
-                    {isLong && (
-                        <Button 
-                            variant="link" 
-                            className="text-primary p-0 h-auto mt-1" 
-                            onClick={toggleExpand}
-                        >
-                            {isExpanded ? 'Show less' : 'Show more'}
-                        </Button>
-                    )}
+                    <p>{summary}</p>
                 </div>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-x-8 gap-y-4 mt-6">
                     <InfoItem label="CEO" value={stock?.ceo} />
@@ -69,7 +42,7 @@ export function AboutCard({ stock, className }: AboutCardProps) {
                     <InfoItem label="Headquarters" value={stock?.headquarters} />
                     <InfoItem label="Founded" value={stock?.founded} />
                 </div>
-            </CardContent>
-        </Card>
+            </div>
+        </div>
     );
 }

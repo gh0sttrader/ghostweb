@@ -191,10 +191,12 @@ function TradingDashboardPageContent() {
                   className="h-full"
                 />
             </div>
-            <AboutCard stock={stockForSyncedComps} />
+            <div className="mt-16">
+                <AboutCard stock={stockForSyncedComps} />
+            </div>
           </div>
 
-          <div className="sticky top-[calc(4rem+1.5rem)] h-[45vh]">
+          <div className="h-[45vh]">
             <OrderCard
               selectedStock={stockForSyncedComps}
               initialActionType={orderCardActionType}
