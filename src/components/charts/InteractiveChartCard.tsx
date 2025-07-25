@@ -224,7 +224,7 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
     const uniqueId = `chart-gradient-${stock?.id || 'default'}`;
     
     // On trading page, it's always 'area'. On account page, it uses the state.
-    const chartComponentType = variant === 'account' ? chartType : 'area';
+    const chartComponentType = variant === 'trading' ? 'area' : chartType;
 
     if (chartComponentType === 'line') {
       return (
@@ -383,7 +383,6 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
             {[
               { type: 'line', label: 'Line', Icon: LineChartIcon },
               { type: 'area', label: 'Area', Icon: AreaIcon },
-              { type: 'candle', label: 'Candle', Icon: CandlestickChart },
             ].map(({ type, label, Icon }) => (
               <Button
                 key={type}
@@ -412,5 +411,6 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
     </Card>
   );
 }
+
 
 
