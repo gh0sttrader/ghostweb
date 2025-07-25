@@ -26,6 +26,7 @@ import { cn } from '@/lib/utils';
 import { ScreenerWatchlist } from '@/components/ScreenerWatchlist';
 import { AboutCard } from '@/components/AboutCard';
 import { KeyStatistics } from '@/components/KeyStatistics';
+import { AnalystRatings } from '@/components/AnalystRatings';
 
 const dummyWatchlists = ["My Watchlist", "Tech Stocks", "Growth", "Crypto", "High Volume"];
 const dummyScreeners = ["Top Gainers", "High Volume", "Unusual Options"];
@@ -184,39 +185,42 @@ function TradingDashboardPageContent() {
     <main className="w-full h-full flex flex-col bg-background">
       <div className="w-full max-w-6xl mx-auto px-8 2xl:max-w-7xl 2xl:px-16 flex-1 py-4 md:py-6 lg:py-8">
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_428px] gap-1.5 items-start">
-          <div className="flex flex-col gap-1.5">
-            <div className="border border-white/10 rounded-lg h-[45vh]">
-              <InteractiveChartCard
-                stock={stockForSyncedComps}
-                onManualTickerSubmit={handleSyncedTickerChange}
-                className="h-full"
-              />
+            <div className="flex flex-col gap-1.5">
+                <div className="border border-white/10 rounded-lg h-[45vh]">
+                    <InteractiveChartCard
+                        stock={stockForSyncedComps}
+                        onManualTickerSubmit={handleSyncedTickerChange}
+                        className="h-full"
+                    />
+                </div>
+                <div className="mt-16">
+                    <AboutCard stock={stockForSyncedComps} />
+                </div>
+                <div className="mt-12">
+                    <KeyStatistics stock={stockForSyncedComps} />
+                </div>
+                <div className="mt-12">
+                  <NewsCard stock={stockForSyncedComps} />
+                </div>
+                <div className="mt-12">
+                    <AnalystRatings stock={stockForSyncedComps} />
+                </div>
             </div>
-            <div className="mt-16">
-                <AboutCard stock={stockForSyncedComps} />
-            </div>
-            <div className="mt-12">
-                <KeyStatistics stock={stockForSyncedComps} />
-            </div>
-            <div className="mt-12">
-              <NewsCard stock={stockForSyncedComps} />
-            </div>
-          </div>
 
-          <div className="sticky top-8">
-            <OrderCard
-              selectedStock={stockForSyncedComps}
-              initialActionType={orderCardActionType}
-              initialTradeMode={orderCardInitialTradeMode}
-              miloActionContextText={orderCardMiloActionContext}
-              onSubmit={handleTradeSubmit}
-              onClear={handleClearOrderCard}
-              initialQuantity={orderCardInitialQuantity}
-              initialOrderType={orderCardInitialOrderType}
-              initialLimitPrice={orderCardInitialLimitPrice}
-              className="h-full"
-            />
-          </div>
+            <div className="sticky top-8">
+                <OrderCard
+                selectedStock={stockForSyncedComps}
+                initialActionType={orderCardActionType}
+                initialTradeMode={orderCardInitialTradeMode}
+                miloActionContextText={orderCardMiloActionContext}
+                onSubmit={handleTradeSubmit}
+                onClear={handleClearOrderCard}
+                initialQuantity={orderCardInitialQuantity}
+                initialOrderType={orderCardInitialOrderType}
+                initialLimitPrice={orderCardInitialLimitPrice}
+                className="h-full"
+                />
+            </div>
         </div>
       </div>
     </main>
@@ -230,3 +234,5 @@ export default function TradingDashboardPage() {
     </Suspense>
   );
 }
+
+    

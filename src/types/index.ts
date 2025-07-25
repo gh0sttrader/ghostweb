@@ -13,6 +13,12 @@ export type TradingFeatures = {
     preAfterMarket?: boolean;
 };
 
+export type AnalystRatingsDistribution = {
+    buy: number;
+    hold: number;
+    sell: number;
+};
+
 export type Stock = {
     id: string;
     symbol: string;
@@ -70,6 +76,7 @@ export type Stock = {
     employees?: number;
     headquarters?: string;
     founded?: number;
+    analystRatings?: AnalystRatingsDistribution;
 
     // Expanded for screener
     country?: string;
@@ -278,3 +285,5 @@ export interface OrderCardV2Props {
     onDelete: () => void;
     onAddWidget: (widgetKey: WidgetKey) => void;
 }
+
+    

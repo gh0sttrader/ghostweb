@@ -1,3 +1,4 @@
+
 "use client"
 
 import * as React from "react"
@@ -7,13 +8,14 @@ import { cn } from "@/lib/utils"
 
 const Progress = React.forwardRef<
   React.ElementRef<typeof ProgressPrimitive.Root>,
-  React.ComponentPropsWithoutRef<typeof ProgressPrimitive.Root>
->(({ className, value, ...props }, ref) => (
+  React.ComponentPropsWithoutRef<typeof ProgressPrimitive.Root> & { color?: string }
+>(({ className, value, color, ...props }, ref) => (
   <ProgressPrimitive.Root
     ref={ref}
     className={cn(
       "relative h-4 w-full overflow-hidden rounded-full bg-secondary",
-      className
+      className,
+      color
     )}
     {...props}
   >
@@ -26,3 +28,5 @@ const Progress = React.forwardRef<
 Progress.displayName = ProgressPrimitive.Root.displayName
 
 export { Progress }
+
+    
