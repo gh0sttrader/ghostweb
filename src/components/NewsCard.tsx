@@ -46,10 +46,13 @@ export const NewsCard: React.FC<NewsCardProps> = ({ stock, className }) => {
                             <div className="text-neutral-400 text-xs mb-1">
                                 {item.provider} &middot; <RelativeTime isoString={item.timestamp} />
                             </div>
-                            <Link href={`/news?q=${item.headline}`} passHref legacyBehavior>
-                                <a target="_blank" rel="noopener noreferrer" className="block font-bold text-base mb-1 hover:underline">
-                                    {item.headline}
-                                </a>
+                            <Link 
+                                href={`/news?q=${item.headline}`} 
+                                target="_blank" 
+                                rel="noopener noreferrer" 
+                                className="block font-bold text-base mb-1 hover:underline"
+                            >
+                                {item.headline}
                             </Link>
                             <p className="text-neutral-400 text-sm leading-relaxed">
                                 {item.preview}
