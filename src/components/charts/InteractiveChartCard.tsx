@@ -22,8 +22,6 @@ type Timeframe = '1D' | '5D' | '1M' | '3M' | '6M' | 'YTD' | '1Y' | '5Y' | 'Max' 
 interface InteractiveChartCardProps {
   stock: Stock | null;
   onManualTickerSubmit: (symbol: string) => void;
-  onChartHover?: (value: number | null) => void;
-  onChartLeave?: () => void;
   className?: string;
   variant?: 'trading' | 'account';
   onAlertClick?: () => void;
@@ -98,7 +96,7 @@ const getTimeframeParams = (timeframe: Timeframe) => {
 };
 
 
-export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover, onChartLeave, className, variant = 'trading', onAlertClick, isAlertActive, timeframe, onTimeframeChange }: InteractiveChartCardProps) {
+export function InteractiveChartCard({ stock, onManualTickerSubmit, className, variant = 'trading', onAlertClick, isAlertActive, timeframe, onTimeframeChange }: InteractiveChartCardProps) {
   const { toast } = useToast();
   const [chartType, setChartType] = useState<'line' | 'area' | 'candle'>(variant === 'account' ? 'line' : 'area');
   const [manualTickerInput, setManualTickerInput] = useState('');
@@ -111,6 +109,8 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
   const [chartColor, setChartColor] = useState<string>('#e6e6e6');
   const [isWatched, setIsWatched] = useState(false);
   
+  const [hoveredPrice, setHoveredPrice] = useState<number | null>(null);
+  const [hoveredDate, setHoveredDate] = useState<string | null>(null);
 
   const colorOptions = [
       { color: '#5721aa', label: 'Purple' },
@@ -154,7 +154,7 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
         const data = await getChartData({ symbol: stock.symbol, ...params });
         
         let formattedData = data.map(bar => ({
-          date: format(new Date(bar.t), 'MMM dd'),
+          date: format(new Date(bar.t), 'MMM dd, yyyy'),
           price: bar.c,
           open: bar.o,
           high: bar.h,
@@ -186,12 +186,20 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
   };
 
   const handleChartMouseMove = (e: any) => {
-    if (onChartHover && e && e.activePayload && e.activePayload.length > 0) {
+    if (e && e.activePayload && e.activePayload.length > 0) {
         const payload = e.activePayload[0].payload;
         if (payload.price !== undefined) {
-            onChartHover(payload.price);
+            setHoveredPrice(payload.price);
+        }
+        if (payload.date) {
+            setHoveredDate(payload.date);
         }
     }
+  };
+  
+  const handleChartMouseLeave = () => {
+    setHoveredPrice(null);
+    setHoveredDate(null);
   };
 
   const renderChartContent = () => {
@@ -230,7 +238,7 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
     if (chartComponentType === 'line') {
       return (
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={chartData} onMouseMove={handleChartMouseMove} onMouseLeave={onChartLeave}>
+          <LineChart data={chartData} onMouseMove={handleChartMouseMove} onMouseLeave={handleChartMouseLeave}>
             <XAxis dataKey="date" hide />
             <YAxis hide domain={['auto', 'auto']} />
             <Tooltip
@@ -246,7 +254,7 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
     if (chartComponentType === 'area') {
       return (
         <ResponsiveContainer width="100%" height="100%">
-             <RechartsAreaChart data={chartData} onMouseMove={handleChartMouseMove} onMouseLeave={onChartLeave}>
+             <RechartsAreaChart data={chartData} onMouseMove={handleChartMouseMove} onMouseLeave={handleChartMouseLeave}>
                 <defs>
                     <linearGradient id={uniqueId} x1="0" y1="0" x2="0" y2="1">
                       <stop offset="0%" stopColor={chartColor} stopOpacity={0.2}/>
@@ -268,7 +276,7 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
     if (chartComponentType === 'candle') {
       return (
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={chartData} onMouseMove={handleChartMouseMove} onMouseLeave={onChartLeave}>
+          <BarChart data={chartData} onMouseMove={handleChartMouseMove} onMouseLeave={handleChartMouseLeave}>
             
             <XAxis dataKey="date" hide />
             <YAxis hide domain={['dataMin - 1', 'dataMax + 1']} />
@@ -307,19 +315,25 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
                     </h3>
                 </div>
                 <p className="text-xl font-extrabold text-foreground mt-1">
-                    ${stock.price.toFixed(2)}
+                    ${(hoveredPrice ?? stock.price).toFixed(2)}
                 </p>
-                <p className={cn("text-sm font-medium mt-1", stock.changePercent >= 0 ? 'text-[hsl(var(--confirm-green))]' : 'text-destructive')}>
-                    {stock.changePercent >= 0 ? '+' : ''}{(stock.price * (stock.changePercent / 100)).toFixed(2)}
-                    <span className="ml-1.5">({stock.changePercent >= 0 ? '+' : ''}{stock.changePercent.toFixed(2)}%) Today</span>
-                </p>
-                {stock.afterHoursPrice && stock.afterHoursChange !== undefined && (
-                    <p className="text-xs text-neutral-400 mt-0.5">
-                    After-Hours: ${stock.afterHoursPrice.toFixed(2)}
-                    <span className={cn("ml-1.5", stock.afterHoursChange >= 0 ? 'text-[hsl(var(--confirm-green))]' : 'text-destructive')}>
-                        ({stock.afterHoursChange >= 0 ? '+' : ''}{stock.afterHoursChange.toFixed(2)})
-                    </span>
+                {hoveredDate ? (
+                   <p className="text-sm font-medium mt-1 text-muted-foreground">{hoveredDate}</p>
+                ) : (
+                  <>
+                    <p className={cn("text-sm font-medium mt-1", stock.changePercent >= 0 ? 'text-[hsl(var(--confirm-green))]' : 'text-destructive')}>
+                        {stock.changePercent >= 0 ? '+' : ''}{(stock.price * (stock.changePercent / 100)).toFixed(2)}
+                        <span className="ml-1.5">({stock.changePercent >= 0 ? '+' : ''}{stock.changePercent.toFixed(2)}%) Today</span>
                     </p>
+                    {stock.afterHoursPrice && stock.afterHoursChange !== undefined && (
+                        <p className="text-xs text-neutral-400 mt-0.5">
+                        After-Hours: ${stock.afterHoursPrice.toFixed(2)}
+                        <span className={cn("ml-1.5", stock.afterHoursChange >= 0 ? 'text-[hsl(var(--confirm-green))]' : 'text-destructive')}>
+                            ({stock.afterHoursChange >= 0 ? '+' : ''}{stock.afterHoursChange.toFixed(2)})
+                        </span>
+                        </p>
+                    )}
+                  </>
                 )}
              </div>
           ) : (
@@ -392,7 +406,7 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
                     onClick={() => setIsWatched(prev => !prev)}
                     variant="ghost"
                     size="icon"
-                    className={cn("h-7 w-7", isWatched ? 'text-yellow-500' : 'text-neutral-400 hover:bg-white/10')}
+                    className={cn("h-7 w-7", isWatched ? 'text-yellow-500' : 'text-destructive')}
                     aria-label="Add to Watchlist"
                 >
                     <Star size={16} fill={isWatched ? 'currentColor' : 'none'} />
@@ -409,4 +423,3 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
   );
 }
 
-    
