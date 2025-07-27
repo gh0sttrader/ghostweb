@@ -1,7 +1,7 @@
 
 "use client";
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -30,10 +30,10 @@ interface InteractiveChartCardProps {
   onTimeframeChange: (timeframe: Timeframe) => void;
 }
 
-const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>) => {
+const CustomTooltip = ({ active, payload, label, timeframe }: TooltipProps<number, string> & { timeframe: Timeframe }) => {
   if (active && payload && payload.length) {
     const data = payload[0].payload;
-    const color = payload[0].color || 'hsl(var(--primary))';
+    
     // Candlestick data
     if (data.open !== undefined) { 
       const isUp = data.close >= data.open;
@@ -53,13 +53,9 @@ const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>)
     
     return (
         <div className="p-2.5 text-xs bg-background/90 backdrop-blur-sm rounded-md border border-border/20 shadow-lg shadow-primary/10">
-            <p className="label text-muted-foreground font-semibold mb-1">{`${label}`}</p>
-            {payload.map((p, i) => (
-                 <div key={i} className="flex justify-between items-baseline">
-                    <span className="text-foreground">{p.name}:</span>
-                    <span className="font-bold ml-2" style={{ color: p.color }}>${(p.value as number).toFixed(2)}</span>
-                </div>
-            ))}
+            <p className="label text-muted-foreground font-semibold mb-1">
+                {timeframe === '1D' ? format(new Date(data.timestamp), 'h:mm a') : format(new Date(data.timestamp), 'MMM dd')}
+            </p>
         </div>
     );
   }
@@ -109,8 +105,7 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, className, v
   const [chartColor, setChartColor] = useState<string>('#e6e6e6');
   const [isWatched, setIsWatched] = useState(false);
   
-  const [hoveredPrice, setHoveredPrice] = useState<number | null>(null);
-  const [hoveredDate, setHoveredDate] = useState<string | null>(null);
+  const [hoveredData, setHoveredData] = useState<{ price: number; change: number; percent: number; isUp: boolean; date: string } | null>(null);
 
   const colorOptions = [
       { color: '#5721aa', label: 'Purple' },
@@ -137,6 +132,7 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, className, v
       }
       if (variant === 'account' && stock.historicalPrices) {
         const formattedData = stock.historicalPrices.map((price, index) => ({
+            timestamp: sub(new Date(), { days: stock.historicalPrices.length - index }).toISOString(),
             date: `Day ${index + 1}`,
             price: price,
             open: price * (1 - (Math.random() - 0.5) * 0.02),
@@ -154,6 +150,7 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, className, v
         const data = await getChartData({ symbol: stock.symbol, ...params });
         
         let formattedData = data.map(bar => ({
+          timestamp: bar.t,
           date: format(new Date(bar.t), 'MMM dd, yyyy'),
           price: bar.c,
           open: bar.o,
@@ -185,21 +182,28 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, className, v
     }
   };
 
+  const firstPrice = useMemo(() => chartData[0]?.price, [chartData]);
+
   const handleChartMouseMove = (e: any) => {
-    if (e && e.activePayload && e.activePayload.length > 0) {
+    if (e && e.activePayload && e.activePayload.length > 0 && firstPrice) {
         const payload = e.activePayload[0].payload;
         if (payload.price !== undefined) {
-            setHoveredPrice(payload.price);
-        }
-        if (payload.date) {
-            setHoveredDate(payload.date);
+            const price = payload.price;
+            const change = price - firstPrice;
+            const percent = (change / firstPrice) * 100;
+            setHoveredData({
+                price,
+                change,
+                percent,
+                isUp: change >= 0,
+                date: timeframe === '1D' ? format(new Date(payload.timestamp), 'h:mm a') : format(new Date(payload.timestamp), 'MMM dd'),
+            });
         }
     }
   };
   
   const handleChartMouseLeave = () => {
-    setHoveredPrice(null);
-    setHoveredDate(null);
+    setHoveredData(null);
   };
 
   const renderChartContent = () => {
@@ -243,7 +247,7 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, className, v
             <YAxis hide domain={['auto', 'auto']} />
             <Tooltip
               cursor={{ stroke: 'hsl(var(--foreground))', strokeWidth: 1, strokeDasharray: '3 3' }}
-              content={<CustomTooltip />}
+              content={<CustomTooltip timeframe={timeframe} />}
             />
             <Line type="monotone" dataKey="price" name={stock?.symbol || "Portfolio"} stroke={chartColor} strokeWidth={2} dot={false} />
           </LineChart>
@@ -265,7 +269,7 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, className, v
                 <YAxis hide domain={['auto', 'auto']} />
                 <Tooltip
                     cursor={{ stroke: 'hsl(var(--foreground))', strokeWidth: 1, strokeDasharray: '3 3' }}
-                    content={<CustomTooltip />}
+                    content={<CustomTooltip timeframe={timeframe} />}
                 />
                 <Area type="monotone" dataKey="price" name={stock?.symbol || "Portfolio"} stroke={chartColor} strokeWidth={2} fillOpacity={1} fill={`url(#${uniqueId})`} dot={false} />
             </RechartsAreaChart>
@@ -282,7 +286,7 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, className, v
             <YAxis hide domain={['dataMin - 1', 'dataMax + 1']} />
             <Tooltip
               cursor={{ fill: 'hsla(var(--primary), 0.05)' }}
-              content={<CustomTooltip />}
+              content={<CustomTooltip timeframe={timeframe} />}
             />
             <Bar dataKey={(d: any) => [d.low, d.high]} barSize={1} fill="hsla(var(--muted-foreground), 0.5)" />
             <Bar dataKey={(d: any) => [d.open, d.close]} barSize={8}>
@@ -303,6 +307,14 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, className, v
     ? ['1D', '5D', '1M', '3M', '6M', 'YTD', '1Y', '5Y', 'Max']
     : ['1D', '5D', '1M', '3M', '6M', 'YTD', '1Y', '5Y', 'All'];
 
+  const displayPrice = hoveredData ? hoveredData.price : stock?.price;
+  const displayChange = hoveredData ? hoveredData.change : stock ? stock.price * (stock.changePercent / 100) : 0;
+  const displayPercent = hoveredData ? hoveredData.percent : stock?.changePercent;
+  const displayIsUp = hoveredData ? hoveredData.isUp : stock ? stock.changePercent >= 0 : true;
+  const displayDate = hoveredData ? hoveredData.date : "Today";
+  const changeLabel = hoveredData ? "Change" : "Today";
+  const afterHoursVisible = !hoveredData;
+
   return (
     <Card className={cn("shadow-none flex flex-col border-none bg-transparent", className)}>
        <CardHeader className="pb-2 pt-3 px-3">
@@ -315,25 +327,22 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, className, v
                     </h3>
                 </div>
                 <p className="text-xl font-extrabold text-foreground mt-1">
-                    ${(hoveredPrice ?? stock.price).toFixed(2)}
+                    ${(displayPrice ?? 0).toFixed(2)}
                 </p>
-                {hoveredDate ? (
-                   <p className="text-sm font-medium mt-1 text-muted-foreground">{hoveredDate}</p>
-                ) : (
-                  <>
-                    <p className={cn("text-sm font-medium mt-1", stock.changePercent >= 0 ? 'text-[hsl(var(--confirm-green))]' : 'text-destructive')}>
-                        {stock.changePercent >= 0 ? '+' : ''}{(stock.price * (stock.changePercent / 100)).toFixed(2)}
-                        <span className="ml-1.5">({stock.changePercent >= 0 ? '+' : ''}{stock.changePercent.toFixed(2)}%) Today</span>
+                <div className="flex items-center gap-2">
+                   <p className={cn("text-sm font-medium mt-1", displayIsUp ? 'text-[hsl(var(--confirm-green))]' : 'text-destructive')}>
+                        {displayIsUp ? '+' : ''}{displayChange.toFixed(2)}
+                        <span className="ml-1.5">({displayIsUp ? '+' : ''}{displayPercent?.toFixed(2)}%)</span>
                     </p>
-                    {stock.afterHoursPrice && stock.afterHoursChange !== undefined && (
-                        <p className="text-xs text-neutral-400 mt-0.5">
-                        After-Hours: ${stock.afterHoursPrice.toFixed(2)}
-                        <span className={cn("ml-1.5", stock.afterHoursChange >= 0 ? 'text-[hsl(var(--confirm-green))]' : 'text-destructive')}>
-                            ({stock.afterHoursChange >= 0 ? '+' : ''}{stock.afterHoursChange.toFixed(2)})
-                        </span>
-                        </p>
-                    )}
-                  </>
+                    <p className="text-sm font-medium mt-1 text-muted-foreground">{displayDate}</p>
+                </div>
+                {afterHoursVisible && stock.afterHoursPrice && stock.afterHoursChange !== undefined && (
+                    <p className="text-xs text-neutral-400 mt-0.5">
+                    After-Hours: ${stock.afterHoursPrice.toFixed(2)}
+                    <span className={cn("ml-1.5", stock.afterHoursChange >= 0 ? 'text-[hsl(var(--confirm-green))]' : 'text-destructive')}>
+                        ({stock.afterHoursChange >= 0 ? '+' : ''}{stock.afterHoursChange.toFixed(2)})
+                    </span>
+                    </p>
                 )}
              </div>
           ) : (
@@ -422,4 +431,3 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, className, v
     </Card>
   );
 }
-
