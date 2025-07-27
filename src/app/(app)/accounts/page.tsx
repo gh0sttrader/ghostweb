@@ -5,7 +5,7 @@ import React, { useState, useMemo, useCallback } from 'react';
 import type { Stock, Account, Holding } from '@/types';
 import { InteractiveChartCard } from '@/components/charts/InteractiveChartCard';
 import { cn } from '@/lib/utils';
-import { PackageSearch, Calendar as CalendarIcon, ChevronDown, Search } from 'lucide-react';
+import { PackageSearch, Calendar as CalendarIcon, ChevronDown, Search, TrendingUp } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
@@ -134,115 +134,43 @@ const formatCurrency = (value?: number, showSign = false) => {
     return `${sign}$${formattedValue}`;
 }
 
-type Timeframe = "1W" | "1M" | "6M" | "YTD" | "1Y" | "Max";
+const AccountStat = ({ label, value, valueColor = 'text-white' }: { label: string; value: string; valueColor?: string; }) => (
+    <div className="flex flex-col text-right md:text-left">
+        <span className="text-xs text-neutral-400 uppercase tracking-wider">{label}</span>
+        <p className={cn("text-xl font-semibold", valueColor)}>{value}</p>
+    </div>
+);
 
-const summaryData: Record<string, Record<Timeframe, { gain: number; percent: number; period: string }>> = {
-    total: {
-        "1W": { gain: -1817.62, percent: -0.63, period: "Past week" },
-        "1M": { gain: 2000, percent: 0.70, period: "Past month" },
-        "6M": { gain: 15000, percent: 5.45, period: "Past 6 months" },
-        "YTD": { gain: 18500, percent: 6.81, period: "Year to date" },
-        "1Y": { gain: 35000, percent: 13.83, period: "Past year" },
-        "Max": { gain: 75000, percent: 34.88, period: "All time" },
-    },
-    acc_1: {
-        "1W": { gain: -1000, percent: -0.58, period: "Past week" },
-        "1M": { gain: 1500, percent: 0.88, period: "Past month" },
-        "6M": { gain: 8000, percent: 4.93, period: "Past 6 months" },
-        "YTD": { gain: 10000, percent: 6.25, period: "Year to date" },
-        "1Y": { gain: 20000, percent: 13.33, period: "Past year" },
-        "Max": { gain: 40000, percent: 30.77, period: "All time" },
-    },
-    acc_2: {
-        "1W": { gain: -817.62, percent: -0.68, period: "Past week" },
-        "1M": { gain: 500, percent: 0.42, period: "Past month" },
-        "6M": { gain: 7000, percent: 6.19, period: "Past 6 months" },
-        "YTD": { gain: 8500, percent: 7.56, period: "Year to date" },
-        "1Y": { gain: 15000, percent: 14.28, period: "Past year" },
-        "Max": { gain: 35000, percent: 41.18, period: "All time" },
-    }
-};
 
 const AccountSummaryHeader = ({ account, onChartHover, onChartLeave }: { account: Account; onChartHover: (value: number | null) => void; onChartLeave: () => void; }) => {
-    const [timeframe, setTimeframe] = useState<Timeframe>("6M");
-
-    const data = summaryData[account.id]?.[timeframe] || summaryData.total[timeframe];
-    const isPositive = data ? data.gain >= 0 : false;
-
-    const timeframeButtons: { label: Timeframe, value: Timeframe }[] = [
-        { label: "1W", value: "1W" },
-        { label: "1M", value: "1M" },
-        { label: "6M", value: "6M" },
-        { label: "YTD", value: "YTD" },
-        { label: "1Y", value: "1Y" },
-        { label: "Max", value: "Max" },
-    ];
-
-    const handleTimeframeChange = (value: Timeframe) => {
-        setTimeframe(value);
-        onChartLeave(); // Reset header value when timeframe changes
-    };
+    
+    const allTimeGains = (account.totalGains || 0);
+    const allTimePercent = account.netContributions ? (allTimeGains / account.netContributions) * 100 : 0;
+    const isPositive = allTimeGains >= 0;
 
     return (
-        <div className="mb-8 min-h-[148px]">
-            <div className="flex items-end gap-x-6 gap-y-2 flex-wrap">
-                <AnimatedCounter value={account.balance} />
-                {data && (
-                    <div className="flex flex-col items-start pb-1">
-                        <span className={cn("text-lg font-semibold", isPositive ? "text-[hsl(var(--confirm-green))]" : "text-destructive")}>
-                            {isPositive ? "▲" : "▼"}
-                            {formatCurrency(data.gain, true)}
-                            &nbsp;({isPositive ? '+' : ''}{data.percent.toFixed(2)}%)
-                        </span>
-                        <span className="text-sm text-muted-foreground">{data.period}</span>
-                    </div>
-                )}
+       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 mb-8">
+            {/* Left Side: Main Balance and Gain/Loss */}
+            <div className="flex flex-col">
+                <h1 className="text-6xl font-bold text-white">
+                    <AnimatedCounter value={account.balance} />
+                </h1>
+                <div className="flex items-center gap-2 mt-2">
+                    {isPositive ? <TrendingUp className="text-green-500" size={20} /> : <TrendingUp className="text-destructive rotate-180" size={20} />}
+                    <span className={cn("text-xl font-semibold", isPositive ? "text-green-500" : "text-destructive")}>
+                        {formatCurrency(allTimeGains, true)} ({isPositive ? '+' : ''}{allTimePercent.toFixed(2)}%)
+                    </span>
+                    <span className="text-lg text-neutral-400">All time</span>
+                </div>
             </div>
-            <div className="flex mt-8 gap-1 items-center">
-                {timeframeButtons.map(({ label, value }) => (
-                    <Button
-                        key={value}
-                        variant="ghost"
-                        size="sm"
-                        className={cn(
-                            "px-3 py-1 h-auto rounded-md text-sm transition-colors",
-                            timeframe === value
-                                ? "bg-neutral-800 font-bold text-white"
-                                : "text-muted-foreground hover:bg-neutral-800/50 hover:text-white"
-                        )}
-                        onClick={() => handleTimeframeChange(value)}
-                    >
-                        {label}
-                    </Button>
-                ))}
-            </div>
-        </div>
-    );
-};
 
-const Snapshot = ({ account }: { account: Account }) => {
-    const metrics = [
-        { label: "Cash Balance", value: account.cash },
-        { label: "Net Contributions", value: account.netContributions },
-        { label: "Total Gains", value: account.totalGains },
-        { label: "Market Gains", value: account.marketGains },
-        { label: "Dividends", value: account.dividends },
-    ];
-
-    return (
-        <div className="w-full bg-card rounded-2xl mb-6 py-4 px-2">
-            <div className="flex justify-center items-start gap-x-12">
-                {metrics.map((metric, index) => (
-                    <div key={metric.label} className="flex flex-col items-center text-center">
-                        <span className={cn(
-                            "text-xl font-semibold text-white",
-                            (metric.label.includes("Gains") || metric.label.includes("Dividends")) && (metric.value ?? 0) < 0 ? "text-destructive" : "text-white"
-                        )}>
-                            {formatCurrency(metric.value)}
-                        </span>
-                        <span className="text-sm text-neutral-400 mt-1">{metric.label}</span>
-                    </div>
-                ))}
+            {/* Right Side: Detailed stats */}
+            <div className="flex flex-row flex-wrap justify-end gap-x-8 gap-y-4">
+                <AccountStat label="Cash Balance" value={formatCurrency(account.cash)} />
+                <AccountStat label="Net Contributions" value={formatCurrency(account.netContributions)} />
+                <AccountStat label="Total Gains" value={formatCurrency(account.totalGains)} valueColor={(account.totalGains || 0) >= 0 ? "text-green-400" : "text-destructive"} />
+                <AccountStat label="Market Gains" value={formatCurrency(account.marketGains)} valueColor={(account.marketGains || 0) >= 0 ? "text-green-400" : "text-destructive"} />
+                <AccountStat label="Dividends" value={formatCurrency(account.dividends)} valueColor={(account.dividends || 0) >= 0 ? "text-green-400" : "text-destructive"} />
             </div>
         </div>
     );
@@ -450,20 +378,22 @@ export default function AccountsPage() {
 
     return (
         <main className="flex flex-col w-full max-w-6xl mx-auto px-8 py-4 md:py-6 lg:py-8 2xl:max-w-7xl 2xl:px-16">
-            <div className="flex-shrink-0 h-[45vh] min-h-[375px] flex flex-col">
+            <div className="flex-shrink-0 flex flex-col">
                 <AccountSummaryHeader
                     account={{ ...selectedAccount, balance: headerValue }}
                     onChartHover={handleChartHover}
                     onChartLeave={handleChartLeave}
                 />
-                <InteractiveChartCard
-                    stock={chartData}
-                    onManualTickerSubmit={handleTickerSubmit}
-                    onChartHover={handleChartHover}
-                    onChartLeave={handleChartLeave}
-                    variant="account"
-                    className="flex-1 min-h-0"
-                />
+                <div className="border border-white/10 rounded-lg h-[420px]">
+                    <InteractiveChartCard
+                        stock={chartData}
+                        onManualTickerSubmit={handleTickerSubmit}
+                        onChartHover={handleChartHover}
+                        onChartLeave={handleChartLeave}
+                        variant="account"
+                        className="h-full"
+                    />
+                </div>
             </div>
 
             <div className="flex-1 flex flex-col mt-4">
@@ -472,7 +402,6 @@ export default function AccountsPage() {
                 </div>
                 
                 <Separator className="bg-border/20 mb-6" />
-                <Snapshot account={selectedAccount} />
                 
                 <section className="w-full mb-12">
                     <div className="flex justify-between items-center mb-4">
@@ -594,14 +523,5 @@ export default function AccountsPage() {
         </main>
     );
 }
-
-    
-
-
-
-
-
-
-
 
     
