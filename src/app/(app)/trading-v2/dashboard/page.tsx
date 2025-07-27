@@ -60,7 +60,7 @@ const DraggableCard = ({ children, className }: { children: React.ReactNode, cla
 const initialLayouts: ReactGridLayout.Layout[] = [
     { i: 'chart', x: 0, y: 0, w: 9, h: 10, minW: 2, minH: 8, isResizable: true },
     { i: 'order', x: 9, y: 0, w: 3, h: 10, minW: 2, minH: 10, isResizable: true },
-    { i: 'details', x: 9, y: 10, w: 3, h: 5, minW: 3, minH: 5, isResizable: true },
+    { i: 'details', x: 9, y: 10, w: 3, h: 5, minW: 3, isResizable: true },
     { i: 'positions', x: 0, y: 10, w: 9, h: 8, minW: 2, minH: 6, isResizable: true },
     { i: 'watchlist', x: 0, y: 18, w: 6, h: 8, minW: 2, minH: 6, isResizable: true },
     { i: 'news', x: 6, y: 18, w: 6, h: 8, minW: 2, minH: 6, isResizable: true },
