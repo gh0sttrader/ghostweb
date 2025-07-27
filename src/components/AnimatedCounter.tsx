@@ -24,8 +24,6 @@ const Odometer = ({ value }: { value: number }) => {
 
 export const AnimatedCounter = ({ value }: { value: number }) => {
     return (
-        <h1 className="text-5xl font-bold text-white">
-            <Odometer value={value} />
-        </h1>
+        <Odometer value={value} />
     );
 };
