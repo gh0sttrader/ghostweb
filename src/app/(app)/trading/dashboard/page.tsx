@@ -21,6 +21,8 @@ import { AnalystRatings } from '@/components/AnalystRatings';
 import { initialMockStocks } from './mock-data';
 import { AlertModal } from '@/components/AlertModal';
 
+type Timeframe = '1D' | '5D' | '1M' | '3M' | '6M' | 'YTD' | '1Y' | '5Y' | 'Max' | 'All';
+
 function TradingDashboardPageContent() {
   const { toast } = useToast();
   const searchParams = useSearchParams();
@@ -39,6 +41,7 @@ function TradingDashboardPageContent() {
   const [orderCardInitialLimitPrice, setOrderCardInitialLimitPrice] = useState<string | undefined>(undefined);
   
   const [isAlertModalOpen, setIsAlertModalOpen] = useState(false);
+  const [chartTimeframe, setChartTimeframe] = useState<Timeframe>('1M');
   
   const activeAlert = useMemo(() => {
     return alerts.find(a => a.symbol === syncedTickerSymbol);
@@ -198,6 +201,8 @@ function TradingDashboardPageContent() {
                           className="h-full"
                           onAlertClick={handleOpenAlertModal}
                           isAlertActive={!!activeAlert}
+                          timeframe={chartTimeframe}
+                          onTimeframeChange={setChartTimeframe}
                       />
                   </div>
                   <div className="mt-12">
