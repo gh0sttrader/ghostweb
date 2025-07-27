@@ -151,22 +151,23 @@ const AccountStat = ({ label, value, valueColor = 'text-white' }: { label: strin
 
 const AccountSummaryHeader = ({ account, performanceData }: { account: Account; performanceData: { gain: number, percent: number, label: string } }) => {
     
-    const isGain = performanceData.gain >= 0;
+    const data = performanceData || { gain: 0, percent: 0, label: '...' };
+    const isGain = data.gain >= 0;
     const gainColor = isGain ? 'text-green-500' : 'text-destructive';
     const TrendIcon = isGain ? TrendingUp : TrendingDown;
     
     return (
        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 mb-8">
             <div className="flex flex-col">
-                <h1 className="text-6xl font-bold text-white">
+                <div className="text-6xl font-bold text-white">
                     <AnimatedCounter value={account.balance} />
-                </h1>
+                </div>
                 <div className="flex items-center gap-2 mt-2">
                     <TrendIcon className={gainColor} size={20} />
                     <span className={cn("text-xl font-semibold", gainColor)}>
-                         {formatCurrency(performanceData.gain, true)} ({isGain ? '+' : ''}{performanceData.percent.toFixed(2)}%)
+                         {formatCurrency(data.gain, true)} ({isGain ? '+' : ''}{data.percent.toFixed(2)}%)
                     </span>
-                    <span className="text-lg text-neutral-400">{performanceData.label}</span>
+                    <span className="text-lg text-neutral-400">{data.label}</span>
                 </div>
             </div>
 
