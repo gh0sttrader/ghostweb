@@ -335,100 +335,71 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
       </CardHeader>
       <CardContent className="relative flex-1 p-1 pr-2 min-h-[250px]">
         {renderChartContent()}
-        <div className="absolute bottom-3 right-3 z-10 flex items-center gap-2">
-            <Popover>
-              <PopoverTrigger asChild>
-                  <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground/50 hover:text-foreground hover:bg-white/10 opacity-50 hover:opacity-100 transition-opacity">
-                      <Palette className="h-4 w-4" />
+        <div className="absolute bottom-3 left-3 right-3 z-10 flex items-center justify-between">
+            <div className="flex items-center gap-1">
+                {timeframeButtons.map((tf) => (
+                  <Button
+                    key={tf}
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => onTimeframeChange(tf)}
+                    className={cn(
+                      "h-7 text-xs px-2.5 font-semibold",
+                      timeframe === tf
+                        ? "text-foreground bg-white/10"
+                        : "text-muted-foreground hover:text-foreground hover:bg-white/5"
+                    )}
+                  >
+                    {tf}
                   </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-2" side="top" align="end">
-                  <div className="flex gap-2">
-                      {colorOptions.map(({ color, label }) => (
-                         <button
-                              key={color}
-                              aria-label={`Change chart color to ${label}`}
-                              className={cn(
-                                  "w-6 h-6 rounded-full border-2 transition-all",
-                                  chartColor === color ? 'border-white shadow-md' : 'border-gray-600/50 hover:border-gray-400'
-                              )}
-                              style={{ backgroundColor: color }}
-                              onClick={() => setChartColor(color)}
-                          />
-                      ))}
-                  </div>
-              </PopoverContent>
-            </Popover>
-            <Button
-                onClick={onAlertClick}
-                variant="ghost"
-                size="icon"
-                className={cn("h-7 w-7", isAlertActive ? 'text-destructive' : 'text-neutral-400 hover:bg-white/10')}
-                aria-label="Set Alert"
-            >
-                <Bell size={16} fill={isAlertActive ? 'currentColor' : 'none'} />
-            </Button>
-            <Button
-                onClick={() => setIsWatched(prev => !prev)}
-                variant="ghost"
-                size="icon"
-                className={cn("h-7 w-7", isWatched ? 'text-yellow-500' : 'text-neutral-400 hover:bg-white/10')}
-                aria-label="Add to Watchlist"
-            >
-                <Star size={16} fill={isWatched ? 'currentColor' : 'none'} />
-            </Button>
+                ))}
+            </div>
+            <div className="flex items-center gap-1">
+                <Popover>
+                  <PopoverTrigger asChild>
+                      <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground/80 hover:text-foreground hover:bg-white/10">
+                          <Palette className="h-4 w-4" />
+                      </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-2" side="top" align="end">
+                      <div className="flex gap-2">
+                          {colorOptions.map(({ color, label }) => (
+                             <button
+                                  key={color}
+                                  aria-label={`Change chart color to ${label}`}
+                                  className={cn(
+                                      "w-6 h-6 rounded-full border-2 transition-all",
+                                      chartColor === color ? 'border-white shadow-md' : 'border-gray-600/50 hover:border-gray-400'
+                                  )}
+                                  style={{ backgroundColor: color }}
+                                  onClick={() => setChartColor(color)}
+                              />
+                          ))}
+                      </div>
+                  </PopoverContent>
+                </Popover>
+                <Button
+                    onClick={onAlertClick}
+                    variant="ghost"
+                    size="icon"
+                    className={cn("h-7 w-7", isAlertActive ? 'text-destructive' : 'text-neutral-400 hover:bg-white/10')}
+                    aria-label="Set Alert"
+                >
+                    <Bell size={16} fill={isAlertActive ? 'currentColor' : 'none'} />
+                </Button>
+                <Button
+                    onClick={() => setIsWatched(prev => !prev)}
+                    variant="ghost"
+                    size="icon"
+                    className={cn("h-7 w-7", isWatched ? 'text-yellow-500' : 'text-neutral-400 hover:bg-white/10')}
+                    aria-label="Add to Watchlist"
+                >
+                    <Star size={16} fill={isWatched ? 'currentColor' : 'none'} />
+                </Button>
+            </div>
         </div>
       </CardContent>
      
-      <CardFooter className="flex flex-wrap justify-start items-center gap-x-1 gap-y-2 pt-2 pb-2 px-3">
-        {timeframeButtons.map((tf) => (
-          <Button
-            key={tf}
-            variant="ghost"
-            size="sm"
-            onClick={() => onTimeframeChange(tf)}
-            className={cn(
-              "h-8 text-base px-3 font-medium",
-              timeframe === tf
-                ? "text-foreground font-bold"
-                : "text-muted-foreground hover:text-foreground hover:bg-transparent"
-            )}
-          >
-            {tf}
-          </Button>
-        ))}
-        {variant !== 'trading' && (
-          <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-transparent" onClick={() => setIsDatePickerOpen(true)}>
-            <Calendar className="h-5 w-5" />
-          </Button>
-        )}
-        
-        {variant === 'account' && (
-          <>
-            <div className="w-px bg-border/20 h-6 self-center mx-1"></div>
-            {[
-              { type: 'line', label: 'Line', Icon: LineChartIcon },
-              { type: 'area', label: 'Area', Icon: AreaIcon },
-            ].map(({ type, label, Icon }) => (
-              <Button
-                key={type}
-                variant="ghost"
-                size="sm"
-                onClick={() => setChartType(type as any)}
-                className={cn(
-                  "h-8 text-base px-3 font-medium",
-                  chartType === type
-                    ? "text-foreground font-bold"
-                    : "text-muted-foreground hover:text-foreground hover:bg-transparent"
-                )}
-              >
-                <Icon className="h-5 w-5 mr-1.5" />
-                {label}
-              </Button>
-            ))}
-          </>
-        )}
-      </CardFooter>
       <ChartDatePickerModal 
         isOpen={isDatePickerOpen}
         onClose={() => setIsDatePickerOpen(false)}
@@ -437,5 +408,3 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
     </Card>
   );
 }
-
-    
