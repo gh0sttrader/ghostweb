@@ -59,7 +59,10 @@ const AppNavLinks = () => {
                   <Link
                       key={link.href}
                       href={link.href}
-                      className="bg-[#1C1C1E] text-white border border-[#333] font-bold px-5 py-2 rounded-full shadow-none tracking-wider hover:bg-[#232325] transition"
+                      className={cn(
+                        "transition-colors hover:text-foreground/80 font-bold tracking-wider",
+                        isActive(link.href) ? "text-foreground" : "text-foreground/60"
+                      )}
                   >
                       {link.label}
                   </Link>
