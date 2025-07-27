@@ -239,7 +239,9 @@ export const OrderCard: React.FC<OrderCardProps> = ({
                         <div>
                             <p className="text-lg font-bold text-foreground">{selectedStock.symbol}</p>
                             <p className="text-xs text-muted-foreground">{selectedStock.name}</p>
-                             <p className={cn("text-lg font-bold mt-1", selectedStock.changePercent >= 0 ? "text-[hsl(var(--confirm-green))]" : "text-destructive")}>
+                        </div>
+                        <div className="text-right">
+                             <p className={cn("text-lg font-bold", selectedStock.changePercent >= 0 ? "text-[hsl(var(--confirm-green))]" : "text-destructive")}>
                                 ${selectedStock.price.toFixed(2)}
                             </p>
                              <p className={cn("text-xs", selectedStock.changePercent >= 0 ? "text-[hsl(var(--confirm-green))]" : "text-destructive")}>
@@ -371,6 +373,12 @@ export const OrderCard: React.FC<OrderCardProps> = ({
                 <Separator className="bg-white/10" />
 
                 <div className="flex-1"></div>
+                
+                {selectedStock?.tradingFeatures && (
+                    <div className="flex items-center justify-center gap-3 mb-2">
+                        <TradingFeaturesBadges features={selectedStock.tradingFeatures} />
+                    </div>
+                )}
 
                 <div className="space-y-0 p-3 mt-auto rounded-lg bg-black/40 border border-white/10">
                      <DetailItem
@@ -385,11 +393,6 @@ export const OrderCard: React.FC<OrderCardProps> = ({
                         description="The total amount of funds available for purchasing securities, including borrowed money in a margin account."
                     />
                 </div>
-                 {selectedStock?.tradingFeatures && (
-                    <div className="flex items-center justify-center gap-3 mt-4">
-                        <TradingFeaturesBadges features={selectedStock.tradingFeatures} />
-                    </div>
-                )}
                 <Button 
                     className={cn(
                         "w-full h-12 text-base font-bold transition-all duration-300 mt-2",
