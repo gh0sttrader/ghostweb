@@ -235,28 +235,23 @@ export const OrderCard: React.FC<OrderCardProps> = ({
                 
 
                 {selectedStock && (
-                    <>
-                        <div className="flex items-start justify-between">
-                            <div >
-                                <p className="text-lg font-bold text-foreground">{selectedStock.symbol}</p>
-                                <p className="text-xs text-muted-foreground">{selectedStock.name}</p>
-                            </div>
-                             <div className="text-right">
-                                 <p className={cn("text-lg font-bold", selectedStock.changePercent >= 0 ? "text-[hsl(var(--confirm-green))]" : "text-destructive")}>
-                                    ${selectedStock.price.toFixed(2)}
-                                </p>
-                                 <p className={cn("text-xs", selectedStock.changePercent >= 0 ? "text-[hsl(var(--confirm-green))]" : "text-destructive")}>
-                                     {selectedStock.changePercent >= 0 ? '+' : ''}{selectedStock.changePercent.toFixed(2)}%
-                                 </p>
-                             </div>
+                    <div className="flex items-start justify-between">
+                        <div>
+                            <p className="text-lg font-bold text-foreground">{selectedStock.symbol}</p>
+                            <p className="text-xs text-muted-foreground">{selectedStock.name}</p>
+                             <p className={cn("text-lg font-bold mt-1", selectedStock.changePercent >= 0 ? "text-[hsl(var(--confirm-green))]" : "text-destructive")}>
+                                ${selectedStock.price.toFixed(2)}
+                            </p>
+                             <p className={cn("text-xs", selectedStock.changePercent >= 0 ? "text-[hsl(var(--confirm-green))]" : "text-destructive")}>
+                                 {selectedStock.changePercent >= 0 ? '+' : ''}{selectedStock.changePercent.toFixed(2)}%
+                             </p>
                         </div>
-
-                        {selectedStock.tradingFeatures && (
-                            <div className="flex justify-start pt-1 -mt-1">
+                         <div className="text-right">
+                             {selectedStock.tradingFeatures && (
                                 <TradingFeaturesBadges features={selectedStock.tradingFeatures} />
-                            </div>
-                        )}
-                    </>
+                            )}
+                         </div>
+                    </div>
                 )}
                 
                 <div className="grid grid-cols-3 gap-2">

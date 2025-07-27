@@ -36,7 +36,7 @@ export const TradingFeaturesBadges: React.FC<TradingFeaturesBadgesProps> = ({ fe
                         <Tooltip key={key}>
                             <TooltipTrigger asChild>
                                 <div className={cn(
-                                    "flex items-center justify-center w-8 h-8 rounded-lg transition-all duration-200",
+                                    "flex items-center justify-center w-7 h-7 rounded-md transition-all duration-200",
                                     isActive ? activeClass : "bg-transparent text-neutral-500"
                                 )}>
                                     <Icon className="h-4 w-4" strokeWidth={2} />
