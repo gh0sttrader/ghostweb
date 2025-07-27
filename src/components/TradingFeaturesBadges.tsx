@@ -9,7 +9,7 @@ import type { TradingFeatures } from '@/types';
 
 const featureIcons: { [K in keyof Required<TradingFeatures>]: { icon: React.ElementType; label: string; description: string; activeClass: string; } } = {
     overnight: { icon: Timer, label: "Overnight Trading", description: "This security can be traded after market hours.", activeClass: "bg-green-500/10 text-green-400" },
-    fractional: { icon: PieChart, label: "Fractional Shares", description: "You can buy or sell less than one full share.", activeClass: "bg-orange-500/10 text-orange-400" },
+    fractional: { icon: PieChart, label: "Fractional Shares", description: "You can buy or sell less than one full share.", activeClass: "bg-teal-500/10 text-teal-400" },
     shortable: { icon: ArrowDownUp, label: "Shortable", description: "This security can be sold short.", activeClass: "bg-purple-500/10 text-purple-400" },
     marginable: { icon: Landmark, label: "Marginable", description: "You can borrow funds to trade this security.", activeClass: "bg-blue-500/10 text-blue-400" },
     nasdaqTotalView: { icon: BookOpenCheck, label: "NASDAQ TotalView", description: "Deepest level of market data is available.", activeClass: "bg-pink-500/10 text-pink-400" },
