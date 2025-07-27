@@ -240,6 +240,10 @@ export const OrderCardV2: React.FC<OrderCardProps> = ({
 
     }, [action, selectedStock, isFormValid, quantityInShares, estimatedTotal, selectedAccount]);
 
+    const handleInteraction = (e: React.MouseEvent | React.TouchEvent) => {
+      e.stopPropagation();
+    }
+
     return (
         <Card className={cn("h-full flex flex-col bg-transparent border-none", className)}>
             <CardHeader className="py-1 px-3 border-b border-white/10 h-8 flex-row items-center drag-handle cursor-move">
@@ -249,11 +253,11 @@ export const OrderCardV2: React.FC<OrderCardProps> = ({
                 <div className="ml-auto flex items-center gap-1 no-drag">
                      <Popover>
                         <PopoverTrigger asChild>
-                            <Button variant="ghost" className="h-6 w-6 p-0 text-muted-foreground hover:text-foreground">
+                            <Button variant="ghost" className="h-6 w-6 p-0 text-muted-foreground hover:text-foreground" onMouseDown={handleInteraction} onTouchStart={handleInteraction}>
                                 <Plus size={16} />
                             </Button>
                         </PopoverTrigger>
-                        <PopoverContent className="w-48 p-1">
+                        <PopoverContent className="w-48 p-1" onMouseDown={handleInteraction} onTouchStart={handleInteraction}>
                             <div className="flex flex-col">
                                 {WIDGETS.map(w => (
                                     <Button 

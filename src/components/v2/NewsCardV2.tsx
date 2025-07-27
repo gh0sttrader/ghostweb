@@ -60,6 +60,11 @@ interface NewsCardProps {
 
 export const NewsCardV2: React.FC<NewsCardProps> = ({ className, onSymbolSelect, selectedSymbol, onDelete, onAddWidget }) => {
     const { toast } = useToast();
+
+    const handleInteraction = (e: React.MouseEvent | React.TouchEvent) => {
+      e.stopPropagation();
+    }
+
     return (
         <div className={cn("h-full flex flex-col", className)}>
             <CardHeader className="py-1 px-3 border-b border-white/10 h-8 flex-row items-center drag-handle cursor-move">
@@ -69,11 +74,11 @@ export const NewsCardV2: React.FC<NewsCardProps> = ({ className, onSymbolSelect,
                 <div className="ml-auto flex items-center gap-1 no-drag">
                     <Popover>
                         <PopoverTrigger asChild>
-                            <Button variant="ghost" className="h-6 w-6 p-0 text-muted-foreground hover:text-foreground">
+                            <Button variant="ghost" className="h-6 w-6 p-0 text-muted-foreground hover:text-foreground" onMouseDown={handleInteraction} onTouchStart={handleInteraction}>
                                 <Plus size={16} />
                             </Button>
                         </PopoverTrigger>
-                        <PopoverContent className="w-48 p-1">
+                        <PopoverContent className="w-48 p-1" onMouseDown={handleInteraction} onTouchStart={handleInteraction}>
                             <div className="flex flex-col">
                                 {WIDGETS.map(w => (
                                     <Button 

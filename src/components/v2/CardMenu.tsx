@@ -60,7 +60,7 @@ export function CardMenu({ onCustomize, onDelete, showCustomize = true }: CardMe
           {showCustomize && (
               <button
                 className="w-full flex items-center gap-2 px-3 py-2 text-sm text-left hover:bg-white/5 text-white transition-colors"
-                onClick={() => { setOpen(false); onCustomize(); }}
+                onClick={(e) => { e.stopPropagation(); setOpen(false); onCustomize(); }}
               >
                 <Settings2 size={16} className="text-muted-foreground" />
                 <span>Customize</span>
@@ -68,7 +68,7 @@ export function CardMenu({ onCustomize, onDelete, showCustomize = true }: CardMe
           )}
           <button
             className="w-full flex items-center gap-2 px-3 py-2 text-sm text-left hover:bg-white/5 text-destructive font-medium transition-colors"
-            onClick={() => { setOpen(false); onDelete(); }}
+            onClick={(e) => { e.stopPropagation(); setOpen(false); onDelete(); }}
           >
             <Trash2 size={16} />
             <span>Delete Card</span>
