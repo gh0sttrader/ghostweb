@@ -361,7 +361,8 @@ function TradingDashboardPageContentV2() {
                     resizeHandles={['se', 'sw', 'ne', 'nw', 's', 'w', 'e', 'n']}
                     margin={[16, 16]}
                     containerPadding={[0, 0]}
-                    compactType={null}
+                    compactType="vertical"
+                    isBounded={true}
                 >
                   {layouts.map(layoutItem => {
                        const groupId = layoutItem.i;
