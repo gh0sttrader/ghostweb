@@ -305,26 +305,6 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
                     <h3 className="text-2xl font-bold text-neutral-50 truncate" title={stock.name}>
                         {stock.name}
                     </h3>
-                    <div className="flex items-center space-x-2">
-                        <Button
-                            onClick={onAlertClick}
-                            variant="ghost"
-                            size="icon"
-                            className={cn("h-8 w-8", isAlertActive ? 'text-destructive' : 'text-neutral-400 hover:bg-white/10')}
-                            aria-label="Set Alert"
-                        >
-                            <Bell size={18} fill={isAlertActive ? 'currentColor' : 'none'} />
-                        </Button>
-                        <Button
-                            onClick={() => setIsWatched(prev => !prev)}
-                            variant="ghost"
-                            size="icon"
-                            className={cn("h-8 w-8", isWatched ? 'text-yellow-500' : 'text-neutral-400 hover:bg-white/10')}
-                            aria-label="Add to Watchlist"
-                        >
-                            <Star size={18} fill={isWatched ? 'currentColor' : 'none'} />
-                        </Button>
-                    </div>
                 </div>
                 <p className="text-xl font-extrabold text-foreground mt-1">
                     ${stock.price.toFixed(2)}
@@ -355,7 +335,7 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
       </CardHeader>
       <CardContent className="relative flex-1 p-1 pr-2 min-h-[250px]">
         {renderChartContent()}
-        <div className="absolute bottom-3 right-3 z-10">
+        <div className="absolute bottom-3 right-3 z-10 flex items-center gap-2">
             <Popover>
               <PopoverTrigger asChild>
                   <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground/50 hover:text-foreground hover:bg-white/10 opacity-50 hover:opacity-100 transition-opacity">
@@ -378,7 +358,25 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
                       ))}
                   </div>
               </PopoverContent>
-          </Popover>
+            </Popover>
+            <Button
+                onClick={onAlertClick}
+                variant="ghost"
+                size="icon"
+                className={cn("h-7 w-7", isAlertActive ? 'text-destructive' : 'text-neutral-400 hover:bg-white/10')}
+                aria-label="Set Alert"
+            >
+                <Bell size={16} fill={isAlertActive ? 'currentColor' : 'none'} />
+            </Button>
+            <Button
+                onClick={() => setIsWatched(prev => !prev)}
+                variant="ghost"
+                size="icon"
+                className={cn("h-7 w-7", isWatched ? 'text-yellow-500' : 'text-neutral-400 hover:bg-white/10')}
+                aria-label="Add to Watchlist"
+            >
+                <Star size={16} fill={isWatched ? 'currentColor' : 'none'} />
+            </Button>
         </div>
       </CardContent>
      
@@ -439,6 +437,5 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
     </Card>
   );
 }
-
 
     
