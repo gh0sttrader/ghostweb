@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import type { Stock } from '@/types';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, AreaChart as RechartsAreaChart, Area, BarChart, Bar, Cell, Legend } from 'recharts';
 import type { TooltipProps } from 'recharts';
-import { AreaChart as AreaIcon, CandlestickChart, Activity, Search, Loader2, Calendar, LineChart as LineChartIcon, Palette, Plus, X as XIcon } from 'lucide-react';
+import { AreaChart as AreaIcon, CandlestickChart, Activity, Search, Loader2, Calendar, LineChart as LineChartIcon, Palette, Plus, X as XIcon, Bell, Star } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { getChartData } from '@/ai/flows/get-chart-data-flow';
 import { sub, formatISO, format } from 'date-fns';
@@ -25,6 +25,8 @@ interface InteractiveChartCardProps {
   onChartLeave?: () => void;
   className?: string;
   variant?: 'trading' | 'account';
+  onAlertClick?: () => void;
+  isAlertActive?: boolean;
 }
 
 const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>) => {
@@ -92,9 +94,8 @@ const getTimeframeParams = (timeframe: '1D' | '5D' | '1M' | '3M' | '6M' | 'YTD' 
 };
 
 
-export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover, onChartLeave, className, variant = 'trading' }: InteractiveChartCardProps) {
+export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover, onChartLeave, className, variant = 'trading', onAlertClick, isAlertActive }: InteractiveChartCardProps) {
   const { toast } = useToast();
-  // chartType state is only used for the 'account' variant now.
   const [chartType, setChartType] = useState<'line' | 'area' | 'candle'>(variant === 'account' ? 'line' : 'area');
   const [timeframe, setTimeframe] = useState<'1D' | '5D' | '1M' | '3M' | '6M' | 'YTD' | '1Y' | '5Y' | 'Max'>('1M');
   const [manualTickerInput, setManualTickerInput] = useState('');
@@ -105,6 +106,7 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
   const [error, setError] = useState<string | null>(null);
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
   const [chartColor, setChartColor] = useState<string>('#e6e6e6');
+  const [isWatched, setIsWatched] = useState(false);
   
 
   const colorOptions = [
@@ -130,7 +132,6 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
         setChartData([]);
         return;
       }
-      // Use mock historical data for account variant, otherwise fetch
       if (variant === 'account' && stock.historicalPrices) {
         const formattedData = stock.historicalPrices.map((price, index) => ({
             date: `Day ${index + 1}`,
@@ -173,7 +174,6 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
 
   const handleDateGo = (date: Date | DateRange) => {
     console.log("Selected date/range:", date);
-    // Future logic to refetch chart data will go here.
   };
 
   const handleManualSubmit = () => {
@@ -222,8 +222,6 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
     }
 
     const uniqueId = `chart-gradient-${stock?.id || 'default'}`;
-    
-    // On trading page, it's always 'area'. On account page, it uses the state.
     const chartComponentType = variant === 'trading' ? 'area' : chartType;
 
     if (chartComponentType === 'line') {
@@ -300,9 +298,31 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
         <div className="flex flex-col sm:flex-row justify-between items-start gap-2">
           {variant === 'trading' && stock && stock.price > 0 ? (
              <div className="flex-1 min-w-0">
-                <h3 className="text-2xl font-bold text-neutral-50 truncate" title={stock.name}>
-                    {stock.name}
-                </h3>
+                <div className="flex items-center gap-4">
+                    <h3 className="text-2xl font-bold text-neutral-50 truncate" title={stock.name}>
+                        {stock.name}
+                    </h3>
+                    <div className="flex items-center space-x-2">
+                        <Button
+                            onClick={onAlertClick}
+                            variant="ghost"
+                            size="icon"
+                            className={cn("h-8 w-8", isAlertActive ? 'text-destructive bg-destructive/10' : 'text-neutral-400 hover:bg-white/10')}
+                            aria-label="Set Alert"
+                        >
+                            <Bell size={18} fill={isAlertActive ? 'currentColor' : 'none'} />
+                        </Button>
+                        <Button
+                            onClick={() => setIsWatched(prev => !prev)}
+                            variant="ghost"
+                            size="icon"
+                            className={cn("h-8 w-8", isWatched ? 'text-yellow-500 bg-yellow-500/10' : 'text-neutral-400 hover:bg-white/10')}
+                            aria-label="Add to Watchlist"
+                        >
+                            <Star size={18} fill={isWatched ? 'currentColor' : 'none'} />
+                        </Button>
+                    </div>
+                </div>
                 <p className="text-xl font-extrabold text-foreground mt-1">
                     ${stock.price.toFixed(2)}
                 </p>
@@ -416,7 +436,3 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
     </Card>
   );
 }
-
-
-
-

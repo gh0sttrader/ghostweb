@@ -3,40 +3,30 @@
 
 import React, { useState, useMemo, Suspense, useCallback, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
-import type { Stock, TradeRequest, OrderActionType, TradeMode, OrderSystemType, NewsArticle } from "@/types";
+import type { Stock, TradeRequest, OrderActionType, TradeMode, OrderSystemType, NewsArticle, Alert } from "@/types";
 import { useToast } from "@/hooks/use-toast";
 import { useTradeHistoryContext } from '@/contexts/TradeHistoryContext';
 import { useOpenPositionsContext } from '@/contexts/OpenPositionsContext';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { useAlertsContext } from '@/contexts/AlertsContext';
 import { Button } from "@/components/ui/button";
-import { ChevronDown, Plus } from "lucide-react";
 
 import { OrderCard } from '@/components/OrderCard';
 import { Card } from '@/components/ui/card';
 import { InteractiveChartCard } from '@/components/charts/InteractiveChartCard';
-import { WatchlistCard } from '@/components/WatchlistCard';
-import { OpenPositionsCard } from '@/components/OpenPositionsCard';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { TradeHistoryTable } from '@/components/market/TradeHistoryTable';
-import { OrdersTable } from '@/components/market/OrdersTable';
-import { FundamentalsCard } from '@/components/FundamentalsCard';
-import { initialMockStocks } from './mock-data';
-import { NewsCard } from '@/components/NewsCard';
-import { cn } from '@/lib/utils';
-import { ScreenerWatchlist } from '@/components/ScreenerWatchlist';
 import { AboutCard } from '@/components/AboutCard';
 import { KeyStatistics } from '@/components/KeyStatistics';
-import { AnalystRatings } from '@/components/AnalystRatings';
 import { AverageAnnualReturn } from '@/components/AverageAnnualReturn';
-
-const dummyWatchlists = ["My Watchlist", "Tech Stocks", "Growth", "Crypto", "High Volume"];
-const dummyScreeners = ["Top Gainers", "High Volume", "Unusual Options"];
+import { NewsCard } from '@/components/NewsCard';
+import { AnalystRatings } from '@/components/AnalystRatings';
+import { initialMockStocks } from './mock-data';
+import { AlertModal } from '@/components/AlertModal';
 
 function TradingDashboardPageContent() {
   const { toast } = useToast();
   const searchParams = useSearchParams();
   const { addTradeToHistory } = useTradeHistoryContext();
   const { openPositions, addOpenPosition, selectedAccountId } = useOpenPositionsContext();
+  const { alerts, addAlert, removeAlert } = useAlertsContext();
 
   const [syncedTickerSymbol, setSyncedTickerSymbol] = useState<string>('AAPL');
   const [stockForSyncedComps, setStockForSyncedComps] = useState<Stock | null>(null);
@@ -48,11 +38,24 @@ function TradingDashboardPageContent() {
   const [orderCardInitialOrderType, setOrderCardInitialOrderType] = useState<OrderSystemType | undefined>(undefined);
   const [orderCardInitialLimitPrice, setOrderCardInitialLimitPrice] = useState<string | undefined>(undefined);
   
-  const [isWatchlistDropdownOpen, setIsWatchlistDropdownOpen] = useState(false);
-  const [selectedWatchlist, setSelectedWatchlist] = useState("My Watchlist");
+  const [isAlertModalOpen, setIsAlertModalOpen] = useState(false);
   
-  const [isScreenerDropdownOpen, setIsScreenerDropdownOpen] = useState(false);
-  const [selectedScreener, setSelectedScreener] = useState("Top Gainers");
+  const activeAlert = useMemo(() => {
+    return alerts.find(a => a.symbol === syncedTickerSymbol);
+  }, [alerts, syncedTickerSymbol]);
+
+  const handleOpenAlertModal = () => {
+    setIsAlertModalOpen(true);
+  };
+  
+  const handleCloseAlertModal = () => {
+    setIsAlertModalOpen(false);
+  };
+
+  const handleSaveAlert = (alert: Alert) => {
+    addAlert(alert);
+    handleCloseAlertModal();
+  };
 
   const handleClearOrderCard = useCallback(() => {
     setOrderCardActionType(null);
@@ -183,52 +186,66 @@ function TradingDashboardPageContent() {
   };
   
   return (
-    <main className="w-full h-full flex flex-col bg-background">
-      <div className="w-full max-w-6xl mx-auto px-8 2xl:max-w-7xl 2xl:px-16 flex-1 py-4 md:py-6 lg:py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6 items-start">
-            <div className="flex flex-col gap-6">
-                <div className="border border-white/10 rounded-lg h-[640px]">
-                    <InteractiveChartCard
-                        stock={stockForSyncedComps}
-                        onManualTickerSubmit={handleSyncedTickerChange}
-                        className="h-full"
-                    />
-                </div>
-                <div className="mt-12">
-                    <AboutCard stock={stockForSyncedComps} />
-                </div>
-                <div className="mt-12">
-                    <KeyStatistics stock={stockForSyncedComps} />
-                </div>
-                <div className="mt-12">
-                    <AverageAnnualReturn />
-                </div>
-                <div className="mt-12">
-                  <NewsCard stock={stockForSyncedComps} />
-                </div>
-                <div className="mt-12">
-                    <AnalystRatings stock={stockForSyncedComps} />
-                </div>
-                <div className="h-16" />
-            </div>
+    <>
+      <main className="w-full h-full flex flex-col bg-background">
+        <div className="w-full max-w-6xl mx-auto px-8 2xl:max-w-7xl 2xl:px-16 flex-1 py-4 md:py-6 lg:py-8">
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6 items-start">
+              <div className="flex flex-col gap-6">
+                  <div className="h-[640px]">
+                      <InteractiveChartCard
+                          stock={stockForSyncedComps}
+                          onManualTickerSubmit={handleSyncedTickerChange}
+                          className="h-full"
+                          onAlertClick={handleOpenAlertModal}
+                          isAlertActive={!!activeAlert}
+                      />
+                  </div>
+                  <div className="mt-12">
+                      <AboutCard stock={stockForSyncedComps} />
+                  </div>
+                  <div className="mt-12">
+                      <KeyStatistics stock={stockForSyncedComps} />
+                  </div>
+                  <div className="mt-12">
+                      <AverageAnnualReturn />
+                  </div>
+                  <div className="mt-12">
+                    <NewsCard stock={stockForSyncedComps} />
+                  </div>
+                  <div className="mt-12">
+                      <AnalystRatings stock={stockForSyncedComps} />
+                  </div>
+                  <div className="h-16" />
+              </div>
 
-            <div className="sticky top-8 h-[640px]">
-                <OrderCard
-                selectedStock={stockForSyncedComps}
-                initialActionType={orderCardActionType}
-                initialTradeMode={orderCardInitialTradeMode}
-                miloActionContextText={orderCardMiloActionContext}
-                onSubmit={handleTradeSubmit}
-                onClear={handleClearOrderCard}
-                initialQuantity={orderCardInitialQuantity}
-                initialOrderType={orderCardInitialOrderType}
-                initialLimitPrice={orderCardInitialLimitPrice}
-                className="h-full"
-                />
-            </div>
+              <div className="sticky top-8 h-[640px]">
+                  <OrderCard
+                  selectedStock={stockForSyncedComps}
+                  initialActionType={orderCardActionType}
+                  initialTradeMode={orderCardInitialTradeMode}
+                  miloActionContextText={orderCardMiloActionContext}
+                  onSubmit={handleTradeSubmit}
+                  onClear={handleClearOrderCard}
+                  initialQuantity={orderCardInitialQuantity}
+                  initialOrderType={orderCardInitialOrderType}
+                  initialLimitPrice={orderCardInitialLimitPrice}
+                  className="h-full"
+                  />
+              </div>
+          </div>
         </div>
-      </div>
-    </main>
+      </main>
+      {isAlertModalOpen && stockForSyncedComps && (
+        <AlertModal
+          isOpen={isAlertModalOpen}
+          onClose={handleCloseAlertModal}
+          onSave={handleSaveAlert}
+          onDelete={removeAlert}
+          symbol={stockForSyncedComps.symbol}
+          existingAlert={activeAlert}
+        />
+      )}
+    </>
   );
 }
 
