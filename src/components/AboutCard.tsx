@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import React, { useState, useEffect, useRef } from 'react';
@@ -25,6 +26,9 @@ export function AboutCard({ stock, className }: AboutCardProps) {
 
     // Get the first 1-2 sentences for the summary.
     const summary = description.split('. ').slice(0, 2).join('. ') + (description.split('. ').length > 2 ? '.' : '');
+    
+    // Check if it's an ETF by looking for ETF-specific fields
+    const isEtf = !!stock?.['Index-Tracked'];
 
     return (
         <div className={cn("bg-transparent", className)}>
@@ -37,10 +41,21 @@ export function AboutCard({ stock, className }: AboutCardProps) {
                     <p>{summary}</p>
                 </div>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-x-8 gap-y-4 mt-6">
-                    <InfoItem label="CEO" value={stock?.ceo} />
-                    <InfoItem label="Employees" value={stock?.employees?.toLocaleString()} />
-                    <InfoItem label="Headquarters" value={stock?.headquarters} />
-                    <InfoItem label="Founded" value={stock?.founded} />
+                    {isEtf ? (
+                        <>
+                            <InfoItem label="Index-Tracked" value={stock?.['Index-Tracked']} />
+                            <InfoItem label="Category" value={stock?.sector} />
+                            <InfoItem label="Number of holdings" value={stock?.['Number of holdings']} />
+                            <InfoItem label="Inception Date" value={stock?.['Inception Date']} />
+                        </>
+                    ) : (
+                        <>
+                            <InfoItem label="CEO" value={stock?.ceo} />
+                            <InfoItem label="Employees" value={stock?.employees?.toLocaleString()} />
+                            <InfoItem label="Headquarters" value={stock?.headquarters} />
+                            <InfoItem label="Founded" value={stock?.founded} />
+                        </>
+                    )}
                 </div>
             </div>
         </div>

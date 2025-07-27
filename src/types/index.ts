@@ -75,8 +75,13 @@ export type Stock = {
     ceo?: string;
     employees?: number;
     headquarters?: string;
-    founded?: number;
+    founded?: number | string;
     analystRatings?: AnalystRatingsDistribution;
+    
+    // ETF Specific Info
+    'Index-Tracked'?: string;
+    'Number of holdings'?: number;
+    'Inception Date'?: string;
 
     // Expanded for screener
     country?: string;
