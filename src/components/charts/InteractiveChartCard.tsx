@@ -431,3 +431,5 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, className, v
     </Card>
   );
 }
+
+    
