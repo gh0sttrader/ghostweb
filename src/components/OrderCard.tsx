@@ -266,7 +266,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({
                                 key={act}
                                 variant="outline"
                                 className={cn(
-                                    "rounded-md h-8 transition-all duration-200 border-2 font-bold uppercase",
+                                    "rounded-md h-9 transition-all duration-200 border-2 font-bold uppercase py-1",
                                     action === act 
                                         ? config.selectedClassName 
                                         : "bg-transparent border-white/50 text-white/80 hover:bg-white/5 hover:border-white/70 hover:text-white"
