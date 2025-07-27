@@ -323,11 +323,8 @@ const TransactionsTable = ({ transactions }: { transactions: typeof TRANSACTIONS
 
 export default function AccountsPage() {
     const [selectedAccount, setSelectedAccount] = useState<Account>(mockAccounts[0]);
-    const [headerValue, setHeaderValue] = useState<number>(mockAccounts[0].balance);
     const [timeRange, setTimeRange] = useState<keyof typeof portfolioData>('All');
-    const [chartTimeframe, setChartTimeframe] = useState<'1M' | '1D' | '5D' | '3M' | '6M' | 'YTD' | '1Y' | '5Y' | 'Max'>('All');
-
-
+    
     const [transactionType, setTransactionType] = useState('all');
     const [transactionDate, setTransactionDate] = useState<DateRange | undefined>();
     const [transactionSearch, setTransactionSearch] = useState('');
@@ -341,25 +338,10 @@ export default function AccountsPage() {
     const handleTickerSubmit = (symbol: string) => {
         console.log("Account view switched to:", symbol);
     };
-
-    const handleChartHover = useCallback((value: number | null) => {
-        if (value !== null) {
-            setHeaderValue(value);
-        }
-    }, []);
-
-    const handleChartLeave = useCallback(() => {
-        setHeaderValue(selectedAccount.balance);
-    }, [selectedAccount.balance]);
     
-    const handleTimeRangeSelect = (range: keyof typeof portfolioData) => {
-        setTimeRange(range);
-        const chartRangeMap = { '1D': '1D', '5D': '5D', '1M': '1M', '3M': '3M', '1Y': '1Y', 'All': 'Max' };
-        setChartTimeframe(chartRangeMap[range as keyof typeof chartRangeMap] || 'Max');
-    };
-
     React.useEffect(() => {
-        setHeaderValue(selectedAccount.balance);
+        // Reset time range when account changes
+        setTimeRange('All');
     }, [selectedAccount]);
     
     const transactionTypes = useMemo(() => ['all', ...Array.from(new Set(TRANSACTIONS.map(tx => tx.type)))], []);
@@ -392,19 +374,17 @@ export default function AccountsPage() {
         <main className="flex flex-col w-full max-w-6xl mx-auto px-8 py-4 md:py-6 lg:py-8 2xl:max-w-7xl 2xl:px-16">
             <div className="flex-shrink-0 flex flex-col">
                 <AccountSummaryHeader
-                    account={{ ...selectedAccount, balance: headerValue }}
+                    account={selectedAccount}
                     performanceData={performanceData}
                 />
                 <div className="h-[420px]">
                     <InteractiveChartCard
                         stock={chartData}
                         onManualTickerSubmit={handleTickerSubmit}
-                        onChartHover={handleChartHover}
-                        onChartLeave={handleChartLeave}
                         variant="account"
                         className="h-full"
-                        timeframe={chartTimeframe}
-                        onTimeframeChange={setChartTimeframe}
+                        timeframe={timeRange}
+                        onTimeframeChange={setTimeRange}
                     />
                 </div>
             </div>
@@ -536,7 +516,3 @@ export default function AccountsPage() {
         </main>
     );
 }
-
-    
-
-    
