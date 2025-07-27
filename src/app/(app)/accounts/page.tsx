@@ -173,8 +173,8 @@ const AccountSummaryHeader = ({ account, performanceData }: { account: Account; 
 
             <div className="flex flex-row flex-wrap justify-end gap-x-8 gap-y-4">
                 <AccountStat label="Cash Balance" value={formatCurrency(account.cash)} />
+                <AccountStat label="Contributions" value={formatCurrency(account.netContributions)} />
                 <AccountStat label="Market Gains" value={formatCurrency(account.marketGains)} valueColor={(account.marketGains || 0) >= 0 ? "text-green-400" : "text-destructive"} />
-                <AccountStat label="Dividends" value={formatCurrency(account.dividends)} valueColor={(account.dividends || 0) >= 0 ? "text-green-400" : "text-destructive"} />
             </div>
         </div>
     );
@@ -340,10 +340,9 @@ export default function AccountsPage() {
         console.log("Account view switched to:", symbol);
     };
     
-    React.useEffect(() => {
-        // Reset time range when account changes
-        setTimeRange('All');
-    }, [selectedAccount]);
+    const handleTimeRangeChange = (newTimeRange: keyof typeof portfolioData) => {
+        setTimeRange(newTimeRange);
+    };
     
     const transactionTypes = useMemo(() => ['all', ...Array.from(new Set(TRANSACTIONS.map(tx => tx.type)))], []);
 
@@ -385,7 +384,7 @@ export default function AccountsPage() {
                         variant="account"
                         className="h-full"
                         timeframe={timeRange}
-                        onTimeframeChange={setTimeRange}
+                        onTimeframeChange={handleTimeRangeChange}
                     />
                 </div>
             </div>
@@ -517,3 +516,5 @@ export default function AccountsPage() {
         </main>
     );
 }
+
+    
