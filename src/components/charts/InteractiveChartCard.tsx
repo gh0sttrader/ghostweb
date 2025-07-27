@@ -17,6 +17,7 @@ import type { DateRange } from 'react-day-picker';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { useToast } from '@/hooks/use-toast';
 
+type Timeframe = '1D' | '5D' | '1M' | '3M' | '6M' | 'YTD' | '1Y' | '5Y' | 'Max' | 'All';
 
 interface InteractiveChartCardProps {
   stock: Stock | null;
@@ -27,6 +28,8 @@ interface InteractiveChartCardProps {
   variant?: 'trading' | 'account';
   onAlertClick?: () => void;
   isAlertActive?: boolean;
+  timeframe: Timeframe;
+  onTimeframeChange: (timeframe: Timeframe) => void;
 }
 
 const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>) => {
@@ -67,7 +70,7 @@ const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>)
 
 
 // Map UI timeframes to Alpaca API parameters
-const getTimeframeParams = (timeframe: '1D' | '5D' | '1M' | '3M' | '6M' | 'YTD' | '1Y' | '5Y' | 'Max') => {
+const getTimeframeParams = (timeframe: Timeframe) => {
   const now = new Date();
   switch (timeframe) {
     case '1D':
@@ -87,6 +90,7 @@ const getTimeframeParams = (timeframe: '1D' | '5D' | '1M' | '3M' | '6M' | 'YTD' 
     case '5Y':
       return { timeframe: '1Week', start: formatISO(sub(now, { years: 5 })) };
     case 'Max':
+    case 'All':
       return { timeframe: '1Month', start: '2015-01-01T00:00:00Z' }; // A reasonable 'all time' start
     default:
       return { timeframe: '1Day', start: formatISO(sub(now, { months: 1 })) };
@@ -94,10 +98,9 @@ const getTimeframeParams = (timeframe: '1D' | '5D' | '1M' | '3M' | '6M' | 'YTD' 
 };
 
 
-export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover, onChartLeave, className, variant = 'trading', onAlertClick, isAlertActive }: InteractiveChartCardProps) {
+export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover, onChartLeave, className, variant = 'trading', onAlertClick, isAlertActive, timeframe, onTimeframeChange }: InteractiveChartCardProps) {
   const { toast } = useToast();
   const [chartType, setChartType] = useState<'line' | 'area' | 'candle'>(variant === 'account' ? 'line' : 'area');
-  const [timeframe, setTimeframe] = useState<'1D' | '5D' | '1M' | '3M' | '6M' | 'YTD' | '1Y' | '5Y' | 'Max'>('1M');
   const [manualTickerInput, setManualTickerInput] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -288,7 +291,7 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
     return null;
   };
 
-  const timeframeButtons = variant === 'trading'
+  const timeframeButtons: Timeframe[] = variant === 'trading'
     ? ['1D', '5D', '1M', '3M', '6M', 'YTD', '1Y', '5Y', 'Max']
     : ['1D', '5D', '1M', '3M', '6M', 'YTD', '1Y', '5Y', 'All'];
 
@@ -385,7 +388,7 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
             key={tf}
             variant="ghost"
             size="sm"
-            onClick={() => setTimeframe(tf as any)}
+            onClick={() => onTimeframeChange(tf)}
             className={cn(
               "h-8 text-base px-3 font-medium",
               timeframe === tf
@@ -436,3 +439,6 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
     </Card>
   );
 }
+
+
+    

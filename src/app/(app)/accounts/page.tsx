@@ -5,7 +5,7 @@ import React, { useState, useMemo, useCallback } from 'react';
 import type { Stock, Account, Holding } from '@/types';
 import { InteractiveChartCard } from '@/components/charts/InteractiveChartCard';
 import { cn } from '@/lib/utils';
-import { PackageSearch, Calendar as CalendarIcon, ChevronDown, Search, TrendingUp } from 'lucide-react';
+import { PackageSearch, Calendar as CalendarIcon, ChevronDown, Search, TrendingUp, TrendingDown } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
@@ -16,7 +16,6 @@ import { format, addDays, parse } from 'date-fns';
 import { AnimatedCounter } from '@/components/AnimatedCounter';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-
 
 const mockHoldings: Holding[] = [
     { symbol: 'AAPL', name: 'Apple Inc.', shares: 50, marketPrice: 170.34, unrealizedGain: 7340.00, totalValue: 8517, logo: 'https://placehold.co/40x40.png', dayPnl: 105.50, dayPnlPercent: 1.25, openPnlPercent: 17.2, averagePrice: 145.32 },
@@ -111,13 +110,21 @@ const TRANSACTIONS = [
     { date: "07/11/2025", type: "Buy", symbol: "AMZN", name: "Amazon.com, Inc.", shares: "3", price: "$182.50", amount: "$547.50" },
 ];
 
+const portfolioData: Record<string, { gain: number, percent: number, label: string }> = {
+    '1D': { gain: -250.75, percent: -0.15, label: 'Today' },
+    '5D': { gain: 1245.30, percent: 0.73, label: 'Past 5 days' },
+    '1M': { gain: 5670.10, percent: 3.34, label: 'Past month' },
+    '3M': { gain: 8900.00, percent: 5.24, label: 'Past 3 months' },
+    '1Y': { gain: 25400.50, percent: 14.94, label: 'Past year' },
+    'All': { gain: 40000.00, percent: 30.77, label: 'All time' },
+};
+
 
 const accountToStock = (account: Account): Stock => ({
     id: account.id,
     symbol: account.name.toUpperCase().replace(' ', '_'),
     price: account.balance,
     changePercent: account.pnl?.percent || 0,
-    // Generate some mock historical data based on the balance
     historicalPrices: Array.from({ length: 30 }, (_, i) => {
         let price = account.balance;
         for (let j = 0; j < 30 - i; j++) {
@@ -142,33 +149,29 @@ const AccountStat = ({ label, value, valueColor = 'text-white' }: { label: strin
 );
 
 
-const AccountSummaryHeader = ({ account, onChartHover, onChartLeave }: { account: Account; onChartHover: (value: number | null) => void; onChartLeave: () => void; }) => {
+const AccountSummaryHeader = ({ account, performanceData }: { account: Account; performanceData: { gain: number, percent: number, label: string } }) => {
     
-    const allTimeGains = (account.totalGains || 0);
-    const allTimePercent = account.netContributions ? (allTimeGains / account.netContributions) * 100 : 0;
-    const isPositive = allTimeGains >= 0;
-
+    const isGain = performanceData.gain >= 0;
+    const gainColor = isGain ? 'text-green-500' : 'text-destructive';
+    const TrendIcon = isGain ? TrendingUp : TrendingDown;
+    
     return (
        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 mb-8">
-            {/* Left Side: Main Balance and Gain/Loss */}
             <div className="flex flex-col">
                 <h1 className="text-6xl font-bold text-white">
                     <AnimatedCounter value={account.balance} />
                 </h1>
                 <div className="flex items-center gap-2 mt-2">
-                    {isPositive ? <TrendingUp className="text-green-500" size={20} /> : <TrendingUp className="text-destructive rotate-180" size={20} />}
-                    <span className={cn("text-xl font-semibold", isPositive ? "text-green-500" : "text-destructive")}>
-                        {formatCurrency(allTimeGains, true)} ({isPositive ? '+' : ''}{allTimePercent.toFixed(2)}%)
+                    <TrendIcon className={gainColor} size={20} />
+                    <span className={cn("text-xl font-semibold", gainColor)}>
+                         {formatCurrency(performanceData.gain, true)} ({isGain ? '+' : ''}{performanceData.percent.toFixed(2)}%)
                     </span>
-                    <span className="text-lg text-neutral-400">All time</span>
+                    <span className="text-lg text-neutral-400">{performanceData.label}</span>
                 </div>
             </div>
 
-            {/* Right Side: Detailed stats */}
             <div className="flex flex-row flex-wrap justify-end gap-x-8 gap-y-4">
                 <AccountStat label="Cash Balance" value={formatCurrency(account.cash)} />
-                <AccountStat label="Net Contributions" value={formatCurrency(account.netContributions)} />
-                <AccountStat label="Total Gains" value={formatCurrency(account.totalGains)} valueColor={(account.totalGains || 0) >= 0 ? "text-green-400" : "text-destructive"} />
                 <AccountStat label="Market Gains" value={formatCurrency(account.marketGains)} valueColor={(account.marketGains || 0) >= 0 ? "text-green-400" : "text-destructive"} />
                 <AccountStat label="Dividends" value={formatCurrency(account.dividends)} valueColor={(account.dividends || 0) >= 0 ? "text-green-400" : "text-destructive"} />
             </div>
@@ -321,6 +324,9 @@ const TransactionsTable = ({ transactions }: { transactions: typeof TRANSACTIONS
 export default function AccountsPage() {
     const [selectedAccount, setSelectedAccount] = useState<Account>(mockAccounts[0]);
     const [headerValue, setHeaderValue] = useState<number>(mockAccounts[0].balance);
+    const [timeRange, setTimeRange] = useState<keyof typeof portfolioData>('All');
+    const [chartTimeframe, setChartTimeframe] = useState<'1M' | '1D' | '5D' | '3M' | '6M' | 'YTD' | '1Y' | '5Y' | 'Max'>('All');
+
 
     const [transactionType, setTransactionType] = useState('all');
     const [transactionDate, setTransactionDate] = useState<DateRange | undefined>();
@@ -345,8 +351,13 @@ export default function AccountsPage() {
     const handleChartLeave = useCallback(() => {
         setHeaderValue(selectedAccount.balance);
     }, [selectedAccount.balance]);
+    
+    const handleTimeRangeSelect = (range: keyof typeof portfolioData) => {
+        setTimeRange(range);
+        const chartRangeMap = { '1D': '1D', '5D': '5D', '1M': '1M', '3M': '3M', '1Y': '1Y', 'All': 'Max' };
+        setChartTimeframe(chartRangeMap[range as keyof typeof chartRangeMap] || 'Max');
+    };
 
-    // Update header value when selectedAccount changes
     React.useEffect(() => {
         setHeaderValue(selectedAccount.balance);
     }, [selectedAccount]);
@@ -375,14 +386,14 @@ export default function AccountsPage() {
         return isTransactionsExpanded ? filteredTransactions : filteredTransactions.slice(0, 7);
     }, [filteredTransactions, isTransactionsExpanded]);
 
+    const performanceData = portfolioData[timeRange];
 
     return (
         <main className="flex flex-col w-full max-w-6xl mx-auto px-8 py-4 md:py-6 lg:py-8 2xl:max-w-7xl 2xl:px-16">
             <div className="flex-shrink-0 flex flex-col">
                 <AccountSummaryHeader
                     account={{ ...selectedAccount, balance: headerValue }}
-                    onChartHover={handleChartHover}
-                    onChartLeave={handleChartLeave}
+                    performanceData={performanceData}
                 />
                 <div className="h-[420px]">
                     <InteractiveChartCard
@@ -392,6 +403,8 @@ export default function AccountsPage() {
                         onChartLeave={handleChartLeave}
                         variant="account"
                         className="h-full"
+                        timeframe={chartTimeframe}
+                        onTimeframeChange={setChartTimeframe}
                     />
                 </div>
             </div>
@@ -523,5 +536,7 @@ export default function AccountsPage() {
         </main>
     );
 }
+
+    
 
     
