@@ -252,7 +252,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({
                         </div>
 
                         {selectedStock.tradingFeatures && (
-                            <div className="flex justify-end pt-1 -mt-1">
+                            <div className="flex justify-start pt-1 -mt-1">
                                 <TradingFeaturesBadges features={selectedStock.tradingFeatures} />
                             </div>
                         )}
