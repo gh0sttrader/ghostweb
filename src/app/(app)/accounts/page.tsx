@@ -384,7 +384,7 @@ export default function AccountsPage() {
                     onChartHover={handleChartHover}
                     onChartLeave={handleChartLeave}
                 />
-                <div className="border border-white/10 rounded-lg h-[420px]">
+                <div className="h-[420px]">
                     <InteractiveChartCard
                         stock={chartData}
                         onManualTickerSubmit={handleTickerSubmit}
