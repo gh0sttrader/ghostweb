@@ -246,11 +246,6 @@ export const OrderCard: React.FC<OrderCardProps> = ({
                                  {selectedStock.changePercent >= 0 ? '+' : ''}{selectedStock.changePercent.toFixed(2)}%
                              </p>
                         </div>
-                         <div className="text-right">
-                             {selectedStock.tradingFeatures && (
-                                <TradingFeaturesBadges features={selectedStock.tradingFeatures} />
-                            )}
-                         </div>
                     </div>
                 )}
                 
@@ -390,10 +385,14 @@ export const OrderCard: React.FC<OrderCardProps> = ({
                         description="The total amount of funds available for purchasing securities, including borrowed money in a margin account."
                     />
                 </div>
-
+                 {selectedStock?.tradingFeatures && (
+                    <div className="flex items-center justify-center gap-3 mt-4">
+                        <TradingFeaturesBadges features={selectedStock.tradingFeatures} />
+                    </div>
+                )}
                 <Button 
                     className={cn(
-                        "w-full h-12 text-base font-bold transition-all duration-300",
+                        "w-full h-12 text-base font-bold transition-all duration-300 mt-2",
                         submitButtonClass
                     )}
                     disabled={!isFormValid}
