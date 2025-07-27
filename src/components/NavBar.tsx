@@ -36,7 +36,7 @@ const AppNavLinks = () => {
     { href: "/accounts", label: "ACCOUNTS" },
     { href: "/research", label: "RESEARCH" },
     { href: "/news", label: "NEWS" },
-    { href: "/screener", label: "SCREENER" },
+    { href: "/screener", label: "ALERT CENTER" },
     { href: "/tradehistory", label: "TRADE HISTORY" },
     { href: "/settings", label: "SETTINGS" },
   ];
