@@ -296,7 +296,7 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
     : ['1D', '5D', '1M', '3M', '6M', 'YTD', '1Y', '5Y', 'All'];
 
   return (
-    <Card className={cn("shadow-none flex flex-col border-none bg-transparent relative", className)}>
+    <Card className={cn("shadow-none flex flex-col border-none bg-transparent", className)}>
        <CardHeader className="pb-2 pt-3 px-3">
         <div className="flex flex-col sm:flex-row justify-between items-start gap-2">
           {variant === 'trading' && stock && stock.price > 0 ? (
@@ -333,9 +333,10 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
           )}
         </div>
       </CardHeader>
-      <CardContent className="relative flex-1 p-1 pr-2 min-h-[250px]">
+      <CardContent className="flex-1 p-1 pr-2 min-h-[250px]">
         {renderChartContent()}
-        <div className="absolute bottom-3 left-3 right-3 z-10 flex items-center justify-between">
+      </CardContent>
+       <CardFooter className="flex items-center justify-between p-2 bg-transparent">
             <div className="flex items-center gap-1">
                 {timeframeButtons.map((tf) => (
                   <Button
@@ -397,8 +398,7 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
                     <Star size={16} fill={isWatched ? 'currentColor' : 'none'} />
                 </Button>
             </div>
-        </div>
-      </CardContent>
+       </CardFooter>
      
       <ChartDatePickerModal 
         isOpen={isDatePickerOpen}
@@ -408,3 +408,5 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
     </Card>
   );
 }
+
+    
