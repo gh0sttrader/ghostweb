@@ -307,7 +307,7 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
                             onClick={onAlertClick}
                             variant="ghost"
                             size="icon"
-                            className={cn("h-8 w-8", isAlertActive ? 'text-destructive bg-destructive/10' : 'text-neutral-400 hover:bg-white/10')}
+                            className={cn("h-8 w-8", isAlertActive ? 'text-destructive' : 'text-neutral-400 hover:bg-white/10')}
                             aria-label="Set Alert"
                         >
                             <Bell size={18} fill={isAlertActive ? 'currentColor' : 'none'} />
@@ -316,7 +316,7 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, onChartHover
                             onClick={() => setIsWatched(prev => !prev)}
                             variant="ghost"
                             size="icon"
-                            className={cn("h-8 w-8", isWatched ? 'text-yellow-500 bg-yellow-500/10' : 'text-neutral-400 hover:bg-white/10')}
+                            className={cn("h-8 w-8", isWatched ? 'text-yellow-500' : 'text-neutral-400 hover:bg-white/10')}
                             aria-label="Add to Watchlist"
                         >
                             <Star size={18} fill={isWatched ? 'currentColor' : 'none'} />
