@@ -237,15 +237,16 @@ export const OrderCard: React.FC<OrderCardProps> = ({
                                     {selectedStock.changePercent >= 0 ? '+' : ''}{selectedStock.changePercent.toFixed(2)}%
                                 </p>
                             </div>
-                            {selectedStock.tradingFeatures && (
-                                <div className="mt-2">
-                                    <TradingFeaturesBadges features={selectedStock.tradingFeatures} />
-                                </div>
-                            )}
                         </div>
                     </div>
                 )}
                 
+                {selectedStock?.tradingFeatures && (
+                    <div className="flex justify-end">
+                        <TradingFeaturesBadges features={selectedStock.tradingFeatures} />
+                    </div>
+                )}
+
                 <div>
                     <Label className="text-xs text-muted-foreground">Side</Label>
                     <Select value={action || ''} onValueChange={(v) => setAction(v as OrderActionType)}>

@@ -293,6 +293,12 @@ export const OrderCardV2: React.FC<OrderCardProps> = ({
                     </div>
                 )}
                 
+                 {selectedStock?.tradingFeatures && (
+                    <div className="flex justify-end -mt-4">
+                        <TradingFeaturesBadges features={selectedStock.tradingFeatures} />
+                    </div>
+                )}
+
                 <div className="no-drag">
                     <Label className="text-xs text-muted-foreground">Side</Label>
                     <Select value={action || ''} onValueChange={(v) => setAction(v as OrderActionType)}>
