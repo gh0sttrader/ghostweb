@@ -19,7 +19,7 @@ export function SectorsCard({ stock, className }: SectorsCardProps) {
     return (
         <div className={cn("bg-transparent", className)}>
             <div className="pb-3">
-                <h2 className="text-xl font-bold">What's in this fund</h2>
+                <h2 className="text-xl font-bold">Sectors</h2>
                 <Separator className="bg-white/10 mt-2" />
             </div>
             <div className="flex flex-col md:flex-row gap-8">
