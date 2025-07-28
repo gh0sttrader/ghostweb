@@ -86,7 +86,7 @@ export const OrderCardV2: React.FC<OrderCardProps> = ({
 }) => {
     const { accounts, selectedAccountId, setSelectedAccountId } = useOpenPositionsContext();
     const { toast } = useToast();
-    const [action, setAction] = useState<OrderActionType | null>(initialActionType || null);
+    const [action, setAction] = useState<OrderActionType | null>(initialActionType || 'Buy');
     const [quantity, setQuantity] = useState<string>(initialQuantity || '');
     const [orderType, setOrderType] = useState<OrderSystemType>(initialOrderType || 'Market');
     const [limitPrice, setLimitPrice] = useState<string>(initialLimitPrice || '');
@@ -97,7 +97,7 @@ export const OrderCardV2: React.FC<OrderCardProps> = ({
 
     useEffect(() => {
         if (selectedStock) {
-            setAction(initialActionType || null);
+            setAction(initialActionType || 'Buy');
             setQuantity(initialQuantity || '');
             setOrderType(initialOrderType || 'Market');
             setLimitPrice(initialLimitPrice || '');
@@ -107,7 +107,7 @@ export const OrderCardV2: React.FC<OrderCardProps> = ({
     }, [selectedStock, initialActionType, initialQuantity, initialOrderType, initialLimitPrice]);
     
     const handleClear = () => {
-        setAction(null);
+        setAction('Buy');
         setQuantity('');
         setOrderType('Market');
         setLimitPrice('');
@@ -293,25 +293,18 @@ export const OrderCardV2: React.FC<OrderCardProps> = ({
                     </div>
                 )}
                 
-                <div className="grid grid-cols-3 gap-2 no-drag">
-                    {(['Buy', 'Sell', 'Short'] as OrderActionType[]).map((act) => {
-                        const config = actionConfig[act];
-                        return (
-                            <Button
-                                key={act}
-                                variant="outline"
-                                className={cn(
-                                    "rounded-md h-8 text-xs transition-all duration-200 border-2 font-bold",
-                                    action === act 
-                                        ? config.selectedClassName 
-                                        : "bg-transparent border-white/50 text-white/80 hover:bg-white/5 hover:border-white/70 hover:text-white"
-                                )}
-                                onClick={() => setAction(act)}
-                            >
-                                {act}
-                            </Button>
-                        )
-                    })}
+                <div className="no-drag">
+                    <Label className="text-xs text-muted-foreground">Side</Label>
+                    <Select value={action || ''} onValueChange={(v) => setAction(v as OrderActionType)}>
+                        <SelectTrigger className="bg-transparent border-white/10 h-10">
+                            <SelectValue placeholder="Select Side" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="Buy">Buy</SelectItem>
+                            <SelectItem value="Sell">Sell</SelectItem>
+                            <SelectItem value="Short">Short</SelectItem>
+                        </SelectContent>
+                    </Select>
                 </div>
 
                 <Separator className="bg-white/10" />
