@@ -386,6 +386,7 @@ export default function AccountsPage() {
                         timeframe={timeRange}
                         onTimeframeChange={handleTimeRangeChange}
                         showWatchlistButton={false}
+                        showAlertButton={false}
                     />
                 </div>
             </div>
