@@ -339,8 +339,6 @@ export const OrderCardV2: React.FC<OrderCardProps> = ({
                                 <SelectContent>
                                     <SelectItem value="Day">Day</SelectItem>
                                     <SelectItem value="GTC">GTC</SelectItem>
-                                    <SelectItem value="OPG">OPG</SelectItem>
-                                     <SelectItem value="CLS">CLS</SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>
