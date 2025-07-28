@@ -66,7 +66,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({
     className,
 }) => {
     const { accounts, selectedAccountId, setSelectedAccountId } = useOpenPositionsContext();
-    const [action, setAction] = useState<OrderActionType | null>(initialActionType || null);
+    const [action, setAction] = useState<OrderActionType | null>(initialActionType || 'Buy');
     const [quantity, setQuantity] = useState<string>(initialQuantity || '');
     const [orderType, setOrderType] = useState<OrderSystemType>(initialOrderType || 'Market');
     const [limitPrice, setLimitPrice] = useState<string>(initialLimitPrice || '');
@@ -78,7 +78,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({
 
     useEffect(() => {
         if (selectedStock) {
-            setAction(initialActionType || null);
+            setAction(initialActionType || 'Buy');
             setQuantity(initialQuantity || '');
             setOrderType(initialOrderType || 'Market');
             setLimitPrice(initialLimitPrice || '');
@@ -88,7 +88,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({
     }, [selectedStock, initialActionType, initialQuantity, initialOrderType, initialLimitPrice]);
     
     const handleClear = () => {
-        setAction(null);
+        setAction('Buy');
         setQuantity('');
         setOrderType('Market');
         setLimitPrice('');
@@ -180,18 +180,6 @@ export const OrderCard: React.FC<OrderCardProps> = ({
         handleClear();
     };
     
-    const actionConfig = {
-      'Buy': {
-        selectedClassName: 'bg-[hsl(var(--confirm-green))] text-black border-transparent hover:bg-[hsl(var(--confirm-green))]/90',
-      },
-      'Sell': {
-        selectedClassName: 'bg-destructive text-black border-transparent hover:bg-destructive/90',
-      },
-      'Short': {
-        selectedClassName: 'bg-yellow-500 text-black border-transparent hover:bg-yellow-500/90',
-      },
-    };
-
     const submitButtonClass = useMemo(() => {
         if (!action || !selectedStock || !isFormValid) {
             return "bg-neutral-900 text-neutral-600 border-white/10";
@@ -258,25 +246,18 @@ export const OrderCard: React.FC<OrderCardProps> = ({
                     </div>
                 )}
                 
-                <div className="grid grid-cols-3 gap-2">
-                    {(['Buy', 'Sell', 'Short'] as OrderActionType[]).map((act) => {
-                        const config = actionConfig[act];
-                        return (
-                            <Button
-                                key={act}
-                                variant="outline"
-                                className={cn(
-                                    "rounded-md h-9 transition-all duration-200 border-2 font-bold uppercase py-1",
-                                    action === act 
-                                        ? config.selectedClassName 
-                                        : "bg-transparent border-white/50 text-white/80 hover:bg-white/5 hover:border-white/70 hover:text-white"
-                                )}
-                                onClick={() => setAction(act)}
-                            >
-                                {act}
-                            </Button>
-                        )
-                    })}
+                <div>
+                    <Label className="text-xs text-muted-foreground">Side</Label>
+                    <Select value={action || ''} onValueChange={(v) => setAction(v as OrderActionType)}>
+                        <SelectTrigger className="bg-transparent border-white/10 h-10">
+                            <SelectValue placeholder="Select Side" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="Buy">Buy</SelectItem>
+                            <SelectItem value="Sell">Sell</SelectItem>
+                            <SelectItem value="Short">Short</SelectItem>
+                        </SelectContent>
+                    </Select>
                 </div>
 
                 <Separator className="bg-white/10" />
