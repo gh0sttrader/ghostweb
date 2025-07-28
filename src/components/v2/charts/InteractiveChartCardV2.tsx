@@ -1,7 +1,7 @@
 
 "use client";
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -183,6 +183,18 @@ export function InteractiveChartCardV2({ stock, onManualTickerSubmit, className,
     fetchAndSetChartData();
   }, [stock, timeframe, variant]);
 
+  const yAxisDomain = useMemo(() => {
+    if (!chartData || chartData.length === 0) {
+      return ['auto', 'auto'];
+    }
+    const prices = chartData.map(d => d.price);
+    const min = Math.min(...prices);
+    const max = Math.max(...prices);
+    const padding = (max - min) * 0.1; // 10% padding
+    return [min - padding, max + padding];
+  }, [chartData]);
+
+
   const handleDateGo = (date: Date | DateRange) => {
     console.log("Selected date/range:", date);
     // Future logic to refetch chart data will go here.
@@ -227,7 +239,7 @@ export function InteractiveChartCardV2({ stock, onManualTickerSubmit, className,
         tickLine={false}
         tick={{ fill: '#d1d5db', fontSize: 12 }}
         tickFormatter={(value) => `$${Number(value).toFixed(2)}`}
-        domain={['auto', 'auto']}
+        domain={yAxisDomain}
         width={70}
       />
     );
@@ -457,6 +469,7 @@ export function InteractiveChartCardV2({ stock, onManualTickerSubmit, className,
     </Card>
   );
 }
+
 
 
 
