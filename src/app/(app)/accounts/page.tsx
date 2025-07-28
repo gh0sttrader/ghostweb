@@ -385,6 +385,7 @@ export default function AccountsPage() {
                         className="h-full"
                         timeframe={timeRange}
                         onTimeframeChange={handleTimeRangeChange}
+                        showWatchlistButton={false}
                     />
                 </div>
             </div>
@@ -516,3 +517,4 @@ export default function AccountsPage() {
         </main>
     );
 }
+

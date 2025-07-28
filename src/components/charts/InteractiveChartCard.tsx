@@ -28,6 +28,7 @@ interface InteractiveChartCardProps {
   isAlertActive?: boolean;
   timeframe: Timeframe;
   onTimeframeChange: (timeframe: Timeframe) => void;
+  showWatchlistButton?: boolean;
 }
 
 const CustomTooltip = ({ active, payload, label, timeframe }: TooltipProps<number, string> & { timeframe: Timeframe }) => {
@@ -92,7 +93,7 @@ const getTimeframeParams = (timeframe: Timeframe) => {
 };
 
 
-export function InteractiveChartCard({ stock, onManualTickerSubmit, className, variant = 'trading', onAlertClick, isAlertActive, timeframe, onTimeframeChange }: InteractiveChartCardProps) {
+export function InteractiveChartCard({ stock, onManualTickerSubmit, className, variant = 'trading', onAlertClick, isAlertActive, timeframe, onTimeframeChange, showWatchlistButton = true }: InteractiveChartCardProps) {
   const { toast } = useToast();
   const [chartType, setChartType] = useState<'line' | 'area' | 'candle'>(variant === 'account' ? 'line' : 'area');
   const [manualTickerInput, setManualTickerInput] = useState('');
@@ -411,15 +412,17 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, className, v
                 >
                     <Bell size={16} fill={isAlertActive ? 'currentColor' : 'none'} />
                 </Button>
-                <Button
-                    onClick={() => setIsWatched(prev => !prev)}
-                    variant="ghost"
-                    size="icon"
-                    className={cn("h-7 w-7", isWatched ? 'text-yellow-500' : 'text-destructive')}
-                    aria-label="Add to Watchlist"
-                >
-                    <Star size={16} fill={isWatched ? 'currentColor' : 'none'} />
-                </Button>
+                {showWatchlistButton && (
+                  <Button
+                      onClick={() => setIsWatched(prev => !prev)}
+                      variant="ghost"
+                      size="icon"
+                      className={cn("h-7 w-7", isWatched ? 'text-yellow-500' : 'text-neutral-400 hover:bg-white/10')}
+                      aria-label="Add to Watchlist"
+                  >
+                      <Star size={16} fill={isWatched ? 'currentColor' : 'none'} />
+                  </Button>
+                )}
             </div>
        </CardFooter>
      
@@ -432,4 +435,3 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, className, v
   );
 }
 
-    
