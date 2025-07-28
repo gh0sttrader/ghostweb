@@ -54,6 +54,9 @@ const DetailItem: React.FC<{ label: string; value?: string | number | null; unit
 
 const formatNumber = (value?: number, decimals = 2) => value?.toLocaleString(undefined, { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
 
+const quantityModes = ['Shares', '$', '%'] as const;
+type QuantityMode = typeof quantityModes[number];
+
 export const OrderCard: React.FC<OrderCardProps> = ({
     selectedStock,
     initialActionType,
@@ -74,7 +77,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({
     const [stopPrice, setStopPrice] = useState<string>('');
     const [timeInForce, setTimeInForce] = useState<TimeInForce>('Day');
     const [allowExtendedHours, setAllowExtendedHours] = useState(false);
-    const [quantityMode, setQuantityMode] = useState<'Shares' | '$' | '%'>('Shares');
+    const [quantityMode, setQuantityMode] = useState<QuantityMode>('Shares');
 
 
     useEffect(() => {
@@ -210,6 +213,22 @@ export const OrderCard: React.FC<OrderCardProps> = ({
 
     }, [action, selectedStock, isFormValid, quantityInShares, estimatedTotal, selectedAccount]);
 
+    const handleCycleQuantityMode = () => {
+        const currentIndex = quantityModes.indexOf(quantityMode);
+        const nextIndex = (currentIndex + 1) % quantityModes.length;
+        setQuantityMode(quantityModes[nextIndex]);
+    };
+
+    const QuantityIcon = useMemo(() => {
+        switch (quantityMode) {
+            case '$': return DollarSign;
+            case '%': return Percent;
+            case 'Shares':
+            default: return Layers;
+        }
+    }, [quantityMode]);
+
+
     return (
         <Card className={cn("h-full flex flex-col bg-black/50 border-white/10", className)}>
             <CardContent className="flex-1 flex flex-col p-3 space-y-3 overflow-y-auto">
@@ -255,12 +274,11 @@ export const OrderCard: React.FC<OrderCardProps> = ({
                         </SelectContent>
                     </Select>
                 </div>
+                
+                <div className="flex justify-center my-3">
+                    {selectedStock?.tradingFeatures && <TradingFeaturesBadges features={selectedStock.tradingFeatures} />}
+                </div>
 
-                {selectedStock?.tradingFeatures && (
-                    <div className="flex justify-center my-3">
-                        <TradingFeaturesBadges features={selectedStock.tradingFeatures} />
-                    </div>
-                )}
 
                 <div className="space-y-3">
                     <div className="grid grid-cols-2 gap-2">
@@ -299,32 +317,25 @@ export const OrderCard: React.FC<OrderCardProps> = ({
                                     placeholder="0"
                                     value={quantity}
                                     onChange={(e) => setQuantity(e.target.value)}
-                                    className="bg-transparent border-white/10 h-10 pr-28"
+                                    className="bg-transparent border-white/10 h-10 pr-10"
                                 />
                                 <div className="absolute right-1.5 top-1/2 -translate-y-1/2 flex items-center gap-1">
                                     <TooltipProvider>
-                                    {(['Shares', '$', '%'] as const).map(mode => (
-                                        <Tooltip key={mode}>
+                                        <Tooltip>
                                             <TooltipTrigger asChild>
                                                 <Button
                                                     variant="ghost"
-                                                    size="sm"
-                                                    onClick={() => setQuantityMode(mode)}
-                                                    className={cn(
-                                                        "h-7 w-auto px-2 text-xs text-white bg-black border border-transparent hover:border-white/20",
-                                                        quantityMode === mode && "border-white/50"
-                                                    )}
+                                                    size="icon"
+                                                    onClick={handleCycleQuantityMode}
+                                                    className="h-7 w-7 text-white bg-black border border-transparent hover:border-white/20"
                                                 >
-                                                    {mode === '$' && <DollarSign className="h-3.5 w-3.5" />}
-                                                    {mode === '%' && <Percent className="h-3.5 w-3.5" />}
-                                                    {mode === 'Shares' && <Layers className="h-3.5 w-3.5" />}
+                                                    <QuantityIcon className="h-4 w-4" />
                                                 </Button>
                                             </TooltipTrigger>
                                             <TooltipContent>
-                                                <p>Order by {mode === 'Shares' ? 'Number of Shares' : mode === '$' ? 'Dollar Amount' : 'Percentage of Buying Power'}</p>
+                                                <p>Cycle quantity input mode (Shares, $, %)</p>
                                             </TooltipContent>
                                         </Tooltip>
-                                    ))}
                                     </TooltipProvider>
                                 </div>
                              </div>
