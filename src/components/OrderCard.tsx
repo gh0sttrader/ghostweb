@@ -262,7 +262,10 @@ export const OrderCard: React.FC<OrderCardProps> = ({
                 )}
                 
                 <div>
-                    <Label className="text-xs text-muted-foreground">Side</Label>
+                    <div className="flex items-center justify-between mb-1">
+                        <Label className="text-xs text-muted-foreground">Side</Label>
+                        {selectedStock?.tradingFeatures && <TradingFeaturesBadges features={selectedStock.tradingFeatures} />}
+                    </div>
                     <Select value={action || ''} onValueChange={(v) => setAction(v as OrderActionType)}>
                         <SelectTrigger className="bg-transparent border-white/10 h-10">
                             <SelectValue placeholder="Select Side" />
@@ -274,11 +277,6 @@ export const OrderCard: React.FC<OrderCardProps> = ({
                         </SelectContent>
                     </Select>
                 </div>
-                
-                <div className="flex justify-center my-3">
-                    {selectedStock?.tradingFeatures && <TradingFeaturesBadges features={selectedStock.tradingFeatures} />}
-                </div>
-
 
                 <div className="space-y-3">
                     <div className="grid grid-cols-2 gap-2">
