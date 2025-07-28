@@ -20,6 +20,7 @@ import { NewsCard } from '@/components/NewsCard';
 import { AnalystRatings } from '@/components/AnalystRatings';
 import { initialMockStocks } from './mock-data';
 import { AlertModal } from '@/components/AlertModal';
+import { SectorsCard } from '@/components/SectorsCard';
 
 type Timeframe = '1D' | '5D' | '1M' | '3M' | '6M' | 'YTD' | '1Y' | '5Y' | 'Max' | 'All';
 
@@ -102,7 +103,7 @@ function TradingDashboardPageContent() {
                 actionToSet = null;
                 break;
         }
-        setOrderCardActionType(actionToSet);
+        setAction(actionToSet);
         if(actionToSet) {
           toast({
             title: "Smart Action Suggested",
@@ -187,6 +188,8 @@ function TradingDashboardPageContent() {
         });
     }
   };
+
+  const isEtf = useMemo(() => !!stockForSyncedComps?.['Index-Tracked'], [stockForSyncedComps]);
   
   return (
     <>
@@ -211,6 +214,11 @@ function TradingDashboardPageContent() {
                   <div className="mt-12">
                       <KeyStatistics stock={stockForSyncedComps} />
                   </div>
+                  {isEtf && stockForSyncedComps?.sectors && (
+                    <div className="mt-12">
+                      <SectorsCard stock={stockForSyncedComps} />
+                    </div>
+                  )}
                   <div className="mt-12">
                       <AverageAnnualReturn />
                   </div>
@@ -261,5 +269,3 @@ export default function TradingDashboardPage() {
     </Suspense>
   );
 }
-
-    

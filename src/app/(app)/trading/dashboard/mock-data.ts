@@ -81,6 +81,19 @@ export const initialMockStocks: Stock[] = [
     analystRatings: { buy: 40, hold: 50, sell: 10 },
     'Index-Tracked': 'BlueStar QuantCmpting&Mch Lrning TR USD',
     'Number of holdings': 81,
-    'Inception Date': 'Sep 4, 2018'
+    'Inception Date': 'Sep 4, 2018',
+    sectors: [
+        { name: "Technology", pct: 34.40, color: "#8fd3fe" },
+        { name: "Financial Services", pct: 13.58, color: "#b39ddb" },
+        { name: "Consumer Cyclical", pct: 10.55, color: "#f8bbd0" },
+        { name: "Communication Services", pct: 9.80, color: "#ffcdd2" },
+        { name: "Healthcare", pct: 9.35, color: "#ffe082" },
+        { name: "Industrials", pct: 7.75, color: "#ffcc80" },
+        { name: "Consumer Defensive", pct: 5.49, color: "#dcedc8" },
+        { name: "Energy", pct: 2.98, color: "#fff59d" },
+        { name: "Utilities", pct: 2.39, color: "#b2ebf2" },
+        { name: "Real Estate", pct: 2.04, color: "#c8e6c9" },
+        { name: "Basic Materials", pct: 1.67, color: "#e1bee7" }
+    ]
   }
 ];

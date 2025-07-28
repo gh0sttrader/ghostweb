@@ -3,6 +3,12 @@
 import type { DateRange } from "react-day-picker";
 import type { ActiveScreenerFilters } from "@/components/ScreenerFilterModal";
 
+export type Sector = {
+    name: string;
+    pct: number;
+    color: string;
+};
+
 export type TradingFeatures = {
     overnight?: boolean;
     fractional?: boolean;
@@ -82,6 +88,7 @@ export type Stock = {
     'Index-Tracked'?: string;
     'Number of holdings'?: number;
     'Inception Date'?: string;
+    sectors?: Sector[];
 
     // Expanded for screener
     country?: string;
