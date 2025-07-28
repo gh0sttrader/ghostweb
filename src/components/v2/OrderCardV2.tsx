@@ -1,4 +1,5 @@
 
+
 "use client"
 
 import React, { useState, useEffect, useMemo } from 'react';
@@ -293,12 +294,6 @@ export const OrderCardV2: React.FC<OrderCardProps> = ({
                     </div>
                 )}
                 
-                 {selectedStock?.tradingFeatures && (
-                    <div className="flex justify-end -mt-4">
-                        <TradingFeaturesBadges features={selectedStock.tradingFeatures} />
-                    </div>
-                )}
-
                 <div className="no-drag">
                     <Label className="text-xs text-muted-foreground">Side</Label>
                     <Select value={action || ''} onValueChange={(v) => setAction(v as OrderActionType)}>
@@ -313,7 +308,11 @@ export const OrderCardV2: React.FC<OrderCardProps> = ({
                     </Select>
                 </div>
 
-                <Separator className="bg-white/10" />
+                {selectedStock?.tradingFeatures && (
+                    <div className="flex justify-center my-3">
+                        <TradingFeaturesBadges features={selectedStock.tradingFeatures} />
+                    </div>
+                )}
 
                 <div className="space-y-3 no-drag">
                     <div className="grid grid-cols-2 gap-2">
