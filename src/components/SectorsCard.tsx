@@ -24,8 +24,7 @@ export function SectorsCard({ stock, className }: SectorsCardProps) {
             </div>
             <div className="flex flex-col md:flex-row gap-8">
                 <div className="flex-1">
-                    <div className="flex justify-between items-baseline mb-4">
-                        <h3 className="font-semibold text-white">Sectors</h3>
+                    <div className="flex justify-end items-baseline mb-4">
                         <p className="text-xs text-neutral-500">As of June 30, 2025</p>
                     </div>
                     <ul className="space-y-3">
