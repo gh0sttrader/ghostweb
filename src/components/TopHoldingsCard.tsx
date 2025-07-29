@@ -32,7 +32,7 @@ export function TopHoldingsCard({ stock, className }: TopHoldingsCardProps) {
             </div>
             <p className="text-xs text-neutral-500 mb-4">As of July 24, 2025</p>
 
-            <div className="overflow-x-auto rounded-lg border border-white/10">
+            <div className="overflow-x-auto">
                 <Table>
                     <TableHeader>
                         <TableRow className="border-b border-white/10 hover:bg-card">
