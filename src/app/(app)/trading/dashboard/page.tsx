@@ -237,19 +237,26 @@ function TradingDashboardPageContent() {
                   <div className="h-16" />
               </div>
 
-              <div className="sticky top-8 h-[640px]">
-                  <OrderCard
-                  selectedStock={stockForSyncedComps}
-                  initialActionType={orderCardActionType}
-                  initialTradeMode={orderCardInitialTradeMode}
-                  miloActionContextText={orderCardMiloActionContext}
-                  onSubmit={handleTradeSubmit}
-                  onClear={handleClearOrderCard}
-                  initialQuantity={orderCardInitialQuantity}
-                  initialOrderType={orderCardInitialOrderType}
-                  initialLimitPrice={orderCardInitialLimitPrice}
-                  className="h-full"
-                  />
+              <div className="sticky top-8 flex flex-col gap-5">
+                  <div className="h-[640px]">
+                      <OrderCard
+                          selectedStock={stockForSyncedComps}
+                          initialActionType={orderCardActionType}
+                          initialTradeMode={orderCardInitialTradeMode}
+                          miloActionContextText={orderCardMiloActionContext}
+                          onSubmit={handleTradeSubmit}
+                          onClear={handleClearOrderCard}
+                          initialQuantity={orderCardInitialQuantity}
+                          initialOrderType={orderCardInitialOrderType}
+                          initialLimitPrice={orderCardInitialLimitPrice}
+                          className="h-full"
+                      />
+                  </div>
+                  <button
+                      className="w-full px-0 py-3 border border-white rounded-full bg-transparent text-white font-semibold transition-all hover:bg-white/10 hover:text-white focus:outline-none"
+                  >
+                      + Add to List
+                  </button>
               </div>
           </div>
         </div>
