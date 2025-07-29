@@ -120,18 +120,29 @@ const portfolioData: Record<string, { gain: number, percent: number, label: stri
 };
 
 
+const generateRealisticPortfolioHistory = (finalBalance: number, numPoints: number = 90) => {
+    const history = new Array(numPoints).fill(0);
+    history[numPoints - 1] = finalBalance;
+
+    let currentValue = finalBalance;
+    // Work backwards from the final balance
+    for (let i = numPoints - 2; i >= 0; i--) {
+        // Apply a random daily change, with a slight positive drift
+        const randomFactor = (Math.random() - 0.48) * 0.015; // e.g., -0.72% to +0.78% daily change
+        const previousValue = currentValue / (1 + randomFactor);
+        history[i] = previousValue;
+        currentValue = previousValue;
+    }
+    return history;
+};
+
+
 const accountToStock = (account: Account): Stock => ({
     id: account.id,
     symbol: account.name.toUpperCase().replace(' ', '_'),
     price: account.balance,
     changePercent: account.pnl?.percent || 0,
-    historicalPrices: Array.from({ length: 30 }, (_, i) => {
-        let price = account.balance;
-        for (let j = 0; j < 30 - i; j++) {
-            price /= (1 + (Math.random() - 0.49) * 0.01);
-        }
-        return price;
-    }),
+    historicalPrices: generateRealisticPortfolioHistory(account.balance),
 });
 
 const formatCurrency = (value?: number, showSign = false) => {
