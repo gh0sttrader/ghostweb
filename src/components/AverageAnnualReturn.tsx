@@ -9,6 +9,7 @@ const AverageAnnualReturn = ({ className }: { className?: string }) => {
     const returnData = [
         { label: '% Price Return', '1Y': '14.94%', '3Y': '19.56%', '5Y': '16.57%', '10Y': '13.55%', 'Since': '10.48%' },
         { label: '% NAV Return', '1Y': '15.05%', '3Y': '19.59%', '5Y': '16.53%', '10Y': '13.55%', 'Since': '10.51%' },
+        { label: 'Benchmark (SPY)', '1Y': '14.20%', '3Y': '18.70%', '5Y': '16.10%', '10Y': '13.40%', 'Since': '10.30%' },
     ];
     const headers = ['1Y', '3Y', '5Y', '10Y', 'Since'];
 
