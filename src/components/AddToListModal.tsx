@@ -2,7 +2,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { Dialog, DialogContent, DialogOverlay, DialogPortal } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogOverlay, DialogPortal, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { AnimatePresence, motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
@@ -117,9 +117,10 @@ export function AddToListModal({ isOpen, onClose, ticker }: AddToListModalProps)
                          <DialogContent
                             className="bg-neutral-900 border-white/10 p-6 sm:p-8 rounded-2xl w-[380px] max-w-[92vw]"
                          >
+                            <DialogHeader>
+                              <DialogTitle className="font-semibold text-xl mb-6 text-center">Add {ticker} to Lists</DialogTitle>
+                            </DialogHeader>
                             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-                                <h2 className="font-semibold text-xl mb-6 text-center">Add {ticker} to Lists</h2>
-                                
                                 {isCreating ? (
                                     <div className="flex items-center gap-2 mb-4">
                                         <Input 
