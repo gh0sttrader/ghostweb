@@ -88,6 +88,18 @@ export const initialMockStocks: Stock[] = [
         { name: "Communication Services", pct: 6.32, color: "#f8bbd0" },
         { name: "Consumer Cyclical", pct: 1.23, color: "#ffcdd2" },
         { name: "Healthcare", pct: 1.18, color: "#ffe082" }
+    ],
+    topHoldings: [
+        { name: 'Synopsys', symbol: 'SNPS', assets: 1.76 },
+        { name: 'Arqit Quantum', symbol: 'ARQQ', assets: 1.75 },
+        { name: 'Rigetti Computing', symbol: 'RGTI', assets: 1.71 },
+        { name: 'Oracle', symbol: 'ORCL', assets: 1.67 },
+        { name: 'AMD', symbol: 'AMD', assets: 1.63 },
+        { name: 'Alchip Technologies Ltd', symbol: '3661 (XTAI)', assets: 1.53 },
+        { name: 'NVIDIA', symbol: 'NVDA', assets: 1.48 },
+        { name: 'Coherent', symbol: 'COHR', assets: 1.47 },
+        { name: 'D-Wave Quantum', symbol: 'QBTS', assets: 1.45 },
+        { name: 'ABB Ltd', symbol: 'ABBN (SWX)', assets: 1.41 }
     ]
   }
 ];

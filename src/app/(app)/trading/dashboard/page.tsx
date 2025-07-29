@@ -21,6 +21,7 @@ import { AnalystRatings } from '@/components/AnalystRatings';
 import { initialMockStocks } from './mock-data';
 import { AlertModal } from '@/components/AlertModal';
 import { SectorsCard } from '@/components/SectorsCard';
+import { TopHoldingsCard } from '@/components/TopHoldingsCard';
 
 type Timeframe = '1D' | '5D' | '1M' | '3M' | '6M' | 'YTD' | '1Y' | '5Y' | 'Max' | 'All';
 
@@ -218,6 +219,11 @@ function TradingDashboardPageContent() {
                     <div className="mt-12">
                       <SectorsCard stock={stockForSyncedComps} />
                     </div>
+                  )}
+                  {isEtf && stockForSyncedComps?.topHoldings && (
+                      <div className="mt-12">
+                          <TopHoldingsCard stock={stockForSyncedComps} />
+                      </div>
                   )}
                   <div className="mt-12">
                       <AverageAnnualReturn />

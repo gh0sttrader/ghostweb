@@ -9,6 +9,12 @@ export type Sector = {
     color: string;
 };
 
+export type HoldingV2 = {
+    name: string;
+    symbol: string;
+    assets: number;
+}
+
 export type TradingFeatures = {
     overnight?: boolean;
     fractional?: boolean;
@@ -89,6 +95,7 @@ export type Stock = {
     'Number of holdings'?: number;
     'Inception Date'?: string;
     sectors?: Sector[];
+    topHoldings?: HoldingV2[];
 
     // Expanded for screener
     country?: string;
