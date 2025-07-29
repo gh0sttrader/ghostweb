@@ -23,6 +23,7 @@ import { AlertModal } from '@/components/AlertModal';
 import { SectorsCard } from '@/components/SectorsCard';
 import { TopHoldingsCard } from '@/components/TopHoldingsCard';
 import { TradeHistory } from '@/components/TradeHistory';
+import { AddToListModal } from '@/components/AddToListModal';
 
 type Timeframe = '1D' | '5D' | '1M' | '3M' | '6M' | 'YTD' | '1Y' | '5Y' | 'Max' | 'All';
 
@@ -44,6 +45,7 @@ function TradingDashboardPageContent() {
   const [orderCardInitialLimitPrice, setOrderCardInitialLimitPrice] = useState<string | undefined>(undefined);
   
   const [isAlertModalOpen, setIsAlertModalOpen] = useState(false);
+  const [isAddToListModalOpen, setIsAddToListModalOpen] = useState(false);
   const [chartTimeframe, setChartTimeframe] = useState<Timeframe>('1M');
   
   const activeAlert = useMemo(() => {
@@ -257,6 +259,7 @@ function TradingDashboardPageContent() {
                       />
                   </div>
                   <button
+                      onClick={() => setIsAddToListModalOpen(true)}
                       className="w-full px-0 py-3 border border-white rounded-full bg-transparent text-white font-semibold transition-all hover:bg-white/10 hover:text-white focus:outline-none"
                   >
                       + Add to List
@@ -274,6 +277,13 @@ function TradingDashboardPageContent() {
           symbol={stockForSyncedComps.symbol}
           existingAlert={activeAlert}
         />
+      )}
+      {isAddToListModalOpen && stockForSyncedComps && (
+          <AddToListModal
+              isOpen={isAddToListModalOpen}
+              onClose={() => setIsAddToListModalOpen(false)}
+              ticker={stockForSyncedComps.symbol}
+          />
       )}
     </>
   );
