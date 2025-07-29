@@ -6,7 +6,7 @@ import type { Stock, Account, Holding } from '@/types';
 import { InteractiveChartCard } from '@/components/charts/InteractiveChartCard';
 import { cn } from '@/lib/utils';
 import { PackageSearch, Calendar as CalendarIcon, ChevronDown, Search, TrendingUp, TrendingDown } from 'lucide-react';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, TableFooter } from "@/components/ui/table";
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -193,6 +193,11 @@ const AccountSummaryHeader = ({ account, performanceData }: { account: Account; 
 
 
 const HoldingsTable = ({ holdings }: { holdings: Holding[] }) => {
+    const totalMarketValue = useMemo(() => {
+        if (!holdings || holdings.length === 0) return 0;
+        return holdings.reduce((sum, holding) => sum + holding.totalValue, 0);
+    }, [holdings]);
+
     if (!holdings || holdings.length === 0) {
         return (
             <div className="flex flex-col items-center justify-center text-center py-16 text-muted-foreground rounded-2xl bg-card">
@@ -221,31 +226,42 @@ const HoldingsTable = ({ holdings }: { holdings: Holding[] }) => {
                         <TableHead className="py-3 px-6 text-center font-bold text-sm whitespace-nowrap">Market Value</TableHead>
                         <TableHead className="py-3 px-6 text-center font-bold text-sm whitespace-nowrap">Average Price</TableHead>
                         <TableHead className="py-3 px-6 text-center font-bold text-sm whitespace-nowrap">Current Price</TableHead>
-                        <TableHead className="py-3 px-6 text-right font-bold text-sm whitespace-nowrap">Shares</TableHead>
+                        <TableHead className="py-3 px-6 text-center font-bold text-sm whitespace-nowrap">Shares</TableHead>
+                        <TableHead className="py-3 px-6 text-right font-bold text-sm whitespace-nowrap">Weight</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {holdings.map((holding) => (
-                        <TableRow key={holding.symbol} className="transition-colors border-none hover:bg-white/5">
-                            <TableCell className="py-3 px-6">
-                                <span className="font-semibold">{holding.symbol}</span>
-                            </TableCell>
-                            <TableCell className={cn("text-center py-3 px-6", (holding.dayPnlPercent || 0) >= 0 ? 'text-[hsl(var(--confirm-green))]' : 'text-destructive')}>
-                                {formatPercent(holding.dayPnlPercent)}
-                            </TableCell>
-                            <TableCell className={cn("text-center py-3 px-6", (holding.openPnlPercent || 0) >= 0 ? 'text-[hsl(var(--confirm-green))]' : 'text-destructive')}>
-                                {formatPercent(holding.openPnlPercent)}
-                            </TableCell>
-                            <TableCell className={cn("text-center py-3 px-6 font-semibold", (holding.unrealizedGain || 0) >= 0 ? 'text-[hsl(var(--confirm-green))]' : 'text-destructive')}>
-                                {formatCurrency(holding.unrealizedGain, true)}
-                            </TableCell>
-                            <TableCell className="text-center py-3 px-6 font-semibold">{formatCurrency(holding.totalValue)}</TableCell>
-                            <TableCell className="text-center py-3 px-6">{formatCurrency(holding.averagePrice)}</TableCell>
-                            <TableCell className="text-center py-3 px-6">{formatCurrency(holding.marketPrice)}</TableCell>
-                            <TableCell className="text-right py-3 px-6">{holding.shares.toFixed(4)}</TableCell>
-                        </TableRow>
-                    ))}
+                    {holdings.map((holding) => {
+                        const weight = totalMarketValue > 0 ? (holding.totalValue / totalMarketValue) * 100 : 0;
+                        return (
+                            <TableRow key={holding.symbol} className="transition-colors border-none hover:bg-white/5">
+                                <TableCell className="py-3 px-6">
+                                    <span className="font-semibold">{holding.symbol}</span>
+                                </TableCell>
+                                <TableCell className={cn("text-center py-3 px-6", (holding.dayPnlPercent || 0) >= 0 ? 'text-[hsl(var(--confirm-green))]' : 'text-destructive')}>
+                                    {formatPercent(holding.dayPnlPercent)}
+                                </TableCell>
+                                <TableCell className={cn("text-center py-3 px-6", (holding.openPnlPercent || 0) >= 0 ? 'text-[hsl(var(--confirm-green))]' : 'text-destructive')}>
+                                    {formatPercent(holding.openPnlPercent)}
+                                </TableCell>
+                                <TableCell className={cn("text-center py-3 px-6 font-semibold", (holding.unrealizedGain || 0) >= 0 ? 'text-[hsl(var(--confirm-green))]' : 'text-destructive')}>
+                                    {formatCurrency(holding.unrealizedGain, true)}
+                                </TableCell>
+                                <TableCell className="text-center py-3 px-6 font-semibold">{formatCurrency(holding.totalValue)}</TableCell>
+                                <TableCell className="text-center py-3 px-6">{formatCurrency(holding.averagePrice)}</TableCell>
+                                <TableCell className="text-center py-3 px-6">{formatCurrency(holding.marketPrice)}</TableCell>
+                                <TableCell className="text-center py-3 px-6">{holding.shares.toFixed(4)}</TableCell>
+                                <TableCell className="text-right py-3 px-6 font-semibold">{weight.toFixed(2)}%</TableCell>
+                            </TableRow>
+                        );
+                    })}
                 </TableBody>
+                <TableFooter>
+                    <TableRow className="border-t border-white/10 font-bold hover:bg-card">
+                        <TableCell colSpan={8} className="py-3 px-6 text-right">Total</TableCell>
+                        <TableCell className="py-3 px-6 text-right">100.00%</TableCell>
+                    </TableRow>
+                </TableFooter>
             </Table>
         </div>
     );
