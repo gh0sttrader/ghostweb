@@ -22,6 +22,7 @@ import { initialMockStocks } from './mock-data';
 import { AlertModal } from '@/components/AlertModal';
 import { SectorsCard } from '@/components/SectorsCard';
 import { TopHoldingsCard } from '@/components/TopHoldingsCard';
+import { TradeHistory } from '@/components/TradeHistory';
 
 type Timeframe = '1D' | '5D' | '1M' | '3M' | '6M' | 'YTD' | '1Y' | '5Y' | 'Max' | 'All';
 
@@ -227,6 +228,9 @@ function TradingDashboardPageContent() {
                   )}
                   <div className="mt-12">
                       <AverageAnnualReturn />
+                  </div>
+                  <div className="mt-12">
+                    <TradeHistory stock={stockForSyncedComps} />
                   </div>
                   <div className="mt-12">
                     <NewsCard stock={stockForSyncedComps} />
