@@ -224,7 +224,6 @@ const HoldingsTable = ({ holdings }: { holdings: Holding[] }) => {
                         <TableHead className="py-3 px-6 text-center font-bold text-sm whitespace-nowrap">Open P&L %</TableHead>
                         <TableHead className="py-3 px-6 text-center font-bold text-sm whitespace-nowrap">Unrealized Gain/Loss</TableHead>
                         <TableHead className="py-3 px-6 text-center font-bold text-sm whitespace-nowrap">Market Value</TableHead>
-                        <TableHead className="py-3 px-6 text-center font-bold text-sm whitespace-nowrap">Average Price</TableHead>
                         <TableHead className="py-3 px-6 text-center font-bold text-sm whitespace-nowrap">Current Price</TableHead>
                         <TableHead className="py-3 px-6 text-center font-bold text-sm whitespace-nowrap">Shares</TableHead>
                         <TableHead className="py-3 px-6 text-right font-bold text-sm whitespace-nowrap">Weight</TableHead>
@@ -248,7 +247,6 @@ const HoldingsTable = ({ holdings }: { holdings: Holding[] }) => {
                                     {formatCurrency(holding.unrealizedGain, true)}
                                 </TableCell>
                                 <TableCell className="text-center py-3 px-6 font-semibold">{formatCurrency(holding.totalValue)}</TableCell>
-                                <TableCell className="text-center py-3 px-6">{formatCurrency(holding.averagePrice)}</TableCell>
                                 <TableCell className="text-center py-3 px-6">{formatCurrency(holding.marketPrice)}</TableCell>
                                 <TableCell className="text-center py-3 px-6">{holding.shares.toFixed(4)}</TableCell>
                                 <TableCell className="text-right py-3 px-6 font-semibold">{weight.toFixed(2)}%</TableCell>
@@ -258,7 +256,7 @@ const HoldingsTable = ({ holdings }: { holdings: Holding[] }) => {
                 </TableBody>
                 <TableFooter>
                     <TableRow className="border-t border-white/10 font-bold hover:bg-card">
-                        <TableCell colSpan={8} className="py-3 px-6 text-right">Total</TableCell>
+                        <TableCell colSpan={7} className="py-3 px-6 text-right">Total</TableCell>
                         <TableCell className="py-3 px-6 text-right">100.00%</TableCell>
                     </TableRow>
                 </TableFooter>
@@ -546,3 +544,5 @@ export default function AccountsPage() {
     );
 }
 
+
+    
