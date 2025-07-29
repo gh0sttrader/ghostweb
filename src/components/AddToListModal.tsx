@@ -113,12 +113,12 @@ export function AddToListModal({ isOpen, onClose, ticker }: AddToListModalProps)
             {isOpen && (
                 <Dialog open={isOpen} onOpenChange={onClose}>
                     <DialogPortal>
-                         <DialogOverlay className="bg-black/70 backdrop-blur-sm" />
+                         <DialogOverlay className="bg-transparent backdrop-blur-lg" />
                          <DialogContent
-                            className="bg-neutral-900 border-white/10 p-6 sm:p-8 rounded-2xl w-[380px] max-w-[92vw]"
+                            className="bg-transparent border-none shadow-none w-[380px] max-w-[92vw] p-5"
                          >
                             <DialogHeader>
-                              <DialogTitle className="font-semibold text-xl mb-6 text-center">Add {ticker} to Lists</DialogTitle>
+                              <DialogTitle className="font-semibold text-white/90 text-lg mb-4 text-left">Add {ticker} to Lists</DialogTitle>
                             </DialogHeader>
                             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
                                 {isCreating ? (
@@ -135,27 +135,27 @@ export function AddToListModal({ isOpen, onClose, ticker }: AddToListModalProps)
                                     </div>
                                 ) : (
                                     <button 
-                                      className="w-full flex items-center gap-3 py-3 mb-4 rounded-lg hover:bg-neutral-800/80 transition-colors text-left"
+                                      className="w-full flex items-center gap-3 py-3 mb-4 rounded-lg hover:bg-neutral-800/80 transition-colors text-left text-white/80"
                                       onClick={() => setIsCreating(true)}
                                     >
-                                        <span className="w-9 h-9 rounded-lg bg-neutral-800 flex items-center justify-center text-2xl text-white font-light">+</span>
+                                        <span className="w-9 h-9 rounded-lg bg-neutral-800 flex items-center justify-center text-xl font-light">+</span>
                                         <span className="font-medium">Create New List</span>
                                     </button>
                                 )}
                                 
-                                <div className="space-y-2 max-h-64 overflow-y-auto pr-2">
+                                <div className="space-y-3 max-h-64 overflow-y-auto pr-2">
                                     {watchlists.map(list => (
                                       <button key={list.id}
-                                        className={cn(`w-full flex items-center gap-3 p-3 rounded-lg transition-all duration-200 text-left`,
+                                        className={cn(`w-full flex items-center gap-3 p-4 rounded-lg transition-all duration-200 text-left border`,
                                           selectedLists.includes(list.id) 
-                                          ? "bg-primary/20 ring-2 ring-primary" 
-                                          : "hover:bg-neutral-800/80"
+                                          ? "bg-white/5 border-white/20" 
+                                          : "border-white/10 hover:bg-white/5"
                                         )}
                                         onClick={() => handleToggleList(list.id)}>
-                                        <GhostIcon className="w-7 h-7 text-white/80" />
+                                        <GhostIcon className="w-7 h-7 text-white/70" />
                                         <div>
-                                          <div className="font-medium">{list.name}</div>
-                                          <div className="text-xs text-white/50">{list.items.length} items</div>
+                                          <div className="font-medium text-white/90">{list.name}</div>
+                                          <div className="text-xs text-white/60">{list.items.length} items</div>
                                         </div>
                                       </button>
                                     ))}
@@ -164,9 +164,9 @@ export function AddToListModal({ isOpen, onClose, ticker }: AddToListModalProps)
                                 <Button
                                   disabled={selectedLists.length === 0}
                                   onClick={handleSaveChanges}
-                                  className="mt-6 w-full py-3 h-12 bg-[hsl(var(--confirm-green))] text-black rounded-full font-semibold text-base
-                                             hover:bg-[hsl(var(--confirm-green))]/90
-                                             disabled:bg-neutral-800 disabled:text-neutral-500 disabled:cursor-not-allowed"
+                                  className="mt-6 w-full py-3 h-12 bg-black border border-white text-white rounded-full font-semibold text-base
+                                             hover:bg-white/10
+                                             disabled:bg-neutral-800 disabled:text-neutral-500 disabled:cursor-not-allowed disabled:border-transparent"
                                 >
                                   Save Changes
                                 </Button>
