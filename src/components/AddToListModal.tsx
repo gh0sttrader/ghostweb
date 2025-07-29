@@ -113,9 +113,9 @@ export function AddToListModal({ isOpen, onClose, ticker }: AddToListModalProps)
             {isOpen && (
                 <Dialog open={isOpen} onOpenChange={onClose}>
                     <DialogPortal>
-                         <DialogOverlay className="bg-transparent backdrop-blur-lg" />
+                         <DialogOverlay className="bg-transparent" />
                          <DialogContent
-                            className="bg-transparent border-none shadow-none w-[380px] max-w-[92vw] p-5"
+                            className="bg-transparent backdrop-blur-lg border-white/10 shadow-none w-[380px] max-w-[92vw] p-5"
                          >
                             <DialogHeader>
                               <DialogTitle className="font-semibold text-white/90 text-lg mb-4 text-left">Add {ticker} to Lists</DialogTitle>
