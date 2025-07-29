@@ -104,7 +104,7 @@ function TradingDashboardPageContent() {
                 actionToSet = null;
                 break;
         }
-        setAction(actionToSet);
+        setOrderCardActionType(actionToSet);
         if(actionToSet) {
           toast({
             title: "Smart Action Suggested",
