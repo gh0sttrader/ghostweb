@@ -457,7 +457,7 @@ export default function AccountsPage() {
                                 <Separator className="my-2 bg-white/10" />
                                 <button
                                      onClick={() => setIsWatchlistPopoverOpen(false)}
-                                     className="text-left px-3 py-1.5 rounded-md text-sm transition-colors text-primary hover:bg-white/10"
+                                     className="text-left px-3 py-1.5 rounded-md text-sm transition-colors text-white/80 hover:text-white hover:bg-white/10"
                                 >
                                     + Create New Watchlist
                                 </button>
@@ -545,4 +545,5 @@ export default function AccountsPage() {
 }
 
 
+    
     
