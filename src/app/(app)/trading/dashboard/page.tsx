@@ -260,7 +260,7 @@ function TradingDashboardPageContent() {
                   </div>
                   <button
                       onClick={() => setIsAddToListModalOpen(true)}
-                      className="mt-4 w-[85%] py-2 text-sm border border-white text-white rounded-full mx-auto block hover:bg-white/10"
+                      className="mt-2 w-[85%] py-2 text-sm border border-white text-white rounded-full mx-auto block hover:bg-white/10"
                   >
                       + Add to List
                   </button>
