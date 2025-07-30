@@ -233,7 +233,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({
         <Card className={cn("h-full flex flex-col bg-black/50 border-white/10", className)}>
             <CardContent className="flex-1 flex flex-col p-3 space-y-3 overflow-y-auto">
                 <Select onValueChange={setSelectedAccountId} defaultValue={selectedAccountId}>
-                    <SelectTrigger className="bg-transparent border-white/10 h-10">
+                    <SelectTrigger className="bg-transparent border-white/10 h-9">
                         <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -267,7 +267,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({
                         {selectedStock?.tradingFeatures && <TradingFeaturesBadges features={selectedStock.tradingFeatures} />}
                     </div>
                     <Select value={action || ''} onValueChange={(v) => setAction(v as OrderActionType)}>
-                        <SelectTrigger className="bg-transparent border-white/10 h-10">
+                        <SelectTrigger className="bg-transparent border-white/10 h-9">
                             <SelectValue placeholder="Select Side" />
                         </SelectTrigger>
                         <SelectContent>
@@ -283,7 +283,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({
                         <div>
                             <Label className="text-xs text-muted-foreground">Order Type</Label>
                             <Select value={orderType} onValueChange={(v) => setOrderType(v as OrderSystemType)}>
-                                <SelectTrigger className="bg-transparent border-white/10 h-10">
+                                <SelectTrigger className="bg-transparent border-white/10 h-9">
                                     <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -296,7 +296,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({
                         <div>
                             <Label className="text-xs text-muted-foreground">Time in Force</Label>
                              <Select value={timeInForce} onValueChange={(v) => setTimeInForce(v as TimeInForce)}>
-                                <SelectTrigger className="bg-transparent border-white/10 h-10">
+                                <SelectTrigger className="bg-transparent border-white/10 h-9">
                                     <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -315,7 +315,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({
                                     placeholder="0"
                                     value={quantity}
                                     onChange={(e) => setQuantity(e.target.value)}
-                                    className="bg-transparent border-white/10 h-10 pr-10"
+                                    className="bg-transparent border-white/10 h-9 pr-10"
                                 />
                                 <div className="absolute right-1.5 top-1/2 -translate-y-1/2 flex items-center gap-1">
                                     <TooltipProvider>
@@ -341,7 +341,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({
                         <div>
                             <Label className="text-xs text-muted-foreground">Trading Hours</Label>
                             <Select value={allowExtendedHours ? 'extended' : 'regular'} onValueChange={(v) => setAllowExtendedHours(v === 'extended')}>
-                                <SelectTrigger className="bg-transparent border-white/10 h-10">
+                                <SelectTrigger className="bg-transparent border-white/10 h-9">
                                     <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -354,13 +354,13 @@ export const OrderCard: React.FC<OrderCardProps> = ({
                     {orderType === 'Limit' && (
                         <div>
                             <Label className="text-xs text-muted-foreground">Limit Price</Label>
-                            <Input type="number" placeholder="0.00" value={limitPrice} onChange={(e) => setLimitPrice(e.target.value)} className="bg-transparent border-white/10 h-10" />
+                            <Input type="number" placeholder="0.00" value={limitPrice} onChange={(e) => setLimitPrice(e.target.value)} className="bg-transparent border-white/10 h-9" />
                         </div>
                     )}
                     {orderType === 'Stop' && (
                         <div>
                             <Label className="text-xs text-muted-foreground">Stop Price</Label>
-                            <Input type="number" placeholder="0.00" value={stopPrice} onChange={(e) => setStopPrice(e.target.value)} className="bg-transparent border-white/10 h-10" />
+                            <Input type="number" placeholder="0.00" value={stopPrice} onChange={(e) => setStopPrice(e.target.value)} className="bg-transparent border-white/10 h-9" />
                         </div>
                     )}
                 </div>
