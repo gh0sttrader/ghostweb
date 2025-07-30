@@ -13,11 +13,11 @@ interface SectorsCardProps {
 }
 
 const COLORS = [
-    '#38bdf8', // Technology (Sky Blue)
-    '#a78bfa', // Industrials (Light Purple)
-    '#f472b6', // Communication Services (Pink)
-    '#facc15', // Consumer Cyclical (Yellow)
-    '#34d399', // Healthcare (Mint Green)
+    '#38bdf8', // Blue
+    '#a78bfa', // Purple
+    '#f472b6', // Pink (original, keeping for now) -> maps to Comm Services
+    '#facc15', // Yellow (original, keeping for now) -> maps to Consumer Cyclical
+    '#34d399', // Mint Green (original, keeping for now) -> maps to Healthcare
 ];
 
 const CustomTooltipContent = ({ active, payload }: any) => {
@@ -66,7 +66,7 @@ export function SectorsCard({ stock, className }: SectorsCardProps) {
                         ))}
                     </ul>
                 </div>
-                <div className="w-full md:w-1/2 h-52">
+                <div className="w-full md:w-1/2 h-52 drop-shadow-md">
                     <ResponsiveContainer width="100%" height="100%">
                         <PieChart>
                             <Tooltip content={<CustomTooltipContent />} />
@@ -77,10 +77,11 @@ export function SectorsCard({ stock, className }: SectorsCardProps) {
                                 innerRadius={60}
                                 outerRadius={80}
                                 fill="#8884d8"
-                                paddingAngle={5}
+                                paddingAngle={2}
                                 dataKey="value"
                                 nameKey="name"
                                 stroke="none"
+                                cornerRadius={5}
                             >
                                 {chartData.map((entry, index) => (
                                     <Cell key={`cell-${index}`} fill={entry.color} />
