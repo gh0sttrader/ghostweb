@@ -5,16 +5,43 @@ import React from 'react';
 import { Separator } from '@/components/ui/separator';
 import type { Stock } from '@/types';
 import { cn } from '@/lib/utils';
+import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
 
 interface SectorsCardProps {
     stock: Stock;
     className?: string;
 }
 
+const COLORS = [
+    '#38bdf8', // Technology (Sky Blue)
+    '#a78bfa', // Industrials (Light Purple)
+    '#f472b6', // Communication Services (Pink)
+    '#facc15', // Consumer Cyclical (Yellow)
+    '#34d399', // Healthcare (Mint Green)
+];
+
+const CustomTooltipContent = ({ active, payload }: any) => {
+    if (active && payload && payload.length) {
+        return (
+            <div className="bg-background/80 backdrop-blur-sm border border-white/10 rounded-lg p-2 text-sm shadow-lg">
+                <p className="font-bold">{`${payload[0].name}: ${payload[0].value.toFixed(2)}%`}</p>
+            </div>
+        );
+    }
+    return null;
+};
+
+
 export function SectorsCard({ stock, className }: SectorsCardProps) {
     if (!stock.sectors || stock.sectors.length === 0) {
         return null;
     }
+    
+    const chartData = stock.sectors.map((sector, index) => ({
+        name: sector.name,
+        value: sector.pct,
+        color: COLORS[index % COLORS.length]
+    }));
 
     return (
         <div className={cn("bg-transparent", className)}>
@@ -22,13 +49,10 @@ export function SectorsCard({ stock, className }: SectorsCardProps) {
                 <h2 className="text-xl font-bold">Sectors</h2>
                 <Separator className="bg-white/10 mt-2" />
             </div>
-            <div className="flex flex-col md:flex-row gap-8">
-                <div className="flex-1">
-                    <div className="flex justify-end items-baseline mb-4">
-                        <p className="text-xs text-neutral-500">As of June 30, 2025</p>
-                    </div>
+            <div className="flex flex-col md:flex-row gap-8 items-center">
+                <div className="w-full md:w-1/2">
                     <ul className="space-y-3">
-                        {stock.sectors.map((sector) => (
+                        {chartData.map((sector) => (
                             <li key={sector.name} className="flex items-center justify-between text-sm">
                                 <div className="flex items-center">
                                     <span
@@ -37,24 +61,33 @@ export function SectorsCard({ stock, className }: SectorsCardProps) {
                                     />
                                     <span className="text-neutral-200">{sector.name}</span>
                                 </div>
-                                <span className="font-mono text-neutral-100">{sector.pct.toFixed(2)}%</span>
+                                <span className="font-mono text-neutral-100">{sector.value.toFixed(2)}%</span>
                             </li>
                         ))}
                     </ul>
                 </div>
-                <div className="flex-1 flex flex-col justify-center">
-                    <div className="w-full h-8 bg-neutral-800 rounded-md flex overflow-hidden shadow-inner" title="Sector allocation">
-                        {stock.sectors.map((sector) => (
-                            <div
-                                key={sector.name}
-                                className="h-full"
-                                style={{
-                                    width: `${sector.pct}%`,
-                                    backgroundColor: sector.color
-                                }}
-                            />
-                        ))}
-                    </div>
+                <div className="w-full md:w-1/2 h-52">
+                    <ResponsiveContainer width="100%" height="100%">
+                        <PieChart>
+                            <Tooltip content={<CustomTooltipContent />} />
+                            <Pie
+                                data={chartData}
+                                cx="50%"
+                                cy="50%"
+                                innerRadius={60}
+                                outerRadius={80}
+                                fill="#8884d8"
+                                paddingAngle={5}
+                                dataKey="value"
+                                nameKey="name"
+                                stroke="none"
+                            >
+                                {chartData.map((entry, index) => (
+                                    <Cell key={`cell-${index}`} fill={entry.color} />
+                                ))}
+                            </Pie>
+                        </PieChart>
+                    </ResponsiveContainer>
                 </div>
             </div>
         </div>
