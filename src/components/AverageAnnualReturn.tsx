@@ -20,23 +20,23 @@ const AverageAnnualReturn = ({ className }: { className?: string }) => {
                 <Separator className="bg-white/10 mt-2" />
             </div>
             <div className="overflow-x-auto">
-                <table className="w-full text-left">
+                <table className="w-full text-left text-sm font-mono">
                     <thead>
                         <tr className="border-b border-neutral-700">
-                            <th className="py-3 pr-4 font-normal text-sm text-neutral-400 w-1/4"></th>
+                            <th className="py-2 pr-6 font-medium text-white/60 w-1/4"></th>
                             {headers.map(header => (
-                                <th key={header} className="py-3 px-4 font-normal text-sm text-neutral-400 text-center">
-                                    {header === 'Since' ? <span>Since<br/>Jan 22, 1993</span> : header}
+                                <th key={header} className="py-2 pr-6 font-medium text-white/60 text-left">
+                                    {header === 'Since' ? <span>Since Jan 22, 1993</span> : header}
                                 </th>
                             ))}
                         </tr>
                     </thead>
                     <tbody>
                         {returnData.map((row, rowIndex) => (
-                            <tr key={rowIndex} className="border-b border-neutral-800 last:border-b-0">
-                                <td className="py-4 pr-4 font-semibold text-white">{row.label}</td>
+                            <tr key={rowIndex} className="border-b border-white/10 last:border-b-0">
+                                <td className="py-2 pr-6 text-white/80 font-normal">{row.label}</td>
                                 {headers.map(header => (
-                                    <td key={header} className="py-4 px-4 text-white text-center font-mono">{row[header as keyof typeof row]}</td>
+                                    <td key={header} className="py-2 pr-6 text-white/80 font-normal">{row[header as keyof typeof row]}</td>
                                 ))}
                             </tr>
                         ))}

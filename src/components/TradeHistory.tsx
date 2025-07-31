@@ -36,21 +36,21 @@ export function TradeHistory({ stock, className }: TradeHistoryProps) {
             <table className="min-w-full text-sm font-mono">
               <thead>
                 <tr className="text-white/60">
-                  <th className="text-left pb-2 pr-8 font-medium min-w-[100px]">Date</th>
-                  <th className="text-left pb-2 pr-8 font-medium min-w-[80px]">Action</th>
-                  <th className="text-left pb-2 pr-8 font-medium min-w-[80px]">Quantity</th>
-                  <th className="text-left pb-2 pr-8 font-medium min-w-[100px]">Price</th>
-                  <th className="text-left pb-2 font-medium min-w-[120px]">Status</th>
+                  <th className="text-left pb-2 pr-6 font-medium min-w-[100px]">Date</th>
+                  <th className="text-left pb-2 pr-6 font-medium min-w-[80px]">Action</th>
+                  <th className="text-left pb-2 pr-6 font-medium min-w-[80px]">Quantity</th>
+                  <th className="text-left pb-2 pr-6 font-medium min-w-[100px]">Price</th>
+                  <th className="text-left pb-2 pr-6 font-medium min-w-[120px]">Status</th>
                 </tr>
               </thead>
-              <tbody className="text-white/80">
+              <tbody>
                 {dataToShow.map((item, index) => (
                     <tr key={index} className="border-b border-white/10 last:border-b-0">
-                      <td className="py-2 pr-8">{item.date}</td>
-                      <td className="py-2 pr-8">{item.action}</td>
-                      <td className="py-2 pr-8">{item.quantity}</td>
-                      <td className="py-2 pr-8">{item.price}</td>
-                      <td className="py-2 text-white/60">{item.status}</td>
+                      <td className="py-2 pr-6 text-white/80 font-normal">{item.date}</td>
+                      <td className="py-2 pr-6 text-white/80 font-normal">{item.action}</td>
+                      <td className="py-2 pr-6 text-white/80 font-normal">{item.quantity}</td>
+                      <td className="py-2 pr-6 text-white/80 font-normal">{item.price}</td>
+                      <td className="py-2 pr-6 text-white/60 font-normal">{item.status}</td>
                     </tr>
                 ))}
               </tbody>
