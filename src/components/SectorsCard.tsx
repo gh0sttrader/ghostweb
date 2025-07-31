@@ -66,7 +66,7 @@ export function SectorsCard({ stock, className }: SectorsCardProps) {
                         ))}
                     </ul>
                 </div>
-                <div className="w-full md:w-1/2 h-52 drop-shadow-md">
+                <div className="w-full md:w-1/2 h-64 drop-shadow-lg flex items-center justify-center">
                     <ResponsiveContainer width="100%" height="100%">
                         <PieChart>
                             <Tooltip content={<CustomTooltipContent />} />
@@ -74,8 +74,8 @@ export function SectorsCard({ stock, className }: SectorsCardProps) {
                                 data={chartData}
                                 cx="50%"
                                 cy="50%"
-                                innerRadius={60}
-                                outerRadius={80}
+                                innerRadius={80}
+                                outerRadius={110}
                                 fill="#8884d8"
                                 paddingAngle={2}
                                 dataKey="value"
