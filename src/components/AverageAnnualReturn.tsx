@@ -20,12 +20,12 @@ const AverageAnnualReturn = ({ className }: { className?: string }) => {
                 <Separator className="bg-white/10 mt-2" />
             </div>
             <div className="overflow-x-auto">
-                <table className="w-full text-left text-sm font-mono">
+                <table className="w-full text-left text-sm">
                     <thead>
-                        <tr className="border-b border-neutral-700">
-                            <th className="py-2 pr-6 font-medium text-white/60 w-1/4"></th>
+                        <tr className="border-b border-white/10">
+                            <th className="py-2 pr-6 font-normal text-white/60 w-1/4"></th>
                             {headers.map(header => (
-                                <th key={header} className="py-2 pr-6 font-medium text-white/60 text-left">
+                                <th key={header} className="py-2 pr-6 font-normal text-white/60 text-left">
                                     {header === 'Since' ? <span>Since Jan 22, 1993</span> : header}
                                 </th>
                             ))}

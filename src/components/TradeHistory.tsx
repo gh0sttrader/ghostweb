@@ -33,14 +33,14 @@ export function TradeHistory({ stock, className }: TradeHistoryProps) {
         <section className={cn("bg-transparent", className)}>
           <h2 className="text-xl font-bold mb-4">History</h2>
           <div className="overflow-x-auto">
-            <table className="min-w-full text-sm font-mono">
+            <table className="min-w-full text-sm">
               <thead>
                 <tr className="text-white/60">
-                  <th className="text-left pb-2 pr-6 font-medium min-w-[100px]">Date</th>
-                  <th className="text-left pb-2 pr-6 font-medium min-w-[80px]">Action</th>
-                  <th className="text-left pb-2 pr-6 font-medium min-w-[80px]">Quantity</th>
-                  <th className="text-left pb-2 pr-6 font-medium min-w-[100px]">Price</th>
-                  <th className="text-left pb-2 pr-6 font-medium min-w-[120px]">Status</th>
+                  <th className="text-left pb-2 pr-6 font-normal min-w-[100px]">Date</th>
+                  <th className="text-left pb-2 pr-6 font-normal min-w-[80px]">Action</th>
+                  <th className="text-left pb-2 pr-6 font-normal min-w-[80px]">Quantity</th>
+                  <th className="text-left pb-2 pr-6 font-normal min-w-[100px]">Price</th>
+                  <th className="text-left pb-2 pr-6 font-normal min-w-[120px]">Status</th>
                 </tr>
               </thead>
               <tbody>
