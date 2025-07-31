@@ -20,12 +20,12 @@ const AverageAnnualReturn = ({ className }: { className?: string }) => {
                 <Separator className="bg-white/10 mt-2" />
             </div>
             <div className="overflow-x-auto">
-                <table className="w-full text-left text-sm">
+                <table className="w-full text-left text-sm table-fixed">
                     <thead>
                         <tr className="border-b border-white/10">
-                            <th className="py-2 pr-6 font-normal text-white/60 w-1/4"></th>
+                            <th className="py-2 px-4 font-normal text-white/60 w-[25%]"></th>
                             {headers.map(header => (
-                                <th key={header} className="py-2 pr-6 font-normal text-white/60 text-left">
+                                <th key={header} className="py-2 px-4 font-normal text-white/60 text-left">
                                     {header === 'Since' ? <span>Since Jan 22, 1993</span> : header}
                                 </th>
                             ))}
@@ -34,9 +34,9 @@ const AverageAnnualReturn = ({ className }: { className?: string }) => {
                     <tbody>
                         {returnData.map((row, rowIndex) => (
                             <tr key={rowIndex} className="border-b border-white/10 last:border-b-0">
-                                <td className="py-2 pr-6 text-white/80 font-normal">{row.label}</td>
+                                <td className="py-2 px-4 text-white/80 font-normal">{row.label}</td>
                                 {headers.map(header => (
-                                    <td key={header} className="py-2 pr-6 text-white/80 font-normal">{row[header as keyof typeof row]}</td>
+                                    <td key={header} className="py-2 px-4 text-white/80 font-normal">{row[header as keyof typeof row]}</td>
                                 ))}
                             </tr>
                         ))}

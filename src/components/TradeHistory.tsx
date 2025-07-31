@@ -33,24 +33,24 @@ export function TradeHistory({ stock, className }: TradeHistoryProps) {
         <section className={cn("bg-transparent", className)}>
           <h2 className="text-xl font-bold mb-4">History</h2>
           <div className="overflow-x-auto">
-            <table className="min-w-full text-sm">
+            <table className="w-full text-sm table-fixed">
               <thead>
-                <tr className="text-white/60">
-                  <th className="text-left pb-2 pr-6 font-normal min-w-[100px]">Date</th>
-                  <th className="text-left pb-2 pr-6 font-normal min-w-[80px]">Action</th>
-                  <th className="text-left pb-2 pr-6 font-normal min-w-[80px]">Quantity</th>
-                  <th className="text-left pb-2 pr-6 font-normal min-w-[100px]">Price</th>
-                  <th className="text-left pb-2 pr-6 font-normal min-w-[120px]">Status</th>
+                <tr className="text-white/60 border-b border-white/10">
+                  <th className="text-left py-2 px-4 font-normal">Date</th>
+                  <th className="text-left py-2 px-4 font-normal">Action</th>
+                  <th className="text-left py-2 px-4 font-normal">Quantity</th>
+                  <th className="text-left py-2 px-4 font-normal">Price</th>
+                  <th className="text-left py-2 px-4 font-normal">Status</th>
                 </tr>
               </thead>
               <tbody>
                 {dataToShow.map((item, index) => (
                     <tr key={index} className="border-b border-white/10 last:border-b-0">
-                      <td className="py-2 pr-6 text-white/80 font-normal">{item.date}</td>
-                      <td className="py-2 pr-6 text-white/80 font-normal">{item.action}</td>
-                      <td className="py-2 pr-6 text-white/80 font-normal">{item.quantity}</td>
-                      <td className="py-2 pr-6 text-white/80 font-normal">{item.price}</td>
-                      <td className="py-2 pr-6 text-white/60 font-normal">{item.status}</td>
+                      <td className="py-2 px-4 text-white/80 font-normal">{item.date}</td>
+                      <td className="py-2 px-4 text-white/80 font-normal">{item.action}</td>
+                      <td className="py-2 px-4 text-white/80 font-normal">{item.quantity}</td>
+                      <td className="py-2 px-4 text-white/80 font-normal">{item.price}</td>
+                      <td className="py-2 px-4 text-white/60 font-normal">{item.status}</td>
                     </tr>
                 ))}
               </tbody>
