@@ -30,13 +30,13 @@ const AppNavLinks = () => {
   const pathname = usePathname();
 
   const links = [
-    { href: "/trading-v2/dashboard", label: "GHOST TRADING" },
-    { href: "/trading/dashboard", label: "TRADE" },
-    { href: "/accounts", label: "DASHBOARD" },
-    { href: "/news", label: "NEWS" },
+    { href: "/trading-v2/dashboard", label: "Ghost Trading" },
+    { href: "/trading/dashboard", label: "Trade" },
+    { href: "/accounts", label: "Dashboard" },
+    { href: "/news", label: "News" },
     { href: "/screener", label: "Screener" },
-    { href: "/tradehistory", label: "TRADE HISTORY" },
-    { href: "/settings", label: "SETTINGS" },
+    { href: "/tradehistory", label: "Trade History" },
+    { href: "/settings", label: "Settings" },
   ];
 
   const isActive = (href: string) => {
@@ -52,7 +52,7 @@ const AppNavLinks = () => {
   return (
     <nav className="flex items-center space-x-4 lg:space-x-6 text-sm font-medium">
       {links.map((link) => {
-          if (link.label === 'GHOST TRADING') {
+          if (link.label === 'Ghost Trading') {
               return (
                   <Link
                       key={link.href}
