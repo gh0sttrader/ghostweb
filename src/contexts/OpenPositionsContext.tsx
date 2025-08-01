@@ -16,6 +16,7 @@ const initialPositions: OpenPosition[] = [
     { id: 'pos_msft', symbol: 'MSFT', entryPrice: 415.00, shares: 50, currentPrice: 420.72, origin: 'manual', accountId: 'acc_1', side: 'Long' },
     { id: 'pos_tsla', symbol: 'TSLA', entryPrice: 181.01, shares: 20, currentPrice: 180.01, origin: 'manual', accountId: 'acc_1', side: 'Short' },
     { id: 'pos_nvda', symbol: 'NVDA', entryPrice: 898.00, shares: 10, currentPrice: 900.50, origin: 'manual', accountId: 'acc_1', side: 'Long' },
+    { id: 'pos_qtum', symbol: 'QTUM', entryPrice: 63.00, shares: 100, currentPrice: 63.55, origin: 'manual', accountId: 'acc_1', side: 'Long' },
 ];
 
 interface OpenPositionsContextType {
