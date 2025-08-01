@@ -63,11 +63,11 @@ const PositionRow = ({ position, stock, onSelect, isSelected }: { position: any,
             onClick={() => onSelect(stock.symbol)}
         >
             <div className="flex-1">
-                <div className="font-semibold">{position.symbol}</div>
+                <div className="font-medium text-white/80">{position.symbol}</div>
                 <div className="text-xs text-white/60 truncate max-w-[120px]">{stock.name || '...'}</div>
             </div>
             <div className="text-right">
-                <div className="font-semibold">${stock.price.toFixed(2)}</div>
+                <div className="font-medium text-white">${stock.price.toFixed(2)}</div>
                 <div className={cn("text-xs", changeColor)}>
                     {isUp ? '+' : ''}{stock.changePercent.toFixed(2)}%
                 </div>
