@@ -26,8 +26,21 @@ import { TradeHistory } from '@/components/TradeHistory';
 import { AddToListModal } from '@/components/AddToListModal';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { cn } from '@/lib/utils';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 type Timeframe = '1D' | '5D' | '1M' | '3M' | '6M' | 'YTD' | '1Y' | '5Y' | 'Max' | 'All';
+
+const dummyWatchlists: Record<string, Stock[]> = {
+  "Main Watchlist": initialMockStocks.slice(0, 7),
+  "Tech Stocks": initialMockStocks.filter(s => s.sector === 'Technology').slice(0, 5),
+  "Dividend Picks": initialMockStocks.filter(s => (s.dividendYield || 0) > 2).slice(0, 5),
+};
+
+const dummyScreeners: Record<string, Stock[]> = {
+  "Top Gainers": [...initialMockStocks].sort((a, b) => b.changePercent - a.changePercent).slice(0, 7),
+  "Most Active": [...initialMockStocks].sort((a, b) => (b.volume || 0) - (a.volume || 0)).slice(0, 7),
+  "High Short Interest": [...initialMockStocks].sort((a, b) => (b.shortFloat || 0) - (a.shortFloat || 0)).slice(0, 7),
+};
 
 const PositionRow = ({ position, stock, onSelect, isSelected }: { position: any, stock: Stock | undefined, onSelect: (symbol: string) => void, isSelected: boolean }) => {
     if (!stock) {
@@ -84,6 +97,9 @@ function TradingDashboardPageContent() {
   const [isAddToListModalOpen, setIsAddToListModalOpen] = useState(false);
   const [chartTimeframe, setChartTimeframe] = useState<Timeframe>('1M');
   
+  const [selectedWatchlist, setSelectedWatchlist] = useState<string>(Object.keys(dummyWatchlists)[0]);
+  const [selectedScreener, setSelectedScreener] = useState<string>(Object.keys(dummyScreeners)[0]);
+
   const activeAlert = useMemo(() => {
     return alerts.find(a => a.symbol === syncedTickerSymbol);
   }, [alerts, syncedTickerSymbol]);
@@ -91,9 +107,6 @@ function TradingDashboardPageContent() {
   const accountPositions = useMemo(() => {
       return openPositions.filter(p => p.accountId === selectedAccountId);
   }, [openPositions, selectedAccountId]);
-
-  const watchlistStocks = useMemo(() => initialMockStocks.slice(0, 15), []);
-  const screenerStocks = useMemo(() => initialMockStocks.slice(10, 25).sort((a,b) => b.changePercent - a.changePercent), []);
 
   const handleOpenAlertModal = () => {
     setIsAlertModalOpen(true);
@@ -329,8 +342,20 @@ function TradingDashboardPageContent() {
                           <AccordionItem value="item-2" className="border-b border-white/10">
                               <AccordionTrigger className="px-4 py-3 text-white/80 hover:bg-white/5 font-semibold">Watchlist</AccordionTrigger>
                               <AccordionContent className="px-4 py-2 text-white/60">
+                                  <div className="mb-3 px-2">
+                                    <Select value={selectedWatchlist} onValueChange={setSelectedWatchlist}>
+                                        <SelectTrigger className="w-full h-8 text-xs bg-black border-white/20">
+                                            <SelectValue placeholder="Select Watchlist" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {Object.keys(dummyWatchlists).map(name => (
+                                                <SelectItem key={name} value={name}>{name}</SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                  </div>
                                   <div className="space-y-2">
-                                      {watchlistStocks.map(stock => (
+                                      {dummyWatchlists[selectedWatchlist].map(stock => (
                                           <PositionRow
                                               key={stock.id}
                                               position={{ symbol: stock.symbol }}
@@ -345,8 +370,20 @@ function TradingDashboardPageContent() {
                           <AccordionItem value="item-3" className="border-b-0">
                               <AccordionTrigger className="px-4 py-3 text-white/80 hover:bg-white/5 font-semibold">Screener</AccordionTrigger>
                               <AccordionContent className="px-4 py-2 text-white/60">
+                                 <div className="mb-3 px-2">
+                                    <Select value={selectedScreener} onValueChange={setSelectedScreener}>
+                                        <SelectTrigger className="w-full h-8 text-xs bg-black border-white/20">
+                                            <SelectValue placeholder="Select Screener" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {Object.keys(dummyScreeners).map(name => (
+                                                <SelectItem key={name} value={name}>{name}</SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                  </div>
                                   <div className="space-y-2">
-                                      {screenerStocks.map(stock => (
+                                      {dummyScreeners[selectedScreener].map(stock => (
                                           <PositionRow
                                               key={stock.id}
                                               position={{ symbol: stock.symbol }}
@@ -392,6 +429,3 @@ export default function TradingDashboardPage() {
     </Suspense>
   );
 }
-
-
-    
