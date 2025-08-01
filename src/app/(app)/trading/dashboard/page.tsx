@@ -24,6 +24,7 @@ import { SectorsCard } from '@/components/SectorsCard';
 import { TopHoldingsCard } from '@/components/TopHoldingsCard';
 import { TradeHistory } from '@/components/TradeHistory';
 import { AddToListModal } from '@/components/AddToListModal';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 
 type Timeframe = '1D' | '5D' | '1M' | '3M' | '6M' | 'YTD' | '1Y' | '5Y' | 'Max' | 'All';
 
@@ -258,6 +259,29 @@ function TradingDashboardPageContent() {
                           className="h-full"
                       />
                   </div>
+
+                  <Card className="bg-black/50 border-white/10 p-0">
+                      <Accordion type="single" collapsible className="w-full">
+                          <AccordionItem value="item-1" className="border-b border-white/10">
+                              <AccordionTrigger className="px-4 py-3 text-white/80 hover:bg-white/5 font-semibold">My Positions</AccordionTrigger>
+                              <AccordionContent className="px-4 py-2 text-white/60">
+                                  {/* Future content here */}
+                              </AccordionContent>
+                          </AccordionItem>
+                          <AccordionItem value="item-2" className="border-b border-white/10">
+                              <AccordionTrigger className="px-4 py-3 text-white/80 hover:bg-white/5 font-semibold">Watchlist</AccordionTrigger>
+                              <AccordionContent className="px-4 py-2 text-white/60">
+                                  {/* Future content here */}
+                              </AccordionContent>
+                          </AccordionItem>
+                          <AccordionItem value="item-3" className="border-b-0">
+                              <AccordionTrigger className="px-4 py-3 text-white/80 hover:bg-white/5 font-semibold">Screener</AccordionTrigger>
+                              <AccordionContent className="px-4 py-2 text-white/60">
+                                  {/* Future content here */}
+                              </AccordionContent>
+                          </AccordionItem>
+                      </Accordion>
+                  </Card>
               </div>
           </div>
         </div>
