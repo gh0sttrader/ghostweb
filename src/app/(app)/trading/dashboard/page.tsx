@@ -92,6 +92,9 @@ function TradingDashboardPageContent() {
       return openPositions.filter(p => p.accountId === selectedAccountId);
   }, [openPositions, selectedAccountId]);
 
+  const watchlistStocks = useMemo(() => initialMockStocks.slice(0, 15), []);
+  const screenerStocks = useMemo(() => initialMockStocks.slice(10, 25).sort((a,b) => b.changePercent - a.changePercent), []);
+
   const handleOpenAlertModal = () => {
     setIsAlertModalOpen(true);
   };
@@ -326,13 +329,33 @@ function TradingDashboardPageContent() {
                           <AccordionItem value="item-2" className="border-b border-white/10">
                               <AccordionTrigger className="px-4 py-3 text-white/80 hover:bg-white/5 font-semibold">Watchlist</AccordionTrigger>
                               <AccordionContent className="px-4 py-2 text-white/60">
-                                  {/* Future content here */}
+                                  <div className="space-y-2">
+                                      {watchlistStocks.map(stock => (
+                                          <PositionRow
+                                              key={stock.id}
+                                              position={{ symbol: stock.symbol }}
+                                              stock={stock}
+                                              onSelect={handleSyncedTickerChange}
+                                              isSelected={syncedTickerSymbol === stock.symbol}
+                                          />
+                                      ))}
+                                  </div>
                               </AccordionContent>
                           </AccordionItem>
                           <AccordionItem value="item-3" className="border-b-0">
                               <AccordionTrigger className="px-4 py-3 text-white/80 hover:bg-white/5 font-semibold">Screener</AccordionTrigger>
                               <AccordionContent className="px-4 py-2 text-white/60">
-                                  {/* Future content here */}
+                                  <div className="space-y-2">
+                                      {screenerStocks.map(stock => (
+                                          <PositionRow
+                                              key={stock.id}
+                                              position={{ symbol: stock.symbol }}
+                                              stock={stock}
+                                              onSelect={handleSyncedTickerChange}
+                                              isSelected={syncedTickerSymbol === stock.symbol}
+                                          />
+                                      ))}
+                                  </div>
                               </AccordionContent>
                           </AccordionItem>
                       </Accordion>
@@ -369,3 +392,6 @@ export default function TradingDashboardPage() {
     </Suspense>
   );
 }
+
+
+    
