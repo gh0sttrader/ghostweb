@@ -25,8 +25,34 @@ import { TopHoldingsCard } from '@/components/TopHoldingsCard';
 import { TradeHistory } from '@/components/TradeHistory';
 import { AddToListModal } from '@/components/AddToListModal';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { cn } from '@/lib/utils';
 
 type Timeframe = '1D' | '5D' | '1M' | '3M' | '6M' | 'YTD' | '1Y' | '5Y' | 'Max' | 'All';
+
+const PositionRow = ({ position, stock }: { position: any, stock: Stock | undefined }) => {
+    const marketValue = position.shares * position.currentPrice;
+
+    return (
+        <div className="flex justify-between items-center text-sm border-b border-white/10 last:border-b-0 py-2">
+            <div className="flex-1">
+                <div className="font-semibold">{position.symbol}</div>
+                <div className="text-xs text-white/60 truncate max-w-[120px]">{stock?.name || '...'}</div>
+            </div>
+            <div className="flex-1 text-right">
+                <div>{position.shares}</div>
+                <div className="text-xs text-white/60">Qty</div>
+            </div>
+            <div className="flex-1 text-right">
+                <div>${position.entryPrice.toFixed(2)}</div>
+                <div className="text-xs text-white/60">Avg. Price</div>
+            </div>
+            <div className="flex-1 text-right">
+                <div>${marketValue.toFixed(2)}</div>
+                <div className="text-xs text-white/60">Market Value</div>
+            </div>
+        </div>
+    );
+};
 
 function TradingDashboardPageContent() {
   const { toast } = useToast();
@@ -52,6 +78,10 @@ function TradingDashboardPageContent() {
   const activeAlert = useMemo(() => {
     return alerts.find(a => a.symbol === syncedTickerSymbol);
   }, [alerts, syncedTickerSymbol]);
+
+  const accountPositions = useMemo(() => {
+      return openPositions.filter(p => p.accountId === selectedAccountId);
+  }, [openPositions, selectedAccountId]);
 
   const handleOpenAlertModal = () => {
     setIsAlertModalOpen(true);
@@ -261,11 +291,23 @@ function TradingDashboardPageContent() {
                   </div>
 
                   <Card className="bg-black/50 border-white/10 p-0">
-                      <Accordion type="single" collapsible className="w-full">
+                      <Accordion type="single" collapsible className="w-full" defaultValue="item-1">
                           <AccordionItem value="item-1" className="border-b border-white/10">
                               <AccordionTrigger className="px-4 py-3 text-white/80 hover:bg-white/5 font-semibold">My Positions</AccordionTrigger>
                               <AccordionContent className="px-4 py-2 text-white/60">
-                                  {/* Future content here */}
+                                  {accountPositions.length > 0 ? (
+                                      <div className="space-y-2">
+                                          {accountPositions.map(pos => (
+                                              <PositionRow
+                                                  key={pos.id}
+                                                  position={pos}
+                                                  stock={initialMockStocks.find(s => s.symbol === pos.symbol)}
+                                              />
+                                          ))}
+                                      </div>
+                                  ) : (
+                                      <p className="text-sm text-center py-4">No open positions in this account.</p>
+                                  )}
                               </AccordionContent>
                           </AccordionItem>
                           <AccordionItem value="item-2" className="border-b border-white/10">
