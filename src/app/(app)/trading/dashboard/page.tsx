@@ -258,12 +258,6 @@ function TradingDashboardPageContent() {
                           className="h-full"
                       />
                   </div>
-                  <button
-                      onClick={() => setIsAddToListModalOpen(true)}
-                      className="mt-2 w-[85%] py-2 text-sm border border-white text-white rounded-full mx-auto block hover:bg-white/10"
-                  >
-                      + Add to List
-                  </button>
               </div>
           </div>
         </div>
