@@ -67,7 +67,7 @@ const PositionRow = ({ position, stock, onSelect, isSelected }: { position: any,
                 <div className="text-xs text-white/60 truncate max-w-[120px]">{stock.name || '...'}</div>
             </div>
             <div className="text-right">
-                <div className="font-medium text-white">${stock.price.toFixed(2)}</div>
+                <div className="font-medium text-white/80">${stock.price.toFixed(2)}</div>
                 <div className={cn("text-xs", changeColor)}>
                     {isUp ? '+' : ''}{stock.changePercent.toFixed(2)}%
                 </div>
@@ -266,8 +266,8 @@ function TradingDashboardPageContent() {
                           isAlertActive={!!activeAlert}
                           timeframe={chartTimeframe}
                           onTimeframeChange={setChartTimeframe}
-                          showAlertButton={false}
-                          showWatchlistButton={false}
+                          showAlertButton={true}
+                          showWatchlistButton={true}
                       />
                   </div>
                   <div className="mt-12">
