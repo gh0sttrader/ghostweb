@@ -42,13 +42,11 @@ export default function AddToWatchlistModal({
   const [selectedLists, setSelectedLists] = useState<string[]>([]);
   const [newList, setNewList] = useState("");
   const [isCreating, setIsCreating] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     if (!isOpen || !db) return;
 
     const fetchWatchlists = async () => {
-      setIsLoading(true);
       try {
         const watchlistCollection = collection(db, "watchlists");
         const querySnapshot = await getDocs(watchlistCollection);
@@ -74,8 +72,6 @@ export default function AddToWatchlistModal({
           description: "Could not fetch your watchlists.",
           variant: "destructive",
         });
-      } finally {
-        setIsLoading(false);
       }
     };
 
@@ -153,59 +149,56 @@ export default function AddToWatchlistModal({
         <DialogHeader>
           <DialogTitle className="font-semibold text-white/90 text-lg mb-4 text-left">Add {ticker} to Lists</DialogTitle>
         </DialogHeader>
-        {isLoading ? (
-          <div className="text-center p-8 text-muted-foreground">Loading...</div>
-        ) : (
-          <div>
-            {isCreating ? (
-              <div className="flex items-center gap-2 mb-4">
-                <Input 
-                  placeholder="New list name..."
-                  value={newList}
-                  onChange={(e) => setNewList(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && handleCreateNewList()}
-                  className="h-10"
-                />
-                <Button size="sm" onClick={handleCreateNewList}>Create</Button>
-                <Button size="sm" variant="ghost" onClick={() => setIsCreating(false)}>Cancel</Button>
-              </div>
-            ) : (
-              <button 
-                className="w-full flex items-center gap-3 py-3 mb-4 rounded-lg hover:bg-neutral-800/80 transition-colors text-left text-white/80"
-                onClick={() => setIsCreating(true)}
-              >
-                <span className="w-9 h-9 rounded-lg bg-neutral-800 flex items-center justify-center text-xl font-light">+</span>
-                <span className="font-medium">Create New List</span>
-              </button>
-            )}
-            
-            <div className="space-y-3 max-h-64 overflow-y-auto pr-2">
-              {lists.map(list => (
-                <button key={list.id}
-                  className={cn(`w-full flex items-center gap-3 p-4 rounded-lg transition-all duration-200 text-left border`,
-                    selectedLists.includes(list.id) 
-                    ? "bg-white/5 border-white/20" 
-                    : "border-white/10 hover:bg-white/5"
-                  )}
-                  onClick={() => handleToggleList(list.id)}>
-                  <GhostIcon className="w-7 h-7 text-white/70" />
-                  <div>
-                    <div className="font-medium text-white/90">{list.name}</div>
-                  </div>
-                </button>
-              ))}
+        <div>
+          {isCreating ? (
+            <div className="flex items-center gap-2 mb-4">
+              <Input 
+                placeholder="New list name..."
+                value={newList}
+                onChange={(e) => setNewList(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleCreateNewList()}
+                className="h-10"
+              />
+              <Button size="sm" onClick={handleCreateNewList}>Create</Button>
+              <Button size="sm" variant="ghost" onClick={() => setIsCreating(false)}>Cancel</Button>
             </div>
-            
-            <Button
-              onClick={handleSaveChanges}
-              className="mt-6 w-full py-3 h-12 bg-black border border-white text-white rounded-full font-semibold text-base
-                         hover:bg-white/10
-                         disabled:bg-neutral-800 disabled:text-neutral-500 disabled:cursor-not-allowed disabled:border-transparent"
+          ) : (
+            <button 
+              className="w-full flex items-center gap-3 py-3 mb-4 rounded-lg hover:bg-neutral-800/80 transition-colors text-left text-white/80"
+              onClick={() => setIsCreating(true)}
             >
-              Save Changes
-            </Button>
+              <span className="w-9 h-9 rounded-lg bg-neutral-800 flex items-center justify-center text-xl font-light">+</span>
+              <span className="font-medium">Create New List</span>
+            </button>
+          )}
+          
+          <div className="space-y-3 max-h-64 overflow-y-auto pr-2">
+            {lists.map(list => (
+              <button key={list.id}
+                className={cn(`w-full flex items-center gap-3 p-4 rounded-lg transition-all duration-200 text-left border`,
+                  selectedLists.includes(list.id) 
+                  ? "bg-white/5 border-white/20" 
+                  : "border-white/10 hover:bg-white/5"
+                )}
+                onClick={() => handleToggleList(list.id)}>
+                <GhostIcon className="w-7 h-7 text-white/70" />
+                <div>
+                  <div className="font-medium text-white/90">{list.name}</div>
+                </div>
+              </button>
+            ))}
           </div>
-        )}
+          
+          <Button
+            onClick={handleSaveChanges}
+            disabled={selectedLists.length === 0}
+            className="mt-6 w-full py-3 h-12 bg-black border border-white text-white rounded-full font-semibold text-base
+                       hover:bg-white/10
+                       disabled:bg-neutral-800 disabled:text-neutral-500 disabled:cursor-not-allowed disabled:border-transparent"
+          >
+            Save Changes
+          </Button>
+        </div>
       </DialogContent>
     </Dialog>
   );
