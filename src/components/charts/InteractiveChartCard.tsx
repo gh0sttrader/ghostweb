@@ -327,6 +327,29 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, className, v
                     <h3 className="text-2xl font-bold text-neutral-50 truncate" title={stock.name}>
                         {stock.name}
                     </h3>
+                     <Popover>
+                        <PopoverTrigger asChild>
+                            <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground/80 hover:text-foreground hover:bg-white/10">
+                                <Palette className="h-4 w-4" />
+                            </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-2" side="top" align="end">
+                            <div className="flex gap-2">
+                                {colorOptions.map(({ color, label }) => (
+                                   <button
+                                        key={color}
+                                        aria-label={`Change chart color to ${label}`}
+                                        className={cn(
+                                            "w-6 h-6 rounded-full border-2 transition-all",
+                                            chartColor === color ? 'border-white shadow-md' : 'border-gray-600/50 hover:border-gray-400'
+                                        )}
+                                        style={{ backgroundColor: color }}
+                                        onClick={() => setChartColor(color)}
+                                    />
+                                ))}
+                            </div>
+                        </PopoverContent>
+                     </Popover>
                 </div>
                 <p className="text-xl font-extrabold text-foreground mt-1">
                     ${(displayPrice ?? 0).toFixed(2)}
@@ -380,59 +403,33 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, className, v
                   </Button>
                 ))}
             </div>
-            <div className="flex items-center gap-1">
-                <Popover>
-                  <PopoverTrigger asChild>
-                      <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground/80 hover:text-foreground hover:bg-white/10">
-                          <Palette className="h-4 w-4" />
-                      </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-2" side="top" align="end">
-                      <div className="flex gap-2">
-                          {colorOptions.map(({ color, label }) => (
-                             <button
-                                  key={color}
-                                  aria-label={`Change chart color to ${label}`}
-                                  className={cn(
-                                      "w-6 h-6 rounded-full border-2 transition-all",
-                                      chartColor === color ? 'border-white shadow-md' : 'border-gray-600/50 hover:border-gray-400'
-                                  )}
-                                  style={{ backgroundColor: color }}
-                                  onClick={() => setChartColor(color)}
-                              />
-                          ))}
-                      </div>
-                  </PopoverContent>
-                </Popover>
-            </div>
+            { (showAlertButton || showWatchlistButton) &&
+              <div className="flex items-center space-x-3 z-10">
+                {showAlertButton && (
+                    <Button
+                        onClick={onAlertClick}
+                        variant="ghost"
+                        size="icon"
+                        className={cn("p-1.5 rounded-full hover:bg-white/10 transition", isAlertActive ? 'text-destructive' : 'text-white')}
+                        aria-label="Set Alert"
+                    >
+                        <Bell size={16} fill={isAlertActive ? 'currentColor' : 'none'} />
+                    </Button>
+                )}
+                {showWatchlistButton && (
+                  <Button
+                      onClick={() => setIsWatched(prev => !prev)}
+                      variant="ghost"
+                      size="icon"
+                      className={cn("p-1.5 rounded-full hover:bg-white/10 transition", isWatched ? 'text-yellow-500' : 'text-white')}
+                      aria-label="Add to Watchlist"
+                  >
+                      <Star size={16} fill={isWatched ? 'currentColor' : 'none'} />
+                  </Button>
+                )}
+              </div>
+            }
        </CardFooter>
-      { (showAlertButton || showWatchlistButton) &&
-        <div className="absolute bottom-14 right-6 flex items-center space-x-2 z-10">
-          {showAlertButton && (
-              <Button
-                  onClick={onAlertClick}
-                  variant="ghost"
-                  size="icon"
-                  className={cn("p-1.5 rounded-full hover:bg-white/10 transition", isAlertActive ? 'text-destructive' : 'text-white')}
-                  aria-label="Set Alert"
-              >
-                  <Bell size={16} fill={isAlertActive ? 'currentColor' : 'none'} />
-              </Button>
-          )}
-          {showWatchlistButton && (
-            <Button
-                onClick={() => setIsWatched(prev => !prev)}
-                variant="ghost"
-                size="icon"
-                className={cn("p-1.5 rounded-full hover:bg-white/10 transition", isWatched ? 'text-yellow-500' : 'text-white')}
-                aria-label="Add to Watchlist"
-            >
-                <Star size={16} fill={isWatched ? 'currentColor' : 'none'} />
-            </Button>
-          )}
-        </div>
-      }
-     
       <ChartDatePickerModal 
         isOpen={isDatePickerOpen}
         onClose={() => setIsDatePickerOpen(false)}
