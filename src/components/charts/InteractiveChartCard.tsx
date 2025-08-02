@@ -407,13 +407,13 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, className, v
             </div>
        </CardFooter>
       { (showAlertButton || showWatchlistButton) &&
-        <div className="absolute bottom-4 right-4 flex space-x-3 z-10">
+        <div className="absolute bottom-14 right-6 flex items-center space-x-2 z-10">
           {showAlertButton && (
               <Button
                   onClick={onAlertClick}
                   variant="ghost"
                   size="icon"
-                  className={cn("h-7 w-7 rounded-full", isAlertActive ? 'text-destructive' : 'text-white hover:bg-white/10')}
+                  className={cn("p-1.5 rounded-full hover:bg-white/10 transition", isAlertActive ? 'text-destructive' : 'text-white')}
                   aria-label="Set Alert"
               >
                   <Bell size={16} fill={isAlertActive ? 'currentColor' : 'none'} />
@@ -424,7 +424,7 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, className, v
                 onClick={() => setIsWatched(prev => !prev)}
                 variant="ghost"
                 size="icon"
-                className={cn("h-7 w-7 rounded-full", isWatched ? 'text-yellow-500' : 'text-white hover:bg-white/10')}
+                className={cn("p-1.5 rounded-full hover:bg-white/10 transition", isWatched ? 'text-yellow-500' : 'text-white')}
                 aria-label="Add to Watchlist"
             >
                 <Star size={16} fill={isWatched ? 'currentColor' : 'none'} />
