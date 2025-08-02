@@ -1,8 +1,13 @@
+"use client";
+
+import dynamic from 'next/dynamic';
+
+const TradingViewWidget = dynamic(() => import('@/components/TradingViewWidget'), { ssr: false });
 
 export default function SettingsPage() {
-    return (
-        <main className="flex flex-col flex-1 h-full overflow-hidden p-4 md:p-6 space-y-4">
-            {/* Settings page content will go here */}
-        </main>
-    );
+  return (
+    <main className="w-full h-full bg-black">
+      <TradingViewWidget />
+    </main>
+  );
 }
