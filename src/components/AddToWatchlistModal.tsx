@@ -18,7 +18,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { GhostIcon } from "./v2/GhostIcon";
+import { GhostIcon } from "@/components/v2/GhostIcon";
 import { cn } from "@/lib/utils";
 import { Alert, AlertDescription } from "./ui/alert";
 
@@ -78,7 +78,7 @@ export default function AddToWatchlistModal({
     };
 
     fetchWatchlists();
-  }, [isOpen, ticker, db]);
+  }, [isOpen, ticker]);
   
   const handleCreateNewList = async () => {
     const name = newListName.trim();
@@ -89,12 +89,16 @@ export default function AddToWatchlistModal({
         return;
     }
 
+    if (!db) {
+      setError("Firebase is not initialized.");
+      return;
+    }
+
     try {
-        const watchlistRef = doc(db, "watchlists", name);
-        await setDoc(watchlistRef, { createdAt: Timestamp.now() });
+        await setDoc(doc(db, "watchlists", name), { createdAt: Timestamp.now() }, { merge: true });
         
-        const symbolsCol = collection(watchlistRef, "symbols");
-        await addDoc(symbolsCol, {
+        const symbolsColRef = collection(db, "watchlists", name, "symbols");
+        await addDoc(symbolsColRef, {
           symbol: ticker,
           addedAt: Timestamp.now(),
         });
@@ -104,7 +108,7 @@ export default function AddToWatchlistModal({
         setSelectedLists(prev => [...prev, name]);
         setNewListName("");
         setIsCreating(false);
-        toast({ title: `Created and added to "${name}"`, variant: "success" });
+        toast({ title: `Created "${name}" and added ${ticker}`, variant: "success" });
     } catch (error: any) {
         console.error("Error creating watchlist:", error);
         setError(error.message || "Could not create new watchlist.");
@@ -112,7 +116,10 @@ export default function AddToWatchlistModal({
   };
 
   const handleSaveChanges = async () => {
-    if (!db) return;
+    if (!db) {
+      setError("Firebase is not initialized.");
+      return;
+    };
     setError(null);
     try {
       const batch = writeBatch(db);
