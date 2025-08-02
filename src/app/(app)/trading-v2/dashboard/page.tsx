@@ -154,16 +154,19 @@ function TradingDashboardPageContentV2() {
   }, [addOpenPosition, addTradeToHistory, selectedAccountId, stockForSyncedComps, toast]);
 
   const handleDeleteWidget = useCallback((groupId: string) => {
-    setLayouts(prev => prev.filter(l => l.i !== groupId));
-    setWidgetGroups(prev => {
-      const newGroups = {...prev};
-      delete newGroups[groupId];
-      return newGroups;
-    });
-    toast({ title: `Card removed from layout.` });
+    setTimeout(() => {
+      setLayouts(prev => prev.filter(l => l.i !== groupId));
+      setWidgetGroups(prev => {
+        const newGroups = {...prev};
+        delete newGroups[groupId];
+        return newGroups;
+      });
+      toast({ title: `Card removed from layout.` });
+    }, 0);
   }, [toast]);
   
   const addWidgetAsNewCard = useCallback((widgetKey: WidgetKey) => {
+    setTimeout(() => {
       if (existingWidgets.includes(widgetKey)) {
           toast({ title: `Widget "${ALL_WIDGETS.find(w => w.id === widgetKey)?.label}" is already on the dashboard.` });
           return;
@@ -173,6 +176,7 @@ function TradingDashboardPageContentV2() {
       setLayouts(prev => [...prev, newLayoutItem]);
       setWidgetGroups(prev => ({ ...prev, [newCardId]: [widgetKey] }));
       toast({ title: "Widget added as a new card." });
+    }, 0);
   }, [existingWidgets, toast]);
 
     const WIDGET_COMPONENTS: Record<WidgetKey, Widget> = useMemo(() => ({
@@ -283,42 +287,46 @@ function TradingDashboardPageContentV2() {
   }, [syncedTickerSymbol, toast]);
   
   const addWidgetToGroup = useCallback((groupId: string, widgetKey: WidgetKey) => {
-    setWidgetGroups(prev => {
-        if (existingWidgets.includes(widgetKey)) {
-          toast({ title: `Widget "${ALL_WIDGETS.find(w => w.id === widgetKey)?.label}" is already on the dashboard.` });
-          return prev;
-        }
-        
-        const currentGroup = prev[groupId] || [];
-        if (currentGroup.includes(widgetKey)) {
-            toast({ title: "Widget already in this group." });
+    setTimeout(() => {
+      setWidgetGroups(prev => {
+          if (existingWidgets.includes(widgetKey)) {
+            toast({ title: `Widget "${ALL_WIDGETS.find(w => w.id === widgetKey)?.label}" is already on the dashboard.` });
             return prev;
-        }
-        const newGroups = { ...prev, [groupId]: [...currentGroup, widgetKey] };
-        setActiveTabs(tabs => ({ ...tabs, [groupId]: widgetKey }));
-        return newGroups;
-    });
+          }
+          
+          const currentGroup = prev[groupId] || [];
+          if (currentGroup.includes(widgetKey)) {
+              toast({ title: "Widget already in this group." });
+              return prev;
+          }
+          const newGroups = { ...prev, [groupId]: [...currentGroup, widgetKey] };
+          setActiveTabs(tabs => ({ ...tabs, [groupId]: widgetKey }));
+          return newGroups;
+      });
+    }, 0);
   }, [existingWidgets, toast]);
 
   const handleRemoveWidgetFromGroup = useCallback((groupId: string, widgetKey: WidgetKey) => {
-    setWidgetGroups(prev => {
-        const newGroups = { ...prev };
-        const group = newGroups[groupId] || [];
-        const newGroup = group.filter(wk => wk !== widgetKey);
-        
-        if (newGroup.length === 0) {
-            setLayouts(layouts => layouts.filter(l => l.i !== groupId));
-            delete newGroups[groupId];
-        } else {
-            newGroups[groupId] = newGroup;
-            if (activeTabs[groupId] === widgetKey) {
-                setActiveTabs(tabs => ({ ...tabs, [groupId]: newGroup[0] }));
-            }
-        }
+    setTimeout(() => {
+      setWidgetGroups(prev => {
+          const newGroups = { ...prev };
+          const group = newGroups[groupId] || [];
+          const newGroup = group.filter(wk => wk !== widgetKey);
+          
+          if (newGroup.length === 0) {
+              setLayouts(layouts => layouts.filter(l => l.i !== groupId));
+              delete newGroups[groupId];
+          } else {
+              newGroups[groupId] = newGroup;
+              if (activeTabs[groupId] === widgetKey) {
+                  setActiveTabs(tabs => ({ ...tabs, [groupId]: newGroup[0] }));
+              }
+          }
 
-        toast({ title: `Widget "${ALL_WIDGETS.find(w => w.id === widgetKey)?.label}" removed.` });
-        return newGroups;
-    });
+          toast({ title: `Widget "${ALL_WIDGETS.find(w => w.id === widgetKey)?.label}" removed.` });
+          return newGroups;
+      });
+    }, 0);
   }, [activeTabs, toast]);
 
   useEffect(() => {
@@ -453,3 +461,5 @@ export default function TradingDashboardPage() {
     </Suspense>
   );
 }
+
+    
