@@ -16,26 +16,33 @@ const firebaseConfig = {
 };
 
 interface FirebaseServices {
-    app: FirebaseApp | null;
-    auth: Auth | null;
-    db: Firestore | null;
-    storage: FirebaseStorage | null;
+    app: FirebaseApp;
+    auth: Auth;
+    db: Firestore;
+    storage: FirebaseStorage;
 }
 
-// Conditionally initialize Firebase
-function getFirebaseServices(): FirebaseServices {
-    if (!firebaseConfig.apiKey) {
-        console.warn("Firebase API key is not set. Skipping Firebase initialization.");
-        return { app: null, auth: null, db: null, storage: null };
-    }
-    
-    const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-    const storage = getStorage(app);
+let services: FirebaseServices | null = null;
 
-    return { app, auth, db, storage };
+// Initialize Firebase only once
+if (firebaseConfig.apiKey && !getApps().length) {
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+  const storage = getStorage(app);
+  services = { app, auth, db, storage };
+} else if (getApps().length) {
+  const app = getApp();
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+  const storage = getStorage(app);
+  services = { app, auth, db, storage };
+} else {
+    console.warn("Firebase configuration is missing or incomplete. Firebase services are not available.");
 }
 
-// Export a function to get the services
-export const { app, auth, db, storage } = getFirebaseServices();
+// Export the initialized services
+export const app = services?.app;
+export const auth = services?.auth;
+export const db = services?.db;
+export const storage = services?.storage;
