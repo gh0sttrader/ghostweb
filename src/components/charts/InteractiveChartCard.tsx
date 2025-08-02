@@ -16,6 +16,7 @@ import { ChartDatePickerModal } from './ChartDatePickerModal';
 import type { DateRange } from 'react-day-picker';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { useToast } from '@/hooks/use-toast';
+import AddToWatchlistModal from '@/components/AddToWatchlistModal';
 
 type Timeframe = '1D' | '5D' | '1M' | '3M' | '6M' | 'YTD' | '1Y' | '5Y' | 'Max' | 'All';
 
@@ -106,6 +107,7 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, className, v
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
   const [chartColor, setChartColor] = useState<string>('#e6e6e6');
   const [isWatched, setIsWatched] = useState(false);
+  const [isWatchlistModalOpen, setIsWatchlistModalOpen] = useState(false);
   
   const [hoveredData, setHoveredData] = useState<{ price: number; change: number; percent: number; isUp: boolean; date: string } | null>(null);
 
@@ -318,123 +320,133 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, className, v
   const afterHoursVisible = !hoveredData;
 
   return (
-    <Card className={cn("shadow-none flex flex-col border-none bg-transparent relative", className)}>
-       <CardHeader className="pb-2 pt-3 px-3">
-        <div className="flex flex-col sm:flex-row justify-between items-start gap-2">
-          {variant === 'trading' && stock && stock.price > 0 ? (
-             <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-4">
-                    <h3 className="text-2xl font-bold text-neutral-50 truncate" title={stock.name}>
-                        {stock.name}
-                    </h3>
-                     <Popover>
-                        <PopoverTrigger asChild>
-                            <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground/80 hover:text-foreground hover:bg-white/10">
-                                <Palette className="h-4 w-4" />
-                            </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-auto p-2" side="top" align="end">
-                            <div className="flex gap-2">
-                                {colorOptions.map(({ color, label }) => (
-                                   <button
-                                        key={color}
-                                        aria-label={`Change chart color to ${label}`}
-                                        className={cn(
-                                            "w-6 h-6 rounded-full border-2 transition-all",
-                                            chartColor === color ? 'border-white shadow-md' : 'border-gray-600/50 hover:border-gray-400'
-                                        )}
-                                        style={{ backgroundColor: color }}
-                                        onClick={() => setChartColor(color)}
-                                    />
-                                ))}
-                            </div>
-                        </PopoverContent>
-                     </Popover>
-                </div>
-                <p className="text-xl font-extrabold text-foreground mt-1">
-                    ${(displayPrice ?? 0).toFixed(2)}
-                </p>
-                <div className="flex items-center gap-2">
-                   <p className={cn("text-sm font-medium mt-1", displayIsUp ? 'text-[hsl(var(--confirm-green))]' : 'text-destructive')}>
-                        {displayIsUp ? '+' : ''}{displayChange.toFixed(2)}
-                        <span className="ml-1.5">({displayIsUp ? '+' : ''}{displayPercent?.toFixed(2)}%)</span>
-                    </p>
-                    <p className="text-sm font-medium mt-1 text-muted-foreground">{displayDate}</p>
-                </div>
-                {afterHoursVisible && stock.afterHoursPrice && stock.afterHoursChange !== undefined && (
-                    <p className="text-xs text-neutral-400 mt-0.5">
-                    After-Hours: ${stock.afterHoursPrice.toFixed(2)}
-                    <span className={cn("ml-1.5", stock.afterHoursChange >= 0 ? 'text-[hsl(var(--confirm-green))]' : 'text-destructive')}>
-                        ({stock.afterHoursChange >= 0 ? '+' : ''}{stock.afterHoursChange.toFixed(2)})
-                    </span>
-                    </p>
-                )}
-             </div>
-          ) : (
-              <div className="flex-1">
-                 {variant === 'trading' && (
-                    <CardTitle className="text-lg font-headline text-foreground">
-                      Trading Chart
-                    </CardTitle>
+    <>
+      <Card className={cn("shadow-none flex flex-col border-none bg-transparent relative", className)}>
+        <CardHeader className="pb-2 pt-3 px-3">
+          <div className="flex flex-col sm:flex-row justify-between items-start gap-2">
+            {variant === 'trading' && stock && stock.price > 0 ? (
+              <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-4">
+                      <h3 className="text-2xl font-bold text-neutral-50 truncate" title={stock.name}>
+                          {stock.name}
+                      </h3>
+                  </div>
+                  <p className="text-xl font-extrabold text-foreground mt-1">
+                      ${(displayPrice ?? 0).toFixed(2)}
+                  </p>
+                  <div className="flex items-center gap-2">
+                    <p className={cn("text-sm font-medium mt-1", displayIsUp ? 'text-[hsl(var(--confirm-green))]' : 'text-destructive')}>
+                          {displayIsUp ? '+' : ''}{displayChange.toFixed(2)}
+                          <span className="ml-1.5">({displayIsUp ? '+' : ''}{displayPercent?.toFixed(2)}%)</span>
+                      </p>
+                      <p className="text-sm font-medium mt-1 text-muted-foreground">{displayDate}</p>
+                  </div>
+                  {afterHoursVisible && stock.afterHoursPrice && stock.afterHoursChange !== undefined && (
+                      <p className="text-xs text-neutral-400 mt-0.5">
+                      After-Hours: ${stock.afterHoursPrice.toFixed(2)}
+                      <span className={cn("ml-1.5", stock.afterHoursChange >= 0 ? 'text-[hsl(var(--confirm-green))]' : 'text-destructive')}>
+                          ({stock.afterHoursChange >= 0 ? '+' : ''}{stock.afterHoursChange.toFixed(2)})
+                      </span>
+                      </p>
                   )}
               </div>
+            ) : (
+                <div className="flex-1">
+                  {variant === 'trading' && (
+                      <CardTitle className="text-lg font-headline text-foreground">
+                        Trading Chart
+                      </CardTitle>
+                    )}
+                </div>
+            )}
+             <div className="absolute top-4 right-4 z-10">
+                <Popover>
+                    <PopoverTrigger asChild>
+                        <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground/80 hover:text-foreground hover:bg-white/10">
+                            <Palette className="h-4 w-4" />
+                        </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-2" side="top" align="end">
+                        <div className="flex gap-2">
+                            {colorOptions.map(({ color, label }) => (
+                                <button
+                                    key={color}
+                                    aria-label={`Change chart color to ${label}`}
+                                    className={cn(
+                                        "w-6 h-6 rounded-full border-2 transition-all",
+                                        chartColor === color ? 'border-white shadow-md' : 'border-gray-600/50 hover:border-gray-400'
+                                    )}
+                                    style={{ backgroundColor: color }}
+                                    onClick={() => setChartColor(color)}
+                                />
+                            ))}
+                        </div>
+                    </PopoverContent>
+                </Popover>
+              </div>
+          </div>
+        </CardHeader>
+        <CardContent className="flex-1 p-1 pr-2 min-h-[250px]">
+          {renderChartContent()}
+        </CardContent>
+        <CardFooter className="flex items-center justify-between p-2 bg-transparent">
+              <div className="flex items-center gap-1">
+                  {timeframeButtons.map((tf) => (
+                    <Button
+                      key={tf}
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => onTimeframeChange(tf)}
+                      className={cn(
+                        "h-7 text-xs px-2.5 font-semibold",
+                        timeframe === tf
+                          ? "text-foreground bg-white/10"
+                          : "text-muted-foreground hover:text-foreground hover:bg-white/5"
+                      )}
+                    >
+                      {tf}
+                    </Button>
+                  ))}
+              </div>
+        </CardFooter>
+        <div className="absolute bottom-4 right-4 flex items-center space-x-3 z-10">
+          {showAlertButton && (
+              <Button
+                  onClick={onAlertClick}
+                  variant="ghost"
+                  size="icon"
+                  className={cn("p-1.5 rounded-full hover:bg-white/10 transition", isAlertActive ? 'text-destructive' : 'text-white')}
+                  aria-label="Set Alert"
+              >
+                  <Bell size={16} fill={isAlertActive ? 'currentColor' : 'none'} />
+              </Button>
+          )}
+          {showWatchlistButton && (
+            <Button
+                onClick={() => setIsWatchlistModalOpen(true)}
+                variant="ghost"
+                size="icon"
+                className={cn("p-1.5 rounded-full hover:bg-white/10 transition", isWatched ? 'text-yellow-500' : 'text-white')}
+                aria-label="Add to Watchlist"
+            >
+                <Star size={16} fill={isWatched ? 'currentColor' : 'none'} />
+            </Button>
           )}
         </div>
-      </CardHeader>
-      <CardContent className="flex-1 p-1 pr-2 min-h-[250px]">
-        {renderChartContent()}
-      </CardContent>
-       <CardFooter className="flex items-center justify-between p-2 bg-transparent">
-            <div className="flex items-center gap-1">
-                {timeframeButtons.map((tf) => (
-                  <Button
-                    key={tf}
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => onTimeframeChange(tf)}
-                    className={cn(
-                      "h-7 text-xs px-2.5 font-semibold",
-                      timeframe === tf
-                        ? "text-foreground bg-white/10"
-                        : "text-muted-foreground hover:text-foreground hover:bg-white/5"
-                    )}
-                  >
-                    {tf}
-                  </Button>
-                ))}
-            </div>
-            { (showAlertButton || showWatchlistButton) &&
-              <div className="flex items-center space-x-3 z-10">
-                {showAlertButton && (
-                    <Button
-                        onClick={onAlertClick}
-                        variant="ghost"
-                        size="icon"
-                        className={cn("p-1.5 rounded-full hover:bg-white/10 transition", isAlertActive ? 'text-destructive' : 'text-white')}
-                        aria-label="Set Alert"
-                    >
-                        <Bell size={16} fill={isAlertActive ? 'currentColor' : 'none'} />
-                    </Button>
-                )}
-                {showWatchlistButton && (
-                  <Button
-                      onClick={() => setIsWatched(prev => !prev)}
-                      variant="ghost"
-                      size="icon"
-                      className={cn("p-1.5 rounded-full hover:bg-white/10 transition", isWatched ? 'text-yellow-500' : 'text-white')}
-                      aria-label="Add to Watchlist"
-                  >
-                      <Star size={16} fill={isWatched ? 'currentColor' : 'none'} />
-                  </Button>
-                )}
-              </div>
-            }
-       </CardFooter>
-      <ChartDatePickerModal 
-        isOpen={isDatePickerOpen}
-        onClose={() => setIsDatePickerOpen(false)}
-        onGo={handleDateGo}
-      />
-    </Card>
+        <ChartDatePickerModal 
+          isOpen={isDatePickerOpen}
+          onClose={() => setIsDatePickerOpen(false)}
+          onGo={handleDateGo}
+        />
+      </Card>
+      {stock && (
+        <AddToWatchlistModal
+            isOpen={isWatchlistModalOpen}
+            onClose={() => setIsWatchlistModalOpen(false)}
+            ticker={stock.symbol}
+            onSave={() => setIsWatched(true)}
+        />
+      )}
+    </>
   );
 }
