@@ -11,8 +11,8 @@ import {
   query,
   where,
   deleteDoc,
-  getDoc,
   writeBatch,
+  Timestamp,
 } from "firebase/firestore";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "./ui/button";
@@ -20,6 +20,7 @@ import { Input } from "./ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { GhostIcon } from "./v2/GhostIcon";
 import { cn } from "@/lib/utils";
+import { Alert, AlertDescription } from "./ui/alert";
 
 interface Watchlist {
   id: string;
@@ -40,11 +41,16 @@ export default function AddToWatchlistModal({
   const { toast } = useToast();
   const [lists, setLists] = useState<Watchlist[]>([]);
   const [selectedLists, setSelectedLists] = useState<string[]>([]);
-  const [newList, setNewList] = useState("");
+  const [newListName, setNewListName] = useState("");
   const [isCreating, setIsCreating] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!isOpen || !db) return;
+
+    setError(null); // Reset error on open
+    setNewListName('');
+    setIsCreating(false);
 
     const fetchWatchlists = async () => {
       try {
@@ -65,21 +71,17 @@ export default function AddToWatchlistModal({
 
         setLists(fetchedLists);
         setSelectedLists(initialSelected);
-      } catch (error) {
+      } catch (error: any) {
         console.error("Error fetching watchlists:", error);
-        toast({
-          title: "Error",
-          description: "Could not fetch your watchlists.",
-          variant: "destructive",
-        });
+        setError(error.message || "Could not fetch your watchlists.");
       }
     };
 
     fetchWatchlists();
-  }, [isOpen, ticker, db, toast]);
-
+  }, [isOpen, ticker, db]);
+  
   const handleCreateNewList = async () => {
-    const name = newList.trim();
+    const name = newListName.trim();
     if (!name) return;
 
     if (lists.some(l => l.name.toLowerCase() === name.toLowerCase())) {
@@ -88,41 +90,50 @@ export default function AddToWatchlistModal({
     }
 
     try {
-        await setDoc(doc(db, "watchlists", name), { createdAt: new Date() });
+        const watchlistRef = doc(db, "watchlists", name);
+        await setDoc(watchlistRef, { createdAt: Timestamp.now() });
+        
+        const symbolsCol = collection(watchlistRef, "symbols");
+        await addDoc(symbolsCol, {
+          symbol: ticker,
+          addedAt: Timestamp.now(),
+        });
+        
         const newWatchlist = { id: name, name: name };
         setLists(prev => [...prev, newWatchlist]);
-        setSelectedLists(prev => [...prev, name]); // Auto-select the new list
-        setNewList("");
+        setSelectedLists(prev => [...prev, name]);
+        setNewListName("");
         setIsCreating(false);
-        toast({ title: `Created watchlist "${name}"`, variant: "success" });
-    } catch (error) {
+        toast({ title: `Created and added to "${name}"`, variant: "success" });
+    } catch (error: any) {
         console.error("Error creating watchlist:", error);
-        toast({ title: "Error", description: "Could not create new watchlist.", variant: "destructive" });
+        setError(error.message || "Could not create new watchlist.");
     }
   };
 
   const handleSaveChanges = async () => {
     if (!db) return;
-    const batch = writeBatch(db);
-
-    for (const list of lists) {
-      const isSelected = selectedLists.includes(list.id);
-      const symbolsCollection = collection(db, "watchlists", list.id, "symbols");
-      const symbolQuery = query(symbolsCollection, where("symbol", "==", ticker));
-      const symbolSnapshot = await getDocs(symbolQuery);
-      const exists = !symbolSnapshot.empty;
-
-      if (isSelected && !exists) {
-        const newSymbolRef = doc(symbolsCollection);
-        batch.set(newSymbolRef, { symbol: ticker, addedAt: new Date() });
-      } else if (!isSelected && exists) {
-        symbolSnapshot.forEach(docToDelete => {
-          batch.delete(docToDelete.ref);
-        });
-      }
-    }
-
+    setError(null);
     try {
+      const batch = writeBatch(db);
+
+      for (const list of lists) {
+        const isSelected = selectedLists.includes(list.id);
+        const symbolsCollection = collection(db, "watchlists", list.id, "symbols");
+        const symbolQuery = query(symbolsCollection, where("symbol", "==", ticker));
+        const symbolSnapshot = await getDocs(symbolQuery);
+        const exists = !symbolSnapshot.empty;
+
+        if (isSelected && !exists) {
+          const newSymbolRef = doc(symbolsCollection);
+          batch.set(newSymbolRef, { symbol: ticker, addedAt: Timestamp.now() });
+        } else if (!isSelected && exists) {
+          symbolSnapshot.forEach(docToDelete => {
+            batch.delete(docToDelete.ref);
+          });
+        }
+      }
+
       await batch.commit();
       toast({
         title: "Watchlists Updated",
@@ -130,10 +141,10 @@ export default function AddToWatchlistModal({
         variant: "success",
       });
       onSave();
-      onClose();
-    } catch (error) {
+      onClose(); // Close only on success
+    } catch (error: any) {
       console.error("Error updating watchlists:", error);
-      toast({ title: "Error", description: "Failed to save changes.", variant: "destructive" });
+      setError(error.message || "Failed to save changes.");
     }
   };
 
@@ -150,12 +161,17 @@ export default function AddToWatchlistModal({
           <DialogTitle className="font-semibold text-white/90 text-lg mb-4 text-left">Add {ticker} to Lists</DialogTitle>
         </DialogHeader>
         <div>
+          {error && (
+              <Alert variant="destructive" className="mb-4">
+                  <AlertDescription>{error}</AlertDescription>
+              </Alert>
+          )}
           {isCreating ? (
             <div className="flex items-center gap-2 mb-4">
               <Input 
                 placeholder="New list name..."
-                value={newList}
-                onChange={(e) => setNewList(e.target.value)}
+                value={newListName}
+                onChange={(e) => setNewListName(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleCreateNewList()}
                 className="h-10"
               />
@@ -191,7 +207,7 @@ export default function AddToWatchlistModal({
           
           <Button
             onClick={handleSaveChanges}
-            disabled={selectedLists.length === 0}
+            disabled={selectedLists.length === 0 && !newListName.trim()}
             className="mt-6 w-full py-3 h-12 bg-black border border-white text-white rounded-full font-semibold text-base
                        hover:bg-white/10
                        disabled:bg-neutral-800 disabled:text-neutral-500 disabled:cursor-not-allowed disabled:border-transparent"
