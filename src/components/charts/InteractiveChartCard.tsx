@@ -359,31 +359,6 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, className, v
                     )}
                 </div>
             )}
-             <div className="absolute top-4 right-4 z-10">
-                <Popover>
-                    <PopoverTrigger asChild>
-                        <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground/80 hover:text-foreground hover:bg-white/10">
-                            <Palette className="h-4 w-4" />
-                        </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-2" side="top" align="end">
-                        <div className="flex gap-2">
-                            {colorOptions.map(({ color, label }) => (
-                                <button
-                                    key={color}
-                                    aria-label={`Change chart color to ${label}`}
-                                    className={cn(
-                                        "w-6 h-6 rounded-full border-2 transition-all",
-                                        chartColor === color ? 'border-white shadow-md' : 'border-gray-600/50 hover:border-gray-400'
-                                    )}
-                                    style={{ backgroundColor: color }}
-                                    onClick={() => setChartColor(color)}
-                                />
-                            ))}
-                        </div>
-                    </PopoverContent>
-                </Popover>
-              </div>
           </div>
         </CardHeader>
         <CardContent className="flex-1 p-1 pr-2 min-h-[250px]">
@@ -432,6 +407,29 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, className, v
                 <Star size={16} fill={isWatched ? 'currentColor' : 'none'} />
             </Button>
           )}
+           <Popover>
+              <PopoverTrigger asChild>
+                  <Button variant="ghost" size="icon" className="p-1.5 rounded-full hover:bg-white/10 text-white">
+                      <Palette size={16} />
+                  </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-2" side="top" align="end">
+                  <div className="flex gap-2">
+                      {colorOptions.map(({ color, label }) => (
+                          <button
+                              key={color}
+                              aria-label={`Change chart color to ${label}`}
+                              className={cn(
+                                  "w-6 h-6 rounded-full border-2 transition-all",
+                                  chartColor === color ? 'border-white shadow-md' : 'border-gray-600/50 hover:border-gray-400'
+                              )}
+                              style={{ backgroundColor: color }}
+                              onClick={() => setChartColor(color)}
+                          />
+                      ))}
+                  </div>
+              </PopoverContent>
+          </Popover>
         </div>
         <ChartDatePickerModal 
           isOpen={isDatePickerOpen}
