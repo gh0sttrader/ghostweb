@@ -1,7 +1,8 @@
+
 "use client";
 
 import React, { useRef, useEffect } from "react";
-import { createChart, IChartApi } from "lightweight-charts";
+import { createChart, IChartApi, CandlestickSeries } from "lightweight-charts";
 
 const dummyData = [
   { time: '2024-07-29', open: 101, high: 107, low: 98, close: 105 },
