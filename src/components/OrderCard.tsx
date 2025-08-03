@@ -375,6 +375,20 @@ export const OrderCard: React.FC<OrderCardProps> = ({
                 >
                    {submitButtonText}
                 </Button>
+                <div className="w-full mt-3">
+                    <Select value={selectedAccountId} onValueChange={setSelectedAccountId}>
+                        <SelectTrigger className="w-full bg-transparent border-white/10 h-10">
+                            <SelectValue placeholder="Select Account" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {accounts.map(account => (
+                                <SelectItem key={account.id} value={account.id}>
+                                    {account.name}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                </div>
             </CardContent>
         </Card>
     );
