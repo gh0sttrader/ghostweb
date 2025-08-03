@@ -38,8 +38,8 @@ const dummyWatchlists: Record<string, Stock[]> = {
 
 const dummyScreeners: Record<string, Stock[]> = {
   "Top Gainers": [...initialMockStocks].sort((a, b) => b.changePercent - a.changePercent).slice(0, 7),
-  "Most Active": [...initialMockStocks].sort((a, b) => (b.volume || 0) - (a.volume || 0)).slice(0, 7),
-  "High Short Interest": [...initialMockStocks].sort((a, b) => (b.shortFloat || 0) - (a.shortFloat || 0)).slice(0, 7),
+  "Most Active": [...initialMockStocks].sort((a, b) => (b.volume || 0) - a.volume || 0).slice(0, 7),
+  "High Short Interest": [...initialMockStocks].sort((a, b) => (b.shortFloat || 0) - a.shortFloat || 0).slice(0, 7),
 };
 
 const PositionRow = ({ position, stock, onSelect, isSelected }: { position: any, stock: Stock | undefined, onSelect: (symbol: string) => void, isSelected: boolean }) => {
@@ -267,7 +267,7 @@ function TradingDashboardPageContent() {
                           timeframe={chartTimeframe}
                           onTimeframeChange={setChartTimeframe}
                           showAlertButton={true}
-                          showWatchlistButton={true}
+                          showWatchlistButton={false}
                       />
                   </div>
                   <div className="mt-12">
