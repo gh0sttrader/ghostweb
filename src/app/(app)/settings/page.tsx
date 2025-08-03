@@ -3,8 +3,11 @@
 
 import dynamic from 'next/dynamic';
 import React, { useState, useRef, useEffect, useCallback } from "react";
+import { ResizableBox } from "react-resizable";
+import 'react-resizable/css/styles.css';
 
 const TradingViewWidget = dynamic(() => import('@/components/TradingViewWidget'), { ssr: false });
+const TradingViewScreenerWidget = dynamic(() => import('@/components/TradingViewScreenerWidget'), { ssr: false });
 
 export default function SettingsPage() {
   const [size, setSize] = useState({ width: 900, height: 500 });
@@ -104,7 +107,17 @@ export default function SettingsPage() {
         <Handle dir="bottom-left" cursor="nesw-resize" />
         <Handle dir="bottom-right" cursor="nwse-resize" />
       </div>
-      {/* Add additional cards/components below here as needed */}
+      
+      <ResizableBox
+        width={1100}
+        height={550}
+        minConstraints={[400, 350]}
+        maxConstraints={[1600, 1000]}
+        resizeHandles={["s", "e", "se", "n", "w", "nw", "ne", "sw"]}
+        className="bg-black mt-10 mb-20 p-2 border border-neutral-800 rounded-xl"
+      >
+        <TradingViewScreenerWidget />
+      </ResizableBox>
     </div>
   );
 }
