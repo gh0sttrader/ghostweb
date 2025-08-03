@@ -40,8 +40,8 @@ export default function LandingPage() {
              <Image
                 src="https://firebasestorage.googleapis.com/v0/b/ghost-trading.firebasestorage.app/o/Ghost_Trading.png?alt=media&token=582fe62a-2491-4acb-9fa4-02744abf05d7"
                 alt="Ghost Trading Platform Preview"
-                layout="fill"
-                objectFit="cover"
+                fill
+                style={{ objectFit: 'cover' }}
                 className="rounded-xl"
                 data-ai-hint="platform dashboard"
                 priority
@@ -52,8 +52,8 @@ export default function LandingPage() {
             <Image
                 src="https://firebasestorage.googleapis.com/v0/b/ghost-trading.firebasestorage.app/o/News.png?alt=media&token=54be3d5e-b463-4bad-9cb5-c009d2c7283a"
                 alt="Ghost Trading Platform News Preview"
-                layout="fill"
-                objectFit="cover"
+                fill
+                style={{ objectFit: 'cover' }}
                 className="rounded-xl"
                 data-ai-hint="platform mobile"
                 priority
@@ -64,8 +64,8 @@ export default function LandingPage() {
             <Image
                 src="https://firebasestorage.googleapis.com/v0/b/ghost-trading.firebasestorage.app/o/screener.png?alt=media&token=01718b94-92fd-498f-b560-56e82994b1c8"
                 alt="Screener screenshot"
-                layout="fill"
-                objectFit="cover"
+                fill
+                style={{ objectFit: 'cover' }}
                 className="rounded-xl"
                 data-ai-hint="platform screener"
                 priority
