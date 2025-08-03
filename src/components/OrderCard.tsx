@@ -232,7 +232,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({
     return (
         <Card className={cn("h-full flex flex-col bg-black/50 border-white/10", className)}>
             <CardContent className="flex-1 flex flex-col p-3 space-y-3 overflow-y-auto">
-                <div className="text-lg font-semibold text-white pt-2 pb-1 px-1">
+                <div className="text-base font-medium text-white pt-2 pb-2 px-0">
                     {action} {selectedStock?.symbol}
                 </div>
                 <Separator className="bg-white/20" />
