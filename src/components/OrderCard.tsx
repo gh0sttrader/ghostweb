@@ -318,7 +318,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({
                         <Label className="text-sm font-medium text-muted-foreground">Trading Hours</Label>
                         <div className="w-32">
                             <Select value={allowExtendedHours ? 'extended' : 'regular'} onValueChange={(v) => setAllowExtendedHours(v === 'extended')}>
-                                <SelectTrigger className="bg-transparent border-white/10 h-9">
+                                <SelectTrigger className="bg-transparent border-white/10 h-9 px-2">
                                     <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
