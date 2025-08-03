@@ -32,7 +32,7 @@ function TradingViewWidget() {
           "symbol": "AMEX:SPY",
           "theme": "dark",
           "timezone": "America/Chicago",
-          "backgroundColor": "rgba(0, 0, 0, 1)",
+          "backgroundColor": "#000000",
           "gridColor": "rgba(15, 15, 15, 0.62)",
           "watchlist": [
             "AMEX:VOO",

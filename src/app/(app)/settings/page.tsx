@@ -80,7 +80,7 @@ export default function SettingsPage() {
     <div className="flex flex-col items-center w-full px-6 pt-8">
       <div
         ref={containerRef}
-        className="relative bg-transparent rounded-xl"
+        className="relative bg-black rounded-xl"
         style={{
           width: size.width,
           height: size.height,
