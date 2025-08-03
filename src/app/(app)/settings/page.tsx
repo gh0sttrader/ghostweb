@@ -88,10 +88,6 @@ export default function SettingsPage() {
           minHeight: 200,
           maxWidth: "98vw",
           maxHeight: "90vh",
-          transition: resizing.current.active ? "none" : "box-shadow 0.2s",
-          boxShadow: resizing.current.active
-            ? "0 0 0 2px #a78bfa"
-            : "0 2px 14px rgba(0,0,0,0.20)",
         }}
       >
         <div style={{ height: '100%', width: '100%' }}>
