@@ -327,7 +327,7 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, className, v
       <Card className={cn("shadow-none flex flex-col border-none bg-transparent relative", className)}>
         {showAdvancedButton && (
             <Button
-                className="absolute top-4 right-4 px-4 py-1.5 h-auto rounded-full border border-white/20 text-white font-medium hover:bg-white/10 transition z-20 text-xs"
+                className="absolute top-4 right-4 px-4 py-1.5 h-auto rounded-full bg-[#19191c] text-white font-medium hover:bg-[#23232b] transition z-20 text-xs"
                 onClick={() => router.push('/ghosttrading')}
             >
                 Advanced
