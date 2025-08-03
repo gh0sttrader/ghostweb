@@ -328,7 +328,7 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, className, v
         {showAdvancedButton && (
             <Button
                 className="absolute top-4 right-4 px-4 py-1.5 h-auto rounded-full bg-[#19191c] text-white font-medium hover:bg-[#23232b] transition z-20 text-xs"
-                onClick={() => router.push('/ghosttrading')}
+                onClick={() => router.push('/trading-v2/dashboard')}
             >
                 Advanced
             </Button>
