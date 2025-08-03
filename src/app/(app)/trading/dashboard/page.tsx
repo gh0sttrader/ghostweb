@@ -395,6 +395,12 @@ function TradingDashboardPageContent() {
                                   </div>
                               </AccordionContent>
                           </AccordionItem>
+                          <AccordionItem value="item-4" className="border-b-0">
+                              <AccordionTrigger className="px-4 py-3 text-white/80 hover:bg-white/5 font-semibold">Alerts</AccordionTrigger>
+                              <AccordionContent className="px-4 py-2 text-white/60">
+                                  {/* Content for alerts goes here (leave blank for now) */}
+                              </AccordionContent>
+                          </AccordionItem>
                       </Accordion>
                   </Card>
               </div>
