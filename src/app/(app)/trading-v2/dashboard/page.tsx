@@ -363,8 +363,8 @@ function TradingDashboardPageContentV2() {
                     cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
                     rowHeight={32}
                     onLayoutChange={handleLayoutChange}
-                    isDraggable={true}
-                    isResizable
+                    isDraggable={false}
+                    isResizable={false}
                     draggableHandle=".drag-handle"
                     resizeHandles={['se', 'sw', 'ne', 'nw', 's', 'w', 'e', 'n']}
                     margin={[16, 16]}
