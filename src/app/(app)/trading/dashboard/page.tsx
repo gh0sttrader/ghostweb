@@ -27,6 +27,7 @@ import { AddToListModal } from '@/components/AddToListModal';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { cn } from '@/lib/utils';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useRouter } from 'next/navigation';
 
 type Timeframe = '1D' | '5D' | '1M' | '3M' | '6M' | 'YTD' | '1Y' | '5Y' | 'Max' | 'All';
 
@@ -79,6 +80,7 @@ const PositionRow = ({ position, stock, onSelect, isSelected }: { position: any,
 function TradingDashboardPageContent() {
   const { toast } = useToast();
   const searchParams = useSearchParams();
+  const router = useRouter();
   const { addTradeToHistory } = useTradeHistoryContext();
   const { openPositions, addOpenPosition, selectedAccountId } = useOpenPositionsContext();
   const { alerts, addAlert, removeAlert } = useAlertsContext();
@@ -368,7 +370,7 @@ function TradingDashboardPageContent() {
                                   </div>
                               </AccordionContent>
                           </AccordionItem>
-                          <AccordionItem value="item-3" className="border-b-0">
+                          <AccordionItem value="item-3" className="border-b border-white/10">
                               <AccordionTrigger className="px-4 py-3 text-white/80 hover:bg-white/5 font-semibold">Screener</AccordionTrigger>
                               <AccordionContent className="px-4 py-2 text-white/60">
                                  <div className="mb-3 px-2">
