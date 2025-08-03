@@ -35,7 +35,7 @@ const getFirstDayOfMonth = (year: number, month: number) => {
     return new Date(year, month, 1).getDay();
 };
 
-const TradeHistoryCalendar = () => {
+const PerformanceCalendar = () => {
     const [currentDate, setCurrentDate] = useState(new Date(2025, 4, 1)); // May 2025
 
     const year = currentDate.getFullYear();
@@ -129,10 +129,10 @@ const TradeHistoryCalendar = () => {
 };
 
 
-export default function HistoryPage() {
+export default function PerformancePage() {
   return (
     <main className="w-full max-w-6xl mx-auto px-8 py-4 md:py-6 lg:py-8 2xl:max-w-7xl 2xl:px-16">
-       <TradeHistoryCalendar />
+       <PerformanceCalendar />
     </main>
   );
 }
