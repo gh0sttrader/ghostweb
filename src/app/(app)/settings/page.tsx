@@ -1,6 +1,13 @@
 "use client";
 
-import TradingViewLightweightChart from "@/components/TradingViewLightweightChart";
+import dynamic from 'next/dynamic';
+import React from 'react';
+
+// Dynamically import the chart component with SSR turned off
+const TradingViewLightweightChart = dynamic(
+  () => import('@/components/TradingViewLightweightChart'),
+  { ssr: false }
+);
 
 export default function SettingsPage() {
   return (
