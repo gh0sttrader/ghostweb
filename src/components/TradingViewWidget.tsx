@@ -9,40 +9,40 @@ function TradingViewWidget() {
   useEffect(
     () => {
       if (container.current) {
-        // Clear the container before appending the new script
+        // Clear the container before appending the new script to prevent duplicates on re-render
         container.current.innerHTML = "";
         const script = document.createElement("script");
         script.src = "https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js";
         script.type = "text/javascript";
         script.async = true;
         script.innerHTML = `
-          {
-            "allow_symbol_change": true,
-            "calendar": false,
-            "details": false,
-            "hide_side_toolbar": true,
-            "hide_top_toolbar": false,
-            "hide_legend": false,
-            "hide_volume": false,
-            "hotlist": false,
-            "interval": "D",
-            "locale": "en",
-            "save_image": true,
-            "style": "2",
-            "symbol": "AMEX:SPY",
-            "theme": "dark",
-            "timezone": "Etc/UTC",
-            "backgroundColor": "rgba(0, 0, 0, 1)",
-            "gridColor": "rgba(15, 15, 15, 0.62)",
-            "watchlist": [
-              "AMEX:VOO",
-              "NASDAQ:SOXX"
-            ],
-            "withdateranges": true,
-            "compareSymbols": [],
-            "studies": [],
-            "autosize": true
-          }`;
+        {
+          "allow_symbol_change": true,
+          "calendar": false,
+          "details": true,
+          "hide_side_toolbar": true,
+          "hide_top_toolbar": false,
+          "hide_legend": false,
+          "hide_volume": false,
+          "hotlist": false,
+          "interval": "D",
+          "locale": "en",
+          "save_image": true,
+          "style": "2",
+          "symbol": "AMEX:SPY",
+          "theme": "dark",
+          "timezone": "Etc/UTC",
+          "backgroundColor": "rgba(0, 0, 0, 1)",
+          "gridColor": "rgba(15, 15, 15, 0.62)",
+          "watchlist": [
+            "AMEX:VOO",
+            "NASDAQ:SOXX"
+          ],
+          "withdateranges": true,
+          "compareSymbols": [],
+          "studies": [],
+          "autosize": true
+        }`;
         container.current.appendChild(script);
       }
     },
