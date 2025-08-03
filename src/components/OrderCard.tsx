@@ -246,22 +246,24 @@ export const OrderCard: React.FC<OrderCardProps> = ({
                         <Label className="text-sm font-medium text-muted-foreground">Side</Label>
                         {selectedStock?.tradingFeatures && <TradingFeaturesBadges features={selectedStock.tradingFeatures} />}
                     </div>
-                    <Select value={action || ''} onValueChange={(v) => setAction(v as OrderActionType)}>
-                        <SelectTrigger className="bg-transparent border-white/10 h-9 w-32">
-                            <SelectValue placeholder="Select Side" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="Buy">Buy</SelectItem>
-                            <SelectItem value="Sell">Sell</SelectItem>
-                            <SelectItem value="Short">Short</SelectItem>
-                        </SelectContent>
-                    </Select>
+                    <div className="w-32">
+                        <Select value={action || ''} onValueChange={(v) => setAction(v as OrderActionType)}>
+                            <SelectTrigger className="bg-transparent border-white/10 h-9">
+                                <SelectValue placeholder="Select Side" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="Buy">Buy</SelectItem>
+                                <SelectItem value="Sell">Sell</SelectItem>
+                                <SelectItem value="Short">Short</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
                 </div>
 
                 <div className="space-y-3">
-                    <div className="grid grid-cols-2 gap-2">
-                        <div>
-                            <Label className="text-xs text-muted-foreground">Order Type</Label>
+                    <div className="flex items-center justify-between">
+                        <Label className="text-sm font-medium text-muted-foreground">Order Type</Label>
+                        <div className="w-32">
                             <Select value={orderType} onValueChange={(v) => setOrderType(v as OrderSystemType)}>
                                 <SelectTrigger className="bg-transparent border-white/10 h-9">
                                     <SelectValue />
@@ -273,8 +275,10 @@ export const OrderCard: React.FC<OrderCardProps> = ({
                                 </SelectContent>
                             </Select>
                         </div>
-                        <div>
-                            <Label className="text-xs text-muted-foreground">Time in Force</Label>
+                    </div>
+                    <div className="flex items-center justify-between">
+                        <Label className="text-sm font-medium text-muted-foreground">Time in Force</Label>
+                        <div className="w-32">
                              <Select value={timeInForce} onValueChange={(v) => setTimeInForce(v as TimeInForce)}>
                                 <SelectTrigger className="bg-transparent border-white/10 h-9">
                                     <SelectValue />
@@ -286,40 +290,40 @@ export const OrderCard: React.FC<OrderCardProps> = ({
                             </Select>
                         </div>
                     </div>
-                     <div className="grid grid-cols-2 gap-2">
-                         <div>
-                             <Label className="text-xs text-muted-foreground">Quantity</Label>
-                             <div className="relative">
-                                <Input
-                                    type="number"
-                                    placeholder="0"
-                                    value={quantity}
-                                    onChange={(e) => setQuantity(e.target.value)}
-                                    className="bg-transparent border-white/10 h-9 pr-10"
-                                />
-                                <div className="absolute right-1.5 top-1/2 -translate-y-1/2 flex items-center gap-1">
-                                    <TooltipProvider>
-                                        <Tooltip>
-                                            <TooltipTrigger asChild>
-                                                <Button
-                                                    variant="ghost"
-                                                    size="icon"
-                                                    onClick={handleCycleQuantityMode}
-                                                    className="h-7 w-7 text-white bg-black border border-transparent hover:border-white/20"
-                                                >
-                                                    <QuantityIcon className="h-4 w-4" />
-                                                </Button>
-                                            </TooltipTrigger>
-                                            <TooltipContent>
-                                                <p>Cycle quantity input mode (Shares, $, %)</p>
-                                            </TooltipContent>
-                                        </Tooltip>
-                                    </TooltipProvider>
-                                </div>
-                             </div>
-                        </div>
-                        <div>
-                            <Label className="text-xs text-muted-foreground">Trading Hours</Label>
+                     <div className="flex items-center justify-between">
+                         <Label className="text-sm font-medium text-muted-foreground">Quantity</Label>
+                         <div className="relative w-32">
+                            <Input
+                                type="number"
+                                placeholder="0"
+                                value={quantity}
+                                onChange={(e) => setQuantity(e.target.value)}
+                                className="bg-transparent border-white/10 h-9 pr-10"
+                            />
+                            <div className="absolute right-1.5 top-1/2 -translate-y-1/2 flex items-center gap-1">
+                                <TooltipProvider>
+                                    <Tooltip>
+                                        <TooltipTrigger asChild>
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                onClick={handleCycleQuantityMode}
+                                                className="h-7 w-7 text-white bg-black border border-transparent hover:border-white/20"
+                                            >
+                                                <QuantityIcon className="h-4 w-4" />
+                                            </Button>
+                                        </TooltipTrigger>
+                                        <TooltipContent>
+                                            <p>Cycle quantity input mode (Shares, $, %)</p>
+                                        </TooltipContent>
+                                    </Tooltip>
+                                </TooltipProvider>
+                            </div>
+                         </div>
+                    </div>
+                    <div className="flex items-center justify-between">
+                        <Label className="text-sm font-medium text-muted-foreground">Trading Hours</Label>
+                        <div className="w-32">
                             <Select value={allowExtendedHours ? 'extended' : 'regular'} onValueChange={(v) => setAllowExtendedHours(v === 'extended')}>
                                 <SelectTrigger className="bg-transparent border-white/10 h-9">
                                     <SelectValue />
