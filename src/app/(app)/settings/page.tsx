@@ -7,31 +7,45 @@ import React, { useState, useRef, useEffect, useCallback } from "react";
 const TradingViewWidget = dynamic(() => import('@/components/TradingViewWidget'), { ssr: false });
 
 export default function SettingsPage() {
-  const [height, setHeight] = useState(500); // Default 500px
-  const dragging = useRef(false);
+  const [size, setSize] = useState({ width: 900, height: 500 });
+  const resizing = useRef({ active: false, dir: null as string | null, startX: 0, startY: 0, startW: 0, startH: 0 });
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const onMouseDown = useCallback((e: React.MouseEvent) => {
+  const onResizeStart = useCallback((dir: string, e: React.MouseEvent) => {
     e.preventDefault();
-    dragging.current = true;
-  }, []);
+    resizing.current = {
+      active: true,
+      dir,
+      startX: e.clientX,
+      startY: e.clientY,
+      startW: size.width,
+      startH: size.height,
+    };
+    document.body.style.userSelect = "none";
+  }, [size.width, size.height]);
 
   const onMouseMove = useCallback((e: MouseEvent) => {
-    if (dragging.current && containerRef.current) {
-      const minHeight = 280;
-      const maxHeight = window.innerHeight * 0.9;
-      
-      // Adjust clientY by the top offset of the container to get relative position
-      const containerTop = containerRef.current.getBoundingClientRect().top;
-      let newHeight = e.clientY - containerTop;
-      
-      newHeight = Math.max(minHeight, Math.min(maxHeight, newHeight));
-      setHeight(newHeight);
-    }
+    if (!resizing.current.active) return;
+    let { dir, startX, startY, startW, startH } = resizing.current;
+    let deltaX = e.clientX - startX;
+    let deltaY = e.clientY - startY;
+    let newWidth = startW;
+    let newHeight = startH;
+
+    if (dir?.includes("right")) newWidth = startW + deltaX;
+    if (dir?.includes("left")) newWidth = startW - deltaX;
+    if (dir?.includes("bottom")) newHeight = startH + deltaY;
+    if (dir?.includes("top")) newHeight = startH - deltaY;
+
+    newWidth = Math.max(300, Math.min(newWidth, window.innerWidth * 0.98));
+    newHeight = Math.max(200, Math.min(newHeight, window.innerHeight * 0.9));
+
+    setSize({ width: newWidth, height: newHeight });
   }, []);
 
   const onMouseUp = useCallback(() => {
-    dragging.current = false;
+    resizing.current.active = false;
+    document.body.style.userSelect = "";
   }, []);
 
   useEffect(() => {
@@ -43,45 +57,56 @@ export default function SettingsPage() {
     };
   }, [onMouseMove, onMouseUp]);
 
+  const Handle = ({ dir, cursor }: { dir: string, cursor: string }) => (
+    <div
+      onMouseDown={(e) => onResizeStart(dir, e)}
+      style={{
+        cursor,
+        zIndex: 20,
+        position: "absolute",
+        ...(dir === "right" && { top: 0, right: 0, width: 10, height: "100%" }),
+        ...(dir === "left" && { top: 0, left: 0, width: 10, height: "100%" }),
+        ...(dir === "top" && { top: 0, left: 0, width: "100%", height: 10 }),
+        ...(dir === "bottom" && { bottom: 0, left: 0, width: "100%", height: 10 }),
+        ...(dir === "top-left" && { top: 0, left: 0, width: 16, height: 16 }),
+        ...(dir === "top-right" && { top: 0, right: 0, width: 16, height: 16 }),
+        ...(dir === "bottom-left" && { bottom: 0, left: 0, width: 16, height: 16 }),
+        ...(dir === "bottom-right" && { bottom: 0, right: 0, width: 16, height: 16 }),
+      }}
+    />
+  );
+
   return (
     <div className="flex flex-col items-center w-full px-6 pt-8">
       <div
         ref={containerRef}
-        className="w-full max-w-6xl relative"
+        className="relative bg-transparent rounded-xl"
         style={{
-          minHeight: "280px",
+          width: size.width,
+          height: size.height,
+          minWidth: 300,
+          minHeight: 200,
+          maxWidth: "98vw",
           maxHeight: "90vh",
-          height: `${height}px`,
-          transition: dragging.current ? "none" : "height 0.2s",
+          transition: resizing.current.active ? "none" : "box-shadow 0.2s",
+          boxShadow: resizing.current.active
+            ? "0 0 0 2px #a78bfa"
+            : "0 2px 14px rgba(0,0,0,0.20)",
         }}
       >
         <div style={{ height: '100%', width: '100%' }}>
             <TradingViewWidget />
         </div>
-        <div
-          onMouseDown={onMouseDown}
-          style={{
-            position: "absolute",
-            bottom: 0,
-            left: 0,
-            width: "100%",
-            height: "12px",
-            cursor: "ns-resize",
-            zIndex: 10,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <div
-            style={{
-              width: "40px",
-              height: "4px",
-              borderRadius: "2px",
-              backgroundColor: "#444"
-            }}
-          />
-        </div>
+        {/* Sides */}
+        <Handle dir="right" cursor="ew-resize" />
+        <Handle dir="left" cursor="ew-resize" />
+        <Handle dir="top" cursor="ns-resize" />
+        <Handle dir="bottom" cursor="ns-resize" />
+        {/* Corners */}
+        <Handle dir="top-left" cursor="nwse-resize" />
+        <Handle dir="top-right" cursor="nesw-resize" />
+        <Handle dir="bottom-left" cursor="nesw-resize" />
+        <Handle dir="bottom-right" cursor="nwse-resize" />
       </div>
       {/* Add additional cards/components below here as needed */}
     </div>
