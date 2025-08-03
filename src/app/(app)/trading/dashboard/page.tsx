@@ -53,7 +53,7 @@ const PositionRow = ({ position, stock, onSelect, isSelected }: { position: any,
         );
     }
     const isUp = stock.changePercent >= 0;
-    const changeColor = isUp ? 'text-green-400' : 'text-red-400';
+    const changeColor = isUp ? 'text-[hsl(var(--confirm-green))]' : 'text-destructive';
 
     return (
         <div 

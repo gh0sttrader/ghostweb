@@ -39,6 +39,8 @@ const AppNavLinks = () => {
     { href: "/settings", label: "Settings" },
   ];
 
+  const visibleLinks = links.filter(link => link.label !== 'Ghost Trading');
+
   const isActive = (href: string) => {
     if (href === "/trading/dashboard") {
       // Special check for the main portal button to also be active for dashboard
@@ -51,7 +53,7 @@ const AppNavLinks = () => {
 
   return (
     <nav className="flex items-center space-x-4 lg:space-x-6 text-sm font-medium">
-      {links.map((link) => {
+      {visibleLinks.map((link) => {
           if (link.label === 'Ghost Trading') {
               return (
                   <Link
