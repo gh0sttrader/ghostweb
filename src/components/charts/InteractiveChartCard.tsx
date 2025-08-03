@@ -2,6 +2,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -31,6 +32,7 @@ interface InteractiveChartCardProps {
   onTimeframeChange: (timeframe: Timeframe) => void;
   showWatchlistButton?: boolean;
   showAlertButton?: boolean;
+  showAdvancedButton?: boolean;
 }
 
 const CustomTooltip = ({ active, payload, label, timeframe }: TooltipProps<number, string> & { timeframe: Timeframe }) => {
@@ -95,8 +97,9 @@ const getTimeframeParams = (timeframe: Timeframe) => {
 };
 
 
-export function InteractiveChartCard({ stock, onManualTickerSubmit, className, variant = 'trading', onAlertClick, isAlertActive, timeframe, onTimeframeChange, showWatchlistButton = true, showAlertButton = true }: InteractiveChartCardProps) {
+export function InteractiveChartCard({ stock, onManualTickerSubmit, className, variant = 'trading', onAlertClick, isAlertActive, timeframe, onTimeframeChange, showWatchlistButton = true, showAlertButton = true, showAdvancedButton = false }: InteractiveChartCardProps) {
   const { toast } = useToast();
+  const router = useRouter();
   const [chartType, setChartType] = useState<'line' | 'area' | 'candle'>(variant === 'account' ? 'line' : 'area');
   const [manualTickerInput, setManualTickerInput] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
@@ -322,6 +325,14 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, className, v
   return (
     <>
       <Card className={cn("shadow-none flex flex-col border-none bg-transparent relative", className)}>
+        {showAdvancedButton && (
+            <Button
+                className="absolute top-4 right-4 px-4 py-1.5 h-auto rounded-full border border-white/20 text-white font-medium hover:bg-white/10 transition z-20 text-xs"
+                onClick={() => router.push('/ghosttrading')}
+            >
+                Advanced
+            </Button>
+        )}
         <CardHeader className="pb-2 pt-3 px-3">
           <div className="flex flex-col sm:flex-row justify-between items-start gap-2">
             {variant === 'trading' && stock && stock.price > 0 ? (
@@ -395,17 +406,6 @@ export function InteractiveChartCard({ stock, onManualTickerSubmit, className, v
               >
                   <Bell size={16} fill={isAlertActive ? 'currentColor' : 'none'} />
               </Button>
-          )}
-          {showWatchlistButton && (
-            <Button
-                onClick={() => setIsWatchlistModalOpen(true)}
-                variant="ghost"
-                size="icon"
-                className={cn("p-1.5 rounded-full hover:bg-white/10 transition", isWatched ? 'text-yellow-500' : 'text-white')}
-                aria-label="Add to Watchlist"
-            >
-                <Star size={16} fill={isWatched ? 'currentColor' : 'none'} />
-            </Button>
           )}
            <Popover>
               <PopoverTrigger asChild>

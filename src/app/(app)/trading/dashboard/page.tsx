@@ -268,6 +268,7 @@ function TradingDashboardPageContent() {
                           onTimeframeChange={setChartTimeframe}
                           showAlertButton={true}
                           showWatchlistButton={false}
+                          showAdvancedButton={true}
                       />
                   </div>
                   <div className="mt-12">
