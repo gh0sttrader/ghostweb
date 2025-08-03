@@ -242,10 +242,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({
                 </Select>
                 
                 <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                        <Label className="text-sm font-medium text-muted-foreground">Side</Label>
-                        {selectedStock?.tradingFeatures && <TradingFeaturesBadges features={selectedStock.tradingFeatures} />}
-                    </div>
+                    <Label className="text-sm font-medium text-muted-foreground">Side</Label>
                     <div className="w-32">
                         <Select value={action || ''} onValueChange={(v) => setAction(v as OrderActionType)}>
                             <SelectTrigger className="bg-transparent border-white/10 h-9">
@@ -353,6 +350,12 @@ export const OrderCard: React.FC<OrderCardProps> = ({
 
                 <div className="flex-1"></div>
 
+                {selectedStock?.tradingFeatures && (
+                    <div className="flex items-center justify-center my-2">
+                        <TradingFeaturesBadges features={selectedStock.tradingFeatures} />
+                    </div>
+                )}
+                
                 <div className="space-y-0 p-3 mt-auto rounded-lg bg-black/40 border border-white/10">
                      <DetailItem
                         label="Est. Total"
