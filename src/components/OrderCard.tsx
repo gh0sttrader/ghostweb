@@ -232,15 +232,11 @@ export const OrderCard: React.FC<OrderCardProps> = ({
     return (
         <Card className={cn("h-full flex flex-col bg-black/50 border-white/10", className)}>
             <CardContent className="flex-1 flex flex-col p-3 space-y-3 overflow-y-auto">
-                <Select onValueChange={setSelectedAccountId} defaultValue={selectedAccountId}>
-                    <SelectTrigger className="bg-transparent border-white/10 h-9">
-                        <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                        {accounts.map(acc => <SelectItem key={acc.id} value={acc.id}>{acc.name} (${acc.balance.toLocaleString()})</SelectItem>)}
-                    </SelectContent>
-                </Select>
-                
+                <Separator className="bg-white/20" />
+                <div className="text-lg font-semibold text-white pt-2 pb-1 px-1">
+                    {action} {selectedStock?.symbol}
+                </div>
+
                 <div className="flex items-center justify-between">
                     <Label className="text-sm font-medium text-muted-foreground">Side</Label>
                     <div className="w-32">
