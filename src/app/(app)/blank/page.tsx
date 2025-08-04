@@ -61,8 +61,8 @@ export default function BlankPage() {
       <div className="flex-1">
         {/* The rest of the page is blank */}
       </div>
-      <div className="sticky top-0 h-screen flex-shrink-0 w-[380px] p-4">
-          <div className="h-full">
+      <div className="sticky top-0 h-screen flex-shrink-0 w-[380px] overflow-hidden">
+          <div className="absolute inset-0 p-4">
             <OrderCard
                 selectedStock={selectedStock}
                 onSubmit={handleTradeSubmit}
