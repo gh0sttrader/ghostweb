@@ -58,7 +58,7 @@ export default function BlankPage() {
   }, []);
 
   return (
-    <main className="flex w-full h-full overflow-hidden">
+    <main className="flex w-full h-screen overflow-hidden">
       <div className="flex-1 h-full">
         <TradingViewWidget />
       </div>
