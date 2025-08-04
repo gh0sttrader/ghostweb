@@ -80,8 +80,8 @@ export default function SettingsPage() {
                     </Card>
                 </div>
             </div>
-            <div className="fixed top-0 right-0 h-full w-[380px] p-4 hidden lg:block">
-                 <div className="sticky top-0 h-full">
+            <div className="fixed top-20 right-8 w-[380px] hidden lg:block">
+                 <div className="h-[640px]">
                      <OrderCard
                         selectedStock={selectedStock}
                         initialActionType={orderCardActionType}
