@@ -30,9 +30,8 @@ const AppNavLinks = () => {
   const pathname = usePathname();
 
   const links = [
-    { href: "/trading-v2/dashboard", label: "Ghost Trading" },
-    { href: "/trading/dashboard", label: "Trade" },
     { href: "/accounts", label: "Dashboard" },
+    { href: "/trading/dashboard", label: "Trade" },
     { href: "/news", label: "News" },
     { href: "/screener", label: "Screener" },
     { href: "/performance", label: "Performance" },
