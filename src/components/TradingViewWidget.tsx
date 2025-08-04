@@ -8,9 +8,7 @@ function TradingViewWidget() {
 
   useEffect(
     () => {
-      if (container.current) {
-        // Clear the container before appending the new script to prevent duplicates on re-render
-        container.current.innerHTML = "";
+      if (container.current && container.current.children.length === 0) {
         const script = document.createElement("script");
         script.src = "https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js";
         script.type = "text/javascript";
@@ -19,7 +17,7 @@ function TradingViewWidget() {
         {
           "allow_symbol_change": true,
           "calendar": false,
-          "details": true,
+          "details": false,
           "hide_side_toolbar": true,
           "hide_top_toolbar": false,
           "hide_legend": false,
@@ -29,25 +27,12 @@ function TradingViewWidget() {
           "locale": "en",
           "save_image": true,
           "style": "2",
-          "symbol": "AMEX:SPY",
+          "symbol": "AMEX:IYW",
           "theme": "dark",
           "timezone": "America/Chicago",
-          "backgroundColor": "#000000",
-          "gridColor": "rgba(15, 15, 15, 0.62)",
-          "watchlist": [
-            "AMEX:VOO",
-            "NASDAQ:SOXX",
-            "AMEX:IYW",
-            "NASDAQ:IBIT",
-            "AMEX:BITQ",
-            "CBOE:PAVE",
-            "NASDAQ:GRID",
-            "NASDAQ:QTUM",
-            "NASDAQ:SMH",
-            "AMEX:XAR",
-            "NASDAQ:CIBR",
-            "AMEX:URA"
-          ],
+          "backgroundColor": "rgba(0, 0, 0, 1)",
+          "gridColor": "rgba(15, 15, 15, 0.45)",
+          "watchlist": [],
           "withdateranges": true,
           "compareSymbols": [],
           "studies": [],
@@ -62,7 +47,11 @@ function TradingViewWidget() {
   return (
     <div className="tradingview-widget-container" ref={container} style={{ height: "100%", width: "100%" }}>
       <div className="tradingview-widget-container__widget" style={{ height: "calc(100% - 32px)", width: "100%" }}></div>
-      <div className="tradingview-widget-copyright"><a href="https://www.tradingview.com/symbols/AMEX-SPY/?exchange=AMEX" rel="noopener nofollow" target="_blank"><span className="blue-text">SPY chart by TradingView</span></a></div>
+      <div className="tradingview-widget-copyright">
+        <a href="https://www.tradingview.com/symbols/AMEX-IYW/?exchange=AMEX" rel="noopener nofollow" target="_blank">
+          <span className="blue-text">IYW chart by TradingView</span>
+        </a>
+      </div>
     </div>
   );
 }

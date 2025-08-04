@@ -8,6 +8,7 @@ import { useTradeHistoryContext } from '@/contexts/TradeHistoryContext';
 import { useOpenPositionsContext } from '@/contexts/OpenPositionsContext';
 import { OrderCard } from '@/components/OrderCard';
 import { initialMockStocks } from '@/app/(app)/trading/dashboard/mock-data';
+import TradingViewWidget from '@/components/TradingViewWidget';
 
 export default function BlankPage() {
   const { toast } = useToast();
@@ -57,11 +58,11 @@ export default function BlankPage() {
   }, []);
 
   return (
-    <main className="flex w-full h-full">
-      <div className="flex-1">
-        {/* The rest of the page is blank */}
+    <main className="flex w-full h-full overflow-hidden">
+      <div className="flex-1 h-full">
+        <TradingViewWidget />
       </div>
-      <div className="sticky top-0 flex-shrink-0 w-[380px] h-full overflow-hidden">
+      <div className="flex-shrink-0 w-[380px] h-full overflow-hidden border-l border-white/10">
         <div className="h-full p-4">
           <OrderCard
               selectedStock={selectedStock}
