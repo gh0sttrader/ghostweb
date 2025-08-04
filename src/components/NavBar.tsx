@@ -35,6 +35,7 @@ const AppNavLinks = () => {
     { href: "/news", label: "News" },
     { href: "/screener", label: "Screener" },
     { href: "/performance", label: "Performance" },
+    { href: "/blank", label: "Blank" },
   ];
 
   const visibleLinks = links.filter(link => link.label !== 'Ghost Trading');
