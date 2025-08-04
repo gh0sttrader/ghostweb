@@ -1,8 +1,8 @@
 
 "use client";
 
-import React, { useState, useMemo, useCallback } from 'react';
-import type { Stock, TradeRequest, OrderActionType, TradeMode, OrderSystemType } from "@/types";
+import React, { useState, useCallback } from 'react';
+import type { Stock, TradeRequest } from "@/types";
 import { useToast } from "@/hooks/use-toast";
 import { useTradeHistoryContext } from '@/contexts/TradeHistoryContext';
 import { useOpenPositionsContext } from '@/contexts/OpenPositionsContext';
@@ -61,15 +61,15 @@ export default function BlankPage() {
       <div className="flex-1">
         {/* The rest of the page is blank */}
       </div>
-      <div className="sticky top-0 h-screen flex-shrink-0 w-[380px] overflow-hidden">
-          <div className="absolute inset-0 p-4">
-            <OrderCard
-                selectedStock={selectedStock}
-                onSubmit={handleTradeSubmit}
-                onClear={handleClearOrderCard}
-                className="h-full"
-            />
-          </div>
+      <div className="sticky top-0 flex-shrink-0 w-[380px] h-full overflow-hidden">
+        <div className="h-full p-4">
+          <OrderCard
+              selectedStock={selectedStock}
+              onSubmit={handleTradeSubmit}
+              onClear={handleClearOrderCard}
+              className="h-full"
+          />
+        </div>
       </div>
     </main>
   );
