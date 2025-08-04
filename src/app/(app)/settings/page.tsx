@@ -1,7 +1,7 @@
 
 "use client";
 
-import React, 'react';
+import React from 'react';
 import type { Stock, TradeRequest, OrderActionType, TradeMode, OrderSystemType } from "@/types";
 import { useToast } from "@/hooks/use-toast";
 import { useTradeHistoryContext } from '@/contexts/TradeHistoryContext';
