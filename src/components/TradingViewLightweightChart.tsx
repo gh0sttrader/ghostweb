@@ -2,7 +2,7 @@
 "use client";
 
 import React, { useRef, useEffect } from "react";
-import { createChart, type IChartApi, type CandlestickSeries, type LineSeries, type ISeriesApi } from "lightweight-charts";
+import { createChart } from "lightweight-charts";
 
 export default function TradingViewLightweightChart() {
   const chartContainerRef = useRef<HTMLDivElement>(null);
