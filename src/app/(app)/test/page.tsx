@@ -1,20 +1,18 @@
+"use client";
+
+import TradingViewWidget from '@/components/TradingViewWidget';
 
 export default function TestPage() {
   return (
     <div style={{
       display: 'flex',
-      flexDirection: 'column',
       alignItems: 'center',
-      justifyContent: 'flex-start',
-      height: '100vh',
-      paddingTop: '64px',
+      justifyContent: 'center',
+      height: '100%',
+      width: '100%',
+      paddingTop: '2rem',
     }}>
-      <h1 style={{
-        color: 'white',
-        fontSize: '2rem',
-        fontWeight: 700,
-        letterSpacing: '0.03em',
-      }}>Test</h1>
+      <TradingViewWidget />
     </div>
   );
 }
