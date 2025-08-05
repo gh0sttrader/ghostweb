@@ -1,7 +1,7 @@
 
 "use client";
 
-import TradingViewWidget from '@/components/TradingViewWidget';
+import TradingViewLightweightChart from '@/components/TradingViewLightweightChart';
 
 export default function TestPage() {
   return (
@@ -14,7 +14,7 @@ export default function TestPage() {
       padding: '2rem',
     }}>
       <div style={{ width: '980px', height: '610px' }}>
-        <TradingViewWidget />
+        <TradingViewLightweightChart />
       </div>
     </div>
   );

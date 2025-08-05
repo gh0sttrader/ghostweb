@@ -2,42 +2,47 @@
 "use client";
 
 import React, { useRef, useEffect } from "react";
-import { createChart, IChartApi, CandlestickSeries } from "lightweight-charts";
-
-const dummyData = [
-  { time: '2024-07-29', open: 101, high: 107, low: 98, close: 105 },
-  { time: '2024-07-30', open: 105, high: 112, low: 104, close: 110 },
-  { time: '2024-07-31', open: 110, high: 114, low: 109, close: 112 },
-  { time: '2024-08-01', open: 112, high: 113, low: 108, close: 109 },
-  { time: '2024-08-02', open: 109, high: 111, low: 106, close: 107 },
-];
+import { createChart, IChartApi, CandlestickSeries, LineSeries, ISeriesApi } from "lightweight-charts";
 
 export default function TradingViewLightweightChart() {
-  const chartContainer = useRef<HTMLDivElement>(null);
+  const chartContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!chartContainer.current) return;
+    if (!chartContainerRef.current) return;
 
-    const chart = createChart(chartContainer.current, {
-      width: chartContainer.current.clientWidth,
-      height: 400,
+    const chart = createChart(chartContainerRef.current, {
+      width: chartContainerRef.current.clientWidth,
+      height: chartContainerRef.current.clientHeight,
       layout: {
-        background: { color: "#000" },
-        textColor: "#fff",
+        background: { type: 'solid', color: '#000' },
+        textColor: '#e0e0e0',
       },
       grid: {
-        vertLines: { color: "#222" },
-        horzLines: { color: "#222" },
+        vertLines: { color: '#222' },
+        horzLines: { color: '#222' },
+      },
+      crosshair: { mode: 0 },
+      timeScale: {
+        borderColor: '#444',
+      },
+      rightPriceScale: {
+        borderColor: '#444',
       },
     });
 
-    const candlestickSeries = chart.addCandlestickSeries();
-    candlestickSeries.setData(dummyData);
+    const lineSeries = chart.addLineSeries({ color: '#66ffcc' });
+    lineSeries.setData([
+      { time: '2024-08-01', value: 100 },
+      { time: '2024-08-02', value: 110 },
+      { time: '2024-08-03', value: 105 },
+      { time: '2024-08-04', value: 125 },
+      { time: '2024-08-05', value: 115 },
+    ]);
 
     // Responsive resize
     const handleResize = () => {
-        if (chartContainer.current) {
-            chart.applyOptions({ width: chartContainer.current.clientWidth });
+        if (chartContainerRef.current) {
+            chart.applyOptions({ width: chartContainerRef.current.clientWidth });
         }
     };
     window.addEventListener("resize", handleResize);
@@ -50,8 +55,8 @@ export default function TradingViewLightweightChart() {
 
   return (
     <div
-      ref={chartContainer}
-      style={{ width: "100%", minHeight: 400, background: "#000" }}
+      ref={chartContainerRef}
+      style={{ width: "100%", height: "100%", background: "#000" }}
     />
   );
 }
