@@ -1,3 +1,4 @@
+
 "use client";
 
 import TradingViewWidget from '@/components/TradingViewWidget';
@@ -8,11 +9,13 @@ export default function TestPage() {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      height: '100%',
+      height: 'calc(100vh - 64px)', // Adjust 64px to your nav's height
       width: '100%',
-      paddingTop: '2rem',
+      padding: '2rem',
     }}>
-      <TradingViewWidget />
+      <div style={{ width: '980px', height: '610px' }}>
+        <TradingViewWidget />
+      </div>
     </div>
   );
 }
