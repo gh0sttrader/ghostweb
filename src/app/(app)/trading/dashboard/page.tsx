@@ -1,7 +1,7 @@
 
 "use client";
 
-import React, { useState, useMemo, Suspense, useCallback, useEffect } from 'react';
+import React, a { useState, useMemo, Suspense, useCallback, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import type { Stock, TradeRequest, OrderActionType, TradeMode, OrderSystemType, NewsArticle, Alert } from "@/types";
 import { useToast } from "@/hooks/use-toast";
@@ -321,7 +321,7 @@ function TradingDashboardPageContent() {
                   </div>
 
                   <Card className="bg-black/50 border-white/10 p-0">
-                      <Accordion type="single" collapsible className="w-full" defaultValue="item-1">
+                      <Accordion type="single" collapsible className="w-full">
                           <AccordionItem value="item-1" className="border-b border-white/10">
                               <AccordionTrigger className="px-4 py-3 text-white/80 hover:bg-white/5 font-semibold">My Positions</AccordionTrigger>
                               <AccordionContent className="px-4 py-2 text-white/60">
