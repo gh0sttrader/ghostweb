@@ -1,7 +1,7 @@
 
 "use client";
 
-import React, a { useState, useMemo, Suspense, useCallback, useEffect } from 'react';
+import React, { useState, useMemo, Suspense, useCallback, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import type { Stock, TradeRequest, OrderActionType, TradeMode, OrderSystemType, NewsArticle, Alert } from "@/types";
 import { useToast } from "@/hooks/use-toast";
