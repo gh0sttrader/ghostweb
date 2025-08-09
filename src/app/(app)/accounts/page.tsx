@@ -468,7 +468,7 @@ export default function AccountsPage() {
                 </section>
                 <section className="w-full mt-12">
                     <div className="flex w-full items-center justify-between mb-4 gap-4">
-                        <h2 className="text-white text-xl font-semibold">Transactions</h2>
+                        <h2 className="text-white text-xl font-semibold">Activity</h2>
                         <div className="flex items-center gap-2">
                             <Select value={transactionType} onValueChange={setTransactionType}>
                                 <SelectTrigger className="w-auto h-9 text-xs">
