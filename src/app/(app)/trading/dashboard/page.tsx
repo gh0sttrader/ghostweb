@@ -305,7 +305,7 @@ function TradingDashboardPageContent() {
               </div>
 
               <div className="sticky top-8 flex flex-col gap-5">
-                  <div className="h-[640px]">
+                  <div className="h-auto">
                       <OrderCard
                           selectedStock={stockForSyncedComps}
                           initialActionType={orderCardActionType}
@@ -316,7 +316,6 @@ function TradingDashboardPageContent() {
                           initialQuantity={orderCardInitialQuantity}
                           initialOrderType={orderCardInitialOrderType}
                           initialLimitPrice={orderCardInitialLimitPrice}
-                          className="h-full"
                       />
                   </div>
 
