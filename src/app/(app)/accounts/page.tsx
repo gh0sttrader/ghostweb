@@ -267,7 +267,7 @@ const HoldingsTable = ({ holdings }: { holdings: Holding[] }) => {
 
 const AccountSelector = ({ accounts, selected, onSelect }: { accounts: Account[], selected: Account, onSelect: (account: Account) => void }) => {
     return (
-        <div className="flex justify-start gap-8 mt-4">
+        <div className="flex justify-start gap-8">
             {accounts.map((acct) => (
                 <button
                     key={acct.id}
@@ -546,4 +546,6 @@ export default function AccountsPage() {
 
 
     
+    
+
     
